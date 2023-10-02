@@ -1,0 +1,10 @@
+{
+	"all": true,
+	"report-dir": "coverage/cypress",
+	"include": [
+		"src/**/*.{js,jsx,ts,tsx}",
+		"!src/**/*.{test,spec}.{js,jsx,ts,tsx}",
+		"!src/**/*.config.{js,ts}",
+		"!**/*.d.ts"
+	]
+}
