@@ -6,6 +6,7 @@ export default function Root() {
 	return (
 		<>
 			<Navbar />
+			aas
 			<div id="pages">
 				<Outlet />
 			</div>
