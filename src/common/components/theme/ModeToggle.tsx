@@ -9,6 +9,12 @@ import {
 } from '@/common/components/ui/dropdown-menu';
 import { useTheme } from '@/contexts/ThemeContext';
 
+enum Theme {
+	LIGHT = 'light',
+	DARK = 'dark',
+	SYSTEM = 'system',
+}
+
 export function ModeToggle() {
 	const { setTheme } = useTheme();
 
@@ -29,19 +35,19 @@ export function ModeToggle() {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end" data-test="theme-dropdown-container">
 				<DropdownMenuItem
-					onClick={() => setTheme('light')}
+					onClick={() => setTheme(Theme.LIGHT)}
 					data-test="theme-dropdown-light"
 				>
 					Light
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					onClick={() => setTheme('dark')}
+					onClick={() => setTheme(Theme.DARK)}
 					data-test="theme-dropdown-dark"
 				>
 					Dark
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					onClick={() => setTheme('system')}
+					onClick={() => setTheme(Theme.SYSTEM)}
 					data-test="theme-dropdown-system"
 				>
 					System
