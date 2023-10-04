@@ -1,10 +1,17 @@
+import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
+import ContractInput from '@/common/components/Input/ContractInput';
+
 export default function Home() {
 	return (
-		<div className="flex items-center justify-center h-screen">
-			{/* data-test? https://docs.cypress.io/guides/references/best-practices */}
-			<h1 className="text-3xl font-bold underline" data-test="home-msg">
-				This is the homepage!
-			</h1>
-		</div>
+		<main className="flex flex-1">
+			<div className="flex flex-col p-3 w-full gap-7">
+				<Breadcrumb
+					contractName="Counter contract"
+					folderName="Basic use case"
+					contractInvocationName="Get current counter"
+				/>
+				<ContractInput />
+			</div>
+		</main>
 	);
 }
