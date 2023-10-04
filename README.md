@@ -1,6 +1,4 @@
-# template-ui-vite-react
-
-Template for building Web Apps using React + Vite.
+![Keizai](https://github.com/tammaroivan/keizai/assets/25356559/c1815eba-4c4b-4b49-a4a8-c50c4d98697b)
 
 # Features
 
