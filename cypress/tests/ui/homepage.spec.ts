@@ -4,9 +4,25 @@ describe('Home page', () => {
 		cy.visit('/');
 	});
 
-	it('Should render correctly', () => {
+	it('Should show a title', () => {
 		cy.getBySel('home-msg')
 			.should('be.visible')
-			.and('have.text', 'This is the homepage!');
+			.and('have.text', 'Keizai Homes');
+	});
+	it('Should redirect to the Home page when navigating to other paths', () => {
+		cy.visit('/aaa');
+		cy.getBySel('home-msg')
+			.should('be.visible')
+			.and('have.text', 'Keizai Homes');
+
+		cy.visit('/bbb');
+		cy.getBySel('home-msg')
+			.should('be.visible')
+			.and('have.text', 'Keizai Homes');
+
+		cy.visit('/ccc');
+		cy.getBySel('home-msg')
+			.should('be.visible')
+			.and('have.text', 'Keizai Homes');
 	});
 });
