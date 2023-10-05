@@ -1,3 +1,6 @@
+import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
+import Collections from '@/common/components/Collections/Collections';
+import ContractInput from '@/common/components/Input/ContractInput';
 import Terminal from '@/common/components/ui/Terminal';
 import {
 	Tabs,
@@ -5,9 +8,6 @@ import {
 	TabsList,
 	TabsTrigger,
 } from '@/common/components/ui/tabs';
-import Collections from '@/common/components/Collections/Collections';
-import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
-import ContractInput from '@/common/components/Input/ContractInput';
 
 const tabs: Record<string, string> = {
 	functions: 'Functions',
@@ -20,9 +20,15 @@ const tabs: Record<string, string> = {
 export default function Home() {
 	return (
 		<main className="flex flex-1" data-test="home-page-container">
-      <Collections />
+			<Collections />
 			<div className="flex flex-col justify-between w-full gap-7">
 				<div className="flex flex-col p-3 w-full gap-7">
+					<Breadcrumb
+						contractName="Counter contract"
+						folderName="Basic use case"
+						contractInvocationName="Get current counter"
+					/>
+					<ContractInput />
 					<Tabs
 						defaultValue="functions"
 						className=""
@@ -71,4 +77,3 @@ export default function Home() {
 		</main>
 	);
 }
-
