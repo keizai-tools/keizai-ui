@@ -30,21 +30,19 @@ describe('Home page', () => {
 		cy.getBySel('contract-input-btn-load')
 			.should('be.visible')
 			.and('have.text', 'LOAD');
+		cy.getBySel('contract-input-btn-load').realHover();
+		cy.getBySel('contract-input-btn-load-tooltip')
+			.should('be.visible')
+			.and('contain', 'Coming soon');
 	});
 	it('Should redirect to the Home page when navigating to other paths', () => {
 		cy.visit('/aaa');
-		cy.getBySel('home-msg')
-			.should('be.visible')
-			.and('have.text', 'Keizai Homes');
+		cy.getBySel('home-page-container').should('be.visible');
 
 		cy.visit('/bbb');
-		cy.getBySel('home-msg')
-			.should('be.visible')
-			.and('have.text', 'Keizai Homes');
+		cy.getBySel('home-page-container').should('be.visible');
 
 		cy.visit('/ccc');
-		cy.getBySel('home-msg')
-			.should('be.visible')
-			.and('have.text', 'Keizai Homes');
+		cy.getBySel('home-page-container').should('be.visible');
 	});
 });

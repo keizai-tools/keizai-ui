@@ -4,7 +4,10 @@ import ContractInput from '@/common/components/Input/ContractInput';
 export default function Home() {
 	return (
 		<main className="flex flex-1">
-			<div className="flex flex-col p-3 w-full gap-7">
+			<div
+				className="flex flex-col p-3 w-full gap-7"
+				data-test="home-page-container"
+			>
 				<Breadcrumb
 					contractName="Counter contract"
 					folderName="Basic use case"
