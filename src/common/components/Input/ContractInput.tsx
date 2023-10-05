@@ -1,3 +1,5 @@
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+
 import { Button } from '@/common/components/ui/button';
 import { Input } from '@/common/components/ui/input';
 import { Select, SelectTrigger } from '@/common/components/ui/select';
@@ -22,12 +24,19 @@ const ContractInput = () => {
 				placeholder="Contract adress"
 				data-test="input-contract-name"
 			/>
-			<Button
-				className="bg-primary dark:bg-primary text-black"
-				data-test="contract-input-btn-load"
-			>
-				LOAD
-			</Button>
+			<Tooltip delayDuration={0}>
+				<TooltipTrigger asChild>
+					<Button
+						className="bg-primary dark:bg-primary text-black"
+						data-test="contract-input-btn-load"
+					>
+						LOAD
+					</Button>
+				</TooltipTrigger>
+				<TooltipContent>
+					<p data-test="contract-input-btn-load-tooltip">Coming soon</p>
+				</TooltipContent>
+			</Tooltip>
 		</div>
 	);
 };
