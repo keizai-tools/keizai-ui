@@ -2,7 +2,12 @@ name: CI
 on:
   pull_request:
     branches:
-      - main # or your default branch
+      - main
+
+env:
+  PORT: 3000
+  CYPRESS_HOST_PORT: 3001
+  CYPRESS_BASE_URL_PREFIX: http://localhost:3000
 
 jobs:
   build:
@@ -25,6 +30,5 @@ jobs:
       - name: Run build
         run: npm run build
 
-			- name: Test UI
+      - name: Test UI
         run: npm run test:ui
-
