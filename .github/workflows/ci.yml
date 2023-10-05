@@ -5,9 +5,9 @@ on:
       - main
 
 env:
-  PORT: 4000
+  PORT: 3000
   CYPRESS_HOST_PORT: 3001
-  CYPRESS_BASE_URL_PREFIX: http://localhost:3001
+  CYPRESS_BASE_URL_PREFIX: http://localhost:3000
 
 jobs:
   build:
