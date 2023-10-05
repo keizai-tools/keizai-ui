@@ -34,6 +34,22 @@ describe('Home page', () => {
 		cy.getBySel('contract-input-btn-load-tooltip')
 			.should('be.visible')
 			.and('contain', 'Coming soon');
+    });
+	it('Should show a Collections component', () => {
+		cy.getBySel('collections-container').should('exist').and('be.visible');
+		cy.getBySel('collections-header').should('exist').and('be.visible');
+		cy.getBySel('collections-header-title')
+			.should('be.visible')
+			.and('have.text', 'Collections');
+		cy.getBySel('collections-header-btn-new')
+			.should('be.visible')
+			.and('have.text', 'New');
+		cy.getBySel('collections-header-btn-import')
+			.should('be.visible')
+			.and('have.text', 'Import');
+		cy.getBySel('collections-accordion-container')
+			.should('exist')
+			.and('be.visible');
 	});
 	it('Should redirect to the Home page when navigating to other paths', () => {
 		cy.visit('/aaa');
