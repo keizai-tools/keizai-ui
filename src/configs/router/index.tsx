@@ -1,7 +1,6 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { Navigate, createBrowserRouter } from 'react-router-dom';
 
 import Root from '@pages/Root';
-import About from '@pages/about/About';
 import Home from '@pages/home/Home';
 
 const router = createBrowserRouter([
@@ -13,11 +12,11 @@ const router = createBrowserRouter([
 				index: true,
 				element: <Home />,
 			},
-			{
-				path: '/about',
-				element: <About />,
-			},
 		],
+	},
+	{
+		path: '*',
+		element: <Navigate to="/" />,
 	},
 ]);
 
