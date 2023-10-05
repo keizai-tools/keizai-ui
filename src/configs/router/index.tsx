@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { Navigate, createBrowserRouter } from 'react-router-dom';
 
 import Root from '@pages/Root';
 import Home from '@pages/home/Home';
@@ -13,6 +13,10 @@ const router = createBrowserRouter([
 				element: <Home />,
 			},
 		],
+	},
+	{
+		path: '*',
+		element: <Navigate to="/" />,
 	},
 ]);
 
