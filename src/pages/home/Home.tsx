@@ -1,4 +1,3 @@
-
 import Terminal from '@/common/components/ui/Terminal';
 import {
 	Tabs,
@@ -7,7 +6,9 @@ import {
 	TabsTrigger,
 } from '@/common/components/ui/tabs';
 import Collections from '@/common/components/Collections/Collections';
-        
+import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
+import ContractInput from '@/common/components/Input/ContractInput';
+
 const tabs: Record<string, string> = {
 	functions: 'Functions',
 	authorizations: 'Authorization',
@@ -70,3 +71,4 @@ export default function Home() {
 		</main>
 	);
 }
+
