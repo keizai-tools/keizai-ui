@@ -27,3 +27,6 @@ jobs:
 
       - name: Test UI
         run: npm run test:ui
+        env:
+          CYPRESS_HOST_PORT: 3001
+          CYPRESS_BASE_URL_PREFIX: http://localhost:3001
