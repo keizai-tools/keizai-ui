@@ -1,3 +1,4 @@
+
 import Terminal from '@/common/components/ui/Terminal';
 import {
 	Tabs,
@@ -5,7 +6,8 @@ import {
 	TabsList,
 	TabsTrigger,
 } from '@/common/components/ui/tabs';
-
+import Collections from '@/common/components/Collections/Collections';
+        
 const tabs: Record<string, string> = {
 	functions: 'Functions',
 	authorizations: 'Authorization',
@@ -16,7 +18,8 @@ const tabs: Record<string, string> = {
 
 export default function Home() {
 	return (
-		<main className="flex flex-1">
+		<main className="flex flex-1" data-test="home-page-container">
+      <Collections />
 			<div className="flex flex-col justify-between w-full gap-7">
 				<div className="flex flex-col p-3 w-full gap-7">
 					<Tabs
