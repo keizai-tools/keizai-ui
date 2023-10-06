@@ -7,7 +7,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/common/components/ui/dropdown-menu';
-import { useTheme } from '@/contexts/ThemeContext';
+import { useTheme } from '@/providers/ThemeProvider';
 
 enum Theme {
 	LIGHT = 'light',
@@ -15,7 +15,7 @@ enum Theme {
 	SYSTEM = 'system',
 }
 
-export function ModeToggle() {
+export function ToggleThemeButton() {
 	const { setTheme } = useTheme();
 
 	return (
