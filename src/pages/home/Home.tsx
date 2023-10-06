@@ -1,3 +1,5 @@
+import InvocationPage from '../default/InvocationPage';
+
 import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
 import Collections from '@/common/components/Collections/Collections';
 import ContractInput from '@/common/components/Input/ContractInput';
@@ -19,9 +21,9 @@ const tabs: Record<string, string> = {
 
 export default function Home() {
 	return (
-		<main className="flex flex-1" data-test="home-page-container">
+		<main className="flex flex-1">
 			<Collections />
-			<div className="flex flex-col justify-between w-full gap-7">
+			<InvocationPage>
 				<div className="flex flex-col p-3 w-full gap-7">
 					<Breadcrumb
 						contractName="Counter contract"
@@ -34,16 +36,9 @@ export default function Home() {
 						className=""
 						data-test="tabs-container"
 					>
-						<TabsList
-							className="bg-white text-black dark:bg-background dark:text-white"
-							data-test="tabs-list-container"
-						>
+						<TabsList className="" data-test="tabs-list-container">
 							{Object.keys(tabs).map((tab) => (
-								<TabsTrigger
-									key={tab}
-									value={tab}
-									className="data-[state=active]:bg-background data-[state=active]:dark:bg-white data-[state=active]:text-white data-[state=active]:dark:text-black  rounded-md"
-								>
+								<TabsTrigger key={tab} value={tab} className="">
 									{tabs[tab]}
 								</TabsTrigger>
 							))}
@@ -73,7 +68,7 @@ export default function Home() {
 					</Tabs>
 				</div>
 				<Terminal />
-			</div>
+			</InvocationPage>
 		</main>
 	);
 }
