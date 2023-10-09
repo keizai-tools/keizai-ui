@@ -45,14 +45,7 @@ export const CollectionsProvider = ({
 	const [collections, setCollections] = useState<Collection[]>([]);
 	const [selectedCollection, setSelectedCollection] =
 		useState<Collection | null>(null);
-
-	useEffect(() => {
-		const localData = localStorage.getItem('collections');
-		const newValue = localData ? JSON.parse(localData) : [];
-		setCollections(localData ? newValue : []);
-		setSelectedCollection(newValue.length ? newValue[0] : null);
-		setLoading(false);
-	}, []);
+	setLoading(false);
 
 	useEffect(() => {
 		const selectedCollectionData = collections.find(
@@ -69,7 +62,6 @@ export const CollectionsProvider = ({
 	}, [collections, selectedCollection?.folders.length, selectedCollection?.id]);
 
 	const updateCollections = (newValue: Collection[]) => {
-		localStorage.setItem('collections', JSON.stringify(newValue));
 		setCollections(newValue);
 	};
 
