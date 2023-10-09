@@ -41,14 +41,11 @@ export const CollectionsProvider = ({
 }: {
 	children: React.ReactNode;
 }) => {
-	const [loading, setLoading] = useState(true);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const [loading, _setLoading] = useState(false);
 	const [collections, setCollections] = useState<Collection[]>([]);
 	const [selectedCollection, setSelectedCollection] =
 		useState<Collection | null>(null);
-
-	useEffect(() => {
-		setLoading(false);
-	}, []);
 
 	useEffect(() => {
 		const selectedCollectionData = collections.find(
