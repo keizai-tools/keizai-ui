@@ -4,6 +4,9 @@ describe('Collections', () => {
 	});
 
 	it('Should show the Collections header', () => {
+		cy.getBySel('invocation-page-container').should('exist').and('be.visible');
+		cy.getBySel('home-page-container').should('not.exist');
+		cy.getBySel('collections-accordion-item').should('not.exist');
 		cy.getBySel('collections-container').should('exist').and('be.visible');
 		cy.getBySel('collections-header').should('exist').and('be.visible');
 		cy.getBySel('collections-header-title')
@@ -17,8 +20,25 @@ describe('Collections', () => {
 			.and('have.text', 'Import');
 	});
 	it('Should create a new collection by clicking the New button in the header', () => {
+		cy.getBySel('invocation-page-container').should('exist').and('be.visible');
+		cy.getBySel('home-page-container').should('not.exist');
+		cy.getBySel('collections-accordion-item').should('not.exist');
 		cy.getBySel('collections-header-btn-new').click();
+		cy.getBySel('invocation-page-container').should('not.exist');
+		cy.getBySel('home-page-container').should('exist').and('be.visible');
 		cy.getBySel('collections-accordion-item').should('have.length', 1);
+		cy.getBySel('collections-accordion-item').should('exist').and('be.visible');
+		cy.getBySel('collection-item-name').should('have.text', 'New collection 1');
+		cy.getBySel('collection-options-btn').should('exist').and('be.visible');
+	});
+	it('Should create a new collection by clicking the New Collection button', () => {
+		cy.getBySel('invocation-page-container').should('exist').and('be.visible');
+		cy.getBySel('home-page-container').should('not.exist');
+		cy.getBySel('collections-accordion-item').should('not.exist');
+		cy.getBySel('invocation-page-btn').click();
+		cy.getBySel('invocation-page-container').should('not.exist');
+		cy.getBySel('home-page-container').should('exist').and('be.visible');
+		cy.getBySel('collections-accordion-container').should('have.length', 1);
 		cy.getBySel('collections-accordion-item').should('exist').and('be.visible');
 		cy.getBySel('collection-item-name').should('have.text', 'New collection 1');
 		cy.getBySel('collection-options-btn').should('exist').and('be.visible');
