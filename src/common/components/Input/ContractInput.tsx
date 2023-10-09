@@ -21,17 +21,12 @@ const ContractInput = () => {
 			<Input
 				className="border-none focus-visible:ring-0"
 				defaultValue="f47e3e34187dc84aa9ff41108082d289cdf6e40720cdfba8fcd9974369b9d32e"
-				placeholder="Contract adress"
+				placeholder="Contract address"
 				data-test="input-contract-name"
 			/>
 			<Tooltip delayDuration={0}>
 				<TooltipTrigger asChild>
-					<Button
-						className="bg-primary dark:bg-primary text-black"
-						data-test="contract-input-btn-load"
-					>
-						LOAD
-					</Button>
+					<Button data-test="contract-input-btn-load">LOAD</Button>
 				</TooltipTrigger>
 				<TooltipContent>
 					<p data-test="contract-input-btn-load-tooltip">Coming soon</p>
