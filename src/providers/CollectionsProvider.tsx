@@ -45,7 +45,10 @@ export const CollectionsProvider = ({
 	const [collections, setCollections] = useState<Collection[]>([]);
 	const [selectedCollection, setSelectedCollection] =
 		useState<Collection | null>(null);
-	setLoading(false);
+
+	useEffect(() => {
+		setLoading(false);
+	}, []);
 
 	useEffect(() => {
 		const selectedCollectionData = collections.find(
