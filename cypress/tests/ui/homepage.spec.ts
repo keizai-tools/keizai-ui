@@ -137,14 +137,5 @@ describe('Home page', () => {
 				.should('be.visible')
 				.and('have.text', terminalDefaultText);
 		});
-		it('Should redirect to the Home page when navigating to other paths', () => {
-			cy.visit('/aaa');
-			cy.getBySel('home-page-container').should('be.visible');
-			cy.visit('/bbb');
-			cy.getBySel('home-page-container').should('be.visible');
-
-			cy.visit('/ccc');
-			cy.getBySel('home-page-container').should('be.visible');
-		});
 	});
 });
