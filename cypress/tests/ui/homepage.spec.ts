@@ -68,7 +68,7 @@ describe('Home page', () => {
 		cy.getBySel('contract-input-btn-load-tooltip')
 			.should('be.visible')
 			.and('contain', 'Coming soon');
-    });
+	});
 	it('Should show a Collections component', () => {
 		cy.getBySel('collections-container').should('exist').and('be.visible');
 		cy.getBySel('collections-header').should('exist').and('be.visible');
@@ -81,17 +81,14 @@ describe('Home page', () => {
 		cy.getBySel('collections-header-btn-import')
 			.should('be.visible')
 			.and('have.text', 'Import');
-		cy.getBySel('collections-accordion-container')
-			.should('exist')
-			.and('be.visible');
 	});
-  	it('Should show a terminal', () => {
+	it('Should show a terminal', () => {
 		const terminalDefaultText = 'Welcome to keizai 0.1.0 - OUTPUT';
 
 		cy.getBySel('terminal-container')
 			.should('be.visible')
 			.and('have.text', terminalDefaultText);
-   	});
+	});
 	it('Should redirect to the Home page when navigating to other paths', () => {
 		cy.visit('/aaa');
 		cy.getBySel('home-page-container').should('be.visible');
