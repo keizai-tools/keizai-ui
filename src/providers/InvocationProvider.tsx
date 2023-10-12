@@ -3,6 +3,7 @@ import React, { ReactNode, createContext } from 'react';
 
 export type Invocation = {
 	id: number;
+	name: string;
 	contractId?: string;
 	functions?: string[];
 	selectedFunction?: string | null;
@@ -48,6 +49,7 @@ export const InvocationProvider = ({ children }: InvocationProviderProps) => {
 		setInvocationData({
 			...invocationData,
 			id: invocationId,
+			name: '',
 		});
 	};
 
@@ -56,6 +58,7 @@ export const InvocationProvider = ({ children }: InvocationProviderProps) => {
 		setInvocationData({
 			...invocationData,
 			id: 0,
+			name: '',
 		});
 	};
 
