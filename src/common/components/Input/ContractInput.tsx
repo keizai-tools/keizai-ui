@@ -40,7 +40,6 @@ const ContractInput = ({
 				value={contractId}
 				onChange={(e) => setContractId(e.target.value)}
 				className="border-none focus-visible:ring-0"
-				defaultValue="f47e3e34187dc84aa9ff41108082d289cdf6e40720cdfba8fcd9974369b9d32e"
 				placeholder="Contract address"
 				data-test="input-contract-name"
 			/>
