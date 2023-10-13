@@ -99,23 +99,17 @@ describe('Home page', () => {
 			);
 		});
 		it('Should show a contract input', () => {
-			const contractId =
-				'f47e3e34187dc84aa9ff41108082d289cdf6e40720cdfba8fcd9974369b9d32e';
-
 			cy.getBySel('contract-input-container').should('exist').and('be.visible');
 			cy.getBySel('contract-input-network')
 				.should('be.visible')
 				.and('have.text', 'FUTURENET');
 			cy.getBySel('input-contract-name')
 				.should('be.visible')
-				.and('have.value', contractId);
+				.and('have.attr', 'placeholder', 'Contract address');
 			cy.getBySel('contract-input-btn-load')
 				.should('be.visible')
 				.and('have.text', 'LOAD');
 			cy.getBySel('contract-input-btn-load').realHover();
-			cy.getBySel('contract-input-btn-load-tooltip')
-				.should('be.visible')
-				.and('contain', 'Coming soon');
 		});
 		it('Should show a Collections component', () => {
 			cy.getBySel('collections-container').should('exist').and('be.visible');

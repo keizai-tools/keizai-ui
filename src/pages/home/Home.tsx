@@ -3,6 +3,7 @@ import InvocationPage from '../default/InvocationPage';
 import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
 import Collections from '@/common/components/Collections/Collections';
 import ContractInput from '@/common/components/Input/ContractInput';
+import FunctionsTab from '@/common/components/Tabs/FunctionsTab/FunctionsTab';
 import Terminal from '@/common/components/ui/Terminal';
 import {
 	Tabs,
@@ -10,6 +11,7 @@ import {
 	TabsList,
 	TabsTrigger,
 } from '@/common/components/ui/tabs';
+import { useInvocation } from '@/common/hooks/useInvocation';
 
 const tabs: Record<string, string> = {
 	functions: 'Functions',
@@ -20,6 +22,8 @@ const tabs: Record<string, string> = {
 };
 
 export default function Home() {
+	const { loadContractToInvocation } = useInvocation();
+
 	return (
 		<main className="flex flex-1">
 			<Collections />
@@ -30,7 +34,7 @@ export default function Home() {
 						folderName="Basic use case"
 						contractInvocationName="Get current counter"
 					/>
-					<ContractInput />
+					<ContractInput loadContract={loadContractToInvocation} />
 					<Tabs
 						defaultValue="functions"
 						className=""
@@ -44,26 +48,7 @@ export default function Home() {
 							))}
 						</TabsList>
 						<TabsContent value="functions">
-							<div
-								className="flex justify-center mt-36 flex-1 gap-8"
-								data-test="tabs-content-container"
-							>
-								<img
-									src="/moon.svg"
-									alt="Load contract image"
-									width={300}
-									height={300}
-									loading="eager"
-									data-test="tabs-content-contract-img"
-								/>
-								<div
-									className="flex flex-col justify-center text-primary font-black text-6xl"
-									data-test="tabs-content-contract-text"
-								>
-									<h2>Let&apos;s Load</h2>
-									<h2>Your Contract</h2>
-								</div>
-							</div>
+							<FunctionsTab />
 						</TabsContent>
 					</Tabs>
 				</div>
