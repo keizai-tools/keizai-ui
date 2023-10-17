@@ -14,6 +14,7 @@ describe('Sidebar', () => {
 			.and('have.attr', 'href', '/');
 		cy.getBySel('sidebar-btn-copy').should('exist').and('be.visible');
 		cy.getBySel('theme-dropdown-btn').should('exist').and('be.visible');
+		cy.getBySel('sidebar-btn-logout').should('exist').and('be.visible');
 		cy.getBySel('theme-dropdown-container').should('not.exist');
 	});
 	it('Should show a dropdown menu to change the theme', () => {
