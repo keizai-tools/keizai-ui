@@ -8,6 +8,9 @@ env:
   PORT: 3000
   CYPRESS_HOST_PORT: 3001
   CYPRESS_BASE_URL_PREFIX: http://localhost:3000
+  VITE_COGNITO_USER_POOL_ID: local
+  VITE_COGNITO_CLIENT_ID: clientid
+  VITE_COGNITO_ENDPOINT: http://localhost:9229
 
 jobs:
   build:
