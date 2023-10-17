@@ -30,4 +30,12 @@ describe('Sidebar', () => {
 		cy.getBySel('theme-dropdown-btn').click({ force: true });
 		cy.getBySel('theme-dropdown-container').should('not.exist');
 	});
+	it('Should disconnect from the session', () => {
+		cy.getBySel('sidebar-container').should('exist').and('be.visible');
+		cy.getBySel('login-form-container').should('not.exist');
+		cy.getBySel('sidebar-btn-logout').click();
+		cy.url().should('include', `${Cypress.env('loginUrl')}`);
+		cy.getBySel('login-form-container').should('exist').and('be.visible');
+		cy.getBySel('sidebar-container').should('not.exist');
+	});
 });
