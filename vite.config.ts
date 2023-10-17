@@ -12,7 +12,7 @@ dotenv.config();
 
 // automatically map path aliases
 const rawAlias = tsconfig.compilerOptions.paths;
-const alias = {};
+const alias = { './runtimeConfig': './runtimeConfig.browser' };
 
 for (const x in rawAlias) {
 	alias[x.replace('/*', '')] = rawAlias[x].map((p) =>
@@ -23,6 +23,9 @@ for (const x in rawAlias) {
 // https://vitejs.dev/config/
 // https://vitest.dev/config/
 export default defineConfig({
+	define: {
+		global: 'globalThis',
+	},
 	resolve: {
 		alias,
 	},
