@@ -1,5 +1,7 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 
+import AuthenticationPage from '@/pages/auth/AuthenticationPage';
+
 import Root from '@pages/Root';
 import Home from '@pages/home/Home';
 
@@ -13,6 +15,14 @@ const router = createBrowserRouter([
 				element: <Home />,
 			},
 		],
+	},
+	{
+		path: 'login',
+		element: <AuthenticationPage />,
+	},
+	{
+		path: 'register',
+		element: <AuthenticationPage />,
 	},
 	{
 		path: '*',

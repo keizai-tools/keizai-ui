@@ -109,7 +109,6 @@ describe('Home page', () => {
 			cy.getBySel('contract-input-btn-load')
 				.should('be.visible')
 				.and('have.text', 'LOAD');
-			cy.getBySel('contract-input-btn-load').realHover();
 		});
 		it('Should show a Collections component', () => {
 			cy.getBySel('collections-container').should('exist').and('be.visible');
