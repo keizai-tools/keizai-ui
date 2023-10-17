@@ -1,9 +1,9 @@
-'use client';
-
 import React from 'react';
 
 import { Button } from '@/common/components/ui/button';
 import { useCollections } from '@/providers/CollectionsProvider';
+
+('use client');
 
 const InvocationPage = ({ children }: { children: React.ReactNode }) => {
 	const { selectedCollection, addCollection } = useCollections();

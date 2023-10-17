@@ -1,9 +1,9 @@
-'use client';
-
 import { Loader } from 'lucide-react';
 import React from 'react';
 
 import { useCollections } from '@/providers/CollectionsProvider';
+
+('use client');
 
 export const AppLoader = ({
 	children,
