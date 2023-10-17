@@ -7,8 +7,8 @@ import PasswordInput from '../Input/PasswordInput';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
-import { User } from '@/services/domain/user';
-import useAuth from '@/services/useAuth';
+import { User } from '@/services/auth/domain/user';
+import useAuth from '@/services/auth/hook/useAuth';
 
 function Login() {
 	const { formData, onChangeInput, loginUser } = useAuth();
