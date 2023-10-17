@@ -2,6 +2,7 @@ import { Copy } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 import { ModeToggle } from '../theme/ModeToggle';
+import ButtonLogOut from './ButtonLogOut';
 
 function Sidebar() {
 	const location = useLocation();
@@ -31,7 +32,10 @@ function Sidebar() {
 					</Link>
 				</div>
 			</div>
-			<ModeToggle />
+			<div className="flex flex-col gap-2 mb-4">
+				<ModeToggle />
+				<ButtonLogOut />
+			</div>
 		</div>
 	);
 }
