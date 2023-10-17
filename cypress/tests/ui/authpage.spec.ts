@@ -8,6 +8,10 @@ describe('Authentication page management', () => {
 		description: 'Next-gen testing for Soroban.',
 		url: 'https://www.keizai.dev/',
 	};
+	const user = {
+		username: 'test@test.com',
+		password: 'Test1234+',
+	};
 
 	describe('Login', () => {
 		const loginForm = {
@@ -65,7 +69,7 @@ describe('Authentication page management', () => {
 				.and('have.attr', 'href', loginForm.footer.link.url)
 				.contains(loginForm.footer.link.title);
 		});
-		it('should go to the login form', () => {
+		it('Should go to the login form', () => {
 			cy.url().should('include', `${Cypress.env('loginUrl')}`);
 			cy.getBySel('login-form-container').should('exist').and('be.visible');
 			cy.getBySel('register-form-container').should('not.exist');
@@ -73,6 +77,25 @@ describe('Authentication page management', () => {
 			cy.url().should('include', `${Cypress.env('registerUrl')}`);
 			cy.getBySel('register-form-container').should('exist').and('be.visible');
 			cy.getBySel('login-form-container').should('not.exist');
+		});
+		it('Should log in', () => {
+			cy.intercept(
+				'POST',
+				`${Cypress.env('apiUrl')}${Cypress.env('apiAuth')}${Cypress.env(
+					'loginUrl',
+				)}`,
+				{
+					fixture: 'token.json',
+				},
+			).as('loginUser');
+			cy.getBySel('login-form-username').type(user.username);
+			cy.getBySel('form-input-password').type(user.password);
+			cy.getBySel('login-form-btn-submit').click();
+			cy.wait('@loginUser');
+			cy.url().should('not.include', `${Cypress.env('loginUrl')}`);
+			cy.getBySel('invocation-page-container')
+				.should('exist')
+				.and('be.visible');
 		});
 	});
 	describe('Register', () => {
@@ -128,7 +151,7 @@ describe('Authentication page management', () => {
 				.and('have.attr', 'href', registerForm.footer.link.url)
 				.contains(registerForm.footer.link.title);
 		});
-		it('should go to the register form', () => {
+		it('Should go to the register form', () => {
 			cy.url().should('include', `${Cypress.env('registerUrl')}`);
 			cy.getBySel('register-form-container').should('exist').and('be.visible');
 			cy.getBySel('login-form-container').should('not.exist');
@@ -136,6 +159,25 @@ describe('Authentication page management', () => {
 			cy.url().should('include', `${Cypress.env('loginUrl')}`);
 			cy.getBySel('login-form-container').should('exist').and('be.visible');
 			cy.getBySel('register-form-container').should('not.exist');
+		});
+		it('Should register a user', () => {
+			cy.intercept(
+				'POST',
+				`${Cypress.env('apiUrl')}${Cypress.env('apiAuth')}${Cypress.env(
+					'registerUrl',
+				)}`,
+				{
+					fixture: 'user-cognito.json',
+				},
+			).as('registerUser');
+			cy.getBySel('register-form-email').type(user.username);
+			cy.getBySel('form-input-password').type(user.password);
+			cy.getBySel('register-form-btn-submit').click();
+			cy.wait('@registerUser');
+			cy.url().should('not.include', `${Cypress.env('registerUrl')}`);
+			cy.getBySel('invocation-page-container')
+				.should('exist')
+				.and('be.visible');
 		});
 	});
 });
