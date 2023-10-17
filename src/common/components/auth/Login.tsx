@@ -1,23 +1,34 @@
+import { useMutation } from '@tanstack/react-query';
 import { Form, Formik } from 'formik';
 import { User2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import PasswordInput from '../Input/PasswordInput';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
-const INITIAL_VALUES = {
-	username: '',
-	password: '',
-};
+import { User } from '@/services/auth/domain/user';
+import useAuth from '@/services/auth/hook/useAuth';
 
 function Login() {
+	const { formData, onChangeInput, loginUser } = useAuth();
+	const { mutate } = useMutation({
+		mutationFn: loginUser,
+		onSuccess: () => {
+			navigate('/');
+		},
+	});
+	const navigate = useNavigate();
+
+	const onSubmit = (values: User) => {
+		mutate(values);
+	};
+
 	return (
 		<Formik
-			initialValues={INITIAL_VALUES}
+			initialValues={formData}
 			enableReinitialize={true}
-			// eslint-disable-next-line @typescript-eslint/no-empty-function
-			onSubmit={() => {}}
+			onSubmit={onSubmit}
 		>
 			<Form className="md:w-1/2" data-test="login-form-container">
 				<h1
@@ -34,9 +45,10 @@ function Login() {
 						placeholder="Username"
 						name="username"
 						data-test="login-form-username"
+						onChange={onChangeInput}
 					/>
 				</div>
-				<PasswordInput />
+				<PasswordInput onChange={onChangeInput} />
 				<Button
 					type="submit"
 					className="block w-full bg-primary dark:bg-primary mt-4 py-2 rounded-md text-black font-semibold mb-2"
