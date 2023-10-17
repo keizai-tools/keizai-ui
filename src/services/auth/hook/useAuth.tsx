@@ -1,6 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 import { ChangeEvent, useState } from 'react';
 
+import { getUserPool, newCognitoUser } from '../cognito/cognito';
+
 import { User } from '@/services/auth/domain/user';
 import { AUTH_RESPONSE } from '@/services/auth/validators/authResponse';
 
@@ -37,7 +39,23 @@ function useAuth() {
 		}
 	}
 
-	return { formData, onChangeInput, loginUser, registerUser };
+	async function logoutUser(username: string) {
+		const userPool = getUserPool();
+		const userData = {
+			Username: username,
+			Pool: userPool,
+		};
+		const cognitoUser = newCognitoUser(userData);
+
+		try {
+			cognitoUser.signOut();
+			return true;
+		} catch (error) {
+			throw new Error(AUTH_RESPONSE.FAILED_LOGOUT);
+		}
+	}
+
+	return { formData, onChangeInput, loginUser, logoutUser, registerUser };
 }
 
 export default useAuth;

@@ -1,9 +1,8 @@
 import { Copy } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
-import ButtonLogOut from './ButtonLogOut';
 import { ToggleThemeButton } from '../theme/ToggleThemeButton';
-
+import ButtonLogOut from './ButtonLogOut';
 
 function Sidebar() {
 	const location = useLocation();

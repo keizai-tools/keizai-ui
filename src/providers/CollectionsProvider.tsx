@@ -1,8 +1,8 @@
-'use client';
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { Invocation } from './InvocationProvider';
+
+('use client');
 
 export type Folder = {
 	id: string;
