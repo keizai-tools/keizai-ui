@@ -1,15 +1,16 @@
 import { Copy } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
-import { ModeToggle } from '../theme/ModeToggle';
 import ButtonLogOut from './ButtonLogOut';
+import { ToggleThemeButton } from '../theme/ToggleThemeButton';
+
 
 function Sidebar() {
 	const location = useLocation();
 	const currentRoute = location.pathname;
 	return (
 		<div
-			className="h-screen w-[80px] flex flex-col items-center justify-between bg-background border-r border-r-background-100 py-4"
+			className="h-screen w-[80px] flex flex-col items-center justify-between bg-foreground dark:bg-background border-r dark:border-r-border py-4"
 			data-test="sidebar-container"
 		>
 			<div className="flex flex-col items-center">
@@ -20,7 +21,7 @@ function Sidebar() {
 					alt="Keizai Logo"
 					data-test="sidebar-img"
 				/>
-				<div className="flex flex-col mt-4 text-neutral-0">
+				<div className="flex flex-col mt-4 items-center">
 					<Link
 						to="/"
 						data-test="sidebar-link"
@@ -33,7 +34,7 @@ function Sidebar() {
 				</div>
 			</div>
 			<div className="flex flex-col gap-2 mb-4">
-				<ModeToggle />
+				<ToggleThemeButton />
 				<ButtonLogOut />
 			</div>
 		</div>

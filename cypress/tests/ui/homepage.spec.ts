@@ -109,6 +109,7 @@ describe('Home page', () => {
 			cy.getBySel('input-contract-name')
 				.should('be.visible')
 				.and('have.value', contractId);
+
 			cy.getBySel('contract-input-btn-load')
 				.should('be.visible')
 				.and('have.text', 'LOAD');
