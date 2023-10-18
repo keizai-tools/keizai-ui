@@ -68,7 +68,7 @@ function CreateAccount() {
 								className="pl-2 border-none bg-white focus-visible:ring-0 text-black"
 								type="text"
 								placeholder="Email"
-								data-test="login-form-username"
+								data-test="register-form-email"
 								{...field}
 							/>
 						)}

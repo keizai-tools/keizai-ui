@@ -1,5 +1,6 @@
 describe('Home page', () => {
 	beforeEach(() => {
+		cy.loginByCognitoApi();
 		cy.visit('/');
 	});
 

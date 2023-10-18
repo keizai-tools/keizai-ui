@@ -1,5 +1,6 @@
 describe('Collections', () => {
 	beforeEach(() => {
+		cy.loginByCognitoApi();
 		cy.visit('/');
 	});
 

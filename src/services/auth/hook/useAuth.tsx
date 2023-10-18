@@ -4,7 +4,7 @@ import React from 'react';
 import { AuthContext } from '@/providers/AuthProvider';
 
 const amplifyConfigurationOptions = {
-	userPoolRegion: 'us-west-1',
+	userPoolRegion: import.meta.env.VITE_AWS_COGNITO_REGION,
 	userPoolId: import.meta.env.VITE_AWS_COGNITO_USER_POOL_ID,
 	userPoolWebClientId: import.meta.env.VITE_AWS_COGNITO_CLIENT_ID,
 };
