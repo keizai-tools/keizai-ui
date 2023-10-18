@@ -27,6 +27,8 @@ export function useProvideAuth() {
 	const [isLoading, setIsLoading] = React.useState(true);
 	const [isAuthenticated, setIsAuthenticated] = React.useState(false);
 
+	console.log({ user });
+
 	React.useEffect(() => {
 		if (!user) {
 			setIsLoading(true);

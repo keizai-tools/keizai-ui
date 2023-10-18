@@ -6,7 +6,7 @@ import { useCollections } from '@/providers/CollectionsProvider';
 ('use client');
 
 const InvocationPage = ({ children }: { children: React.ReactNode }) => {
-	const { selectedCollection, addCollection } = useCollections();
+	const { selectedCollection } = useCollections();
 
 	if (!selectedCollection) {
 		return (
@@ -28,7 +28,9 @@ const InvocationPage = ({ children }: { children: React.ReactNode }) => {
 					Create your first collection
 				</h1>
 				<Button
-					onClick={() => addCollection('New collection 1')}
+					onClick={() => {
+						// TODO Implement add collection
+					}}
 					data-test="invocation-page-btn"
 				>
 					New collection

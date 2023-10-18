@@ -13,9 +13,9 @@ const queryClient = new QueryClient();
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
 	return (
-		<AuthProvider>
-			<QueryClientProvider client={queryClient}>
-				<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+		<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+			<AuthProvider>
+				<QueryClientProvider client={queryClient}>
 					<TooltipProvider>
 						<CollectionsProvider>
 							<InvocationProvider>
@@ -24,9 +24,9 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 							</InvocationProvider>
 						</CollectionsProvider>
 					</TooltipProvider>
-				</ThemeProvider>
-			</QueryClientProvider>
-		</AuthProvider>
+				</QueryClientProvider>
+			</AuthProvider>
+		</ThemeProvider>
 	);
 };
 

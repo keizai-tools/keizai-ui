@@ -2,9 +2,12 @@ import { Navigate, createBrowserRouter } from 'react-router-dom';
 
 import AuthenticationPage from '@/pages/auth/AuthenticationPage';
 import ProtectedRoute from '@/pages/auth/ProtectedRoute';
+import CollectionPage from '@/pages/collection/CollectionPage';
 
 import Root from '@pages/Root';
 import Home from '@pages/home/Home';
+
+// Import your CollectionView component
 
 const router = createBrowserRouter([
 	{
@@ -20,6 +23,14 @@ const router = createBrowserRouter([
 				element: (
 					<ProtectedRoute>
 						<Home />
+					</ProtectedRoute>
+				), // Removed the redundant ProtectedRoute
+			},
+			{
+				path: 'collection/:id',
+				element: (
+					<ProtectedRoute>
+						<CollectionPage />
 					</ProtectedRoute>
 				),
 			},

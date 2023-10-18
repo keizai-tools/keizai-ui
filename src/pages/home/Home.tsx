@@ -1,59 +1,26 @@
-import InvocationPage from '../default/InvocationPage';
-
-import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
-import Collections from '@/common/components/Collections/Collections';
-import ContractInput from '@/common/components/Input/ContractInput';
-import FunctionsTab from '@/common/components/Tabs/FunctionsTab/FunctionsTab';
-import Terminal from '@/common/components/ui/Terminal';
-import {
-	Tabs,
-	TabsContent,
-	TabsList,
-	TabsTrigger,
-} from '@/common/components/ui/tabs';
-import { useInvocation } from '@/common/hooks/useInvocation';
-
-const tabs: Record<string, string> = {
-	functions: 'Functions',
-	authorizations: 'Authorization',
-	preInvocateScript: 'Pre-invocate script',
-	tests: 'Tests',
-	events: 'Events',
-};
+import CollectionCard from '@/common/components/Collections/CollectionCard';
+import CollectionPlaceholder from '@/common/components/Collections/CollectionPlaceholder';
+import FullscreenLoading from '@/common/views/FullscreenLoading';
+import { useCollections } from '@/providers/CollectionsProvider';
 
 export default function Home() {
-	const { loadContractToInvocation } = useInvocation();
+	const { collections, isLoading } = useCollections();
+
+	if (isLoading) {
+		return <FullscreenLoading />;
+	}
 
 	return (
-		<main className="flex flex-1">
-			<Collections />
-			<InvocationPage>
-				<div className="flex flex-col p-3 w-full gap-7">
-					<Breadcrumb
-						contractName="Counter contract"
-						folderName="Basic use case"
-						contractInvocationName="Get current counter"
-					/>
-					<ContractInput loadContract={loadContractToInvocation} />
-					<Tabs
-						defaultValue="functions"
-						className=""
-						data-test="tabs-container"
-					>
-						<TabsList className="" data-test="tabs-list-container">
-							{Object.keys(tabs).map((tab) => (
-								<TabsTrigger key={tab} value={tab} className="">
-									{tabs[tab]}
-								</TabsTrigger>
-							))}
-						</TabsList>
-						<TabsContent value="functions">
-							<FunctionsTab />
-						</TabsContent>
-					</Tabs>
-				</div>
-				<Terminal />
-			</InvocationPage>
+		<main className="flex flex-col p-3 gap-4">
+			<h3 className="text-xl font-bold" data-test="collections-header-title">
+				Collections
+			</h3>
+			<div className="flex gap-8 flex-wrap">
+				{collections.map((collection) => (
+					<CollectionCard id={collection.id} name={collection.name} />
+				))}
+				<CollectionPlaceholder />
+			</div>
 		</main>
 	);
 }
