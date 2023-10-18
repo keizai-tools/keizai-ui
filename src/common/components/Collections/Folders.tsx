@@ -1,9 +1,13 @@
+import { ArrowLeftIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
 import { Button } from '../ui/button';
 import Folder from './Folder';
 
 import { useCollections } from '@/providers/CollectionsProvider';
 
-const Collections = () => {
+const Folders = () => {
+	const navigate = useNavigate();
 	const { selectedCollection } = useCollections();
 
 	return (
@@ -11,12 +15,19 @@ const Collections = () => {
 			className="w-[300px] flex-col border-r dark:border-r-border h-full px-3 py-1 gap-4"
 			data-test="collections-container"
 		>
+			<Button
+				variant="link"
+				className="flex items-center gap-2 text-xs text-primary p-0"
+				onClick={() => navigate('/')}
+			>
+				<ArrowLeftIcon size={16} /> Collections
+			</Button>
 			<div
 				className="flex items-center justify-between"
 				data-test="collections-header"
 			>
 				<h4 className="text-lg font-bold" data-test="collections-header-title">
-					Collections
+					Folders
 				</h4>
 				<div className="">
 					<Button
@@ -29,18 +40,10 @@ const Collections = () => {
 					>
 						New
 					</Button>
-					<Button
-						variant="link"
-						className="p-2 text-foreground"
-						data-test="collections-header-btn-import"
-						disabled
-					>
-						Import
-					</Button>
 				</div>
 			</div>
 			{selectedCollection?.folders.length ? (
-				<div className="flex flex-col ml-5 text-slate-400">
+				<div className="flex flex-col text-slate-400">
 					{selectedCollection.folders.map((folder) => (
 						<Folder
 							key={folder.id}
@@ -53,7 +56,7 @@ const Collections = () => {
 				</div>
 			) : (
 				<span
-					className="text-xs text-slate-400 ml-7"
+					className="text-xs text-slate-400"
 					data-test="collection-empty-folders"
 				>
 					No folders
@@ -63,4 +66,4 @@ const Collections = () => {
 	);
 };
 
-export default Collections;
+export default Folders;
