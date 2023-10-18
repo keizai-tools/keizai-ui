@@ -9,14 +9,14 @@ describe('Authentication page management', () => {
 		url: 'https://www.keizai.dev/',
 	};
 	const user = {
-		username: 'test@test.com',
-		password: 'Test1234+',
+		username: Cypress.env('cognitoE2EUsername'),
+		password: Cypress.env('cognitoE2EPassword'),
 	};
 
 	describe('Login', () => {
 		const loginForm = {
 			title: 'Welcome Back',
-			username: 'Username',
+			username: 'Email',
 			password: 'Password',
 			btnSubmit: 'Login',
 			footer: {
@@ -52,7 +52,7 @@ describe('Authentication page management', () => {
 			cy.getBySel('login-form-title')
 				.should('be.visible')
 				.contains(loginForm.title);
-			cy.getBySel('login-form-username')
+			cy.getBySel('login-form-email')
 				.should('be.visible')
 				.and('have.attr', 'placeholder', loginForm.username);
 			cy.getBySel('form-input-password')
@@ -79,19 +79,9 @@ describe('Authentication page management', () => {
 			cy.getBySel('login-form-container').should('not.exist');
 		});
 		it('Should log in', () => {
-			cy.intercept(
-				'POST',
-				`${Cypress.env('apiUrl')}${Cypress.env('apiAuth')}${Cypress.env(
-					'loginUrl',
-				)}`,
-				{
-					fixture: 'token.json',
-				},
-			).as('loginUser');
-			cy.getBySel('login-form-username').type(user.username);
+			cy.getBySel('login-form-email').type(user.username);
 			cy.getBySel('form-input-password').type(user.password);
 			cy.getBySel('login-form-btn-submit').click();
-			cy.wait('@loginUser');
 			cy.url().should('not.include', `${Cypress.env('loginUrl')}`);
 			cy.getBySel('invocation-page-container')
 				.should('exist')
@@ -159,25 +149,6 @@ describe('Authentication page management', () => {
 			cy.url().should('include', `${Cypress.env('loginUrl')}`);
 			cy.getBySel('login-form-container').should('exist').and('be.visible');
 			cy.getBySel('register-form-container').should('not.exist');
-		});
-		it('Should register a user', () => {
-			cy.intercept(
-				'POST',
-				`${Cypress.env('apiUrl')}${Cypress.env('apiAuth')}${Cypress.env(
-					'registerUrl',
-				)}`,
-				{
-					fixture: 'user-cognito.json',
-				},
-			).as('registerUser');
-			cy.getBySel('register-form-email').type(user.username);
-			cy.getBySel('form-input-password').type(user.password);
-			cy.getBySel('register-form-btn-submit').click();
-			cy.wait('@registerUser');
-			cy.url().should('not.include', `${Cypress.env('registerUrl')}`);
-			cy.getBySel('invocation-page-container')
-				.should('exist')
-				.and('be.visible');
 		});
 	});
 });

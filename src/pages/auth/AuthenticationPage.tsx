@@ -1,10 +1,22 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 
 import CreateAccount from '@/common/components/auth/CreateAccount';
 import Login from '@/common/components/auth/Login';
+import FullscreenLoading from '@/common/views/FullscreenLoading';
+import { useAuth } from '@/services/auth/hook/useAuth';
 
 function AuthenticationPage() {
 	const location = useLocation();
+	const { isLoading, isAuthenticated } = useAuth();
+
+	if (isLoading) {
+		return <FullscreenLoading />;
+	}
+
+	if (isAuthenticated) {
+		return <Navigate replace to="/" />;
+	}
+
 	return (
 		<div className="h-screen md:flex" data-test="auth-page-container">
 			<div

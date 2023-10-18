@@ -4,11 +4,12 @@ import { ChangeEvent, useState } from 'react';
 import { Input } from '../ui/input';
 
 interface IPropsPassword {
-	styles?: string;
+	value: string;
 	onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+	styles?: string;
 }
 
-function PasswordInput({ styles, onChange }: IPropsPassword) {
+function PasswordInput({ value, styles, onChange }: IPropsPassword) {
 	const [showPassword, setShowPassword] = useState(false);
 
 	const toggleShowPassword = () => {
@@ -25,6 +26,7 @@ function PasswordInput({ styles, onChange }: IPropsPassword) {
 				type={showPassword ? 'text' : 'password'}
 				name="password"
 				placeholder="Password"
+				value={value}
 				onChange={onChange}
 				data-test="form-input-password"
 			/>
