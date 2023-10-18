@@ -7,7 +7,7 @@ const defaultValues = {
 	user: null,
 	isAuthenticated: false,
 	isLoading: false,
-	signUp: () => {},
+	signUp: () => Promise.resolve(),
 	signIn: () => {},
 	signOut: () => {},
 };
@@ -16,7 +16,13 @@ type AuthContextType = {
 	user: AuthUser | null;
 	isAuthenticated: boolean;
 	isLoading: boolean;
-	signUp: ({ email, password }: { email: string; password: string }) => void;
+	signUp: ({
+		email,
+		password,
+	}: {
+		email: string;
+		password: string;
+	}) => Promise<void>;
 	signIn: ({ email, password }: { email: string; password: string }) => void;
 	signOut: () => void;
 };
