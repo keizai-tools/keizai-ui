@@ -1,61 +1,99 @@
-import axios, { AxiosResponse } from 'axios';
-import { ChangeEvent, useState } from 'react';
+import { Auth } from '@aws-amplify/auth';
+import React from 'react';
 
-import { getUserPool, newCognitoUser } from '../cognito/cognito';
+import { AuthContext } from '@/providers/AuthProvider';
 
-import { User } from '@/services/auth/domain/user';
-import { AUTH_RESPONSE } from '@/services/auth/validators/authResponse';
-
-const INITIAL_VALUES: User = {
-	username: '',
-	password: '',
+const amplifyConfigurationOptions = {
+	userPoolRegion: 'us-west-1',
+	userPoolId: import.meta.env.VITE_AWS_COGNITO_USER_POOL_ID,
+	userPoolWebClientId: import.meta.env.VITE_AWS_COGNITO_CLIENT_ID,
 };
 
-const URL_API_BASE: string = import.meta.env.VITE_URL_API_BASE;
+Auth.configure(amplifyConfigurationOptions);
 
-function useAuth() {
-	const [formData, setFormData] = useState<User>(INITIAL_VALUES);
+export const useAuth = () => React.useContext(AuthContext);
 
-	const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		setFormData({ ...formData, [name]: value });
+export type AuthUser = {
+	email: string;
+	accessToken: string;
+};
+
+export function useProvideAuth() {
+	const [user, setUser] = React.useState<AuthUser | null>(null);
+	const [isLoading, setIsLoading] = React.useState(true);
+	const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+
+	React.useEffect(() => {
+		if (!user) {
+			setIsLoading(true);
+			Auth.currentSession()
+				.then((session) => {
+					const accessToken = session.getAccessToken();
+					const idToken = session.getIdToken();
+
+					const user = {
+						email: idToken.payload.email,
+						accessToken: accessToken.getJwtToken(),
+					};
+
+					setIsAuthenticated(true);
+					setUser(user);
+					setIsLoading(false);
+				})
+				.catch((err) => {
+					console.log(err);
+					setIsAuthenticated(false);
+					setIsLoading(false);
+				});
+		}
+	}, [user]);
+
+	const signUp = ({ email, password }: { email: string; password: string }) => {
+		return Auth.signUp({
+			username: email,
+			password,
+			autoSignIn: {
+				enabled: true,
+			},
+		});
 	};
 
-	async function loginUser(userData: User): Promise<AxiosResponse> {
-		try {
-			const url = `${URL_API_BASE}/auth/login`;
-			return await axios.post(url, userData);
-		} catch (error) {
-			throw new Error(AUTH_RESPONSE.FAILED_LOGIN);
-		}
-	}
+	const signIn = async ({
+		email,
+		password,
+	}: {
+		email: string;
+		password: string;
+	}) => {
+		const cognitoUser = await Auth.signIn(email, password);
+		const {
+			attributes,
+			signInUserSession: { accessToken },
+		} = cognitoUser;
 
-	async function registerUser(userData: User): Promise<AxiosResponse> {
-		try {
-			const url = `${URL_API_BASE}/auth/register`;
-			return await axios.post(url, userData);
-		} catch (error) {
-			throw new Error(AUTH_RESPONSE.FAILED_REGSTER);
-		}
-	}
-
-	async function logoutUser(username: string) {
-		const userPool = getUserPool();
-		const userData = {
-			Username: username,
-			Pool: userPool,
+		const user = {
+			email: attributes.email,
+			accessToken: accessToken.jwtToken,
 		};
-		const cognitoUser = newCognitoUser(userData);
 
-		try {
-			cognitoUser.signOut();
-			return true;
-		} catch (error) {
-			throw new Error(AUTH_RESPONSE.FAILED_LOGOUT);
-		}
-	}
+		setIsAuthenticated(true);
+		setUser(user);
 
-	return { formData, onChangeInput, loginUser, logoutUser, registerUser };
+		return user;
+	};
+
+	const signOut = () =>
+		Auth.signOut().then(() => {
+			setIsAuthenticated(false);
+			setUser(null);
+		});
+
+	return {
+		user,
+		isAuthenticated,
+		isLoading,
+		signUp,
+		signIn,
+		signOut,
+	};
 }
-
-export default useAuth;

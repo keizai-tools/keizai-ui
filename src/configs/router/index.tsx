@@ -1,6 +1,7 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 
 import AuthenticationPage from '@/pages/auth/AuthenticationPage';
+import ProtectedRoute from '@/pages/auth/ProtectedRoute';
 
 import Root from '@pages/Root';
 import Home from '@pages/home/Home';
@@ -8,11 +9,19 @@ import Home from '@pages/home/Home';
 const router = createBrowserRouter([
 	{
 		path: '/',
-		element: <Root />,
+		element: (
+			<ProtectedRoute>
+				<Root />
+			</ProtectedRoute>
+		),
 		children: [
 			{
 				index: true,
-				element: <Home />,
+				element: (
+					<ProtectedRoute>
+						<Home />
+					</ProtectedRoute>
+				),
 			},
 		],
 	},
