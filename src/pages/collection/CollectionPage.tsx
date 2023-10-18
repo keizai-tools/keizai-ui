@@ -22,7 +22,7 @@ const tabs: Record<string, string> = {
 
 const CollectionPage = () => {
 	return (
-		<main className="flex flex-1">
+		<main className="flex flex-1" data-test="collection-page-container">
 			<Folders />
 			<InvocationPage>
 				<div className="flex flex-col p-3 w-full gap-7">
