@@ -13,6 +13,5 @@
 		"^@configs/(.*)$",
 		"^@pages/(.*)$"
 	],
-	"importOrderSeparation": true,
-	"importOrderSortSpecifiers": true
+	"importOrderSeparation": true
 }
