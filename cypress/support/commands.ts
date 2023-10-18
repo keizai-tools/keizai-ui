@@ -46,7 +46,6 @@ Cypress.Commands.add('getBySelLike', (selector, ...args) => {
 	return cy.get(`[data-test*=${selector}]`, ...args);
 });
 
-console.log(Cypress.env('cognitoPoolId'));
 Auth.configure({
 	userPoolRegion: Cypress.env('cognitoRegion'),
 	userPoolId: Cypress.env('cognitoPoolId'),

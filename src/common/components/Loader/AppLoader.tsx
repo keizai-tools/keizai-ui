@@ -1,7 +1,7 @@
 import { Loader } from 'lucide-react';
 import React from 'react';
 
-import { useCollections } from '@/providers/CollectionsProvider';
+import { useAuth } from '@/services/auth/hook/useAuth';
 
 ('use client');
 
@@ -10,9 +10,9 @@ export const AppLoader = ({
 }: {
 	children: React.ReactNode;
 }): JSX.Element => {
-	const { loading } = useCollections();
+	const { isLoading } = useAuth();
 
-	if (loading) {
+	if (isLoading) {
 		return (
 			<div className="flex items-center justify-center w-full">
 				<Loader className="animate-spin" size={36} />

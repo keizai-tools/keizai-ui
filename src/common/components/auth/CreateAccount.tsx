@@ -1,3 +1,4 @@
+import { useMutation } from '@tanstack/react-query';
 import { AtSign } from 'lucide-react';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -26,22 +27,25 @@ function CreateAccount() {
 		},
 	});
 	const { signUp } = useAuth();
-
-	const onSubmit = async (values: User) => {
-		setLoading(true);
-		try {
-			await signUp(values);
+	const { mutate } = useMutation({
+		mutationFn: signUp,
+		onSuccess: () => {
 			toast({
 				title: 'Account created',
 				description: 'Please verify your email',
 			});
 			setError('');
 			setLoading(false);
-		} catch (error) {
+		},
+		onError: (error) => {
 			console.error(error);
 			setError('There was an error creating your account');
 			setLoading(false);
-		}
+		},
+	});
+
+	const onSubmit = async (values: User) => {
+		await mutate(values);
 	};
 
 	return (

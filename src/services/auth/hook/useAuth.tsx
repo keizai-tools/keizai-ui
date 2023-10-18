@@ -1,6 +1,9 @@
 import { Auth } from '@aws-amplify/auth';
 import React from 'react';
 
+import { User } from '../domain/user';
+
+import useAxios from '@/common/hooks/useAxios';
 import { AuthContext } from '@/providers/AuthProvider';
 
 const amplifyConfigurationOptions = {
@@ -19,6 +22,7 @@ export type AuthUser = {
 };
 
 export function useProvideAuth() {
+	const axios = useAxios();
 	const [user, setUser] = React.useState<AuthUser | null>(null);
 	const [isLoading, setIsLoading] = React.useState(true);
 	const [isAuthenticated, setIsAuthenticated] = React.useState(false);
@@ -36,9 +40,9 @@ export function useProvideAuth() {
 						accessToken: accessToken.getJwtToken(),
 					};
 
-					setIsAuthenticated(true);
 					setUser(user);
 					setIsLoading(false);
+					setIsAuthenticated(true);
 				})
 				.catch((err) => {
 					console.log(err);
@@ -48,13 +52,10 @@ export function useProvideAuth() {
 		}
 	}, [user]);
 
-	const signUp = ({ email, password }: { email: string; password: string }) => {
-		return Auth.signUp({
-			username: email,
-			password,
-			autoSignIn: {
-				enabled: true,
-			},
+	const signUp = async (userData: User) => {
+		await axios.post('/auth/register', {
+			username: userData.email,
+			password: userData.password,
 		});
 	};
 
