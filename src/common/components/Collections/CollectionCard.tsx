@@ -12,8 +12,6 @@ import {
 import DeleteCollectionDialog from './DeleteCollectionDialog';
 import EditCollectionDialog from './EditCollectionDialog';
 
-import { useDeleteCollectionMutation } from '@/common/api/collections';
-
 const MoreOptions = ({
 	onClickEdit,
 	onClickDelete,
