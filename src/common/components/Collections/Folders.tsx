@@ -4,11 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../ui/button';
 import Folder from './Folder';
 
-import { useCollections } from '@/providers/CollectionsProvider';
-
 const Folders = () => {
 	const navigate = useNavigate();
-	const { selectedCollection } = useCollections();
 
 	return (
 		<div
@@ -42,11 +39,10 @@ const Folders = () => {
 					</Button>
 				</div>
 			</div>
-			{selectedCollection?.folders.length ? (
+			{[].length ? (
 				<div className="flex flex-col text-slate-400">
-					{selectedCollection.folders.map((folder) => (
+					{[].map((folder) => (
 						<Folder
-							key={folder.id}
 							folder={folder}
 							onRemove={() => {
 								// TODO Implement remove folder

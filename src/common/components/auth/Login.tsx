@@ -74,7 +74,9 @@ function Login() {
 					control={control}
 					name="password"
 					rules={{ required: 'Password is required' }}
-					render={({ field }) => <PasswordInput {...field} />}
+					render={({ field }) => (
+						<PasswordInput value={field.value} onChange={field.onChange} />
+					)}
 				/>
 				{errors.password && (
 					<p className="text-red-500">{errors.password.message}</p>
