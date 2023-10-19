@@ -5,8 +5,6 @@ import { TooltipProvider } from '../common/components/ui/tooltip';
 import { AuthProvider } from './AuthProvider';
 
 import { Toaster } from '@/common/components/ui/toaster';
-import { CollectionsProvider } from '@/providers/CollectionsProvider';
-import { InvocationProvider } from '@/providers/InvocationProvider';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 
 const queryClient = new QueryClient();
@@ -17,12 +15,8 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 			<AuthProvider>
 				<QueryClientProvider client={queryClient}>
 					<TooltipProvider>
-						<CollectionsProvider>
-							<InvocationProvider>
-								{children}
-								<Toaster />
-							</InvocationProvider>
-						</CollectionsProvider>
+						{children}
+						<Toaster />
 					</TooltipProvider>
 				</QueryClientProvider>
 			</AuthProvider>

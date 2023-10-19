@@ -10,8 +10,6 @@ import {
 	SelectValue,
 } from '../../ui/select';
 
-import { useInvocation } from '@/common/hooks/useInvocation';
-
 export type FunctionForm = {
 	functionName: string;
 	parameters: {
@@ -22,7 +20,6 @@ export type FunctionForm = {
 };
 
 const FunctionsTab = () => {
-	const { selectedInvocation } = useInvocation();
 	const {
 		handleSubmit,
 		control,
@@ -30,7 +27,7 @@ const FunctionsTab = () => {
 	} = useForm<FunctionForm>({
 		defaultValues: {
 			functionName: '',
-			parameters: selectedInvocation?.parameters || [],
+			parameters: [],
 		},
 	});
 	const { fields, append, remove } = useFieldArray({
@@ -40,7 +37,8 @@ const FunctionsTab = () => {
 
 	return (
 		<form onSubmit={handleSubmit(console.log)}>
-			{selectedInvocation?.contractId ? (
+			{/* eslint-disable-next-line no-constant-condition */}
+			{false ? (
 				<div className="flex flex-col gap-2 mt-7">
 					<span className="text-primary text-md font-semibold">
 						Function to invoke
@@ -54,7 +52,7 @@ const FunctionsTab = () => {
 									<SelectValue placeholder="Select function" />
 								</SelectTrigger>
 								<SelectContent>
-									{selectedInvocation.functions?.map((functionName) => (
+									{[]?.map((functionName) => (
 										<SelectItem key={functionName} value={functionName}>
 											{functionName}
 										</SelectItem>
