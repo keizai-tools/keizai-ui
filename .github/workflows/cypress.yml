@@ -1,4 +1,5 @@
-name: CI
+name: Cypress Tests
+
 on:
   pull_request:
     branches:
@@ -18,22 +19,14 @@ env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  cypress-run:
+    runs-on: ubuntu-22.04
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Use Node.js
-        uses: actions/setup-node@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Cypress run
+        uses: cypress-io/github-action@v6
         with:
-          node-version: '18.x'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run lint
-        run: npm run lint
-
-      - name: Run build
-        run: npm run build
+          build: npm run build
+          start: npm start
+          record: true
