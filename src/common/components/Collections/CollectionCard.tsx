@@ -1,53 +1,28 @@
-import { MoreVertical } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import DeleteEntityDialog from '../Entity/DeleteEntityDialog';
+import EditEntityDialog from '../Entity/EditEntityDialog';
+import MoreOptions from '../Entity/MoreOptions';
 import { Button } from '../ui/button';
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
-import DeleteCollectionDialog from './DeleteCollectionDialog';
-import EditCollectionDialog from './EditCollectionDialog';
 
-const MoreOptions = ({
-	onClickEdit,
-	onClickDelete,
-}: {
-	onClickEdit: () => void;
-	onClickDelete: () => void;
-}) => {
-	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger
-				data-test="collection-options-btn"
-				className="absolute right-4 top-4"
-				asChild
-			>
-				<Button variant="ghost" className="rounded-md px-3 py-2">
-					<MoreVertical className="text-slate-400" size={16} />
-				</Button>
-			</DropdownMenuTrigger>
-			<DropdownMenuContent data-test="collection-options-container">
-				<DropdownMenuItem onClick={onClickEdit}>Edit</DropdownMenuItem>
-				<DropdownMenuItem
-					onClick={onClickDelete}
-					data-test="collection-options-delete"
-				>
-					Delete
-				</DropdownMenuItem>
-			</DropdownMenuContent>
-		</DropdownMenu>
-	);
-};
+import {
+	useDeleteCollectionMutation,
+	useUpdateCollectionMutation,
+} from '@/common/api/collections';
 
 const CollectionCard = ({ id, name }: { id: string; name: string }) => {
 	const [activeDialog, setActiveDialog] = React.useState<
 		'edit' | 'delete' | null
 	>(null);
 	const navigate = useNavigate();
+	const { mutate: deleteCollectionMutation } = useDeleteCollectionMutation();
+	const { mutate, isPending } = useUpdateCollectionMutation();
+
+	const handleEditCollection = async ({ name }: { name: string }) => {
+		await mutate({ id, name });
+		setActiveDialog(null);
+	};
 
 	return (
 		<div className="relative">
@@ -58,20 +33,28 @@ const CollectionCard = ({ id, name }: { id: string; name: string }) => {
 			>
 				<span>{name}</span>
 			</Button>
-			<MoreOptions
-				onClickEdit={() => setActiveDialog('edit')}
-				onClickDelete={() => setActiveDialog('delete')}
-			/>
-			<DeleteCollectionDialog
-				id={id}
+			<div className="absolute right-5 top-6 text-white">
+				<MoreOptions
+					onClickEdit={() => setActiveDialog('edit')}
+					onClickDelete={() => setActiveDialog('delete')}
+				/>
+			</div>
+			<DeleteEntityDialog
 				open={activeDialog === 'delete'}
 				onOpenChange={() => setActiveDialog(null)}
+				title="Are you sure?"
+				description="This will permanently delete your collection and all of its contents."
+				onConfirm={() => deleteCollectionMutation(id)}
 			/>
-			<EditCollectionDialog
+			<EditEntityDialog
 				id={id}
-				name={name}
+				defaultName={name}
 				open={activeDialog === 'edit'}
 				onOpenChange={() => setActiveDialog(null)}
+				title="Edit collection"
+				description="Let's name your collection"
+				onEdit={handleEditCollection}
+				isLoading={isPending}
 			/>
 		</div>
 	);

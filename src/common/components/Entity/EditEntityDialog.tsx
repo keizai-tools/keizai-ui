@@ -10,40 +10,40 @@ import {
 } from '../ui/dialog';
 import { Input } from '../ui/input';
 
-import { useUpdateCollectionMutation } from '@/common/api/collections';
-
-const EditCollectionDialog = ({
+const EditEntityDialog = ({
 	open,
 	onOpenChange,
-	id,
-	name,
+	defaultName,
+	title,
+	description,
+	onEdit,
+	isLoading,
 }: {
 	open: boolean;
 	onOpenChange: () => void;
 	id: string;
-	name: string;
+	defaultName: string;
+	title: string;
+	description: string;
+	onEdit: ({ name }: { name: string }) => void;
+	isLoading: boolean;
 }) => {
 	const { control, handleSubmit } = useForm({
 		defaultValues: {
-			name,
+			name: defaultName,
 		},
 	});
-	const { mutate, isPending } = useUpdateCollectionMutation();
 
-	const onSubmit = async ({ name }: { name: string }) => {
-		await mutate({ id, name });
-		onOpenChange();
-	};
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>New collection</DialogTitle>
-					<DialogDescription>Let's name your collection</DialogDescription>
+					<DialogTitle>{title}</DialogTitle>
+					<DialogDescription>{description}</DialogDescription>
 				</DialogHeader>
 				<form
-					className="flex items-start space-x-2 mt-4 "
-					onSubmit={handleSubmit(onSubmit)}
+					className="flex items-start space-x-2 mt-4"
+					onSubmit={handleSubmit(onEdit)}
 				>
 					<div className="grid flex-1 gap-2">
 						<Controller
@@ -62,9 +62,9 @@ const EditCollectionDialog = ({
 						type="submit"
 						size="sm"
 						className="px-3 mt-1/2"
-						disabled={isPending}
+						disabled={isLoading}
 					>
-						{isPending ? 'Saving...' : 'Save'}
+						{isLoading ? 'Saving...' : 'Save'}
 					</Button>
 				</form>
 			</DialogContent>
@@ -72,4 +72,4 @@ const EditCollectionDialog = ({
 	);
 };
 
-export default EditCollectionDialog;
+export default EditEntityDialog;

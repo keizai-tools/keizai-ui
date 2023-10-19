@@ -4,6 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { Button } from '../ui/button';
 import {
 	Dialog,
+	DialogClose,
 	DialogContent,
 	DialogDescription,
 	DialogHeader,
@@ -12,27 +13,34 @@ import {
 } from '../ui/dialog';
 import { Input } from '../ui/input';
 
-import { useNewCollectionMutation } from '@/common/api/collections';
-
-const NewCollectionDialog = ({ children }: { children: React.ReactNode }) => {
+const NewEntityDialog = ({
+	children,
+	onSubmit,
+	isLoading,
+	title,
+	description,
+	defaultName,
+}: {
+	children: React.ReactNode;
+	onSubmit: ({ name }: { name: string }) => void;
+	isLoading: boolean;
+	title: string;
+	description: string;
+	defaultName: string;
+}) => {
 	const { control, handleSubmit } = useForm({
 		defaultValues: {
-			name: 'Collection',
+			name: defaultName,
 		},
 	});
-	const { mutate, isPending } = useNewCollectionMutation();
-
-	const onSubmit = async ({ name }: { name: string }) => {
-		await mutate({ name });
-	};
 
 	return (
 		<Dialog>
 			<DialogTrigger asChild>{children}</DialogTrigger>
 			<DialogContent>
 				<DialogHeader>
-					<DialogTitle>New collection</DialogTitle>
-					<DialogDescription>Let's name your collection</DialogDescription>
+					<DialogTitle>{title}</DialogTitle>
+					<DialogDescription>{description}</DialogDescription>
 				</DialogHeader>
 				<form
 					className="flex items-center space-x-2 mt-4"
@@ -43,18 +51,23 @@ const NewCollectionDialog = ({ children }: { children: React.ReactNode }) => {
 							control={control}
 							name="name"
 							rules={{ required: true }}
-							render={({ field }) => (
-								<Input defaultValue="Collection" {...field} />
-							)}
+							render={({ field }) => <Input {...field} />}
 						/>
 					</div>
-					<Button type="submit" size="sm" className="px-3" disabled={isPending}>
-						{isPending ? 'Creating...' : 'Create'}
-					</Button>
+					<DialogClose asChild>
+						<Button
+							type="submit"
+							size="sm"
+							className="px-3"
+							disabled={isLoading}
+						>
+							{isLoading ? 'Creating...' : 'Create'}
+						</Button>
+					</DialogClose>
 				</form>
 			</DialogContent>
 		</Dialog>
 	);
 };
 
-export default NewCollectionDialog;
+export default NewEntityDialog;

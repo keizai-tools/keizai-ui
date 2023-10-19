@@ -9,40 +9,35 @@ import {
 	AlertDialogTitle,
 } from '../ui/alert-dialog';
 
-import { useDeleteCollectionMutation } from '@/common/api/collections';
-
-const DeleteCollectionDialog = ({
+const DeleteEntityDialog = ({
 	open,
 	onOpenChange,
-	id,
+	title,
+	description,
+	onConfirm,
 }: {
 	open: boolean;
 	onOpenChange: () => void;
-	id: string;
+	title: string;
+	description: string;
+	onConfirm: () => void;
 }) => {
-	const { mutate: deleteCollectionMutation } = useDeleteCollectionMutation();
-
 	return (
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Are you sure?</AlertDialogTitle>
-					<AlertDialogDescription>
-						This will permanently delete your collection and all of its
-						contents.
-					</AlertDialogDescription>
+					<AlertDialogTitle>{title}</AlertDialogTitle>
+					<AlertDialogDescription>{description}</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel onClick={() => onOpenChange()}>
 						Cancel
 					</AlertDialogCancel>
-					<AlertDialogAction onClick={() => deleteCollectionMutation(id)}>
-						Continue
-					</AlertDialogAction>
+					<AlertDialogAction onClick={onConfirm}>Continue</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>
 	);
 };
 
-export default DeleteCollectionDialog;
+export default DeleteEntityDialog;
