@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react';
 
+import FullscreenLoading from '@/common/views/FullscreenLoading';
 import { AuthUser, useProvideAuth } from '@/services/auth/hook/useAuth';
 
 const defaultValues = {
@@ -31,5 +32,10 @@ export const AuthContext = React.createContext<AuthContextType>(defaultValues);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 	const auth = useProvideAuth();
+
+	if (auth.isLoading) {
+		return <FullscreenLoading />;
+	}
+
 	return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 }

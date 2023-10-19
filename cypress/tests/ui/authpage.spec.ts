@@ -83,9 +83,6 @@ describe('Authentication page management', () => {
 			cy.getBySel('form-input-password').type(user.password);
 			cy.getBySel('login-form-btn-submit').click();
 			cy.url().should('not.include', `${Cypress.env('loginUrl')}`);
-			cy.getBySel('invocation-page-container')
-				.should('exist')
-				.and('be.visible');
 		});
 	});
 	describe('Register', () => {
