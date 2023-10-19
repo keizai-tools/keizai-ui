@@ -7,7 +7,7 @@ import {
 	AccordionTrigger,
 } from '@/common/components/ui/accordion';
 import { Button } from '@/common/components/ui/button';
-import { Folder as IFolder } from '@/providers/CollectionsProvider';
+import { Folder as IFolder } from '@/common/types/folder';
 
 const Folder = ({
 	folder,
@@ -38,8 +38,8 @@ const Folder = ({
 				<AccordionContent>
 					{folder.invocations.length ? (
 						<div className="flex flex-col gap-2 ml-4 text-slate-100">
-							{folder.invocations.map((invocation) => (
-								<span key={invocation.id}>{invocation.name}</span>
+							{[].map(() => (
+								<span>Name</span>
 							))}
 						</div>
 					) : (

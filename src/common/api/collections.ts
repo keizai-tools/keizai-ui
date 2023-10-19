@@ -2,8 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 import useAxios from '../hooks/useAxios';
-
-import { Collection } from '@/providers/CollectionsProvider';
+import { Collection } from '../types/collection';
 
 export const useCollectionsQuery = () => {
 	const axios = useAxios();
