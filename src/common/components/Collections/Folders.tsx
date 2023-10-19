@@ -1,10 +1,16 @@
-import { ArrowLeftIcon } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ArrowLeftIcon, PlusIcon } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import NewEntityDialog from '../Entity/NewEntityDialog';
 import { Button } from '../ui/button';
 import Folder from './Folder';
 
+import { useCreateFolderMutation, useFoldersQuery } from '@/common/api/folders';
+
 const Folders = () => {
+	const { data, isLoading } = useFoldersQuery();
+	const { mutate, isPending } = useCreateFolderMutation();
+	const params = useParams();
 	const navigate = useNavigate();
 
 	return (
@@ -26,28 +32,34 @@ const Folders = () => {
 				<h4 className="text-lg font-bold" data-test="collections-header-title">
 					Folders
 				</h4>
-				<div className="">
+				<NewEntityDialog
+					title="New folder"
+					description="Let's name your folder"
+					defaultName="Folder"
+					isLoading={isPending}
+					onSubmit={async ({ name }) => {
+						if (params.collectionId) {
+							await mutate({ name, collectionId: params.collectionId });
+						}
+					}}
+				>
 					<Button
-						variant="secondary"
-						className="text-xs px-2 py-1 h-auto"
-						onClick={() => {
-							// TODO Implement add collection
-						}}
+						variant="ghost"
+						className="text-xs px-2 py-1 h-auto flex gap-1"
 						data-test="collections-header-btn-new"
 					>
-						New
+						<PlusIcon size={12} /> Add
 					</Button>
-				</div>
+				</NewEntityDialog>
 			</div>
-			{[].length ? (
+			{isLoading ? (
+				<span className="text-xs text-slate-400" data-test="collection-loading">
+					Loading folders...
+				</span>
+			) : data && data.length > 0 ? (
 				<div className="flex flex-col text-slate-400">
-					{[].map((folder) => (
-						<Folder
-							folder={folder}
-							onRemove={() => {
-								// TODO Implement remove folder
-							}}
-						/>
+					{data.map((folder) => (
+						<Folder key={folder.id} folder={folder} />
 					))}
 				</div>
 			) : (

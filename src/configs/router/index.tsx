@@ -27,7 +27,7 @@ const router = createBrowserRouter([
 				), // Removed the redundant ProtectedRoute
 			},
 			{
-				path: 'collection/:id',
+				path: 'collection/:collectionId',
 				element: (
 					<ProtectedRoute>
 						<CollectionPage />
