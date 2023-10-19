@@ -32,3 +32,65 @@ export const useNewCollectionMutation = () => {
 
 	return mutation;
 };
+
+export const useDeleteCollectionMutation = () => {
+	const queryClient = useQueryClient();
+	const axios = useAxios();
+
+	const mutation = useMutation({
+		mutationFn: async (id: string) =>
+			axios?.delete(`/collection/${id}`).then((res) => res.data),
+		onMutate: async (id) => {
+			await queryClient.cancelQueries({ queryKey: ['collections'] });
+
+			const previousCollections = queryClient.getQueryData<Collection[]>([
+				'collections',
+			]);
+
+			queryClient.setQueryData(
+				['collections'],
+				previousCollections?.filter((collection) => collection.id !== id),
+			);
+			return {
+				previousCollections,
+			};
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: ['collections'] });
+		},
+	});
+
+	return mutation;
+};
+
+export const useUpdateCollectionMutation = () => {
+	const queryClient = useQueryClient();
+	const axios = useAxios();
+
+	const mutation = useMutation({
+		mutationFn: async ({ id, name }: { id: string; name: string }) =>
+			axios?.patch(`/collection/`, { id, name }).then((res) => res.data),
+		onMutate: async ({ id, name }) => {
+			await queryClient.cancelQueries({ queryKey: ['collections'] });
+
+			const previousCollections = queryClient.getQueryData<Collection[]>([
+				'collections',
+			]);
+
+			queryClient.setQueryData(
+				['collections'],
+				previousCollections?.map((collection) =>
+					collection.id === id ? { ...collection, name } : collection,
+				),
+			);
+			return {
+				previousCollections,
+			};
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: ['collections'] });
+		},
+	});
+
+	return mutation;
+};
