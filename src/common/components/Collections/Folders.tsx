@@ -15,7 +15,7 @@ const Folders = () => {
 
 	return (
 		<div
-			className="w-[300px] flex-col border-r dark:border-r-border h-full px-3 py-1 gap-4"
+			className="w-[200px]  flex-col border-r dark:border-r-border h-full px-3 py-1 gap-4"
 			data-test="collections-container"
 		>
 			<Button

@@ -1,6 +1,19 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import useAxios from '../hooks/useAxios';
+
+export const useInvocationQuery = ({ id }: { id?: string }) => {
+	const axios = useAxios();
+
+	const query = useQuery({
+		queryKey: ['invocation', id],
+		queryFn: async () =>
+			axios?.get(`/invocation/${id}`).then((res) => res.data),
+		enabled: !!id,
+	});
+
+	return query;
+};
 
 export const useCreateInvocationMutation = () => {
 	const queryClient = useQueryClient();

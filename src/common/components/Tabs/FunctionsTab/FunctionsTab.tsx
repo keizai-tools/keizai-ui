@@ -10,6 +10,8 @@ import {
 	SelectValue,
 } from '../../ui/select';
 
+import { Invocation } from '@/common/types/invocation';
+
 export type FunctionForm = {
 	functionName: string;
 	parameters: {
@@ -19,7 +21,7 @@ export type FunctionForm = {
 	}[];
 };
 
-const FunctionsTab = () => {
+const FunctionsTab = ({ methods }: { methods: Invocation['methods'] }) => {
 	const {
 		handleSubmit,
 		control,
@@ -37,8 +39,7 @@ const FunctionsTab = () => {
 
 	return (
 		<form onSubmit={handleSubmit(console.log)}>
-			{/* eslint-disable-next-line no-constant-condition */}
-			{false ? (
+			{(methods?.length || 0) > 0 ? (
 				<div className="flex flex-col gap-2 mt-7">
 					<span className="text-primary text-md font-semibold">
 						Function to invoke
@@ -103,14 +104,14 @@ const FunctionsTab = () => {
 				</div>
 			) : (
 				<div
-					className="flex justify-center mt-36 flex-1 gap-8"
+					className="flex justify-center my-14 flex-1 gap-8"
 					data-test="tabs-content-container"
 				>
 					<img
 						src="/moon.svg"
 						alt="Load contract image"
-						width={300}
-						height={300}
+						width={200}
+						height={200}
 						loading="eager"
 						data-test="tabs-content-contract-img"
 					/>
