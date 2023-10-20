@@ -9,8 +9,6 @@ import ProtectedRoute from '@/pages/auth/ProtectedRoute';
 import Root from '@pages/Root';
 import Home from '@pages/home/Home';
 
-// Import your CollectionView component
-
 const router = createBrowserRouter([
 	{
 		path: '/',
