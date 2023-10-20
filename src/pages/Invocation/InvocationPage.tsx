@@ -1,3 +1,4 @@
+import { Loader } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 
 import { useInvocationQuery } from '@/common/api/invocations';
@@ -17,7 +18,6 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from '@/common/components/ui/tooltip';
-import FullscreenLoading from '@/common/views/FullscreenLoading';
 
 const tabs: Record<string, string> = {
 	functions: 'Functions',
@@ -36,7 +36,11 @@ const InvocationPage = () => {
 	});
 
 	if (isLoading) {
-		return <FullscreenLoading />;
+		return (
+			<div className="flex flex-1 h-full w-full justify-center items-center">
+				<Loader className="animate-spin" size="36" />
+			</div>
+		);
 	}
 
 	return (
