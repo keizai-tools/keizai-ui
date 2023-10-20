@@ -1,8 +1,11 @@
+import { GanttChart } from 'lucide-react';
 import React from 'react';
+import { useParams } from 'react-router-dom';
 
 import DeleteEntityDialog from '../Entity/DeleteEntityDialog';
 import EditEntityDialog from '../Entity/EditEntityDialog';
 import MoreOptions from '../Entity/MoreOptions';
+import InvocationListItem from '../Invocations/InvocationListItem';
 import NewInvocationButton from '../Invocations/NewInvocationButton';
 
 import {
@@ -18,6 +21,8 @@ import {
 import { Folder as IFolder } from '@/common/types/folder';
 
 const Folder = ({ folder }: { folder: IFolder }) => {
+	const params = useParams();
+	const [isOpen, setIsOpen] = React.useState<string[] | undefined>();
 	const [openDialog, setOpenDialog] = React.useState<'edit' | 'delete' | null>(
 		null,
 	);
@@ -25,16 +30,42 @@ const Folder = ({ folder }: { folder: IFolder }) => {
 	const { mutate: editFolderMutation, isPending: isEditingFolder } =
 		useEditFolderMutation();
 
+	React.useLayoutEffect(() => {
+		if (params?.invocationId) {
+			const folderHasInvocation = folder.invocations.find(
+				(invocation) => invocation.id === params?.invocationId,
+			);
+
+			if (folderHasInvocation) {
+				setIsOpen([folder.id]);
+			}
+		}
+	}, [folder.id, folder.invocations, params.invocationId]);
+
 	return (
 		<>
-			<Accordion type="multiple" className="w-full">
+			<Accordion
+				type="multiple"
+				className="w-full"
+				value={isOpen}
+				onValueChange={() => {
+					if (isOpen?.includes(folder.id)) {
+						setIsOpen(isOpen?.filter((id) => id !== folder.id));
+					} else {
+						setIsOpen(isOpen ? [...isOpen, folder.id] : [folder.id]);
+					}
+				}}
+			>
 				<AccordionItem value={folder.id} className="border-none">
 					<AccordionTrigger
 						className="h-10 w-full "
 						data-test="collection-folder-container"
 					>
 						<div className="flex justify-between items-center w-full text-slate-100 text-sm">
-							<span data-test="collection-folder-name">{folder.name}</span>
+							<div className="flex gap-1 items-center">
+								<GanttChart size={16} />
+								<span data-test="collection-folder-name">{folder.name}</span>
+							</div>
 							<div>
 								<MoreOptions
 									onClickDelete={(e) => {
@@ -50,15 +81,17 @@ const Folder = ({ folder }: { folder: IFolder }) => {
 						</div>
 					</AccordionTrigger>
 					<AccordionContent>
-						{folder.invocations?.length ? (
-							<div className="flex flex-col gap-2 ml-4 text-slate-100">
-								{[].map(() => (
-									<span>Name</span>
-								))}
+						<div className="flex flex-col justify-start text-slate-100">
+							{folder.invocations.map((invocation) => (
+								<InvocationListItem
+									key={invocation.id}
+									invocation={invocation}
+								/>
+							))}
+							<div className="ml-4">
+								<NewInvocationButton folderId={folder.id} />
 							</div>
-						) : (
-							<NewInvocationButton />
-						)}
+						</div>
 					</AccordionContent>
 				</AccordionItem>
 			</Accordion>

@@ -1,8 +1,10 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 
+import CollectionCTAPage from '@/pages/Collection/CollectionCTAPage';
+import CollectionPage from '@/pages/Collection/CollectionPage';
+import InvocationPage from '@/pages/Invocation/InvocationPage';
 import AuthenticationPage from '@/pages/auth/AuthenticationPage';
 import ProtectedRoute from '@/pages/auth/ProtectedRoute';
-import CollectionPage from '@/pages/collection/CollectionPage';
 
 import Root from '@pages/Root';
 import Home from '@pages/home/Home';
@@ -20,19 +22,21 @@ const router = createBrowserRouter([
 		children: [
 			{
 				index: true,
-				element: (
-					<ProtectedRoute>
-						<Home />
-					</ProtectedRoute>
-				), // Removed the redundant ProtectedRoute
+				element: <Home />,
 			},
 			{
 				path: 'collection/:collectionId',
-				element: (
-					<ProtectedRoute>
-						<CollectionPage />
-					</ProtectedRoute>
-				),
+				element: <CollectionPage />,
+				children: [
+					{
+						index: true,
+						element: <CollectionCTAPage />,
+					},
+					{
+						path: 'invocation/:invocationId',
+						element: <InvocationPage />,
+					},
+				],
 			},
 		],
 	},
