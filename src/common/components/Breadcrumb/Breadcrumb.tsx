@@ -8,7 +8,7 @@ const Breadcrumb = ({
 	contractInvocationName: string;
 }) => {
 	return (
-		<div className="flex gap-1" data-test="breadcrumb-container">
+		<div className="flex gap-1 text-sm" data-test="breadcrumb-container">
 			<span
 				className="text-background-300"
 				data-test="breadcrumb-contract-name"
