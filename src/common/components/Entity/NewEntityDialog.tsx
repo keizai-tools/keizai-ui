@@ -28,11 +28,16 @@ const NewEntityDialog = ({
 	description: string;
 	defaultName: string;
 }) => {
-	const { control, handleSubmit } = useForm({
+	const { control, handleSubmit, reset } = useForm({
 		defaultValues: {
 			name: defaultName,
 		},
 	});
+
+	const submitAndReset = async ({ name }: { name: string }) => {
+		await onSubmit({ name });
+		reset();
+	};
 
 	return (
 		<Dialog>
@@ -44,7 +49,7 @@ const NewEntityDialog = ({
 				</DialogHeader>
 				<form
 					className="flex items-center space-x-2 mt-4"
-					onSubmit={handleSubmit(onSubmit)}
+					onSubmit={handleSubmit(submitAndReset)}
 				>
 					<div className="grid flex-1 gap-2">
 						<Controller

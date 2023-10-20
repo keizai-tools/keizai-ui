@@ -3,15 +3,19 @@ import { PlusIcon } from 'lucide-react';
 import NewEntityDialog from '../Entity/NewEntityDialog';
 import { Button } from '../ui/button';
 
-const NewInvocationButton = () => {
+import { useCreateInvocationMutation } from '@/common/api/invocations';
+
+const NewInvocationButton = ({ folderId }: { folderId: string }) => {
+	const { mutate, isPending } = useCreateInvocationMutation();
+
 	return (
 		<NewEntityDialog
 			defaultName="Invocation"
 			title="New invocation"
 			description="Let's name your invocation"
-			isLoading={false}
-			onSubmit={async () => {
-				// TODO Implement new invocation
+			isLoading={isPending}
+			onSubmit={async ({ name }) => {
+				await mutate({ name, folderId });
 			}}
 		>
 			<Button variant="link" className="flex gap-2 text-xs text-slate-400 p-0">
