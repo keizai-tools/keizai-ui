@@ -44,8 +44,8 @@ const Folders = () => {
 					}}
 				>
 					<Button
-						variant="ghost"
-						className="text-xs px-2 py-1 h-auto flex gap-1"
+						variant="link"
+						className="text-xs px-0 py-1 h-auto flex gap-1 text-slate-500	hover:text-slate-100"
 						data-test="collections-header-btn-new"
 					>
 						<PlusIcon size={12} /> Add
