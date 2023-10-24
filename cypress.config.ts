@@ -23,6 +23,7 @@ export default defineConfig({
 		registerUrl: '/register',
 		apiUrl: process.env.VITE_URL_API_BASE,
 		apiAuth: '/auth',
+		cognitoEndpoint: process.env.VITE_AWS_COGNITO_ENDPOINT,
 		cognitoRegion: process.env.VITE_AWS_COGNITO_REGION,
 		cognitoPoolId: process.env.VITE_AWS_COGNITO_USER_POOL_ID,
 		cognitoClientId: process.env.VITE_AWS_COGNITO_CLIENT_ID,
