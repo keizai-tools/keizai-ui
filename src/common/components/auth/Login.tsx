@@ -101,11 +101,20 @@ function Login() {
 				<Link
 					to="/register"
 					className="text-primary"
-					data-test="login-form-footer-link"
+					data-test="login-form-footer-register-link"
 				>
 					Join now
 				</Link>
 			</span>
+			<p className="text-sm mt-2 cursor-pointer text-center">
+				<Link
+					to="/forgot-password"
+					className="text-primary "
+					data-test="login-form-footer-password-link"
+				>
+					Forgot your password?
+				</Link>
+			</p>
 		</form>
 	);
 }
