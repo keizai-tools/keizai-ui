@@ -7,9 +7,15 @@ interface IPropsPassword {
 	value: string;
 	onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 	styles?: string;
+	placeholder?: string;
 }
 
-function PasswordInput({ value, styles, onChange }: IPropsPassword) {
+function PasswordInput({
+	value,
+	styles,
+	onChange,
+	placeholder = 'Password',
+}: IPropsPassword) {
 	const [showPassword, setShowPassword] = useState(false);
 
 	const toggleShowPassword = () => {
@@ -25,7 +31,7 @@ function PasswordInput({ value, styles, onChange }: IPropsPassword) {
 				className="pl-2 border-none focus-visible:ring-0 bg-white text-black"
 				type={showPassword ? 'text' : 'password'}
 				name="password"
-				placeholder="Password"
+				placeholder={placeholder}
 				value={value}
 				onChange={onChange}
 				data-test="form-input-password"
