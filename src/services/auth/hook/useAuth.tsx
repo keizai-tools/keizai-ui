@@ -89,6 +89,38 @@ export function useProvideAuth() {
 			setUser(null);
 		});
 
+	async function forgotPassword(username: string) {
+		try {
+			const data = await Auth.forgotPassword(username);
+			if (data) {
+				setUser({
+					email: username,
+					accessToken: '',
+				});
+			}
+		} catch (err) {
+			throw new Error('Cannot send code, please try again');
+		}
+	}
+
+	async function forgotPasswordSubmit({
+		code,
+		newPassword,
+	}: {
+		code: string;
+		newPassword: string;
+	}) {
+		try {
+			let username = '';
+			if (user !== null) {
+				username = user.email;
+			}
+			return await Auth.forgotPasswordSubmit(username, code, newPassword);
+		} catch (err) {
+			throw new Error('Unable to recover account, please try again');
+		}
+	}
+
 	return {
 		user,
 		isAuthenticated,
@@ -96,5 +128,7 @@ export function useProvideAuth() {
 		signUp,
 		signIn,
 		signOut,
+		forgotPassword,
+		forgotPasswordSubmit,
 	};
 }
