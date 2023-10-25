@@ -21,9 +21,13 @@ describe('Authentication page management', () => {
 			btnSubmit: 'Login',
 			footer: {
 				info: "Don't have an account?",
-				link: {
+				loginLink: {
 					title: 'Join now',
 					url: '/register',
+				},
+				passwordLink: {
+					title: 'Forgot your password?',
+					url: '/forgot-password',
 				},
 			},
 		};
@@ -64,16 +68,20 @@ describe('Authentication page management', () => {
 			cy.getBySel('login-form-footer-info')
 				.should('be.visible')
 				.contains(loginForm.footer.info);
-			cy.getBySel('login-form-footer-link')
+			cy.getBySel('login-form-footer-register-link')
 				.should('be.visible')
-				.and('have.attr', 'href', loginForm.footer.link.url)
-				.contains(loginForm.footer.link.title);
+				.and('have.attr', 'href', loginForm.footer.loginLink.url)
+				.contains(loginForm.footer.loginLink.title);
+			cy.getBySel('login-form-footer-password-link')
+				.should('be.visible')
+				.and('have.attr', 'href', loginForm.footer.passwordLink.url)
+				.and('have.text', loginForm.footer.passwordLink.title);
 		});
 		it('Should go to the login form', () => {
 			cy.url().should('include', `${Cypress.env('loginUrl')}`);
 			cy.getBySel('login-form-container').should('exist').and('be.visible');
 			cy.getBySel('register-form-container').should('not.exist');
-			cy.getBySel('login-form-footer-link').click();
+			cy.getBySel('login-form-footer-register-link').click();
 			cy.url().should('include', `${Cypress.env('registerUrl')}`);
 			cy.getBySel('register-form-container').should('exist').and('be.visible');
 			cy.getBySel('login-form-container').should('not.exist');
@@ -146,6 +154,136 @@ describe('Authentication page management', () => {
 			cy.url().should('include', `${Cypress.env('loginUrl')}`);
 			cy.getBySel('login-form-container').should('exist').and('be.visible');
 			cy.getBySel('register-form-container').should('not.exist');
+		});
+	});
+	describe('Reset password', () => {
+		const paswordForm = {
+			recovery: {
+				title: 'Password Recovery',
+				username: 'Email',
+				btnSubmit: 'Send code',
+			},
+			forgot: {
+				title: 'Password Reset',
+				code: 'Code',
+				newPassword: 'New Password',
+				confirmPassword: 'Confirm New Password',
+				btnSubmit: 'Login',
+				footer: {
+					info: 'Already have an account?',
+					link: {
+						title: 'Log In',
+						url: '/login',
+					},
+				},
+			},
+		};
+
+		beforeEach(() => {
+			cy.visit(`${Cypress.env('loginUrl')}`);
+			cy.getBySel('login-form-footer-password-link').click();
+		});
+		it('Should show a recovery password form', () => {
+			cy.getBySel('auth-page-container').should('exist').and('be.visible');
+			cy.getBySel('auth-page-banner-container')
+				.should('exist')
+				.and('be.visible');
+			cy.getBySel('auth-page-banner-img')
+				.should('be.visible')
+				.and('have.attr', 'src', authPage.img.src)
+				.and('have.attr', 'alt', authPage.img.alt);
+			cy.getBySel('auth-page-banner-title')
+				.should('be.visible')
+				.contains(authPage.title);
+			cy.getBySel('auth-page-banner-info')
+				.should('be.visible')
+				.contains(authPage.description);
+			cy.getBySel('auth-page-banner-link')
+				.should('be.visible')
+				.and('have.attr', 'href', authPage.url);
+			cy.getBySel('recovery-password-form-container')
+				.should('exist')
+				.and('be.visible');
+			cy.getBySel('recovery-password-title')
+				.should('be.visible')
+				.contains(paswordForm.recovery.title);
+			cy.getBySel('recovery-password-email-send-code')
+				.should('be.visible')
+				.and('have.attr', 'placeholder', paswordForm.recovery.username);
+			cy.getBySel('recovery-password-btn-submit')
+				.should('be.visible')
+				.and('have.text', paswordForm.recovery.btnSubmit);
+		});
+		it('Should show a forgot password form', () => {
+			const response = 'SUCCESS';
+			cy.intercept('POST', `${Cypress.env('cognitoEndpoint')}`, response);
+			cy.getBySel('recovery-password-email-send-code').type(user.username);
+			cy.getBySel('recovery-password-btn-submit').click();
+
+			cy.getBySel('auth-page-container').should('exist').and('be.visible');
+			cy.getBySel('auth-page-banner-container')
+				.should('exist')
+				.and('be.visible');
+			cy.getBySel('auth-page-banner-img')
+				.should('be.visible')
+				.and('have.attr', 'src', authPage.img.src)
+				.and('have.attr', 'alt', authPage.img.alt);
+			cy.getBySel('auth-page-banner-title')
+				.should('be.visible')
+				.contains(authPage.title);
+			cy.getBySel('auth-page-banner-info')
+				.should('be.visible')
+				.contains(authPage.description);
+			cy.getBySel('auth-page-banner-link')
+				.should('be.visible')
+				.and('have.attr', 'href', authPage.url);
+			cy.getBySel('forgot-password-form-container')
+				.should('exist')
+				.and('be.visible');
+			cy.getBySel('forgot-password-title')
+				.should('be.visible')
+				.contains(paswordForm.forgot.title);
+			cy.getBySel('forgot-password-code')
+				.should('be.visible')
+				.and('have.attr', 'placeholder', paswordForm.forgot.code);
+			cy.getBySel('form-input-password')
+				.eq(0)
+				.should('be.visible')
+				.and('have.attr', 'placeholder', paswordForm.forgot.newPassword);
+			cy.getBySel('form-input-password')
+				.eq(1)
+				.should('be.visible')
+				.and('have.attr', 'placeholder', paswordForm.forgot.confirmPassword);
+			cy.getBySel('forgot-password-btn-submit')
+				.should('be.visible')
+				.contains(paswordForm.forgot.btnSubmit);
+			cy.getBySel('forgot-password-footer-info')
+				.should('be.visible')
+				.contains(paswordForm.forgot.footer.info);
+			cy.getBySel('forgot-password-footer-link')
+				.should('be.visible')
+				.and('have.attr', 'href', paswordForm.forgot.footer.link.url)
+				.contains(paswordForm.forgot.footer.link.title);
+		});
+		it('Should recover the account, resetting password', () => {
+			const code = '369401';
+			const response = 'SUCCESS';
+			cy.intercept('POST', `${Cypress.env('cognitoEndpoint')}`, response);
+
+			cy.getBySel('recovery-password-email-send-code').type(user.username);
+			cy.getBySel('recovery-password-btn-submit').click();
+
+			cy.getBySel('forgot-password-code').type(code);
+
+			cy.getBySel('form-input-password').eq(0).type(user.password);
+			cy.getBySel('form-input-password').eq(1).type(user.password);
+			cy.clock();
+			cy.getBySel('forgot-password-btn-submit').click();
+
+			cy.tick(4000);
+			cy.url().should('include', `${Cypress.env('loginUrl')}`);
+			cy.getBySel('login-form-container').should('exist').and('be.visible');
+			cy.getBySel('forgot-password-form-container').should('not.exist');
 		});
 	});
 });

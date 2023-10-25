@@ -11,6 +11,8 @@ const defaultValues = {
 	signUp: () => Promise.resolve(),
 	signIn: () => {},
 	signOut: () => {},
+	forgotPassword: () => Promise.resolve(),
+	forgotPasswordSubmit: () => Promise.resolve(''),
 };
 
 type AuthContextType = {
@@ -26,6 +28,14 @@ type AuthContextType = {
 	}) => Promise<void>;
 	signIn: ({ email, password }: { email: string; password: string }) => void;
 	signOut: () => void;
+	forgotPassword: (username: string) => Promise<void>;
+	forgotPasswordSubmit: ({
+		code,
+		newPassword,
+	}: {
+		code: string;
+		newPassword: string;
+	}) => Promise<string>;
 };
 
 export const AuthContext = React.createContext<AuthContextType>(defaultValues);

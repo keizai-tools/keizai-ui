@@ -2,6 +2,8 @@ import { Link, Navigate, useLocation } from 'react-router-dom';
 
 import CreateAccount from '@/common/components/auth/CreateAccount';
 import Login from '@/common/components/auth/Login';
+import RecoveryPassword from '@/common/components/auth/RecoveryPassword';
+import ResetPassword from '@/common/components/auth/ResetPassword';
 import FullscreenLoading from '@/common/views/FullscreenLoading';
 import { useAuth } from '@/services/auth/hook/useAuth';
 
@@ -52,7 +54,10 @@ function AuthenticationPage() {
 				</footer>
 			</div>
 			<div className="flex md:w-3/5 justify-center py-10 items-center">
-				{location.pathname === '/login' ? <Login /> : <CreateAccount />}
+				{location.pathname === '/login' && <Login />}
+				{location.pathname === '/register' && <CreateAccount />}
+				{location.pathname === '/forgot-password' && <RecoveryPassword />}
+				{location.pathname === '/reset-password' && <ResetPassword />}
 			</div>
 		</div>
 	);
