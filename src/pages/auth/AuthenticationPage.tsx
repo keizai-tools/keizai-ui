@@ -1,7 +1,7 @@
 import { Link, Navigate, useLocation } from 'react-router-dom';
 
-import CreateAccount from '@/common/components/auth/CreateAccount';
-import Login from '@/common/components/auth/Login';
+import CreateAccount from '@/common/components/auth/aws/CreateAccount';
+import Login from '@/common/components/auth/aws/Login';
 import FullscreenLoading from '@/common/views/FullscreenLoading';
 import { useAuth } from '@/services/auth/hook/useAuth';
 

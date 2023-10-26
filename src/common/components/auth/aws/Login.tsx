@@ -3,9 +3,9 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link, redirect } from 'react-router-dom';
 
-import PasswordInput from '../Input/PasswordInput';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import PasswordInput from '../../Input/PasswordInput';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
 
 import { User } from '@/services/auth/domain/user';
 import { useAuth } from '@/services/auth/hook/useAuth';

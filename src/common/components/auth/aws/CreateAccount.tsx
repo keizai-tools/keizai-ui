@@ -4,10 +4,10 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
-import PasswordInput from '../Input/PasswordInput';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { useToast } from '../ui/use-toast';
+import PasswordInput from '../../Input/PasswordInput';
+import { Button } from '../../ui/button';
+import { Input } from '../../ui/input';
+import { useToast } from '../../ui/use-toast';
 
 import { User } from '@/services/auth/domain/user';
 import { useAuth } from '@/services/auth/hook/useAuth';
