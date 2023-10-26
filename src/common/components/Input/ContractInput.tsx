@@ -1,17 +1,33 @@
+import { Loader } from 'lucide-react';
 import React from 'react';
 
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import SaveContractDialog from './SaveContractDialog';
 
 import { Button } from '@/common/components/ui/button';
 import { Input } from '@/common/components/ui/input';
 import { Select, SelectTrigger } from '@/common/components/ui/select';
 
 const ContractInput = ({
+	defaultValue = '',
+	loading,
 	loadContract,
+	runContract,
 }: {
-	loadContract: (id: string) => void;
+	defaultValue: string;
+	loading: boolean;
+	loadContract: (id: string) => Promise<void>;
+	runContract: (id: string) => void;
 }) => {
-	const [contractId, setContractId] = React.useState('');
+	const [contractId, setContractId] = React.useState(defaultValue);
+	const [showEditContractDialog, setShowEditContractDialog] =
+		React.useState(false);
+
+	const handleUpdateContractId = async () => {
+		if (contractId) {
+			loadContract(contractId);
+		}
+	};
 
 	return (
 		<div
@@ -25,7 +41,7 @@ const ContractInput = ({
 							className="max-w-[200px] border-none"
 							data-test="contract-input-network"
 						>
-							FUTURENET
+							TESTNET
 						</SelectTrigger>
 					</TooltipTrigger>
 				</Select>
@@ -35,26 +51,56 @@ const ContractInput = ({
 					</p>
 				</TooltipContent>
 			</Tooltip>
-
-			<Input
-				value={contractId}
-				onChange={(e) => setContractId(e.target.value)}
-				className="border-none focus-visible:ring-0"
-				placeholder="Contract address"
-				data-test="input-contract-name"
-			/>
-			<Button
-				disabled={!contractId}
-				onClick={() => {
-					if (contractId) {
-						loadContract(contractId);
-					}
-				}}
-				data-test="contract-input-btn-load"
-				className="transition-all"
-			>
-				LOAD
-			</Button>
+			<div className="flex w-full group">
+				{defaultValue ? (
+					<div className="flex items-center justify-between flex-1">
+						<span>{defaultValue}</span>
+						<Button
+							variant="link"
+							className="invisible group-hover:visible"
+							onClick={() => {
+								setShowEditContractDialog(true);
+							}}
+						>
+							Edit contract address
+						</Button>
+					</div>
+				) : (
+					<Input
+						value={contractId || ''}
+						onChange={(e) => setContractId(e.target.value)}
+						className="border-none focus-visible:ring-0"
+						placeholder="Contract address"
+						data-test="input-contract-name"
+					/>
+				)}
+				{!defaultValue ? (
+					<Button
+						data-test="contract-input-btn-load"
+						className="transition-all"
+						onClick={() => {
+							handleUpdateContractId();
+						}}
+					>
+						{!loading ? 'SAVE' : <Loader className="animate-spin" size="14" />}
+					</Button>
+				) : (
+					<Button
+						data-test="contract-input-btn-load"
+						className="transition-all"
+						onClick={() => runContract('')}
+						type="button"
+					>
+						{!loading ? 'RUN' : <Loader className="animate-spin" size="14" />}
+					</Button>
+				)}
+			</div>
+			{showEditContractDialog && (
+				<SaveContractDialog
+					open={showEditContractDialog}
+					onOpenChange={setShowEditContractDialog}
+				/>
+			)}
 		</div>
 	);
 };
