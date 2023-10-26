@@ -1,11 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import useAxios from '../hooks/useAxios';
+import { Invocation } from '../types/invocation';
 
 export const useInvocationQuery = ({ id }: { id?: string }) => {
 	const axios = useAxios();
 
-	const query = useQuery({
+	const query = useQuery<Invocation>({
 		queryKey: ['invocation', id],
 		queryFn: async () =>
 			axios?.get(`/invocation/${id}`).then((res) => res.data),
@@ -71,49 +72,72 @@ export const useEditInvocationMutation = () => {
 			id,
 			name,
 			folderId,
+			contractId,
+			selectedMethodId,
 		}: {
 			id: string;
 			name?: string;
 			folderId?: string;
+			contractId?: string;
+			selectedMethodId?: string;
 		}) =>
 			axios
 				?.patch('/invocation', {
 					id,
 					name,
 					folderId,
+					contractId,
+					selectedMethodId,
 				})
 				.then((res) => res.data),
+		onSuccess: (_, { name, id }) => {
+			if (name) {
+				queryClient.invalidateQueries({ queryKey: ['folders'] });
+			} else {
+				queryClient.invalidateQueries({ queryKey: ['invocation', id] });
+			}
+		},
+	});
 
-		// TODO Fix this when folderId is coming from the invocation
-		// onMutate: async (invocation) => {
-		// 	await queryClient.cancelQueries({ queryKey: ['folders'] });
+	return mutation;
+};
 
-		// 	const previousFolders = queryClient.getQueryData<Folder[]>(['folders']);
+export const useEditSelectedMethodMutation = () => {
+	const queryClient = useQueryClient();
+	const axios = useAxios();
 
-		// 	queryClient.setQueryData(
-		// 		['folders'],
-		// 		previousFolders?.map((folder) => {
-		// 			if (folder.id === invocation.folderId) {
-		// 				return {
-		// 					...folder,
-		// 					invocations: folder.invocations.map((inv) => {
-		// 						if (inv.id === invocation.id) {
-		// 							return invocation;
-		// 						}
+	const mutation = useMutation({
+		mutationFn: async ({
+			id,
+			selectedMethodId,
+		}: {
+			id: string;
+			selectedMethodId?: string;
+		}) =>
+			axios
+				?.patch('/invocation', {
+					id,
+					selectedMethodId,
+				})
+				.then((res) => res.data),
+		onMutate: async ({ id, selectedMethodId }) => {
+			await queryClient.cancelQueries({ queryKey: ['invocation', id] });
 
-		// 						return inv;
-		// 					}),
-		// 				};
-		// 			}
-		// 		}),
-		// 	);
+			const previousInvocation = queryClient.getQueryData<Invocation>([
+				'invocation',
+				id,
+			]);
 
-		// 	return {
-		// 		previousFolders,
-		// 	};
-		// },
-		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: ['folders'] });
+			queryClient.setQueryData(['invocation', id], {
+				...previousInvocation,
+				selectedMethod: {
+					id: selectedMethodId,
+				},
+			});
+
+			return {
+				previousInvocation,
+			};
 		},
 	});
 
@@ -127,30 +151,37 @@ export const useDeleteInvocationMutation = () => {
 	const mutation = useMutation({
 		mutationFn: async (id: string) =>
 			axios?.delete(`/invocation/${id}`).then((res) => res.data),
-
-		// TODO Fix this when folderId is coming from the invocation
-		// onMutate: async (id) => {
-		// 	await queryClient.cancelQueries({ queryKey: ['folders'] });
-
-		// 	const previousFolders = queryClient.getQueryData<Folder[]>(['folders']);
-
-		// 	queryClient.setQueryData(
-		// 		['folders'],
-		// 		previousFolders?.filter((folder) => {
-		// 			if (folder.id === id) {
-		// 				return folder.invocations.filter((inv) => inv.id !== id);
-		// 			}
-
-		// 			return folder;
-		// 		}),
-		// 	);
-
-		// 	return {
-		// 		previousFolders,
-		// 	};
-		// },
 		onSettled: () => {
 			queryClient.invalidateQueries({ queryKey: ['folders'] });
+		},
+	});
+
+	return mutation;
+};
+
+export const useEditInvocationKeysMutation = () => {
+	const queryClient = useQueryClient();
+	const axios = useAxios();
+
+	const mutation = useMutation({
+		mutationFn: async ({
+			id,
+			secretKey,
+			publicKey,
+		}: {
+			id: string;
+			secretKey?: string;
+			publicKey?: string;
+		}) =>
+			axios
+				?.patch('/invocation', {
+					id,
+					secretKey,
+					publicKey,
+				})
+				.then((res) => res.data),
+		onSuccess: (_, { id }) => {
+			queryClient.invalidateQueries({ queryKey: ['invocation', id] });
 		},
 	});
 

@@ -1,9 +1,12 @@
 import { Loader } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
+
+import useInvocation from './useInvocation';
 
 import { useInvocationQuery } from '@/common/api/invocations';
 import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
 import ContractInput from '@/common/components/Input/ContractInput';
+import AuthorizationTab from '@/common/components/Tabs/AuthorizationTab/AuthorizationTab';
 import FunctionsTab from '@/common/components/Tabs/FunctionsTab/FunctionsTab';
 import Terminal from '@/common/components/ui/Terminal';
 import { Button } from '@/common/components/ui/button';
@@ -18,10 +21,11 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from '@/common/components/ui/tooltip';
+import { Invocation } from '@/common/types/invocation';
 
 const tabs: Record<string, string> = {
 	functions: 'Functions',
-	authorizations: 'Authorization',
+	authorization: 'Authorization',
 	preInvocateScript: 'Pre-invocate script',
 	tests: 'Tests',
 	events: 'Events',
@@ -29,29 +33,32 @@ const tabs: Record<string, string> = {
 
 const disabledTabs = ['preInvocateScript', 'tests', 'events'];
 
-const InvocationPage = () => {
-	const params = useParams();
-	const { data, isLoading } = useInvocationQuery({
-		id: params.invocationId,
-	});
+export type InvocationForm = {
+	contractId?: string | null;
+	selectedMethod?: string | null;
+	parameters?: { id: string; key: string; value: string }[];
+};
 
-	if (isLoading) {
-		return (
-			<div className="flex flex-1 h-full w-full justify-center items-center">
-				<Loader className="animate-spin" size="36" />
-			</div>
-		);
-	}
+const InvocationPageContent = ({ data }: { data: Invocation }) => {
+	const { handleLoadContract, isLoadingContract } = useInvocation({
+		invocationId: data.id ?? '',
+	});
 
 	return (
 		<div className="flex flex-col p-3 w-full gap-4">
 			<Breadcrumb
 				contractName="Collection"
-				folderName={data.folder.name}
+				folderName={data.folder?.name || ''}
 				contractInvocationName={data.name}
 			/>
-			{/* eslint-disable-next-line @typescript-eslint/no-empty-function */}
-			<ContractInput loadContract={() => {}} />
+			<ContractInput
+				defaultValue={data.contractId || ''}
+				loadContract={handleLoadContract}
+				runContract={() => {
+					// TODO Implement invocation
+				}}
+				loading={isLoadingContract}
+			/>
 			<Tabs
 				defaultValue="functions"
 				className="flex-1"
@@ -61,7 +68,7 @@ const InvocationPage = () => {
 					{Object.keys(tabs).map((tab) => {
 						if (disabledTabs.includes(tab)) {
 							return (
-								<Tooltip delayDuration={50}>
+								<Tooltip key={tab} delayDuration={50}>
 									<TooltipTrigger asChild>
 										<Button
 											variant="link"
@@ -89,12 +96,44 @@ const InvocationPage = () => {
 					})}
 				</TabsList>
 				<TabsContent value="functions">
-					<FunctionsTab methods={data.methods} />
+					<FunctionsTab
+						invocationId={data.id}
+						methods={data.methods}
+						selectedMethod={data.selectedMethod}
+					/>
+				</TabsContent>
+				<TabsContent value="authorization">
+					<AuthorizationTab invocationId={data.id} />
 				</TabsContent>
 			</Tabs>
 			<Terminal />
 		</div>
 	);
+};
+
+const InvocationPage = () => {
+	const params = useParams();
+	const { data, isLoading, isRefetching, error } = useInvocationQuery({
+		id: params.invocationId,
+	});
+
+	if (isLoading || isRefetching) {
+		return (
+			<div className="flex flex-1 h-full w-full justify-center items-center">
+				<Loader className="animate-spin" size="36" />
+			</div>
+		);
+	}
+
+	if (error) {
+		return <Navigate to="/collection" replace={true} />;
+	}
+
+	if (!data) {
+		return null;
+	}
+
+	return <InvocationPageContent data={data} />;
 };
 
 export default InvocationPage;
