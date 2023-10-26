@@ -6,12 +6,18 @@ import { Input } from '../../ui/input';
 
 import { useEditInvocationKeysMutation } from '@/common/api/invocations';
 
-const AuthorizationTab = ({ invocationId }: { invocationId: string }) => {
+const AuthorizationTab = ({
+	invocationId,
+	defaultValues,
+}: {
+	invocationId: string;
+	defaultValues: { secretKey?: string; publicKey?: string };
+}) => {
 	const { mutate: editKeys } = useEditInvocationKeysMutation();
 	const { register, reset, formState, watch } = useForm({
 		defaultValues: {
-			secretKey: '',
-			publicKey: '',
+			secretKey: defaultValues.secretKey,
+			publicKey: defaultValues.publicKey,
 		},
 	});
 	const data = watch();

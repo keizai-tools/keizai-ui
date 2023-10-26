@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import useAxios from '../hooks/useAxios';
 import { Method } from '../types/method';
@@ -16,6 +16,7 @@ export const useMethodQuery = ({ id }: { id?: string }) => {
 };
 
 export const useEditParametersMethodMutation = () => {
+	const queryClient = useQueryClient();
 	const axios = useAxios();
 
 	const mutation = useMutation({
@@ -32,6 +33,9 @@ export const useEditParametersMethodMutation = () => {
 					params: parameters,
 				})
 				.then((res) => res.data),
+		onSettled: (_, __, { id }) => {
+			queryClient.invalidateQueries({ queryKey: ['method', id] });
+		},
 	});
 
 	return mutation;

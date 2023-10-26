@@ -19,7 +19,7 @@ const ParametersFormContent = ({ data }: { data: Method }) => {
 			parameters: data?.params,
 		},
 	});
-	const { fields, remove } = useFieldArray({
+	const { fields } = useFieldArray({
 		control,
 		name: 'parameters',
 	});
@@ -66,7 +66,6 @@ const ParametersFormContent = ({ data }: { data: Method }) => {
 							key={field.name}
 							index={index}
 							control={control}
-							onDelete={() => remove(index)}
 							defaultParameters={data.inputs ?? []}
 						/>
 					))}
@@ -108,7 +107,7 @@ const ParametersForm = ({
 		return null;
 	}
 
-	return <ParametersFormContent data={data} />;
+	return <ParametersFormContent key={data.id} data={data} />;
 };
 
 export default ParametersForm;

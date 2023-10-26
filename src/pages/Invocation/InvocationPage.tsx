@@ -103,7 +103,13 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 					/>
 				</TabsContent>
 				<TabsContent value="authorization">
-					<AuthorizationTab invocationId={data.id} />
+					<AuthorizationTab
+						invocationId={data.id}
+						defaultValues={{
+							secretKey: data.secretKey,
+							publicKey: data.publicKey,
+						}}
+					/>
 				</TabsContent>
 			</Tabs>
 			<Terminal />
