@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useInvocationQuery } from '@/common/api/invocations';
 import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
 import ContractInput from '@/common/components/Input/ContractInput';
+import AuthorizationsTab from '@/common/components/Tabs/FunctionsTab/AuthorizationsTab';
 import FunctionsTab from '@/common/components/Tabs/FunctionsTab/FunctionsTab';
 import Terminal from '@/common/components/ui/Terminal';
 import { Button } from '@/common/components/ui/button';
@@ -44,7 +45,10 @@ const InvocationPage = () => {
 	}
 
 	return (
-		<div className="flex flex-col p-3 w-full gap-4">
+		<div
+			className="flex flex-col p-3 w-full gap-4"
+			data-test="invocation-section-container"
+		>
 			<Breadcrumb
 				contractName="Collection"
 				folderName={data.folder.name}
@@ -82,6 +86,7 @@ const InvocationPage = () => {
 								key={tab}
 								value={tab}
 								disabled={disabledTabs.includes(tab)}
+								data-test={`functions-tabs-${tab}`}
 							>
 								{tabs[tab]}
 							</TabsTrigger>
@@ -90,6 +95,9 @@ const InvocationPage = () => {
 				</TabsList>
 				<TabsContent value="functions">
 					<FunctionsTab methods={data.methods} />
+				</TabsContent>
+				<TabsContent value="authorizations">
+					<AuthorizationsTab />
 				</TabsContent>
 			</Tabs>
 			<Terminal />
