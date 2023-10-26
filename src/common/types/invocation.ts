@@ -11,6 +11,8 @@ export type Invocation = {
 	methods?: Method[];
 	selectedMethod?: Method;
 	parameters?: { key: string; value: string }[] | null;
+	secretKey?: string;
+	publicKey?: string;
 };
 
 export const SCSpecTypeMap = {

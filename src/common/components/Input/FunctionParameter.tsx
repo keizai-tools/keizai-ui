@@ -16,7 +16,7 @@ const FunctionParameterInput = ({
 }: {
 	control: Control<ParametersFormType>;
 	index: number;
-	onDelete: () => void;
+	onDelete?: () => void;
 	defaultParameters: {
 		name: string;
 		type: string;
@@ -69,14 +69,16 @@ const FunctionParameterInput = ({
 				)}
 			/>
 
-			<Button
-				onClick={onDelete}
-				variant={'ghost'}
-				size={'icon'}
-				className="min-w-[42px]"
-			>
-				<DeleteIcon size="20" className="text-primary" />
-			</Button>
+			{onDelete && (
+				<Button
+					onClick={onDelete}
+					variant={'ghost'}
+					size={'icon'}
+					className="min-w-[42px]"
+				>
+					<DeleteIcon size="20" className="text-primary" />
+				</Button>
+			)}
 		</div>
 	);
 };

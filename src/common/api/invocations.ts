@@ -160,7 +160,6 @@ export const useDeleteInvocationMutation = () => {
 };
 
 export const useEditInvocationKeysMutation = () => {
-	const queryClient = useQueryClient();
 	const axios = useAxios();
 
 	const mutation = useMutation({
@@ -180,9 +179,6 @@ export const useEditInvocationKeysMutation = () => {
 					publicKey,
 				})
 				.then((res) => res.data),
-		onSuccess: (_, { id }) => {
-			queryClient.invalidateQueries({ queryKey: ['invocation', id] });
-		},
 	});
 
 	return mutation;
