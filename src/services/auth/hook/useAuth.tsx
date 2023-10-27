@@ -121,6 +121,22 @@ export function useProvideAuth() {
 		}
 	}
 
+	const changePassword = async ({
+		oldPassword,
+		newPassword,
+	}: {
+		oldPassword: string;
+		newPassword: string;
+	}) => {
+		try {
+			const user = await Auth.currentAuthenticatedUser();
+			const data = await Auth.changePassword(user, oldPassword, newPassword);
+			return data;
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	return {
 		user,
 		isAuthenticated,
@@ -130,5 +146,6 @@ export function useProvideAuth() {
 		signOut,
 		forgotPassword,
 		forgotPasswordSubmit,
+		changePassword,
 	};
 }
