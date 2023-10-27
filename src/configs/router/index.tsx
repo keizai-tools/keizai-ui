@@ -1,5 +1,6 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 
+import ChangePassword from '@/common/components/auth/ChangePassword';
 import CollectionCTAPage from '@/pages/Collection/CollectionCTAPage';
 import CollectionPage from '@/pages/Collection/CollectionPage';
 import InvocationPage from '@/pages/Invocation/InvocationPage';
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
 			{
 				index: true,
 				element: <Home />,
+			},
+			{
+				path: '/change-password',
+				element: <ChangePassword />,
 			},
 			{
 				path: 'collection/:collectionId',
