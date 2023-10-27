@@ -286,4 +286,65 @@ describe('Authentication page management', () => {
 			cy.getBySel('forgot-password-form-container').should('not.exist');
 		});
 	});
+	describe('Change password', () => {
+		const changePassword = {
+			title: 'Change Password',
+			oldPassword: 'Old Password',
+			newPassword: 'New Password',
+			confirmPassword: 'Confirm New Password',
+			btnSubmit: 'Update password',
+		};
+		const validateErrors = {
+			required: 'is required',
+			notMatch: 'Passwords do not match',
+		};
+
+		beforeEach(() => {
+			cy.loginByCognitoApi();
+			cy.getBySel('sidebar-btn-user').click();
+			cy.getBySel('user-dropdown-change-password').click();
+			cy.url().should('include', `${Cypress.env('changePasswordUrl')}`);
+		});
+		it('Should show a change password form', () => {
+			cy.getBySel('change-password-form-container').and('be.visible');
+			cy.getBySel('change-password-title')
+				.should('be.visible')
+				.contains(changePassword.title);
+			cy.getBySel('form-input-password')
+				.should('be.visible')
+				.eq(0)
+				.should('have.attr', 'placeholder', changePassword.oldPassword);
+			cy.getBySel('form-input-password')
+				.should('be.visible')
+				.eq(1)
+				.should('have.attr', 'placeholder', changePassword.newPassword);
+			cy.getBySel('form-input-password')
+				.should('be.visible')
+				.eq(2)
+				.should('have.attr', 'placeholder', changePassword.confirmPassword);
+			cy.getBySel('change-password-btn-submit')
+				.should('be.visible')
+				.contains(changePassword.btnSubmit);
+		});
+		it('Should show an error messages when submitting with empty fields', () => {
+			cy.getBySel('change-password-btn-submit').click();
+			cy.getBySel('old-password-error').contains(validateErrors.required);
+			cy.getBySel('new-password-error').contains(validateErrors.required);
+			cy.getBySel('confirm-password-error').contains(validateErrors.required);
+		});
+		it('Should show an error message when passwords do not match', () => {
+			cy.getBySel('form-input-password').eq(1).type('test0');
+			cy.getBySel('form-input-password').eq(2).type('test1');
+			cy.getBySel('change-password-btn-submit').click();
+			cy.getBySel('confirm-password-error').contains(validateErrors.notMatch);
+		});
+		it('Should change a password successfully', () => {
+			cy.getBySel('change-password-form-container').click();
+			cy.getBySel('form-input-password').eq(0).type(user.password);
+			cy.getBySel('form-input-password').eq(1).type(user.password);
+			cy.getBySel('form-input-password').eq(2).type(user.password);
+			cy.getBySel('change-password-btn-submit').click();
+			cy.url().should('not.include', `${Cypress.env('changePasswordUrl')}`);
+		});
+	});
 });
