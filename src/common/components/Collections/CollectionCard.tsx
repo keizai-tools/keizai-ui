@@ -25,7 +25,7 @@ const CollectionCard = ({ id, name }: { id: string; name: string }) => {
 	};
 
 	return (
-		<div className="relative">
+		<div className="relative" data-test="collection-folder-container">
 			<Button
 				variant="ghost"
 				className="p-6 flex justify-between items-start gap-4 border-solid border-2 rounded-lg border-primary h-[200px] w-[300px] font-bold"
