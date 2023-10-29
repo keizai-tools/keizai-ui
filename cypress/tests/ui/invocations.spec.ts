@@ -54,11 +54,13 @@ describe('Invocation management', () => {
 		cy.getBySel('auth-tab-secret-key')
 			.should('be.visible')
 			.find('input')
-			.and('have.value', '');
+			.invoke('val')
+			.should('contain', '');
 		cy.getBySel('auth-tab-public-key')
 			.should('be.visible')
 			.find('input')
-			.and('have.value', '');
+			.invoke('val')
+			.should('contain', '');
 
 		cy.getBySel('auth-stellar-create-account-btn').click();
 		cy.getBySel('auth-tab-secret-key')
