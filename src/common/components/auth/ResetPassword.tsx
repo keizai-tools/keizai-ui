@@ -9,7 +9,9 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { useToast } from '../ui/use-toast';
 
+import { CognitoError } from '@/services/auth/error/cognitoError';
 import { useAuth } from '@/services/auth/hook/useAuth';
+import { exceptionsCognitoErrors } from '@/services/auth/validators/exceptionsCognitoErrors';
 
 export interface IPasswordReset {
 	code: string;
@@ -20,6 +22,7 @@ export interface IPasswordReset {
 function ResetPassword() {
 	const { toast } = useToast();
 	const navigate = useNavigate();
+	const [error, setError] = React.useState('');
 	const [loading, setLoading] = React.useState(false);
 	const {
 		control,
@@ -34,7 +37,7 @@ function ResetPassword() {
 		},
 	});
 	const { forgotPasswordSubmit } = useAuth();
-	const { mutate, isPending, isError, error } = useMutation({
+	const { mutate, isPending, isError } = useMutation({
 		mutationFn: forgotPasswordSubmit,
 		onSuccess: () => {
 			toast({
@@ -46,8 +49,11 @@ function ResetPassword() {
 				navigate('login');
 			}, 3000);
 		},
-		onError: (error) => {
-			console.error(error);
+		onError: (error: CognitoError) => {
+			const errorMessage = exceptionsCognitoErrors(error as CognitoError);
+			if (errorMessage) {
+				setError(errorMessage);
+			}
 			setLoading(false);
 		},
 	});
@@ -87,16 +93,26 @@ function ResetPassword() {
 							/>
 						)}
 					/>
-					{errors.code && (
-						<span className="text-red-500">{errors.code.message}</span>
-					)}
 				</div>
+				{errors.code && (
+					<span className="text-sm text-red-500 mt-1">
+						{errors.code.message}
+					</span>
+				)}
 			</div>
 			<div className="flex flex-col mb-4">
 				<Controller
 					control={control}
 					name="newPassword"
-					rules={{ required: 'Password is required' }}
+					rules={{
+						required: 'Password is required',
+						pattern: {
+							value:
+								/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,255}$/,
+							message:
+								'The password must consist of at least 8 alphanumeric characters and alternate between uppercase, lowercase, and special characters',
+						},
+					}}
 					render={({ field }) => (
 						<PasswordInput
 							value={field.value}
@@ -106,8 +122,13 @@ function ResetPassword() {
 					)}
 				/>
 				{errors.newPassword && (
-					<p className="text-sm text-red-500 mt-1 pl-4">
-						{errors.newPassword.message}
+					<p className="ml-4">
+						<span
+							className="text-sm text-red-500 mt-1"
+							data-test="forgot-password-error-message"
+						>
+							{errors.newPassword.message}
+						</span>
 					</p>
 				)}
 			</div>
@@ -137,10 +158,8 @@ function ResetPassword() {
 						{errors.confirmPassword.message}
 					</p>
 				)}
-				{isError && !loading && (
-					<span className="text-sm text-red-500 mt-2 pl-4">
-						{error.message}
-					</span>
+				{isError && !loading && error && (
+					<span className="text-sm text-red-500 mt-2 pl-4">{error}</span>
 				)}
 			</div>
 			<Button

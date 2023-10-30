@@ -1,4 +1,4 @@
-import { User2 } from 'lucide-react';
+import { User2, Loader2 } from 'lucide-react';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link, redirect } from 'react-router-dom';
@@ -8,7 +8,9 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
 import { User } from '@/services/auth/domain/user';
+import { CognitoError } from '@/services/auth/error/cognitoError';
 import { useAuth } from '@/services/auth/hook/useAuth';
+import { exceptionsCognitoErrors } from '@/services/auth/validators/exceptionsCognitoErrors';
 
 function Login() {
 	const {
@@ -22,18 +24,20 @@ function Login() {
 		},
 	});
 	const [error, setError] = React.useState('');
-	const [isLoading, setIsLoading] = React.useState(false);
+	const [isPending, setIsPending] = React.useState(false);
 	const { signIn } = useAuth();
 
 	const onSubmit = async (values: User) => {
 		try {
-			setIsLoading(true);
+			setIsPending(true);
 			await signIn(values);
 			redirect('/');
 		} catch (error) {
-			console.error(error);
-			setError('Invalid email or password');
-			setIsLoading(false);
+			const errorMessage = exceptionsCognitoErrors(error as CognitoError);
+			if (errorMessage) {
+				setError(errorMessage);
+			}
+			setIsPending(false);
 		}
 	};
 
@@ -83,15 +87,24 @@ function Login() {
 				)}
 			</div>
 			{!errors.password && !errors.email && error && (
-				<p className="text-red-500">{error}</p>
+				<p className="text-red-500 ml-4" data-test="login-form-error-message">
+					{error}
+				</p>
 			)}
 			<Button
 				type="submit"
 				className="block w-full bg-primary dark:bg-primary mt-4 py-2 rounded-md text-black font-semibold mb-2"
 				data-test="login-form-btn-submit"
-				disabled={isLoading}
+				disabled={isPending}
 			>
-				Login
+				{isPending ? (
+					<>
+						<Loader2 className="mr-2 h-4 w-4 animate-spin text-black" />
+						Creating...
+					</>
+				) : (
+					'Login'
+				)}
 			</Button>
 			<span
 				className="text-sm ml-2 text-white cursor-pointer"
