@@ -133,7 +133,7 @@ export function useProvideAuth() {
 			const data = await Auth.changePassword(user, oldPassword, newPassword);
 			return data;
 		} catch (error) {
-			console.log(error);
+			throw new Error('Unable to change password, please try again');
 		}
 	};
 
