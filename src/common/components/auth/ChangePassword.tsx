@@ -1,6 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
-import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,6 +8,7 @@ import { Button } from '../ui/button';
 import { useToast } from '../ui/use-toast';
 
 import { useAuth } from '@/services/auth/hook/useAuth';
+import { AUTH_RESPONSE } from '@/services/auth/validators/authResponse';
 
 interface IPasswordReset {
 	oldPassword: string;
@@ -26,10 +26,19 @@ interface Input {
 	test: string;
 }
 
+enum AUTH_VALIDATIONS {
+	CONFIRM_PASSWORD_PLACEHOLDER = 'Confirm New Password',
+	CONFIRM_PASSWORD_REQUIRED = 'Confirm password is required',
+	CONFIRM_PASSWORD_NOT_MATCH = 'Passwords do not match',
+	NEW_PASSWORD_PLACEHOLDER = 'New Password',
+	NEW_PASSWORD_REQUIRED = 'New password is required',
+	OLD_PASSWORD_PLACEHOLDER = 'Old Password',
+	OLD_PASSWORD_REQUIRED = 'Old password is required',
+}
+
 function ChangePassword() {
 	const navigate = useNavigate();
 	const { toast } = useToast();
-	const [error, setError] = React.useState('');
 	const {
 		control,
 		watch,
@@ -47,42 +56,40 @@ function ChangePassword() {
 	const inputs: Input[] = [
 		{
 			name: 'oldPassword',
-			placeholder: 'Old Password',
-			rules: { required: 'Old password is required' },
+			placeholder: AUTH_VALIDATIONS.OLD_PASSWORD_PLACEHOLDER,
+			rules: { required: AUTH_VALIDATIONS.OLD_PASSWORD_REQUIRED },
 			test: 'old-password',
 		},
 		{
 			name: 'newPassword',
-			placeholder: 'New Password',
-			rules: { required: 'New password is required' },
+			placeholder: AUTH_VALIDATIONS.NEW_PASSWORD_PLACEHOLDER,
+			rules: { required: AUTH_VALIDATIONS.NEW_PASSWORD_REQUIRED },
 			test: 'new-password',
 		},
 		{
 			name: 'confirmPassword',
-			placeholder: 'Confirm New Password',
+			placeholder: AUTH_VALIDATIONS.CONFIRM_PASSWORD_PLACEHOLDER,
 			rules: {
-				required: 'Confirm password is required',
+				required: AUTH_VALIDATIONS.CONFIRM_PASSWORD_REQUIRED,
 				validate: (value: string) => {
-					return value === watch('newPassword') || 'Passwords do not match';
+					return (
+						value === watch('newPassword') ||
+						AUTH_VALIDATIONS.CONFIRM_PASSWORD_NOT_MATCH
+					);
 				},
 			},
 			test: 'confirm-password',
 		},
 	];
 
-	const { mutate, isPending } = useMutation({
+	const { mutate, isPending, error } = useMutation({
 		mutationFn: changePassword,
 		onSuccess: () => {
 			navigate('/');
 			toast({
 				title: 'Successful!',
-				description: 'You have changed your password',
+				description: AUTH_RESPONSE.PASSWORD_CHANGED,
 			});
-			setError('');
-		},
-		onError: (error) => {
-			console.error(error);
-			setError('There was an error updating your password');
 		},
 	});
 
@@ -130,7 +137,14 @@ function ChangePassword() {
 					)}
 				</div>
 			))}
-			{error && <p className="text-sm text-red-500 mt-1 pl-4">{error}</p>}
+			{error && (
+				<p
+					className="text-red-500 mt-1 mb-4 pl-4"
+					data-test="change-password-error-message"
+				>
+					{error.message}
+				</p>
+			)}
 			<Button
 				type="submit"
 				className="w-full"
