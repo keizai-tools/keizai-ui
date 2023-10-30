@@ -110,15 +110,11 @@ export function useProvideAuth() {
 		code: string;
 		newPassword: string;
 	}) {
-		try {
-			let username = '';
-			if (user !== null) {
-				username = user.email;
-			}
-			return await Auth.forgotPasswordSubmit(username, code, newPassword);
-		} catch (err) {
-			throw new Error('Unable to recover account, please try again');
+		let username = '';
+		if (user !== null) {
+			username = user.email;
 		}
+		return await Auth.forgotPasswordSubmit(username, code, newPassword);
 	}
 
 	return {
