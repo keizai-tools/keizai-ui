@@ -30,6 +30,9 @@ describe('Authentication page management', () => {
 					url: '/forgot-password',
 				},
 			},
+			errors: {
+				failedLogin: 'Invalid email or password',
+			},
 		};
 		beforeEach(() => {
 			cy.visit(`${Cypress.env('loginUrl')}`);
@@ -86,6 +89,15 @@ describe('Authentication page management', () => {
 			cy.getBySel('register-form-container').should('exist').and('be.visible');
 			cy.getBySel('login-form-container').should('not.exist');
 		});
+		it('Should show an error message when type invalid email or password', () => {
+			cy.getBySel('login-form-email').type(user.username);
+			cy.getBySel('form-input-password').type('test');
+			cy.getBySel('login-form-btn-submit').click();
+			cy.wait(500);
+			cy.getBySel('login-form-error-message')
+				.should('be.visible')
+				.and('have.text', loginForm.errors.failedLogin);
+		});
 		it('Should log in', () => {
 			cy.getBySel('login-form-email').type(user.username);
 			cy.getBySel('form-input-password').type(user.password);
@@ -102,6 +114,12 @@ describe('Authentication page management', () => {
 			footer: {
 				info: 'Already have an account?',
 				link: { title: 'Log in', url: '/login' },
+			},
+			erros: {
+				emailInvalid: 'Invalid email address',
+				emailExist: 'The email is already registered',
+				invalidPassword:
+					'The password must consist of at least 8 alphanumeric characters and alternate between uppercase, lowercase, and special characters',
 			},
 		};
 		beforeEach(() => {
@@ -146,6 +164,31 @@ describe('Authentication page management', () => {
 				.and('have.attr', 'href', registerForm.footer.link.url)
 				.contains(registerForm.footer.link.title);
 		});
+		it('Should show an error message when type invalid email', () => {
+			cy.getBySel('register-form-email').type('test');
+			cy.getBySel('form-input-password').type(user.password);
+			cy.getBySel('register-form-btn-submit').click();
+			cy.getBySel('register-form-email-error')
+				.should('be.visible')
+				.and('contain', registerForm.erros.emailInvalid);
+		});
+		it('Should show an error message when the password does not meet the required pattern', () => {
+			cy.getBySel('register-form-email').type(user.username);
+			cy.getBySel('form-input-password').type('test');
+			cy.getBySel('register-form-btn-submit').click();
+			cy.getBySel('register-form-password-error')
+				.should('be.visible')
+				.and('contain', registerForm.erros.invalidPassword);
+		});
+		it('Should show an error message when the email already exists', () => {
+			cy.getBySel('register-form-email').type(user.username);
+			cy.getBySel('form-input-password').type(user.password);
+			cy.getBySel('register-form-btn-submit').click();
+			cy.wait(500);
+			cy.getBySel('register-form-create-error')
+				.should('be.visible')
+				.and('contain', registerForm.erros.emailExist);
+		});
 		it('Should go to the register form', () => {
 			cy.url().should('include', `${Cypress.env('registerUrl')}`);
 			cy.getBySel('register-form-container').should('exist').and('be.visible');
@@ -175,6 +218,10 @@ describe('Authentication page management', () => {
 						title: 'Log In',
 						url: '/login',
 					},
+				},
+				erros: {
+					invalidPassword:
+						'The password must consist of at least 8 alphanumeric characters and alternate between uppercase, lowercase, and special characters',
 				},
 			},
 		};
@@ -264,6 +311,19 @@ describe('Authentication page management', () => {
 				.should('be.visible')
 				.and('have.attr', 'href', paswordForm.forgot.footer.link.url)
 				.contains(paswordForm.forgot.footer.link.title);
+		});
+		it('Should show an error message when the password does not meet the required pattern', () => {
+			const response = 'SUCCESS';
+			cy.intercept('POST', `${Cypress.env('cognitoEndpoint')}`, response);
+
+			cy.getBySel('recovery-password-email-send-code').type(user.username);
+			cy.getBySel('recovery-password-btn-submit').click();
+			cy.getBySel('form-input-password').eq(0).type('test');
+			cy.getBySel('forgot-password-btn-submit').click();
+
+			cy.getBySel('forgot-password-error-message')
+				.should('be.visible')
+				.and('have.text', paswordForm.forgot.erros.invalidPassword);
 		});
 		it('Should recover the account, resetting password', () => {
 			const code = '369401';
