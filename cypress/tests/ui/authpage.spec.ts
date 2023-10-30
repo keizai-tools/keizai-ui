@@ -293,6 +293,7 @@ describe('Authentication page management', () => {
 			newPassword: 'New Password',
 			confirmPassword: 'Confirm New Password',
 			btnSubmit: 'Update password',
+			error: 'Unable to change password, please try again',
 		};
 		const validateErrors = {
 			required: 'is required',
@@ -337,6 +338,16 @@ describe('Authentication page management', () => {
 			cy.getBySel('form-input-password').eq(2).type('test1');
 			cy.getBySel('change-password-btn-submit').click();
 			cy.getBySel('confirm-password-error').contains(validateErrors.notMatch);
+		});
+		it('Should show an error message when failed password change', () => {
+			cy.getBySel('change-password-form-container').click();
+			cy.getBySel('form-input-password').eq(0).type('test');
+			cy.getBySel('form-input-password').eq(1).type(user.password);
+			cy.getBySel('form-input-password').eq(2).type(user.password);
+			cy.getBySel('change-password-btn-submit').click();
+			cy.getBySel('change-password-error-message')
+				.should('be.visible')
+				.and('have.text', changePassword.error);
 		});
 		it('Should change a password successfully', () => {
 			cy.getBySel('change-password-form-container').click();
