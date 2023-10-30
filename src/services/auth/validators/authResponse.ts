@@ -30,3 +30,13 @@ export enum COGNITO_EXCEPTION {
 	USER_NOT_CONFIRMED = 'UserNotConfirmedException',
 	USER_NOT_FOUND = 'UserNotFoundException',
 }
+
+export enum AUTH_VALIDATIONS {
+	CODE_REQUIRED = 'Code is required',
+	CONFIRM_PASSWORD_REQUIRED = 'Confirm password is required',
+	CONFIRM_PASSWORD_NOT_MATCH = 'Passwords do not match',
+	EMAIL_INVALID = 'Invalid email address',
+	EMAIL_REQUIRED = 'Email is required',
+	PASSWORD_INVALID = 'The password must consist of at least 8 alphanumeric characters and alternate between uppercase, lowercase, and special characters',
+	PASSWORD_REQUIRED = 'Password is required',
+}
