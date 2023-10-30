@@ -12,6 +12,7 @@ import { useToast } from '../ui/use-toast';
 
 import { User } from '@/services/auth/domain/user';
 import { useAuth } from '@/services/auth/hook/useAuth';
+import { AUTH_VALIDATIONS } from '@/services/auth/validators/authResponse';
 
 function CreateAccount() {
 	const { toast } = useToast();
@@ -65,10 +66,10 @@ function CreateAccount() {
 						control={control}
 						name="email"
 						rules={{
-							required: 'Email is required',
+							required: AUTH_VALIDATIONS.EMAIL_REQUIRED,
 							pattern: {
 								value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-								message: 'Invalid email address',
+								message: AUTH_VALIDATIONS.EMAIL_INVALID,
 							},
 						}}
 						render={({ field }) => (
@@ -100,8 +101,7 @@ function CreateAccount() {
 						pattern: {
 							value:
 								/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,255}$/,
-							message:
-								'The password must consist of at least 8 alphanumeric characters and alternate between uppercase, lowercase, and special characters',
+							message: AUTH_VALIDATIONS.PASSWORD_INVALID,
 						},
 					}}
 					render={({ field }) => <PasswordInput {...field} />}

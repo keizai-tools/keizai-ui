@@ -11,6 +11,7 @@ import { useToast } from '../ui/use-toast';
 
 import { CognitoError } from '@/services/auth/error/cognitoError';
 import { useAuth } from '@/services/auth/hook/useAuth';
+import { AUTH_VALIDATIONS } from '@/services/auth/validators/authResponse';
 import { exceptionsCognitoErrors } from '@/services/auth/validators/exceptionsCognitoErrors';
 
 export interface IPasswordReset {
@@ -82,7 +83,7 @@ function ResetPassword() {
 					<Controller
 						control={control}
 						name="code"
-						rules={{ required: 'Code is required' }}
+						rules={{ required: AUTH_VALIDATIONS.CODE_REQUIRED }}
 						render={({ field }) => (
 							<Input
 								className="pl-2 border-none bg-white focus-visible:ring-0 text-black"
@@ -109,8 +110,7 @@ function ResetPassword() {
 						pattern: {
 							value:
 								/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,255}$/,
-							message:
-								'The password must consist of at least 8 alphanumeric characters and alternate between uppercase, lowercase, and special characters',
+							message: AUTH_VALIDATIONS.PASSWORD_INVALID,
 						},
 					}}
 					render={({ field }) => (
@@ -137,9 +137,12 @@ function ResetPassword() {
 					control={control}
 					name="confirmPassword"
 					rules={{
-						required: 'Confirm password is required',
+						required: AUTH_VALIDATIONS.CONFIRM_PASSWORD_REQUIRED,
 						validate: (value) => {
-							return value === watch('newPassword') || 'Passwords do not match';
+							return (
+								value === watch('newPassword') ||
+								AUTH_VALIDATIONS.CONFIRM_PASSWORD_NOT_MATCH
+							);
 						},
 					}}
 					render={({ field }) => (

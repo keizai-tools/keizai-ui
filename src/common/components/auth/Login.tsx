@@ -10,6 +10,7 @@ import { Input } from '../ui/input';
 import { User } from '@/services/auth/domain/user';
 import { CognitoError } from '@/services/auth/error/cognitoError';
 import { useAuth } from '@/services/auth/hook/useAuth';
+import { AUTH_VALIDATIONS } from '@/services/auth/validators/authResponse';
 import { exceptionsCognitoErrors } from '@/services/auth/validators/exceptionsCognitoErrors';
 
 function Login() {
@@ -59,7 +60,7 @@ function Login() {
 					<Controller
 						control={control}
 						name="email"
-						rules={{ required: 'Email Address is required' }}
+						rules={{ required: AUTH_VALIDATIONS.EMAIL_REQUIRED }}
 						render={({ field }) => (
 							<Input
 								className="pl-2 border-none bg-white focus-visible:ring-0 text-black"
@@ -77,7 +78,7 @@ function Login() {
 				<Controller
 					control={control}
 					name="password"
-					rules={{ required: 'Password is required' }}
+					rules={{ required: AUTH_VALIDATIONS.PASSWORD_REQUIRED }}
 					render={({ field }) => (
 						<PasswordInput value={field.value} onChange={field.onChange} />
 					)}
