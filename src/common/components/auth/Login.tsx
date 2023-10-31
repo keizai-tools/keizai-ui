@@ -94,14 +94,13 @@ function Login() {
 			)}
 			<Button
 				type="submit"
-				className="block w-full bg-primary dark:bg-primary mt-4 py-2 rounded-md text-black font-semibold mb-2"
+				className="w-full bg-primary dark:bg-primary mt-4 py-2 rounded-md text-black font-semibold mb-2"
 				data-test="login-form-btn-submit"
 				disabled={isPending}
 			>
 				{isPending ? (
 					<>
 						<Loader2 className="mr-2 h-4 w-4 animate-spin text-black" />
-						Creating...
 					</>
 				) : (
 					'Login'
