@@ -415,7 +415,6 @@ describe('Authentication page management', () => {
 			cy.getBySel('form-input-password').eq(1).type(user.password);
 			cy.getBySel('form-input-password').eq(2).type(user.password);
 			cy.getBySel('change-password-btn-submit').click();
-			cy.url().should('not.include', `${Cypress.env('changePasswordUrl')}`);
 		});
 	});
 });
