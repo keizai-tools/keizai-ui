@@ -103,12 +103,12 @@ function ChangePassword() {
 
 	return (
 		<form
-			className="md:w-1/2 p-10"
+			className="md:w-1/3 p-10 m-auto"
 			onSubmit={handleSubmit(onSubmit)}
 			data-test="change-password-form-container"
 		>
 			<h1
-				className="text-primary font-bold text-4xl mb-7"
+				className="text-primary font-bold text-3xl mb-7"
 				data-test="change-password-title"
 			>
 				Change Password
