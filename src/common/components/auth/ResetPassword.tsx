@@ -9,7 +9,10 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { useToast } from '../ui/use-toast';
 
+import { CognitoError } from '@/services/auth/error/cognitoError';
 import { useAuth } from '@/services/auth/hook/useAuth';
+import { AUTH_VALIDATIONS } from '@/services/auth/validators/authResponse';
+import { exceptionsCognitoErrors } from '@/services/auth/validators/exceptionsCognitoErrors';
 
 export interface IPasswordReset {
 	code: string;
@@ -20,6 +23,7 @@ export interface IPasswordReset {
 function ResetPassword() {
 	const { toast } = useToast();
 	const navigate = useNavigate();
+	const [error, setError] = React.useState('');
 	const [loading, setLoading] = React.useState(false);
 	const {
 		control,
@@ -34,7 +38,7 @@ function ResetPassword() {
 		},
 	});
 	const { forgotPasswordSubmit } = useAuth();
-	const { mutate, isPending, isError, error } = useMutation({
+	const { mutate, isPending, isError } = useMutation({
 		mutationFn: forgotPasswordSubmit,
 		onSuccess: () => {
 			toast({
@@ -46,8 +50,11 @@ function ResetPassword() {
 				navigate('login');
 			}, 3000);
 		},
-		onError: (error) => {
-			console.error(error);
+		onError: (error: CognitoError) => {
+			const errorMessage = exceptionsCognitoErrors(error as CognitoError);
+			if (errorMessage) {
+				setError(errorMessage);
+			}
 			setLoading(false);
 		},
 	});
@@ -76,7 +83,7 @@ function ResetPassword() {
 					<Controller
 						control={control}
 						name="code"
-						rules={{ required: 'Code is required' }}
+						rules={{ required: AUTH_VALIDATIONS.CODE_REQUIRED }}
 						render={({ field }) => (
 							<Input
 								className="pl-2 border-none bg-white focus-visible:ring-0 text-black"
@@ -87,16 +94,25 @@ function ResetPassword() {
 							/>
 						)}
 					/>
-					{errors.code && (
-						<span className="text-red-500">{errors.code.message}</span>
-					)}
 				</div>
+				{errors.code && (
+					<span className="text-sm text-red-500 mt-1">
+						{errors.code.message}
+					</span>
+				)}
 			</div>
 			<div className="flex flex-col mb-4">
 				<Controller
 					control={control}
 					name="newPassword"
-					rules={{ required: 'Password is required' }}
+					rules={{
+						required: 'Password is required',
+						pattern: {
+							value:
+								/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,255}$/,
+							message: AUTH_VALIDATIONS.PASSWORD_INVALID,
+						},
+					}}
 					render={({ field }) => (
 						<PasswordInput
 							value={field.value}
@@ -106,8 +122,13 @@ function ResetPassword() {
 					)}
 				/>
 				{errors.newPassword && (
-					<p className="text-sm text-red-500 mt-1 pl-4">
-						{errors.newPassword.message}
+					<p className="ml-4">
+						<span
+							className="text-sm text-red-500 mt-1"
+							data-test="forgot-password-error-message"
+						>
+							{errors.newPassword.message}
+						</span>
 					</p>
 				)}
 			</div>
@@ -116,9 +137,12 @@ function ResetPassword() {
 					control={control}
 					name="confirmPassword"
 					rules={{
-						required: 'Confirm password is required',
+						required: AUTH_VALIDATIONS.CONFIRM_PASSWORD_REQUIRED,
 						validate: (value) => {
-							return value === watch('newPassword') || 'Passwords do not match';
+							return (
+								value === watch('newPassword') ||
+								AUTH_VALIDATIONS.CONFIRM_PASSWORD_NOT_MATCH
+							);
 						},
 					}}
 					render={({ field }) => (
@@ -137,10 +161,8 @@ function ResetPassword() {
 						{errors.confirmPassword.message}
 					</p>
 				)}
-				{isError && !loading && (
-					<span className="text-sm text-red-500 mt-2 pl-4">
-						{error.message}
-					</span>
+				{isError && !loading && error && (
+					<span className="text-sm text-red-500 mt-2 pl-4">{error}</span>
 				)}
 			</div>
 			<Button
