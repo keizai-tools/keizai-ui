@@ -1,21 +1,32 @@
-import React from 'react';
+import { UseMutateFunction } from '@tanstack/react-query';
 
 import { Button } from '../../ui/button';
 
-import { IKeypair } from '@/services/stellar/domain/keypair';
 import useStellar from '@/services/stellar/hook/useStellar';
 
 function CreateNewAccount({
-	setAccount,
+	invocationId,
+	editKeys,
 }: {
-	setAccount: React.Dispatch<React.SetStateAction<IKeypair>>;
+	invocationId: string;
+	editKeys: UseMutateFunction<
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		any,
+		Error,
+		{
+			id: string;
+			secretKey?: string | undefined;
+			publicKey?: string | undefined;
+		},
+		unknown
+	>;
 }) {
 	const { createNewAccount } = useStellar();
 
 	const onCreateAccount = () => {
 		const keypair = createNewAccount();
 		if (keypair) {
-			setAccount(keypair);
+			editKeys({ id: invocationId, ...keypair });
 		}
 	};
 	return (

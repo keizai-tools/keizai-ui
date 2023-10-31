@@ -1,4 +1,3 @@
-import debounce from 'lodash.debounce';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -16,37 +15,20 @@ const AuthorizationTab = ({
 	invocationId: string;
 	defaultValues: IKeypair;
 }) => {
-	const [account, setAccount] = React.useState<IKeypair>(defaultValues);
-	const { mutate: editKeys } = useEditInvocationKeysMutation();
-	const { register, reset, formState, watch } = useForm({
+	const { mutate: editKeys, data } = useEditInvocationKeysMutation();
+	const { register } = useForm({
 		defaultValues: {
 			secretKey: defaultValues.secretKey,
 			publicKey: defaultValues.publicKey,
 		},
 	});
-	const data = watch();
 
-	const debounceKeyPhrase = React.useMemo(
-		() =>
-			debounce((value) => {
-				editKeys({
-					id: invocationId,
-					secretKey: value.secretKey,
-					publicKey: value.publicKey,
-				});
-				reset({
-					secretKey: value.secretKey,
-					publicKey: value.publicKey,
-				});
-			}, 500),
-		[editKeys, invocationId, reset],
-	);
-
-	React.useEffect(() => {
-		if (formState.isDirty) {
-			debounceKeyPhrase(data);
-		}
-	}, [data, debounceKeyPhrase, formState.isDirty]);
+	const defaultKeys = React.useMemo(() => {
+		return {
+			secretKey: data?.secretKey || defaultValues.secretKey,
+			publicKey: data?.publicKey || defaultValues.publicKey,
+		};
+	}, [data, defaultValues]);
 
 	return (
 		<section data-test="auth-tab-container">
@@ -59,7 +41,7 @@ const AuthorizationTab = ({
 					<Input
 						{...register('secretKey')}
 						placeholder="S . . ."
-						value={account.secretKey || ''}
+						value={defaultKeys.secretKey || ''}
 					/>
 				</div>
 				<div className="flex flex-col gap-1" data-test="auth-tab-public-key">
@@ -67,13 +49,13 @@ const AuthorizationTab = ({
 					<Input
 						{...register('publicKey')}
 						placeholder="G . . ."
-						value={account.publicKey || ''}
+						value={defaultKeys.publicKey || ''}
 					/>
 				</div>
 			</div>
 			<div className="flex justify-center gap-4 h-12 w-[90%] px-4">
-				<CreateNewAccount setAccount={setAccount} />
-				<ImportAccount setAccount={setAccount} />
+				<CreateNewAccount invocationId={invocationId} editKeys={editKeys} />
+				<ImportAccount invocationId={invocationId} editKeys={editKeys} />
 			</div>
 		</section>
 	);

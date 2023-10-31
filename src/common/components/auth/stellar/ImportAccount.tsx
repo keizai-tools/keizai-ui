@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { UseMutateFunction, useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -14,7 +14,6 @@ import {
 } from '../../ui/dialog';
 import { Input } from '../../ui/input';
 
-import { IKeypair } from '@/services/stellar/domain/keypair';
 import useStellar from '@/services/stellar/hook/useStellar';
 
 enum SECRET_KEY_ERROR {
@@ -23,9 +22,21 @@ enum SECRET_KEY_ERROR {
 }
 
 function ImportAccount({
-	setAccount,
+	invocationId,
+	editKeys,
 }: {
-	setAccount: React.Dispatch<React.SetStateAction<IKeypair>>;
+	invocationId: string;
+	editKeys: UseMutateFunction<
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		any,
+		Error,
+		{
+			id: string;
+			secretKey?: string | undefined;
+			publicKey?: string | undefined;
+		},
+		unknown
+	>;
 }) {
 	const [isError, setIsError] = React.useState(false);
 	const { connectAccount } = useStellar();
@@ -42,8 +53,7 @@ function ImportAccount({
 	const { mutate, isPending } = useMutation({
 		mutationFn: connectAccount,
 		onSuccess: (data) => {
-			console.log(data);
-			setAccount(data);
+			editKeys({ id: invocationId, ...data });
 		},
 	});
 	const submitAndReset = async ({ secretKey }: { secretKey: string }) => {
