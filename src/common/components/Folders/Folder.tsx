@@ -62,7 +62,10 @@ const Folder = ({ folder }: { folder: IFolder }) => {
 						data-test="collection-folder-container"
 					>
 						<div className="flex justify-between items-center w-full text-slate-100 text-sm">
-							<div className="flex gap-1 items-center">
+							<div
+								className="flex gap-1 items-center"
+								data-test="folder-accordion-title"
+							>
 								<GanttChart size={16} />
 								<span data-test="collection-folder-name">{folder.name}</span>
 							</div>

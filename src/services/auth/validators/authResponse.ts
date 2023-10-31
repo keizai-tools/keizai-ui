@@ -1,6 +1,7 @@
 export enum AUTH_RESPONSE {
 	CODE_DELIVERY_FAILURE = 'The verification code was not delivered correctly',
 	EXPIRED_CODE = 'The code has expired',
+	CHANGE_PASSWORD_FAILED = 'There was an error updating your password',
 	FAILED_LOGIN = 'Failed to login',
 	FAILED_LOGOUT = 'Failed to logout',
 	FAILED_REGISTER = 'There was an error creating your account, please try again',
@@ -14,6 +15,7 @@ export enum AUTH_RESPONSE {
 	USERNAME_EXIST = 'The email is already registered',
 	USER_NOT_CONFIRMED = 'The user is not confirmed',
 	USER_NOT_FOUND_OR_EXIST = 'The user is not found or not exist',
+	PASSWORD_CHANGED = 'You have changed your password',
 }
 
 export enum COGNITO_EXCEPTION {
@@ -39,4 +41,5 @@ export enum AUTH_VALIDATIONS {
 	EMAIL_REQUIRED = 'Email is required',
 	PASSWORD_INVALID = 'The password must consist of at least 8 alphanumeric characters and alternate between uppercase, lowercase, and special characters',
 	PASSWORD_REQUIRED = 'Password is required',
+	PASSWORD_CHANGED = 'You have changed your password',
 }

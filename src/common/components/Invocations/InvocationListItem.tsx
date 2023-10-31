@@ -33,6 +33,7 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
 				>
 					<NavLink to={`invocation/${invocation?.id}`}>
 						<div
+							data-test="invocation-list-container"
 							className={`flex gap-1 items-center ${
 								params?.invocationId &&
 								params?.invocationId === invocation.id &&

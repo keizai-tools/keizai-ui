@@ -21,6 +21,7 @@ export default defineConfig({
 	env: {
 		loginUrl: '/login',
 		registerUrl: '/register',
+		changePasswordUrl: '/change-password',
 		apiUrl: process.env.VITE_URL_API_BASE,
 		apiAuth: '/auth',
 		cognitoEndpoint: process.env.VITE_AWS_COGNITO_ENDPOINT,

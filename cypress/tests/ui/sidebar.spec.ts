@@ -15,7 +15,8 @@ describe('Sidebar', () => {
 			.and('have.attr', 'href', '/');
 		cy.getBySel('sidebar-btn-copy').should('exist').and('be.visible');
 		cy.getBySel('theme-dropdown-btn').should('exist').and('be.visible');
-		cy.getBySel('sidebar-btn-logout').should('exist').and('be.visible');
+		cy.getBySel('sidebar-btn-user').should('exist').and('be.visible');
+		cy.getBySel('user-dropdown-container').should('not.exist');
 		cy.getBySel('theme-dropdown-container').should('not.exist');
 	});
 	it('Should show a dropdown menu to change the theme', () => {
@@ -34,7 +35,8 @@ describe('Sidebar', () => {
 	it('Should disconnect from the session', () => {
 		cy.getBySel('sidebar-container').should('exist').and('be.visible');
 		cy.getBySel('login-form-container').should('not.exist');
-		cy.getBySel('sidebar-btn-logout').click();
+		cy.getBySel('sidebar-btn-user').click();
+		cy.getBySel('user-dropdown-log-out').click();
 		cy.url().should('include', `${Cypress.env('loginUrl')}`);
 		cy.getBySel('login-form-container').should('exist').and('be.visible');
 		cy.getBySel('sidebar-container').should('not.exist');

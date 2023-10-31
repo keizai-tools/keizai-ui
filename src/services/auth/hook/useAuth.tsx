@@ -117,6 +117,22 @@ export function useProvideAuth() {
 		return await Auth.forgotPasswordSubmit(username, code, newPassword);
 	}
 
+	const changePassword = async ({
+		oldPassword,
+		newPassword,
+	}: {
+		oldPassword: string;
+		newPassword: string;
+	}) => {
+		try {
+			const user = await Auth.currentAuthenticatedUser();
+			const data = await Auth.changePassword(user, oldPassword, newPassword);
+			return data;
+		} catch (error) {
+			throw new Error('Unable to change password, please try again');
+		}
+	};
+
 	return {
 		user,
 		isAuthenticated,
@@ -126,5 +142,6 @@ export function useProvideAuth() {
 		signOut,
 		forgotPassword,
 		forgotPasswordSubmit,
+		changePassword,
 	};
 }

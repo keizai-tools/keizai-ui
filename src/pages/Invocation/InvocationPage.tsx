@@ -45,7 +45,10 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 	});
 
 	return (
-		<div className="flex flex-col p-3 w-full gap-4">
+		<div
+			className="flex flex-col p-3 w-full gap-4"
+			data-test="invocation-section-container"
+		>
 			<Breadcrumb
 				contractName="Collection"
 				folderName={data.folder?.name || ''}
@@ -89,6 +92,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 								key={tab}
 								value={tab}
 								disabled={disabledTabs.includes(tab)}
+								data-test={`functions-tabs-${tab}`}
 							>
 								{tabs[tab]}
 							</TabsTrigger>
