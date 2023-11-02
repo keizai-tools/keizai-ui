@@ -141,7 +141,7 @@ function CreateAccount() {
 				)}
 			</Button>
 			<span
-				className="text-sm ml-2 text-white cursor-pointer"
+				className="text-sm ml-2 text-white cursor-pointer text-center"
 				data-test="register-form-footer-info"
 			>
 				Already have an account?{' '}

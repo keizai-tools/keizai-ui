@@ -24,7 +24,7 @@ const FunctionsTab = ({
 	return (
 		<>
 			{(methods?.length || 0) > 0 ? (
-				<div className="flex flex-col gap-2 mt-7">
+				<div className="flex flex-col gap-2 px-1 py-5">
 					<span className="text-primary text-md font-semibold">Function</span>
 
 					<Select

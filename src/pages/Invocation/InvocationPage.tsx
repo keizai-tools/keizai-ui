@@ -28,7 +28,7 @@ const tabs: Record<string, string> = {
 	authorization: 'Authorization',
 	preInvocateScript: 'Pre-invocate script',
 	tests: 'Tests',
-	events: 'Events',
+	events: 'Events tracker',
 };
 
 const disabledTabs = ['preInvocateScript', 'tests', 'events'];
