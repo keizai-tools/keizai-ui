@@ -38,10 +38,10 @@ const ContractInput = ({
 				<Select disabled>
 					<TooltipTrigger asChild>
 						<SelectTrigger
-							className="max-w-[200px] border-none"
+							className="max-w-[140px] border-none"
 							data-test="contract-input-network"
 						>
-							TESTNET
+							FUTURENET
 						</SelectTrigger>
 					</TooltipTrigger>
 				</Select>

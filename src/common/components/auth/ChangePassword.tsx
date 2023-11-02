@@ -103,14 +103,11 @@ function ChangePassword() {
 
 	return (
 		<form
-			className="md:w-1/2 p-10"
+			className="md:w-1/2 p-3"
 			onSubmit={handleSubmit(onSubmit)}
 			data-test="change-password-form-container"
 		>
-			<h1
-				className="text-primary font-bold text-4xl mb-7"
-				data-test="change-password-title"
-			>
+			<h1 className="font-bold text-xl mb-7" data-test="change-password-title">
 				Change Password
 			</h1>
 			{inputs.map((input: Input) => (

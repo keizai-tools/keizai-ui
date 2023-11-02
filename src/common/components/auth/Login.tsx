@@ -107,13 +107,13 @@ function Login() {
 				)}
 			</Button>
 			<span
-				className="text-sm ml-2 text-white cursor-pointer"
+				className="flex justify-center w-full text-center text-sm ml-2 text-white cursor-pointer"
 				data-test="login-form-footer-info"
 			>
 				Don't have an account?{' '}
 				<Link
 					to="/register"
-					className="text-primary"
+					className="text-primary ml-2"
 					data-test="login-form-footer-register-link"
 				>
 					Join now

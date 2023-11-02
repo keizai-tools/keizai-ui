@@ -33,8 +33,8 @@ function Sidebar() {
 				</div>
 			</div>
 			<div className="flex flex-col gap-2 mb-4">
-				<UserButton />
 				<ToggleThemeButton />
+				<UserButton />
 			</div>
 		</div>
 	);
