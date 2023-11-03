@@ -90,8 +90,15 @@ const ContractInput = ({
 						className="transition-all"
 						onClick={runInvocation}
 						type="button"
+						disabled={loading}
 					>
-						{!loading ? 'RUN' : <Loader className="animate-spin" size="14" />}
+						{!loading ? (
+							'RUN'
+						) : (
+							<div className="flex gap-1 items-center">
+								<Loader className="animate-spin" size="14" /> Running
+							</div>
+						)}
 					</Button>
 				)}
 			</div>
