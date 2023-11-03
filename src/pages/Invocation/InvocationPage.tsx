@@ -1,9 +1,13 @@
 import { Loader } from 'lucide-react';
+import React from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 
 import useInvocation from './useInvocation';
 
-import { useInvocationQuery } from '@/common/api/invocations';
+import {
+	useInvocationQuery,
+	useRunInvocationQuery,
+} from '@/common/api/invocations';
 import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
 import ContractInput from '@/common/components/Input/ContractInput';
 import AuthorizationTab from '@/common/components/Tabs/AuthorizationTab/AuthorizationTab';
@@ -40,13 +44,16 @@ export type InvocationForm = {
 };
 
 const InvocationPageContent = ({ data }: { data: Invocation }) => {
+	const [isRunning, setIsRunning] = React.useState(false);
+	const [responses, setResponses] = React.useState<string[]>([]);
+	const runInvocation = useRunInvocationQuery({ id: data.id });
 	const { handleLoadContract, isLoadingContract } = useInvocation({
 		invocationId: data.id ?? '',
 	});
 
 	return (
 		<div
-			className="flex flex-col p-3 w-full gap-4"
+			className="flex flex-col p-3 w-full gap-4 max-h-screen"
 			data-test="invocation-section-container"
 		>
 			<Breadcrumb
@@ -57,10 +64,16 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 			<ContractInput
 				defaultValue={data.contractId || ''}
 				loadContract={handleLoadContract}
-				runContract={() => {
-					// TODO Implement invocation
+				runInvocation={async () => {
+					setIsRunning(true);
+					const response = await runInvocation();
+
+					if (response) {
+						setResponses((prev) => [...prev, response]);
+						setIsRunning(false);
+					}
 				}}
-				loading={isLoadingContract}
+				loading={isLoadingContract || isRunning}
 			/>
 			<Tabs
 				defaultValue="functions"
@@ -116,7 +129,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 					/>
 				</TabsContent>
 			</Tabs>
-			<Terminal />
+			<Terminal responses={responses} />
 		</div>
 	);
 };
