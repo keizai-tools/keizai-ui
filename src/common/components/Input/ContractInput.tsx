@@ -12,12 +12,12 @@ const ContractInput = ({
 	defaultValue = '',
 	loading,
 	loadContract,
-	runContract,
+	runInvocation,
 }: {
 	defaultValue: string;
 	loading: boolean;
 	loadContract: (id: string) => Promise<void>;
-	runContract: (id: string) => void;
+	runInvocation: () => void;
 }) => {
 	const [contractId, setContractId] = React.useState(defaultValue);
 	const [showEditContractDialog, setShowEditContractDialog] =
@@ -88,7 +88,7 @@ const ContractInput = ({
 					<Button
 						data-test="contract-input-btn-load"
 						className="transition-all"
-						onClick={() => runContract('')}
+						onClick={runInvocation}
 						type="button"
 					>
 						{!loading ? 'RUN' : <Loader className="animate-spin" size="14" />}

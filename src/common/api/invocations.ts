@@ -17,6 +17,14 @@ export const useInvocationQuery = ({ id }: { id?: string }) => {
 	return query;
 };
 
+export const useRunInvocationQuery = ({ id }: { id?: string }) => {
+	const axios = useAxios();
+
+	return () => {
+		return axios?.get(`/invocation/${id}/run`).then((res) => res.data);
+	};
+};
+
 export const useCreateInvocationMutation = () => {
 	const params = useParams();
 	const queryClient = useQueryClient();
