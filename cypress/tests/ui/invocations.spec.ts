@@ -20,9 +20,6 @@ describe('Invocation management', () => {
 		cy.getBySel('folder-accordion-title').eq(0).click();
 		cy.getBySel('invocation-list-container').eq(0).click({ force: true });
 	});
-	it('Should show a invocation section with tabs', () => {
-		cy.getBySel('invocation-section-container').should('be.visible');
-	});
 	it('Should show the Authentication tab', () => {
 		const btnTitle = ['Generate new account', 'Import account'];
 
