@@ -66,7 +66,7 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
 				onConfirm={() => {
 					deleteInvocationMutation(invocation.id);
 					if (params?.invocationId === invocation.id) {
-						navigate('/', { replace: true });
+						navigate('collection/' + params?.collectionId, { replace: true });
 					}
 					setOpenDialog(null);
 				}}
@@ -79,7 +79,10 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
 				title="Edit invocation"
 				description="Let's name your invocation"
 				onEdit={({ name }) => {
-					editInvocationMutation({ id: invocation.id, name: name });
+					editInvocationMutation({
+						id: invocation.id,
+						name: name,
+					});
 					setOpenDialog(null);
 				}}
 				isLoading={isEditingInvocation}

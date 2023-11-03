@@ -26,13 +26,15 @@ const Folder = ({ folder }: { folder: IFolder }) => {
 	const [openDialog, setOpenDialog] = React.useState<'edit' | 'delete' | null>(
 		null,
 	);
-	const { mutate: deleteFolderMutation } = useDeleteFolderMutation();
+	const { mutate: deleteFolderMutation } = useDeleteFolderMutation({
+		collectionId: params?.collectionId,
+	});
 	const { mutate: editFolderMutation, isPending: isEditingFolder } =
-		useEditFolderMutation();
+		useEditFolderMutation({ collectionId: params?.collectionId });
 
 	React.useLayoutEffect(() => {
-		if (params?.invocationId) {
-			const folderHasInvocation = folder.invocations.find(
+		if (params?.invocationId && folder) {
+			const folderHasInvocation = folder.invocations?.find(
 				(invocation) => invocation.id === params?.invocationId,
 			);
 
@@ -40,7 +42,7 @@ const Folder = ({ folder }: { folder: IFolder }) => {
 				setIsOpen([folder.id]);
 			}
 		}
-	}, [folder.id, folder.invocations, params.invocationId]);
+	}, [folder, params?.invocationId]);
 
 	return (
 		<>
@@ -85,7 +87,7 @@ const Folder = ({ folder }: { folder: IFolder }) => {
 					</AccordionTrigger>
 					<AccordionContent>
 						<div className="flex flex-col justify-start text-slate-100">
-							{folder.invocations.map((invocation) => (
+							{folder.invocations?.map((invocation) => (
 								<InvocationListItem
 									key={invocation.id}
 									invocation={invocation}

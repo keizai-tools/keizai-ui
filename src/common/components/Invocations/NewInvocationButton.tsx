@@ -1,4 +1,5 @@
 import { PlusIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import NewEntityDialog from '../Entity/NewEntityDialog';
 import { Button } from '../ui/button';
@@ -7,6 +8,7 @@ import { useCreateInvocationMutation } from '@/common/api/invocations';
 
 const NewInvocationButton = ({ folderId }: { folderId: string }) => {
 	const { mutate, isPending } = useCreateInvocationMutation();
+	const navigate = useNavigate();
 
 	return (
 		<NewEntityDialog
@@ -14,8 +16,15 @@ const NewInvocationButton = ({ folderId }: { folderId: string }) => {
 			title="New invocation"
 			description="Let's name your invocation"
 			isLoading={isPending}
-			onSubmit={async ({ name }) => {
-				await mutate({ name, folderId });
+			onSubmit={({ name }) => {
+				mutate(
+					{ name, folderId },
+					{
+						onSuccess: (invocation) => {
+							navigate(`invocation/${invocation.id}`);
+						},
+					},
+				);
 			}}
 		>
 			<Button
