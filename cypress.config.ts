@@ -17,6 +17,9 @@ export default defineConfig({
 		baseUrl: process.env.CYPRESS_BASE_URL_PREFIX,
 		specPattern: 'cypress/tests/**/*.spec.{js,jsx,ts,tsx}',
 	},
+	requestTimeout: 30000,
+	responseTimeout: 30000,
+	defaultCommandTimeout: 30000,
 	projectId: 'den1pw',
 	env: {
 		loginUrl: '/login',

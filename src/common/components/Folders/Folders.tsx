@@ -5,12 +5,17 @@ import NewEntityDialog from '../Entity/NewEntityDialog';
 import { Button } from '../ui/button';
 import Folder from './Folder';
 
-import { useCreateFolderMutation, useFoldersQuery } from '@/common/api/folders';
+import {
+	useCreateFolderMutation,
+	useFoldersByCollectionIdQuery,
+} from '@/common/api/folders';
 
 const Folders = () => {
-	const { data, isLoading } = useFoldersQuery();
-	const { mutate, isPending } = useCreateFolderMutation();
 	const params = useParams();
+	const { data, isLoading } = useFoldersByCollectionIdQuery({
+		id: params.collectionId,
+	});
+	const { mutate, isPending } = useCreateFolderMutation();
 	const navigate = useNavigate();
 
 	return (

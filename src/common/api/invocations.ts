@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useParams } from 'react-router-dom';
 
 import useAxios from '../hooks/useAxios';
 import { Invocation } from '../types/invocation';
@@ -17,6 +18,7 @@ export const useInvocationQuery = ({ id }: { id?: string }) => {
 };
 
 export const useCreateInvocationMutation = () => {
+	const params = useParams();
 	const queryClient = useQueryClient();
 	const axios = useAxios();
 
@@ -34,29 +36,10 @@ export const useCreateInvocationMutation = () => {
 					folderId,
 				})
 				.then((res) => res.data),
-		// onMutate: async (invocation) => {
-		// 	await queryClient.cancelQueries({ queryKey: ['folders'] });
-
-		// 	const previousFolders = queryClient.getQueryData<Folder[]>(['folders']);
-
-		// 	queryClient.setQueryData(
-		// 		['folders'],
-		// 		previousFolders?.map((folder) => {
-		// 			if (folder.id === invocation.folderId) {
-		// 				return {
-		// 					...folder,
-		// 					invocations: [invocation, ...folder.invocations],
-		// 				};
-		// 			}
-		// 		}),
-		// 	);
-
-		// 	return {
-		// 		previousFolders,
-		// 	};
-		// },
 		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: ['folders'] });
+			queryClient.invalidateQueries({
+				queryKey: ['collection', params.collectionId, 'folders'],
+			});
 		},
 	});
 
@@ -64,6 +47,7 @@ export const useCreateInvocationMutation = () => {
 };
 
 export const useEditInvocationMutation = () => {
+	const params = useParams();
 	const queryClient = useQueryClient();
 	const axios = useAxios();
 
@@ -92,7 +76,9 @@ export const useEditInvocationMutation = () => {
 				.then((res) => res.data),
 		onSuccess: (_, { name, id }) => {
 			if (name) {
-				queryClient.invalidateQueries({ queryKey: ['folders'] });
+				queryClient.invalidateQueries({
+					queryKey: ['collection', params.collectionId, 'folders'],
+				});
 			} else {
 				queryClient.invalidateQueries({ queryKey: ['invocation', id] });
 			}
@@ -145,6 +131,7 @@ export const useEditSelectedMethodMutation = () => {
 };
 
 export const useDeleteInvocationMutation = () => {
+	const params = useParams();
 	const queryClient = useQueryClient();
 	const axios = useAxios();
 
@@ -152,7 +139,9 @@ export const useDeleteInvocationMutation = () => {
 		mutationFn: async (id: string) =>
 			axios?.delete(`/invocation/${id}`).then((res) => res.data),
 		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: ['folders'] });
+			queryClient.invalidateQueries({
+				queryKey: ['collection', params.collectionId, 'folders'],
+			});
 		},
 	});
 

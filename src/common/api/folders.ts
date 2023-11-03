@@ -14,6 +14,31 @@ export const useFoldersQuery = () => {
 	return query;
 };
 
+export const useFolderQuery = ({ id }: { id?: string }) => {
+	const axios = useAxios();
+
+	const query = useQuery<Folder>({
+		queryKey: ['folder', id],
+		queryFn: async () => axios?.get(`/folder/${id}`).then((res) => res.data),
+		enabled: !!id,
+	});
+
+	return query;
+};
+
+export const useFoldersByCollectionIdQuery = ({ id }: { id?: string }) => {
+	const axios = useAxios();
+
+	const query = useQuery<Folder[]>({
+		queryKey: ['collection', id, 'folders'],
+		queryFn: async () =>
+			axios?.get(`/collection/${id}/folders`).then((res) => res.data),
+		enabled: !!id,
+	});
+
+	return query;
+};
+
 export const useCreateFolderMutation = () => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
@@ -27,15 +52,21 @@ export const useCreateFolderMutation = () => {
 			collectionId: string;
 		}) =>
 			axios?.post('/folder', { name, collectionId }).then((res) => res.data),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ['folders'] });
+		onSuccess: (_, { collectionId }) => {
+			queryClient.invalidateQueries({
+				queryKey: ['collection', collectionId, 'folders'],
+			});
 		},
 	});
 
 	return mutation;
 };
 
-export const useDeleteFolderMutation = () => {
+export const useDeleteFolderMutation = ({
+	collectionId,
+}: {
+	collectionId?: string;
+}) => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
 
@@ -43,12 +74,18 @@ export const useDeleteFolderMutation = () => {
 		mutationFn: async (id: string) =>
 			axios?.delete(`/folder/${id}`).then((res) => res.data),
 		onMutate: async (id) => {
-			await queryClient.cancelQueries({ queryKey: ['folders'] });
+			await queryClient.cancelQueries({
+				queryKey: ['collection', collectionId, 'folders'],
+			});
 
-			const previousFolders = queryClient.getQueryData<Folder[]>(['folders']);
+			const previousFolders = queryClient.getQueryData<Folder[]>([
+				'collection',
+				collectionId,
+				'folders',
+			]);
 
 			queryClient.setQueryData(
-				['folders'],
+				['collection', collectionId, 'folders'],
 				previousFolders?.filter((folder) => folder.id !== id),
 			);
 
@@ -57,14 +94,20 @@ export const useDeleteFolderMutation = () => {
 			};
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: ['folders'] });
+			queryClient.invalidateQueries({
+				queryKey: ['collection', collectionId, 'folders'],
+			});
 		},
 	});
 
 	return mutation;
 };
 
-export const useEditFolderMutation = () => {
+export const useEditFolderMutation = ({
+	collectionId,
+}: {
+	collectionId?: string;
+}) => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
 
@@ -72,12 +115,18 @@ export const useEditFolderMutation = () => {
 		mutationFn: async ({ id, name }: { id: string; name: string }) =>
 			axios?.patch('/folder', { id, name }).then((res) => res.data),
 		onMutate: async ({ id, name }) => {
-			await queryClient.cancelQueries({ queryKey: ['folders'] });
+			await queryClient.cancelQueries({
+				queryKey: ['collection', collectionId, 'folders'],
+			});
 
-			const previousFolders = queryClient.getQueryData<Folder[]>(['folders']);
+			const previousFolders = queryClient.getQueryData<Folder[]>([
+				'collection',
+				collectionId,
+				'folders',
+			]);
 
 			queryClient.setQueryData(
-				['folders'],
+				['collection', collectionId, 'folders'],
 				previousFolders?.map((folder) =>
 					folder.id === id ? { ...folder, name } : folder,
 				),
@@ -88,7 +137,9 @@ export const useEditFolderMutation = () => {
 			};
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: ['folders'] });
+			queryClient.invalidateQueries({
+				queryKey: ['collection', collectionId, 'folders'],
+			});
 		},
 	});
 
