@@ -211,11 +211,11 @@ describe('Authentication page management', () => {
 				code: 'Code',
 				newPassword: 'New Password',
 				confirmPassword: 'Confirm New Password',
-				btnSubmit: 'Login',
+				btnSubmit: 'Save',
 				footer: {
 					info: 'Already have an account?',
 					link: {
-						title: 'Log In',
+						title: 'Login',
 						url: '/login',
 					},
 				},

@@ -11,7 +11,15 @@ import {
 	useUpdateCollectionMutation,
 } from '@/common/api/collections';
 
-const CollectionCard = ({ id, name }: { id: string; name: string }) => {
+const CollectionCard = ({
+	id,
+	name,
+	foldersCount = 0,
+}: {
+	id: string;
+	name: string;
+	foldersCount?: number;
+}) => {
 	const [activeDialog, setActiveDialog] = React.useState<
 		'edit' | 'delete' | null
 	>(null);
@@ -25,13 +33,18 @@ const CollectionCard = ({ id, name }: { id: string; name: string }) => {
 	};
 
 	return (
-		<div className="relative" data-test="collection-folder-container">
+		<div className="relative" data-test="collection-folder-container ">
 			<Button
 				variant="ghost"
-				className="p-6 flex justify-between items-start gap-4 border-solid border-2 rounded-lg border-primary h-[200px] w-[300px] font-bold"
+				className="p-6 flex flex-col justify-between items-start gap-4 border-solid border-2 rounded-lg border-primary h-[200px] w-[300px] font-bold"
 				onClick={() => navigate(`/collection/${id}`)}
 			>
 				<span>{name}</span>
+				<span className="text-slate-400 font-medium">
+					{foldersCount === 0
+						? 'No folders'
+						: `${foldersCount} ${foldersCount === 1 ? 'Folder' : 'Folders'}`}
+				</span>
 			</Button>
 			<div className="absolute right-5 top-6 text-white">
 				<MoreOptions

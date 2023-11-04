@@ -14,12 +14,12 @@ describe('Sidebar', () => {
 			.should('be.visible')
 			.and('have.attr', 'href', '/');
 		cy.getBySel('sidebar-btn-copy').should('exist').and('be.visible');
-		cy.getBySel('theme-dropdown-btn').should('exist').and('be.visible');
 		cy.getBySel('sidebar-btn-user').should('exist').and('be.visible');
 		cy.getBySel('user-dropdown-container').should('not.exist');
 		cy.getBySel('theme-dropdown-container').should('not.exist');
 	});
-	it('Should show a dropdown menu to change the theme', () => {
+	// We are remvoving the theme selector for now
+	it.skip('Should show a dropdown menu to change the theme', () => {
 		cy.getBySel('theme-dropdown-btn').click();
 
 		cy.getBySel('theme-dropdown-container').should('exist').and('be.visible');

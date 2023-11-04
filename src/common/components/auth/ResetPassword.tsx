@@ -171,7 +171,7 @@ function ResetPassword() {
 				data-test="forgot-password-btn-submit"
 				disabled={isPending}
 			>
-				Login
+				Save
 			</Button>
 			<span
 				className="text-sm ml-2 text-white cursor-pointer"
@@ -183,7 +183,7 @@ function ResetPassword() {
 					className="text-primary"
 					data-test="forgot-password-footer-link"
 				>
-					Log In
+					Login
 				</Link>
 			</span>
 		</form>

@@ -27,6 +27,7 @@ export default function Home() {
 							key={collection.id}
 							id={collection.id}
 							name={collection.name}
+							foldersCount={collection.folders.length ?? 0}
 						/>
 					))}
 					<CollectionPlaceholder />
