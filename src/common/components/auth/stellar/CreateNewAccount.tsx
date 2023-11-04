@@ -26,6 +26,9 @@ function CreateNewAccount({
 	const onCreateAccount = () => {
 		const keypair = createNewAccount();
 		if (keypair) {
+			fetch(
+				`https://friendbot-futurenet.stellar.org/?addr=${keypair.publicKey}`,
+			);
 			editKeys({ id: invocationId, ...keypair });
 		}
 	};

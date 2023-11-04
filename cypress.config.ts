@@ -22,9 +22,9 @@ export default defineConfig({
 	defaultCommandTimeout: 30000,
 	projectId: 'den1pw',
 	env: {
-		loginUrl: '/login',
-		registerUrl: '/register',
-		changePasswordUrl: '/change-password',
+		loginUrl: '/auth/login',
+		registerUrl: '/auth/register',
+		changePasswordUrl: '/auth/change-password',
 		apiUrl: process.env.VITE_URL_API_BASE,
 		apiAuth: '/auth',
 		cognitoEndpoint: process.env.VITE_AWS_COGNITO_ENDPOINT,

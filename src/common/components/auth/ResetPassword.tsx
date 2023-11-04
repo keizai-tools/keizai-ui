@@ -67,7 +67,7 @@ function ResetPassword() {
 
 	return (
 		<form
-			className="md:w-1/2"
+			className="w-full max-w-[500px]"
 			onSubmit={handleSubmit(onSubmit)}
 			data-test="forgot-password-form-container"
 		>
@@ -167,25 +167,27 @@ function ResetPassword() {
 			</div>
 			<Button
 				type="submit"
-				className="block w-full bg-primary dark:bg-primary mt-4 py-2 rounded-md text-black font-semibold mb-2"
+				className="block w-full mt-8 py-2 rounded-md text-black font-semibold mb-2"
 				data-test="forgot-password-btn-submit"
 				disabled={isPending}
 			>
 				Save
 			</Button>
-			<span
-				className="text-sm ml-2 text-white cursor-pointer"
+			<div
+				className="flex items-center ml-2"
 				data-test="forgot-password-footer-info"
 			>
-				Already have an account?{' '}
-				<Link
-					to="/login"
-					className="text-primary"
-					data-test="forgot-password-footer-link"
-				>
-					Login
-				</Link>
-			</span>
+				<span className="text-sm ">Already have an account?</span>
+				<Button variant="link" asChild>
+					<Link
+						to="/auth/login"
+						className="text-primary"
+						data-test="forgot-password-footer-link"
+					>
+						Login
+					</Link>
+				</Button>
+			</div>
 		</form>
 	);
 }

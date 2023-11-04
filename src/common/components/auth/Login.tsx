@@ -1,4 +1,4 @@
-import { User2, Loader2 } from 'lucide-react';
+import { Loader2, AtSign } from 'lucide-react';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link, redirect } from 'react-router-dom';
@@ -44,7 +44,7 @@ function Login() {
 
 	return (
 		<form
-			className="md:w-1/2"
+			className="w-full max-w-[500px] px-2 flex flex-col gap-1"
 			data-test="login-form-container"
 			onSubmit={handleSubmit(onSubmit)}
 		>
@@ -56,7 +56,7 @@ function Login() {
 			</h1>
 			<div className="flex flex-col mb-4">
 				<div className="flex items-center border-2 px-3 rounded-md bg-white">
-					<User2 className="h-5 w-5 text-gray-400" />
+					<AtSign className="h-5 w-5 text-gray-400" />
 					<Controller
 						control={control}
 						name="email"
@@ -72,9 +72,11 @@ function Login() {
 						)}
 					/>
 				</div>
-				{errors.email && <p className="text-red-500">{errors.email.message}</p>}
+				{errors.email && (
+					<p className="text-red-500 text-sm">{errors.email.message}</p>
+				)}
 			</div>
-			<div className="flex flex-col mb-4">
+			<div className="flex flex-col">
 				<Controller
 					control={control}
 					name="password"
@@ -84,17 +86,20 @@ function Login() {
 					)}
 				/>
 				{errors.password && (
-					<p className="text-red-500">{errors.password.message}</p>
+					<p className="text-red-500 text-sm">{errors.password.message}</p>
 				)}
 			</div>
 			{!errors.password && !errors.email && error && (
-				<p className="text-red-500 ml-4" data-test="login-form-error-message">
+				<p
+					className="text-red-500 text-sm"
+					data-test="login-form-error-message"
+				>
 					{error}
 				</p>
 			)}
 			<Button
 				type="submit"
-				className="w-full bg-primary dark:bg-primary mt-4 py-2 rounded-md text-black font-semibold mb-2"
+				className="w-full py-2 rounded-md text-black font-semibold mb-2 mt-8"
 				data-test="login-form-btn-submit"
 				disabled={isPending}
 			>
@@ -106,28 +111,32 @@ function Login() {
 					'Login'
 				)}
 			</Button>
-			<span
-				className="flex justify-center w-full text-center text-sm ml-2 text-white cursor-pointer"
-				data-test="login-form-footer-info"
-			>
-				Don't have an account?{' '}
-				<Link
-					to="/register"
-					className="text-primary ml-2"
-					data-test="login-form-footer-register-link"
+			<div className="flex justify-between items-center flex-wrap">
+				<span
+					className="text-center text-sm text-white"
+					data-test="login-form-footer-info"
 				>
-					Join now
-				</Link>
-			</span>
-			<p className="text-sm mt-2 cursor-pointer text-center">
-				<Link
-					to="/forgot-password"
-					className="text-primary "
-					data-test="login-form-footer-password-link"
-				>
-					Forgot your password?
-				</Link>
-			</p>
+					Don't have an account?
+					<Button variant="link" asChild>
+						<Link
+							to="/auth/register"
+							className="text-primary"
+							data-test="login-form-footer-register-link"
+						>
+							Join now
+						</Link>
+					</Button>
+				</span>
+				<Button variant="link" asChild>
+					<Link
+						to="/auth/forgot-password"
+						className="text-primary "
+						data-test="login-form-footer-password-link"
+					>
+						Forgot your password?
+					</Link>
+				</Button>
+			</div>
 		</form>
 	);
 }

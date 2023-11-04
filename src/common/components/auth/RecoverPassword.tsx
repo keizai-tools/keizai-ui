@@ -12,7 +12,7 @@ interface Username {
 	username: string;
 }
 
-function RecoveryPassword() {
+function RecoverPassword() {
 	const {
 		control,
 		handleSubmit,
@@ -27,7 +27,7 @@ function RecoveryPassword() {
 	const { mutate, isPending } = useMutation({
 		mutationFn: forgotPassword,
 		onSuccess: () => {
-			navigate('/reset-password');
+			navigate('/auth/reset-password');
 		},
 	});
 
@@ -37,7 +37,7 @@ function RecoveryPassword() {
 	};
 	return (
 		<form
-			className="md:w-1/2"
+			className="flex flex-col w-full max-w-[500px] px-2"
 			onSubmit={handleSubmit(onSubmit)}
 			data-test="recovery-password-form-container"
 		>
@@ -76,7 +76,7 @@ function RecoveryPassword() {
 			</div>
 			<Button
 				type="submit"
-				className="block w-full bg-primary dark:bg-primary mt-4 py-2 rounded-md text-black font-semibold mb-2"
+				className="mt-8 py-2 rounded-md text-black font-semibold mb-2"
 				data-test="recovery-password-btn-submit"
 				disabled={isPending}
 			>
@@ -86,4 +86,4 @@ function RecoveryPassword() {
 	);
 }
 
-export default RecoveryPassword;
+export default RecoverPassword;
