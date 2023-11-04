@@ -23,11 +23,11 @@ describe('Authentication page management', () => {
 				info: "Don't have an account?",
 				loginLink: {
 					title: 'Join now',
-					url: '/register',
+					url: '/auth/register',
 				},
 				passwordLink: {
 					title: 'Forgot your password?',
-					url: '/forgot-password',
+					url: '/auth/forgot-password',
 				},
 			},
 			errors: {
@@ -113,7 +113,7 @@ describe('Authentication page management', () => {
 			btnSubmit: 'Create',
 			footer: {
 				info: 'Already have an account?',
-				link: { title: 'Log in', url: '/login' },
+				link: { title: 'Login', url: '/auth/login' },
 			},
 			erros: {
 				emailInvalid: 'Invalid email address',
@@ -216,7 +216,7 @@ describe('Authentication page management', () => {
 					info: 'Already have an account?',
 					link: {
 						title: 'Login',
-						url: '/login',
+						url: '/auth/login',
 					},
 				},
 				erros: {

@@ -22,8 +22,8 @@ export default defineConfig({
 	defaultCommandTimeout: 30000,
 	projectId: 'den1pw',
 	env: {
-		loginUrl: '/login',
-		registerUrl: '/register',
+		loginUrl: '/auth/login',
+		registerUrl: '/auth/register',
 		changePasswordUrl: '/change-password',
 		apiUrl: process.env.VITE_URL_API_BASE,
 		apiAuth: '/auth',

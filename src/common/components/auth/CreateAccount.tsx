@@ -50,7 +50,7 @@ function CreateAccount() {
 	return (
 		<form
 			onSubmit={handleSubmit(onSubmit)}
-			className="flex flex-col md:w-1/2"
+			className="flex flex-col w-full max-w-[500px] px-2 gap-1"
 			data-test="register-form-container"
 		>
 			<h1
@@ -127,7 +127,7 @@ function CreateAccount() {
 			)}
 			<Button
 				type="submit"
-				className="w-full bg-primary dark:bg-primary mt-4 py-2 rounded-md text-black font-semibold mb-2"
+				className="w-full mt-8 py-2 rounded-md text-black font-semibold mb-2"
 				data-test="register-form-btn-submit"
 				disabled={isPending}
 			>
@@ -141,17 +141,15 @@ function CreateAccount() {
 				)}
 			</Button>
 			<span
-				className="text-sm ml-2 text-white cursor-pointer text-center"
+				className="text-sm text-white"
 				data-test="register-form-footer-info"
 			>
-				Already have an account?{' '}
-				<Link
-					to="/login"
-					className="text-primary"
-					data-test="register-form-footer-link"
-				>
-					Log in
-				</Link>
+				Already have an account?
+				<Button variant="link" asChild>
+					<Link to="/auth/login" data-test="register-form-footer-link">
+						Login
+					</Link>
+				</Button>
 			</span>
 		</form>
 	);
