@@ -38,7 +38,9 @@ const ParametersFormContent = ({ data }: { data: Method }) => {
 					id: data.id,
 					parameters: value.map((param: Parameter) => ({
 						name: param.name,
-						value: param.value,
+						value: isNaN(Number(param.value))
+							? param.value
+							: Number(param.value),
 					})),
 				});
 				reset({

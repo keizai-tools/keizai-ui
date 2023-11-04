@@ -103,7 +103,7 @@ function ChangePassword() {
 
 	return (
 		<form
-			className="md:w-1/2 p-3"
+			className="w-full max-w-[500px] p-3"
 			onSubmit={handleSubmit(onSubmit)}
 			data-test="change-password-form-container"
 		>
