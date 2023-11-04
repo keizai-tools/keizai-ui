@@ -53,11 +53,11 @@ const ContractInput = ({
 			</Tooltip>
 			<div className="flex w-full group">
 				{defaultValue ? (
-					<div className="flex items-center justify-between flex-1">
+					<div className="flex items-center justify-between flex-1 w-full relative">
 						<span>{defaultValue}</span>
 						<Button
 							variant="link"
-							className="invisible group-hover:visible"
+							className="invisible group-hover:visible absolute right-0 bg-background"
 							onClick={() => {
 								setShowEditContractDialog(true);
 							}}
@@ -78,11 +78,12 @@ const ContractInput = ({
 					<Button
 						data-test="contract-input-btn-load"
 						className="transition-all"
+						disabled={loading}
 						onClick={() => {
 							handleUpdateContractId();
 						}}
 					>
-						{!loading ? 'SAVE' : <Loader className="animate-spin" size="14" />}
+						{!loading ? 'LOAD' : <Loader className="animate-spin" size="14" />}
 					</Button>
 				) : (
 					<Button
