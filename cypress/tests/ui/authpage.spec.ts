@@ -215,7 +215,7 @@ describe('Authentication page management', () => {
 				footer: {
 					info: 'Already have an account?',
 					link: {
-						title: 'Log In',
+						title: 'Login',
 						url: '/login',
 					},
 				},
