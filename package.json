@@ -1,8 +1,8 @@
 {
-	"name": "template-ui-react-vite",
-	"description": "Template for building Web Apps using React + Vite.",
+	"name": "keizai-ui",
+	"description": "Postman-inspired tool that takes Soroban smart contract testing to the next level.",
 	"private": true,
-	"version": "0.0.0",
+	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
 		"start:prod": "vite preview",

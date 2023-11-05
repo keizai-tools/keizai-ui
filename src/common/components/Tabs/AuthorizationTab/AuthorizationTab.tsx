@@ -42,6 +42,7 @@ const AuthorizationTab = ({
 						{...register('secretKey')}
 						placeholder="S . . ."
 						value={defaultKeys.secretKey || ''}
+						className="pointer-events-none"
 					/>
 				</div>
 				<div className="flex flex-col gap-1" data-test="auth-tab-public-key">
@@ -50,6 +51,7 @@ const AuthorizationTab = ({
 						{...register('publicKey')}
 						placeholder="G . . ."
 						value={defaultKeys.publicKey || ''}
+						className="pointer-events-none"
 					/>
 				</div>
 			</div>

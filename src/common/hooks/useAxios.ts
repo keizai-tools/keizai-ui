@@ -2,6 +2,15 @@ import axios from 'axios';
 
 import { useAuth } from '@/services/auth/hook/useAuth';
 
+export type ApiError = {
+	message: string;
+	status: number;
+};
+
+export function isApiError(error: any): error is ApiError {
+	return !!(error as ApiError).message;
+}
+
 const useAxios = () => {
 	const { user } = useAuth();
 

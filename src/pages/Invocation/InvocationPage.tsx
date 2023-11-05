@@ -1,4 +1,5 @@
-import { Loader } from 'lucide-react';
+import axios, { AxiosError } from 'axios';
+import { AlertCircle, Loader } from 'lucide-react';
 import React from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 
@@ -25,6 +26,7 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from '@/common/components/ui/tooltip';
+import { ApiError, isApiError } from '@/common/hooks/useAxios';
 import { Invocation } from '@/common/types/invocation';
 
 const tabs: Record<string, string> = {
@@ -45,11 +47,17 @@ export type InvocationForm = {
 
 const InvocationPageContent = ({ data }: { data: Invocation }) => {
 	const [isRunning, setIsRunning] = React.useState(false);
-	const [responses, setResponses] = React.useState<string[]>([]);
+	const [responses, setResponses] = React.useState<
+		{ isError: boolean; message: string }[]
+	>([]);
 	const runInvocation = useRunInvocationQuery({ id: data.id });
 	const { handleLoadContract, isLoadingContract } = useInvocation({
 		invocationId: data.id ?? '',
 	});
+
+	const isMissingKeys = React.useMemo(() => {
+		return !data.publicKey || !data.secretKey;
+	}, [data.publicKey, data.secretKey]);
 
 	return (
 		<div
@@ -66,10 +74,33 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 				loadContract={handleLoadContract}
 				runInvocation={async () => {
 					setIsRunning(true);
-					const response = await runInvocation();
+					try {
+						const response = await runInvocation();
 
-					if (response) {
-						setResponses((prev) => [...prev, response]);
+						if (response) {
+							setResponses((prev) => [
+								...prev,
+								{ isError: false, message: response },
+							]);
+						}
+					} catch (error) {
+						if (axios.isAxiosError(error)) {
+							const axiosError = error as AxiosError;
+
+							if (isApiError(axiosError.response?.data)) {
+								axiosError.response?.data.message;
+								setResponses((prev) => [
+									...prev,
+									{
+										isError: true,
+										message:
+											(axiosError.response?.data as ApiError).message ||
+											'There was a problem running the invocation',
+									},
+								]);
+							}
+						}
+					} finally {
 						setIsRunning(false);
 					}
 				}}
@@ -95,6 +126,27 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 									</TooltipTrigger>
 									<TooltipContent>
 										<p>Coming soon</p>
+									</TooltipContent>
+								</Tooltip>
+							);
+						}
+
+						if (tab === 'authorization' && isMissingKeys) {
+							return (
+								<Tooltip delayDuration={0}>
+									<TooltipTrigger>
+										<TabsTrigger
+											key={tab}
+											value={tab}
+											disabled={disabledTabs.includes(tab)}
+											data-test={`functions-tabs-${tab}`}
+										>
+											{tabs[tab]}
+											<AlertCircle className="text-red-500 ml-2" size={16} />
+										</TabsTrigger>
+									</TooltipTrigger>
+									<TooltipContent>
+										<p>Missing keys</p>
 									</TooltipContent>
 								</Tooltip>
 							);
@@ -129,7 +181,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 					/>
 				</TabsContent>
 			</Tabs>
-			<Terminal responses={responses} />
+			<Terminal entries={responses} />
 		</div>
 	);
 };
