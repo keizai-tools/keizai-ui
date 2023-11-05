@@ -1,6 +1,7 @@
 import { Copy } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
+import { Badge } from '../ui/badge';
 import UserButton from './UserButton';
 
 function Sidebar() {
@@ -19,6 +20,7 @@ function Sidebar() {
 					alt="Keizai Logo"
 					data-test="sidebar-img"
 				/>
+				<Badge className="mt-2">BETA</Badge>
 				<div className="flex flex-col mt-4 items-center">
 					<Link
 						to="/"
