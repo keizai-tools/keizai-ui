@@ -24,6 +24,8 @@ export default defineConfig({
 	env: {
 		loginUrl: '/auth/login',
 		registerUrl: '/auth/register',
+		forgotPasswordUrl: '/auth/forgot-password',
+		resetPasswordUrl: '/auth/reset-password',
 		changePasswordUrl: '/change-password',
 		apiUrl: process.env.VITE_URL_API_BASE,
 		apiAuth: '/auth',
