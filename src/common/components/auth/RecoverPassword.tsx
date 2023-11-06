@@ -1,18 +1,19 @@
-import { useMutation } from '@tanstack/react-query';
-import { AtSign } from 'lucide-react';
+import { AtSign, Loader2 } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 
+import ErrorMessage from '../Form/ErrorMessage';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
-import { useAuth } from '@/services/auth/hook/useAuth';
+import { useRecoverPasswordMutation } from '@/services/auth/api/cognito';
+import { AUTH_VALIDATIONS } from '@/services/auth/validators/authResponse';
 
 interface Username {
 	username: string;
 }
 
 function RecoverPassword() {
+	const { mutate, isPending } = useRecoverPasswordMutation();
 	const {
 		control,
 		handleSubmit,
@@ -22,19 +23,12 @@ function RecoverPassword() {
 			username: '',
 		},
 	});
-	const navigate = useNavigate();
-	const { forgotPassword } = useAuth();
-	const { mutate, isPending } = useMutation({
-		mutationFn: forgotPassword,
-		onSuccess: () => {
-			navigate('/auth/reset-password');
-		},
-	});
 
 	const onSubmit = async (values: Username) => {
 		const { username } = values;
 		await mutate(username);
 	};
+
 	return (
 		<form
 			className="flex flex-col w-full max-w-[500px] px-2"
@@ -53,7 +47,13 @@ function RecoverPassword() {
 					<Controller
 						control={control}
 						name="username"
-						rules={{ required: 'Email is required' }}
+						rules={{
+							required: AUTH_VALIDATIONS.EMAIL_REQUIRED,
+							pattern: {
+								value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+								message: AUTH_VALIDATIONS.EMAIL_INVALID,
+							},
+						}}
 						render={({ field }) => (
 							<Input
 								className="pl-2 border-none bg-white focus-visible:ring-0 text-black"
@@ -66,12 +66,11 @@ function RecoverPassword() {
 					/>
 				</div>
 				{errors.username && (
-					<span
-						className="text-sm text-red-500 mt-2 pl-4"
-						data-test="recovery-password-error"
-					>
-						{errors.username.message}
-					</span>
+					<ErrorMessage
+						message={errors.username.message as string}
+						testName="recovery-password-error"
+						styles="text-sm"
+					/>
 				)}
 			</div>
 			<Button
@@ -80,7 +79,14 @@ function RecoverPassword() {
 				data-test="recovery-password-btn-submit"
 				disabled={isPending}
 			>
-				{isPending ? 'Sending...' : 'Send code'}
+				{isPending ? (
+					<>
+						<Loader2 className="mr-2 h-4 w-4 animate-spin text-black" />
+						<span>Sending...</span>
+					</>
+				) : (
+					'Send code'
+				)}
 			</Button>
 		</form>
 	);

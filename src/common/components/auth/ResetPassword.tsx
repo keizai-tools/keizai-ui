@@ -1,18 +1,15 @@
-import { useMutation } from '@tanstack/react-query';
-import { ChevronRightSquare } from 'lucide-react';
-import React from 'react';
+import { ChevronRightSquare, Loader2 } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
+import AlertError from '../Form/AlertError';
+import ErrorMessage from '../Form/ErrorMessage';
 import PasswordInput from '../Input/PasswordInput';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { useToast } from '../ui/use-toast';
 
-import { CognitoError } from '@/services/auth/error/cognitoError';
-import { useAuth } from '@/services/auth/hook/useAuth';
+import { useResetPasswordMutation } from '@/services/auth/api/cognito';
 import { AUTH_VALIDATIONS } from '@/services/auth/validators/authResponse';
-import { exceptionsCognitoErrors } from '@/services/auth/validators/exceptionsCognitoErrors';
 
 export interface IPasswordReset {
 	code: string;
@@ -21,10 +18,9 @@ export interface IPasswordReset {
 }
 
 function ResetPassword() {
-	const { toast } = useToast();
-	const navigate = useNavigate();
-	const [error, setError] = React.useState('');
-	const [loading, setLoading] = React.useState(false);
+	const { mutation, error, loading, setLoading } = useResetPasswordMutation();
+	const { mutate, isPending, isError } = mutation;
+
 	const {
 		control,
 		watch,
@@ -35,27 +31,6 @@ function ResetPassword() {
 			code: '',
 			newPassword: '',
 			confirmPassword: '',
-		},
-	});
-	const { forgotPasswordSubmit } = useAuth();
-	const { mutate, isPending, isError } = useMutation({
-		mutationFn: forgotPasswordSubmit,
-		onSuccess: () => {
-			toast({
-				title: 'Password changed',
-				description: 'You can now log in with your new password',
-			});
-			setLoading(false);
-			setTimeout(() => {
-				navigate('login');
-			}, 3000);
-		},
-		onError: (error: CognitoError) => {
-			const errorMessage = exceptionsCognitoErrors(error as CognitoError);
-			if (errorMessage) {
-				setError(errorMessage);
-			}
-			setLoading(false);
 		},
 	});
 
@@ -83,7 +58,13 @@ function ResetPassword() {
 					<Controller
 						control={control}
 						name="code"
-						rules={{ required: AUTH_VALIDATIONS.CODE_REQUIRED }}
+						rules={{
+							required: AUTH_VALIDATIONS.CODE_REQUIRED,
+							pattern: {
+								value: /^\d{6}$/,
+								message: AUTH_VALIDATIONS.CODE_INVALID,
+							},
+						}}
 						render={({ field }) => (
 							<Input
 								className="pl-2 border-none bg-white focus-visible:ring-0 text-black"
@@ -96,9 +77,11 @@ function ResetPassword() {
 					/>
 				</div>
 				{errors.code && (
-					<span className="text-sm text-red-500 mt-1">
-						{errors.code.message}
-					</span>
+					<ErrorMessage
+						message={errors.code.message as string}
+						testName="forgot-password-code-error"
+						styles="text-sm"
+					/>
 				)}
 			</div>
 			<div className="flex flex-col mb-4">
@@ -106,7 +89,7 @@ function ResetPassword() {
 					control={control}
 					name="newPassword"
 					rules={{
-						required: 'Password is required',
+						required: AUTH_VALIDATIONS.NEW_PASSWORD_REQUIRED,
 						pattern: {
 							value:
 								/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,255}$/,
@@ -122,14 +105,12 @@ function ResetPassword() {
 					)}
 				/>
 				{errors.newPassword && (
-					<p className="ml-4">
-						<span
-							className="text-sm text-red-500 mt-1"
-							data-test="forgot-password-error-message"
-						>
-							{errors.newPassword.message}
-						</span>
-					</p>
+					<ErrorMessage
+						message={errors.newPassword.message as string}
+						testName="new-password-error-message"
+						styles="text-sm"
+						type="password"
+					/>
 				)}
 			</div>
 			<div className="flex flex-col mb-4">
@@ -154,24 +135,34 @@ function ResetPassword() {
 					)}
 				/>
 				{errors.confirmPassword && (
-					<p
-						className="text-sm text-red-500 mt-1 pl-4"
-						data-test="confirm-password-reset-error"
-					>
-						{errors.confirmPassword.message}
-					</p>
+					<ErrorMessage
+						message={errors.confirmPassword.message as string}
+						testName="confirm-password-reset-error"
+						styles="text-sm"
+					/>
 				)}
 				{isError && !loading && error && (
-					<span className="text-sm text-red-500 mt-2 pl-4">{error}</span>
+					<AlertError
+						title="Reset password failed"
+						message={error}
+						testName="forgot-password-form-error"
+					/>
 				)}
 			</div>
 			<Button
 				type="submit"
-				className="block w-full mt-8 py-2 rounded-md text-black font-semibold mb-2"
+				className="w-full mt-8 py-2 rounded-md text-black font-semibold mb-2"
 				data-test="forgot-password-btn-submit"
 				disabled={isPending}
 			>
-				Save
+				{isPending ? (
+					<>
+						<Loader2 className="mr-2 h-4 w-4 animate-spin text-black" />
+						<span>Saving...</span>
+					</>
+				) : (
+					'Save'
+				)}
 			</Button>
 			<div
 				className="flex items-center ml-2"
