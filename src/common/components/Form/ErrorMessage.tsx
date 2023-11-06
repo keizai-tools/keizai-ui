@@ -24,7 +24,7 @@ function ErrorMessage({ message, styles, testName, type }: PropsErrorMessage) {
 				<AlertCircle className="h-4 w-4" />
 				{message}
 			</p>
-			{type === 'password' && (
+			{type === 'password' && !message.includes('required') && (
 				<ul
 					className="text-sm text-red-500 ml-12"
 					data-test="password-error-requeriment"
