@@ -2,6 +2,7 @@ import { Auth } from '@aws-amplify/auth';
 import React from 'react';
 
 import { User } from '../domain/user';
+import { FORGOT_PASSWORD_RESPONSE } from '../validators/authResponse';
 
 import useAxios from '@/common/hooks/useAxios';
 import { AuthContext } from '@/providers/AuthProvider';
@@ -99,7 +100,7 @@ export function useProvideAuth() {
 				});
 			}
 		} catch (err) {
-			throw new Error('Cannot send code, please try again');
+			throw new Error(FORGOT_PASSWORD_RESPONSE.CODE_DELIVERY_FAILURE);
 		}
 	}
 
@@ -124,13 +125,9 @@ export function useProvideAuth() {
 		oldPassword: string;
 		newPassword: string;
 	}) => {
-		try {
-			const user = await Auth.currentAuthenticatedUser();
-			const data = await Auth.changePassword(user, oldPassword, newPassword);
-			return data;
-		} catch (error) {
-			throw new Error('Unable to change password, please try again');
-		}
+		const user = await Auth.currentAuthenticatedUser();
+		const data = await Auth.changePassword(user, oldPassword, newPassword);
+		return data;
 	};
 
 	return {
