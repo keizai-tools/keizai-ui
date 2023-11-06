@@ -1,48 +1,31 @@
-import { useMutation } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
 import { AtSign, Loader2 } from 'lucide-react';
-import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
+import AlertError from '../Form/AlertError';
+import ErrorMessage from '../Form/ErrorMessage';
 import PasswordInput from '../Input/PasswordInput';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { useToast } from '../ui/use-toast';
 
+import { useCreateAccountMutation } from '@/services/auth/api/cognito';
 import { User } from '@/services/auth/domain/user';
-import { useAuth } from '@/services/auth/hook/useAuth';
 import { AUTH_VALIDATIONS } from '@/services/auth/validators/authResponse';
 
 function CreateAccount() {
-	const { toast } = useToast();
-	const [error, setError] = React.useState<string>('');
 	const {
 		control,
 		handleSubmit,
-		formState: { errors, isDirty },
+		formState: { errors },
 	} = useForm({
 		defaultValues: {
 			email: '',
 			password: '',
 		},
 	});
-	const { signUp } = useAuth();
-	const { mutate, isPending, isError } = useMutation({
-		mutationFn: signUp,
-		onSuccess: () => {
-			toast({
-				title: 'Account created',
-				description: 'Please verify your email',
-			});
-			setError('');
-		},
-		onError: (error: AxiosError<Error>) => {
-			if (error.response) {
-				setError(error.response.data.message);
-			}
-		},
-	});
+	const { mutation, error } = useCreateAccountMutation();
+	const { mutate, isPending } = mutation;
+
 	const onSubmit = async (values: User) => {
 		await mutate(values);
 	};
@@ -84,12 +67,11 @@ function CreateAccount() {
 					/>
 				</div>
 				{errors.email && (
-					<span
-						className="text-sm text-red-500 ml-4 mt-1"
-						data-test="register-form-email-error"
-					>
-						{errors.email.message}
-					</span>
+					<ErrorMessage
+						message={errors.email.message as string}
+						testName="register-form-email-error"
+						styles="text-sm"
+					/>
 				)}
 			</div>
 			<div>
@@ -97,7 +79,7 @@ function CreateAccount() {
 					control={control}
 					name="password"
 					rules={{
-						required: 'Password is required',
+						required: AUTH_VALIDATIONS.PASSWORD_REQUIRED,
 						pattern: {
 							value:
 								/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,255}$/,
@@ -107,23 +89,20 @@ function CreateAccount() {
 					render={({ field }) => <PasswordInput {...field} />}
 				/>
 				{errors.password && (
-					<p className="ml-4">
-						<span
-							className="text-sm text-red-500 mt-1"
-							data-test="register-form-password-error"
-						>
-							{errors.password.message}
-						</span>
-					</p>
+					<ErrorMessage
+						message={errors.password.message as string}
+						testName="register-form-password-error"
+						styles="text-sm"
+						type="password"
+					/>
 				)}
 			</div>
-			{isError && isDirty && (
-				<span
-					className=" text-red-500 mt-2 ml-4"
-					data-test="register-form-create-error"
-				>
-					{error}
-				</span>
+			{!errors.email && !errors.password && error && (
+				<AlertError
+					title="Create account failed"
+					message={error}
+					testName="register-form-create-error"
+				/>
 			)}
 			<Button
 				type="submit"
