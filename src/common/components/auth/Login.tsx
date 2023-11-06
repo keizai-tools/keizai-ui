@@ -1,17 +1,16 @@
 import { Loader2, AtSign } from 'lucide-react';
-import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Link, redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
+import AlertError from '../Form/AlertError';
+import ErrorMessage from '../Form/ErrorMessage';
 import PasswordInput from '../Input/PasswordInput';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
+import { useLoginCognitoMutation } from '@/services/auth/api/cognito';
 import { User } from '@/services/auth/domain/user';
-import { CognitoError } from '@/services/auth/error/cognitoError';
-import { useAuth } from '@/services/auth/hook/useAuth';
 import { AUTH_VALIDATIONS } from '@/services/auth/validators/authResponse';
-import { exceptionsCognitoErrors } from '@/services/auth/validators/exceptionsCognitoErrors';
 
 function Login() {
 	const {
@@ -24,22 +23,10 @@ function Login() {
 			password: '',
 		},
 	});
-	const [error, setError] = React.useState('');
-	const [isPending, setIsPending] = React.useState(false);
-	const { signIn } = useAuth();
+	const { error, isPending, onLoginSubmit } = useLoginCognitoMutation();
 
 	const onSubmit = async (values: User) => {
-		try {
-			setIsPending(true);
-			await signIn(values);
-			redirect('/');
-		} catch (error) {
-			const errorMessage = exceptionsCognitoErrors(error as CognitoError);
-			if (errorMessage) {
-				setError(errorMessage);
-			}
-			setIsPending(false);
-		}
+		await onLoginSubmit(values);
 	};
 
 	return (
@@ -60,7 +47,13 @@ function Login() {
 					<Controller
 						control={control}
 						name="email"
-						rules={{ required: AUTH_VALIDATIONS.EMAIL_REQUIRED }}
+						rules={{
+							required: AUTH_VALIDATIONS.EMAIL_REQUIRED,
+							pattern: {
+								value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+								message: AUTH_VALIDATIONS.EMAIL_INVALID,
+							},
+						}}
 						render={({ field }) => (
 							<Input
 								className="pl-2 border-none bg-white focus-visible:ring-0 text-black"
@@ -73,29 +66,44 @@ function Login() {
 					/>
 				</div>
 				{errors.email && (
-					<p className="text-red-500 text-sm">{errors.email.message}</p>
+					<ErrorMessage
+						message={errors.email.message as string}
+						testName="login-form-email-error-message"
+						styles="text-sm"
+					/>
 				)}
 			</div>
 			<div className="flex flex-col">
 				<Controller
 					control={control}
 					name="password"
-					rules={{ required: AUTH_VALIDATIONS.PASSWORD_REQUIRED }}
+					rules={{
+						required: AUTH_VALIDATIONS.PASSWORD_REQUIRED,
+						pattern: {
+							value:
+								/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,255}$/,
+							message: AUTH_VALIDATIONS.PASSWORD_INVALID,
+						},
+					}}
 					render={({ field }) => (
 						<PasswordInput value={field.value} onChange={field.onChange} />
 					)}
 				/>
 				{errors.password && (
-					<p className="text-red-500 text-sm">{errors.password.message}</p>
+					<ErrorMessage
+						message={errors.password.message as string}
+						testName="login-form-password-error-message"
+						styles="text-sm"
+						type="password"
+					/>
 				)}
 			</div>
 			{!errors.password && !errors.email && error && (
-				<p
-					className="text-red-500 text-sm"
-					data-test="login-form-error-message"
-				>
-					{error}
-				</p>
+				<AlertError
+					title="Login failed"
+					message={error}
+					testName="login-form-error-message"
+				/>
 			)}
 			<Button
 				type="submit"
@@ -106,6 +114,7 @@ function Login() {
 				{isPending ? (
 					<>
 						<Loader2 className="mr-2 h-4 w-4 animate-spin text-black" />
+						<span>Please wait...</span>
 					</>
 				) : (
 					'Login'
