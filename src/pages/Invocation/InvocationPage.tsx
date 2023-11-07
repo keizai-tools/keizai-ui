@@ -1,14 +1,10 @@
-import axios, { AxiosError } from 'axios';
 import { AlertCircle, Loader } from 'lucide-react';
 import React from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 
 import useInvocation from './useInvocation';
 
-import {
-	useInvocationQuery,
-	useRunInvocationQuery,
-} from '@/common/api/invocations';
+import { useInvocationQuery } from '@/common/api/invocations';
 import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
 import ContractInput from '@/common/components/Input/ContractInput';
 import AuthorizationTab from '@/common/components/Tabs/AuthorizationTab/AuthorizationTab';
@@ -26,7 +22,6 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from '@/common/components/ui/tooltip';
-import { ApiError, isApiError } from '@/common/hooks/useAxios';
 import { Invocation } from '@/common/types/invocation';
 
 const tabs: Record<string, string> = {
@@ -46,12 +41,13 @@ export type InvocationForm = {
 };
 
 const InvocationPageContent = ({ data }: { data: Invocation }) => {
-	const [isRunning, setIsRunning] = React.useState(false);
-	const [responses, setResponses] = React.useState<
-		{ isError: boolean; message: string }[]
-	>([]);
-	const runInvocation = useRunInvocationQuery({ id: data.id });
-	const { handleLoadContract, isLoadingContract } = useInvocation({
+	const {
+		handleLoadContract,
+		isLoadingContract,
+		contractResponses,
+		handleRunInvocation,
+		isRunningInvocation,
+	} = useInvocation({
 		invocationId: data.id ?? '',
 	});
 
@@ -72,39 +68,8 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 			<ContractInput
 				defaultValue={data.contractId || ''}
 				loadContract={handleLoadContract}
-				runInvocation={async () => {
-					setIsRunning(true);
-					try {
-						const response = await runInvocation();
-
-						if (response) {
-							setResponses((prev) => [
-								...prev,
-								{ isError: false, message: response },
-							]);
-						}
-					} catch (error) {
-						if (axios.isAxiosError(error)) {
-							const axiosError = error as AxiosError;
-
-							if (isApiError(axiosError.response?.data)) {
-								axiosError.response?.data.message;
-								setResponses((prev) => [
-									...prev,
-									{
-										isError: true,
-										message:
-											(axiosError.response?.data as ApiError).message ||
-											'There was a problem running the invocation',
-									},
-								]);
-							}
-						}
-					} finally {
-						setIsRunning(false);
-					}
-				}}
-				loading={isLoadingContract || isRunning}
+				runInvocation={handleRunInvocation}
+				loading={isLoadingContract || isRunningInvocation}
 			/>
 			<Tabs
 				defaultValue="functions"
@@ -181,7 +146,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 					/>
 				</TabsContent>
 			</Tabs>
-			<Terminal entries={responses} />
+			<Terminal entries={contractResponses} />
 		</div>
 	);
 };
