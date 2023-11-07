@@ -32,6 +32,7 @@ describe('Change password', () => {
 		cy.loginByCognitoApi();
 		cy.getBySel('sidebar-btn-user').click();
 		cy.getBySel('user-dropdown-change-password').click();
+		cy.getBySel('change-password-form-container').click();
 		cy.url().should('include', `${Cypress.env('changePasswordUrl')}`);
 	});
 	it('Should show a change password form', () => {
@@ -68,7 +69,6 @@ describe('Change password', () => {
 			.and('have.text', AUTH_VALIDATIONS.CONFIRM_PASSWORD_REQUIRED);
 	});
 	it('Should show an error message when old password and new password are invalid', () => {
-		cy.getBySel('change-password-form-container').click();
 		cy.getBySel('form-input-password').eq(0).type('test0');
 		cy.getBySel('form-input-password').eq(1).type('test0');
 		cy.getBySel('change-password-btn-submit').click();
@@ -82,7 +82,6 @@ describe('Change password', () => {
 		cy.getBySel('password-error-requeriment').eq(1).should('be.visible');
 	});
 	it('Should show an error message when passwords do not match', () => {
-		cy.getBySel('change-password-form-container').click();
 		cy.getBySel('form-input-password').eq(1).type('test0');
 		cy.getBySel('form-input-password').eq(2).type('test1');
 		cy.getBySel('change-password-btn-submit').click();
@@ -91,7 +90,6 @@ describe('Change password', () => {
 		);
 	});
 	it('Should show an error message in an alert for the exception InvalidPasswordException', () => {
-		cy.getBySel('change-password-form-container').click();
 		cy.getBySel('form-input-password').eq(0).type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
@@ -114,7 +112,6 @@ describe('Change password', () => {
 			.and('have.text', CHANGE_PASSWORD_RESPONSE.INVALID_PASSWORD);
 	});
 	it('Should show an error message in an alert for the exception NotAuthorizedException', () => {
-		cy.getBySel('change-password-form-container').click();
 		cy.getBySel('form-input-password').eq(0).type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
@@ -137,7 +134,6 @@ describe('Change password', () => {
 			.and('have.text', CHANGE_PASSWORD_RESPONSE.NOT_AUTHORIZED);
 	});
 	it('Should show an error message in an alert for the exception PasswordResetRequiredException', () => {
-		cy.getBySel('change-password-form-container').click();
 		cy.getBySel('form-input-password').eq(0).type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
@@ -160,7 +156,6 @@ describe('Change password', () => {
 			.and('have.text', CHANGE_PASSWORD_RESPONSE.PASSWORD_RESET_REQUIRED);
 	});
 	it('Should show an error message in an alert for the exception UserNotConfirmedException', () => {
-		cy.getBySel('change-password-form-container').click();
 		cy.getBySel('form-input-password').eq(0).type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
@@ -183,7 +178,6 @@ describe('Change password', () => {
 			.and('have.text', CHANGE_PASSWORD_RESPONSE.USER_NOT_CONFIRMED);
 	});
 	it('Should show an error message in an alert for the exception UserNotFoundException', () => {
-		cy.getBySel('change-password-form-container').click();
 		cy.getBySel('form-input-password').eq(0).type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
@@ -206,7 +200,6 @@ describe('Change password', () => {
 			.and('have.text', CHANGE_PASSWORD_RESPONSE.USER_NOT_FOUND);
 	});
 	it('Should show a toast with an error message for the exception InternalErrorException', () => {
-		cy.getBySel('change-password-form-container').click();
 		cy.getBySel('form-input-password').eq(0).type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
@@ -223,7 +216,6 @@ describe('Change password', () => {
 		cy.getBySel('toast-container').should('be.visible');
 	});
 	it('Should show a toast with an error message for the exception InvalidParameterException', () => {
-		cy.getBySel('change-password-form-container').click();
 		cy.getBySel('form-input-password').eq(0).type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
@@ -240,7 +232,6 @@ describe('Change password', () => {
 		cy.getBySel('toast-container').should('be.visible');
 	});
 	it('Should show a toast with an error message for the exception RequestExpired', () => {
-		cy.getBySel('change-password-form-container').click();
 		cy.getBySel('form-input-password').eq(0).type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
@@ -257,7 +248,6 @@ describe('Change password', () => {
 		cy.getBySel('toast-container').should('be.visible');
 	});
 	it('Should show a toast with an error message for the exception ServiceUnavailable', () => {
-		cy.getBySel('change-password-form-container').click();
 		cy.getBySel('form-input-password').eq(0).type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
@@ -274,7 +264,6 @@ describe('Change password', () => {
 		cy.getBySel('toast-container').should('be.visible');
 	});
 	it('Should show a toast with an error message for the exception TooManyRequestsException', () => {
-		cy.getBySel('change-password-form-container').click();
 		cy.getBySel('form-input-password').eq(0).type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
@@ -291,7 +280,6 @@ describe('Change password', () => {
 		cy.getBySel('toast-container').should('be.visible');
 	});
 	it('Should show an error message by default if it does not match any exception', () => {
-		cy.getBySel('change-password-form-container').click();
 		cy.getBySel('form-input-password').eq(0).type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
@@ -308,7 +296,6 @@ describe('Change password', () => {
 		cy.getBySel('toast-container').should('be.visible');
 	});
 	it('Should change a password successfully', () => {
-		cy.getBySel('change-password-form-container').click();
 		cy.getBySel('form-input-password').eq(0).type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
