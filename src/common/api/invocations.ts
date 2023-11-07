@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import useAxios from '../hooks/useAxios';
 import { Invocation } from '../types/invocation';
+import { Method } from '../types/method';
 
 export const useInvocationQuery = ({ id }: { id?: string }) => {
 	const axios = useAxios();
@@ -21,7 +22,11 @@ export const useRunInvocationQuery = ({ id }: { id?: string }) => {
 	const axios = useAxios();
 
 	return () => {
-		return axios?.get(`/invocation/${id}/run`).then((res) => res.data);
+		return axios
+			?.get<{ method: Method; response: string; status: string }>(
+				`/invocation/${id}/run`,
+			)
+			.then((res) => res.data);
 	};
 };
 
