@@ -51,7 +51,7 @@ const FunctionsTab = ({
 				</div>
 			) : (
 				<div
-					className="flex justify-center my-14 flex-1 gap-8"
+					className="flex justify-center items-center my-24 flex-1 gap-8"
 					data-test="tabs-content-container"
 				>
 					<img
@@ -62,12 +62,17 @@ const FunctionsTab = ({
 						loading="eager"
 						data-test="tabs-content-contract-img"
 					/>
-					<div
-						className="flex flex-col justify-center text-primary font-black text-6xl"
-						data-test="tabs-content-contract-text"
-					>
-						<h2>Let&apos;s Load</h2>
-						<h2>Your Contract</h2>
+					<div className="flex flex-col gap-3">
+						<div
+							className="flex flex-col justify-center text-primary font-black text-6xl"
+							data-test="tabs-content-contract-text"
+						>
+							<h2>Let&apos;s Load</h2>
+							<h2>Your Contract.</h2>
+						</div>
+						<span className="text-xl text-slate-400">
+							Input your contract address above to begin.
+						</span>
 					</div>
 				</div>
 			)}
