@@ -2,13 +2,13 @@ import { AlertCircle } from 'lucide-react';
 
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
-interface IAlertErrorProps {
+type AlertErrorProps = {
 	title: string;
 	message: string;
 	testName: string;
-}
+};
 
-function AlertError({ title, message, testName }: IAlertErrorProps) {
+function AlertError({ title, message, testName }: AlertErrorProps) {
 	return (
 		<Alert
 			variant="destructive"
