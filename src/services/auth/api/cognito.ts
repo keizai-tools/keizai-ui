@@ -6,8 +6,8 @@ import { redirect, useNavigate } from 'react-router-dom';
 import { User } from '../domain/user';
 import { CognitoError, BadRequestException } from '../error/cognitoError';
 import { useAuth } from '../hook/useAuth';
-import { AUTH_RESPONSE } from '../validators/authResponse';
-import { exceptionsCognitoErrors } from '../validators/exceptionsCognitoErrors';
+import { AUTH_RESPONSE } from '../validators/auth-response';
+import { exceptionsCognitoErrors } from '../validators/exceptions-cognito';
 
 import { useToast } from '@/common/components/ui/use-toast';
 
@@ -166,17 +166,3 @@ export const useChangePasswordMutation = () => {
 
 	return { mutation, error };
 };
-
-/*
-	TODO
-		- Agregar el manejo de errores en CreateAccount y los Password
-			- Ver el tipo de error que viene y transformarlo para mostrarlo al usuario
-			- Agregar onError en los mutation para mostrar el Alert o Toast
-
-		- Ver de agregar el botón RESEND CODE por si falla el envío del código
-		- Ver si se borran los Alert cuando hay errores de validación (fijarse en login que funcionan bien)
-		- Testear cada componente por separado
-
-		OPCIONAL:
-			Los Alerts deben tener links para mejorar el manejo de errores
-*/
