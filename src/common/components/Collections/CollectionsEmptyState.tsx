@@ -22,7 +22,9 @@ const CollectionsEmptyState = () => {
 					await mutate({ name });
 				}}
 			>
-				<Button>Create a new collection</Button>
+				<Button data-test="collections-header-btn-new">
+					Create a new collection
+				</Button>
 			</NewEntityDialog>
 		</div>
 	);
