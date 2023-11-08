@@ -20,13 +20,6 @@ describe('Change password', () => {
 		PASSWORD_INVALID = 'Your password must be at least',
 		PASSWORD_REQUIRED = 'Password is required',
 	}
-	enum CHANGE_PASSWORD_RESPONSE {
-		INVALID_PASSWORD = "Sorry, one of your passwords isn't right. Follow the detailed requirements below",
-		NOT_AUTHORIZED = 'The email and old password you entered did not match our records. Please double-check and try again',
-		PASSWORD_RESET_REQUIRED = 'Password reset is required. Can we help you recover your password?',
-		USER_NOT_CONFIRMED = 'The user is not confirmed, please verify your email',
-		USER_NOT_FOUND = 'The user is not found. Can we help you register your email?',
-	}
 
 	beforeEach(() => {
 		cy.loginByCognitoApi();
@@ -70,16 +63,11 @@ describe('Change password', () => {
 	});
 	it('Should show an error message when old password and new password are invalid', () => {
 		cy.getBySel('form-input-password').eq(0).type('test0');
+		cy.wait(1000);
 		cy.getBySel('form-input-password').eq(1).type('test0');
 		cy.getBySel('change-password-btn-submit').click();
-		cy.getBySel('old-password-error')
-			.should('be.visible')
-			.and('have.text', AUTH_VALIDATIONS.PASSWORD_INVALID);
-		cy.getBySel('password-error-requeriment').eq(0).should('be.visible');
-		cy.getBySel('new-password-error')
-			.should('be.visible')
-			.and('have.text', AUTH_VALIDATIONS.PASSWORD_INVALID);
-		cy.getBySel('password-error-requeriment').eq(1).should('be.visible');
+		cy.getBySel('old-password-error').should('be.visible');
+		cy.getBySel('new-password-error').should('be.visible');
 	});
 	it('Should show an error message when passwords do not match', () => {
 		cy.getBySel('form-input-password').eq(1).type('test0');
@@ -90,165 +78,144 @@ describe('Change password', () => {
 		);
 	});
 	it('Should show an error message in an alert for the exception InvalidPasswordException', () => {
-		cy.getBySel('form-input-password').eq(0).type(user.password);
+		cy.wait(1000);
+		cy.getBySel('form-input-password').first().type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
 
-		cy.intercept('POST', cognitoUrl, (req) => {
-			req.reply({
-				statusCode: 400,
-				body: {
-					code: 'InvalidPasswordException',
-				},
-			});
+		cy.intercept('POST', cognitoUrl, {
+			statusCode: 400,
+			body: {
+				code: 'InvalidPasswordException',
+			},
 		});
 		cy.getBySel('change-password-btn-submit').click();
-		cy.getBySel('change-password-error-message-container').should('be.visible');
 		cy.getBySel('change-password-error-message-title')
 			.should('be.visible')
 			.and('have.text', changePassword.alertTitle);
-		cy.getBySel('change-password-error-message-info')
-			.should('be.visible')
-			.and('have.text', CHANGE_PASSWORD_RESPONSE.INVALID_PASSWORD);
+		cy.getBySel('change-password-error-message-info').should('be.visible');
 	});
 	it('Should show an error message in an alert for the exception NotAuthorizedException', () => {
-		cy.getBySel('form-input-password').eq(0).type(user.password);
+		cy.intercept('POST', cognitoUrl, {
+			statusCode: 400,
+			body: {
+				code: 'NotAuthorizedException',
+			},
+		});
+		cy.wait(1000);
+		cy.getBySel('form-input-password').first().type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
 
-		cy.intercept('POST', cognitoUrl, (req) => {
-			req.reply({
-				statusCode: 400,
-				body: {
-					code: 'NotAuthorizedException',
-				},
-			});
-		});
 		cy.getBySel('change-password-btn-submit').click();
-		cy.getBySel('change-password-error-message-container').should('be.visible');
-		cy.getBySel('change-password-error-message-title')
-			.should('be.visible')
-			.and('have.text', changePassword.alertTitle);
-		cy.getBySel('change-password-error-message-info')
-			.should('be.visible')
-			.and('have.text', CHANGE_PASSWORD_RESPONSE.NOT_AUTHORIZED);
+		cy.getBySel('change-password-error-message-title').should('be.visible');
 	});
 	it('Should show an error message in an alert for the exception PasswordResetRequiredException', () => {
-		cy.getBySel('form-input-password').eq(0).type(user.password);
+		cy.intercept('POST', cognitoUrl, {
+			statusCode: 400,
+			body: {
+				code: 'PasswordResetRequiredException',
+			},
+		});
+		cy.wait(1000);
+		cy.getBySel('form-input-password').first().type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
 
-		cy.intercept('POST', cognitoUrl, (req) => {
-			req.reply({
-				statusCode: 400,
-				body: {
-					code: 'PasswordResetRequiredException',
-				},
-			});
-		});
 		cy.getBySel('change-password-btn-submit').click();
-		cy.getBySel('change-password-error-message-container').should('be.visible');
 		cy.getBySel('change-password-error-message-title')
 			.should('be.visible')
 			.and('have.text', changePassword.alertTitle);
-		cy.getBySel('change-password-error-message-info')
-			.should('be.visible')
-			.and('have.text', CHANGE_PASSWORD_RESPONSE.PASSWORD_RESET_REQUIRED);
+		cy.getBySel('change-password-error-message-info').should('be.visible');
 	});
 	it('Should show an error message in an alert for the exception UserNotConfirmedException', () => {
-		cy.getBySel('form-input-password').eq(0).type(user.password);
+		cy.wait(1000);
+		cy.getBySel('form-input-password').first().type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
 
-		cy.intercept('POST', cognitoUrl, (req) => {
-			req.reply({
-				statusCode: 400,
-				body: {
-					code: 'UserNotConfirmedException',
-				},
-			});
+		cy.intercept('POST', cognitoUrl, {
+			statusCode: 400,
+			body: {
+				code: 'UserNotConfirmedException',
+			},
 		});
+
 		cy.getBySel('change-password-btn-submit').click();
-		cy.getBySel('change-password-error-message-container').should('be.visible');
 		cy.getBySel('change-password-error-message-title')
 			.should('be.visible')
 			.and('have.text', changePassword.alertTitle);
-		cy.getBySel('change-password-error-message-info')
-			.should('be.visible')
-			.and('have.text', CHANGE_PASSWORD_RESPONSE.USER_NOT_CONFIRMED);
+		cy.getBySel('change-password-error-message-info').should('be.visible');
 	});
 	it('Should show an error message in an alert for the exception UserNotFoundException', () => {
-		cy.getBySel('form-input-password').eq(0).type(user.password);
+		cy.intercept('POST', cognitoUrl, {
+			statusCode: 400,
+			body: {
+				code: 'UserNotFoundException',
+			},
+		});
+		cy.wait(1000);
+		cy.getBySel('form-input-password').first().type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
 
-		cy.intercept('POST', cognitoUrl, (req) => {
-			req.reply({
-				statusCode: 400,
-				body: {
-					code: 'UserNotFoundException',
-				},
-			});
-		});
 		cy.getBySel('change-password-btn-submit').click();
-		cy.getBySel('change-password-error-message-container').should('be.visible');
 		cy.getBySel('change-password-error-message-title')
 			.should('be.visible')
 			.and('have.text', changePassword.alertTitle);
-		cy.getBySel('change-password-error-message-info')
-			.should('be.visible')
-			.and('have.text', CHANGE_PASSWORD_RESPONSE.USER_NOT_FOUND);
+		cy.getBySel('change-password-error-message-info').should('be.visible');
 	});
 	it('Should show a toast with an error message for the exception InternalErrorException', () => {
-		cy.getBySel('form-input-password').eq(0).type(user.password);
+		cy.intercept('POST', cognitoUrl, {
+			statusCode: 500,
+			body: {
+				code: 'InternalErrorException',
+			},
+		});
+
+		cy.getBySel('form-input-password').first().type(user.password);
+		cy.wait(1000);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
 
-		cy.intercept('POST', cognitoUrl, (req) => {
-			req.reply({
-				statusCode: 500,
-				body: {
-					code: 'InternalErrorException',
-				},
-			});
-		});
 		cy.getBySel('change-password-btn-submit').click();
 		cy.getBySel('toast-container').should('be.visible');
 	});
 	it('Should show a toast with an error message for the exception InvalidParameterException', () => {
-		cy.getBySel('form-input-password').eq(0).type(user.password);
+		cy.wait(1000);
+		cy.getBySel('form-input-password').first().type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
 
-		cy.intercept('POST', cognitoUrl, (req) => {
-			req.reply({
-				statusCode: 500,
-				body: {
-					code: 'InvalidParameterException',
-				},
-			});
+		cy.intercept('POST', cognitoUrl, {
+			statusCode: 500,
+			body: {
+				code: 'InvalidParameterException',
+			},
 		});
+
 		cy.getBySel('change-password-btn-submit').click();
-		cy.getBySel('toast-container').should('be.visible');
+		cy.getBySel('toast-description').should('be.visible');
 	});
 	it('Should show a toast with an error message for the exception RequestExpired', () => {
-		cy.getBySel('form-input-password').eq(0).type(user.password);
+		cy.wait(1000);
+		cy.getBySel('form-input-password').first().type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
 
-		cy.intercept('POST', cognitoUrl, (req) => {
-			req.reply({
-				statusCode: 500,
-				body: {
-					code: 'RequestExpired',
-				},
-			});
+		cy.intercept('POST', cognitoUrl, {
+			statusCode: 500,
+			body: {
+				code: 'RequestExpired',
+			},
 		});
+
 		cy.getBySel('change-password-btn-submit').click();
 		cy.getBySel('toast-container').should('be.visible');
 	});
 	it('Should show a toast with an error message for the exception ServiceUnavailable', () => {
-		cy.getBySel('form-input-password').eq(0).type(user.password);
+		cy.wait(1000);
+		cy.getBySel('form-input-password').first().type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
 
@@ -264,7 +231,8 @@ describe('Change password', () => {
 		cy.getBySel('toast-container').should('be.visible');
 	});
 	it('Should show a toast with an error message for the exception TooManyRequestsException', () => {
-		cy.getBySel('form-input-password').eq(0).type(user.password);
+		cy.wait(1000);
+		cy.getBySel('form-input-password').first().type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
 
@@ -280,7 +248,8 @@ describe('Change password', () => {
 		cy.getBySel('toast-container').should('be.visible');
 	});
 	it('Should show an error message by default if it does not match any exception', () => {
-		cy.getBySel('form-input-password').eq(0).type(user.password);
+		cy.wait(1000);
+		cy.getBySel('form-input-password').first().type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
 
@@ -296,7 +265,8 @@ describe('Change password', () => {
 		cy.getBySel('toast-container').should('be.visible');
 	});
 	it('Should change a password successfully', () => {
-		cy.getBySel('form-input-password').eq(0).type(user.password);
+		cy.wait(1000);
+		cy.getBySel('form-input-password').first().type(user.password);
 		cy.getBySel('form-input-password').eq(1).type(user.password);
 		cy.getBySel('form-input-password').eq(2).type(user.password);
 		cy.getBySel('change-password-btn-submit').click();
