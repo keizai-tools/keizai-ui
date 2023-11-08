@@ -10,7 +10,7 @@ import {
 	COGNITO_EXCEPTION,
 	CREATE_ACCOUNT_RESPONSE,
 	FORGOT_PASSWORD_RESPONSE,
-} from './authResponse';
+} from './auth-response';
 
 const authLocation = {
 	login: '/auth/login',
