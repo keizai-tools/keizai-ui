@@ -1,41 +1,8 @@
+import { user, apiUrl, authPage, registerForm } from './exceptions/constants';
+import { AUTH_VALIDATIONS, CREATE_ACCOUNT_RESPONSE } from './exceptions/enum';
+
 describe('Register', () => {
-	const registerForm = {
-		title: 'Create Account',
-		email: 'Email',
-		password: 'Password',
-		btnSubmit: 'Create',
-		footer: {
-			info: 'Already have an account?',
-			link: { title: 'Login', url: '/auth/login' },
-		},
-		invalidField: 'test',
-		alertTitle: 'Create account failed',
-	};
-	const apiUrl = `${Cypress.env('apiUrl')}/auth/register`;
-	const authPage = {
-		img: {
-			src: '/welcome.svg',
-			alt: 'Welcome image',
-		},
-		title: 'Discover Keizai',
-		description: 'Next-gen testing for Soroban.',
-		url: 'https://www.keizai.dev/',
-	};
-	const user = {
-		username: Cypress.env('cognitoE2EUsername'),
-		password: Cypress.env('cognitoE2EPassword'),
-	};
-	enum INPUT_VALIDATOR {
-		EMAIL_INVALID = 'Enter in the format: name@example.com',
-		EMAIL_REQUIRED = 'Email is required',
-		PASSWORD_INVALID = 'Your password must be at least',
-		PASSWORD_REQUIRED = 'Password is required',
-	}
-	enum CREATE_ACCOUNT_RESPONSE {
-		INVALID_PASSWORD = "Sorry, that password isn't right. Follow the detailed requirements below",
-		NOT_AUTHORIZED = 'There was an error creating your account, please try again',
-		USERNAME_EXIST = 'Another user with this email already exists. Can we help you recover your email or reset the password?',
-	}
+	const registerUrl = `${apiUrl}/auth/register`;
 
 	beforeEach(() => {
 		cy.visit(`${Cypress.env('registerUrl')}`);
@@ -82,10 +49,10 @@ describe('Register', () => {
 		cy.getBySel('register-form-btn-submit').click();
 		cy.getBySel('register-form-email-error')
 			.should('be.visible')
-			.and('have.text', INPUT_VALIDATOR.EMAIL_REQUIRED);
+			.and('have.text', AUTH_VALIDATIONS.EMAIL_REQUIRED);
 		cy.getBySel('register-form-password-error')
 			.should('be.visible')
-			.and('have.text', INPUT_VALIDATOR.PASSWORD_REQUIRED);
+			.and('have.text', AUTH_VALIDATIONS.PASSWORD_REQUIRED);
 	});
 	it('Should show an error message when the email and password are invalid', () => {
 		cy.getBySel('register-form-email').type(registerForm.invalidField);
@@ -93,23 +60,21 @@ describe('Register', () => {
 		cy.getBySel('register-form-btn-submit').click();
 		cy.getBySel('register-form-email-error')
 			.should('be.visible')
-			.and('have.text', INPUT_VALIDATOR.EMAIL_INVALID);
+			.and('have.text', AUTH_VALIDATIONS.EMAIL_INVALID);
 		cy.getBySel('register-form-password-error')
 			.should('be.visible')
-			.and('have.text', INPUT_VALIDATOR.PASSWORD_INVALID);
+			.and('have.text', AUTH_VALIDATIONS.PASSWORD_INVALID);
 		cy.getBySel('password-error-requeriment').should('be.visible');
 	});
 	it('Should show an error message in an alert for the exception InvalidPasswordException', () => {
 		cy.getBySel('register-form-email').type(user.username);
 		cy.getBySel('form-input-password').type(user.password);
 
-		cy.intercept('POST', apiUrl, (req) => {
-			req.reply({
-				statusCode: 400,
-				body: {
-					code: 'InvalidPasswordException',
-				},
-			});
+		cy.intercept('POST', registerUrl, {
+			statusCode: 400,
+			body: {
+				code: 'InvalidPasswordException',
+			},
 		});
 		cy.getBySel('register-form-btn-submit').click();
 		cy.getBySel('register-form-create-error-container').should('be.visible');
@@ -124,13 +89,11 @@ describe('Register', () => {
 		cy.getBySel('register-form-email').type(user.username);
 		cy.getBySel('form-input-password').type(user.password);
 
-		cy.intercept('POST', apiUrl, (req) => {
-			req.reply({
-				statusCode: 400,
-				body: {
-					code: 'NotAuthorizedException',
-				},
-			});
+		cy.intercept('POST', registerUrl, {
+			statusCode: 400,
+			body: {
+				code: 'NotAuthorizedException',
+			},
 		});
 		cy.getBySel('register-form-btn-submit').click();
 		cy.getBySel('register-form-create-error-container').should('be.visible');
@@ -145,13 +108,11 @@ describe('Register', () => {
 		cy.getBySel('register-form-email').type(user.username);
 		cy.getBySel('form-input-password').type(user.password);
 
-		cy.intercept('POST', apiUrl, (req) => {
-			req.reply({
-				statusCode: 400,
-				body: {
-					code: 'UsernameExistsException',
-				},
-			});
+		cy.intercept('POST', registerUrl, {
+			statusCode: 400,
+			body: {
+				code: 'UsernameExistsException',
+			},
 		});
 		cy.getBySel('register-form-btn-submit').click();
 		cy.getBySel('register-form-create-error-container').should('be.visible');
@@ -166,13 +127,11 @@ describe('Register', () => {
 		cy.getBySel('register-form-email').type(user.username);
 		cy.getBySel('form-input-password').type(user.password);
 
-		cy.intercept('POST', apiUrl, (req) => {
-			req.reply({
-				statusCode: 500,
-				body: {
-					code: 'InternalErrorException',
-				},
-			});
+		cy.intercept('POST', registerUrl, {
+			statusCode: 500,
+			body: {
+				code: 'InternalErrorException',
+			},
 		});
 		cy.getBySel('register-form-btn-submit').click();
 		cy.getBySel('toast-container').should('be.visible');
@@ -181,13 +140,11 @@ describe('Register', () => {
 		cy.getBySel('register-form-email').type(user.username);
 		cy.getBySel('form-input-password').type(user.password);
 
-		cy.intercept('POST', apiUrl, (req) => {
-			req.reply({
-				statusCode: 500,
-				body: {
-					code: 'InvalidParameterException',
-				},
-			});
+		cy.intercept('POST', registerUrl, {
+			statusCode: 500,
+			body: {
+				code: 'InvalidParameterException',
+			},
 		});
 		cy.getBySel('register-form-btn-submit').click();
 		cy.getBySel('toast-container').should('be.visible');
@@ -196,13 +153,11 @@ describe('Register', () => {
 		cy.getBySel('register-form-email').type(user.username);
 		cy.getBySel('form-input-password').type(user.password);
 
-		cy.intercept('POST', apiUrl, (req) => {
-			req.reply({
-				statusCode: 500,
-				body: {
-					code: 'RequestExpired',
-				},
-			});
+		cy.intercept('POST', registerUrl, {
+			statusCode: 500,
+			body: {
+				code: 'RequestExpired',
+			},
 		});
 		cy.getBySel('register-form-btn-submit').click();
 		cy.getBySel('toast-container').should('be.visible');
@@ -211,13 +166,11 @@ describe('Register', () => {
 		cy.getBySel('register-form-email').type(user.username);
 		cy.getBySel('form-input-password').type(user.password);
 
-		cy.intercept('POST', apiUrl, (req) => {
-			req.reply({
-				statusCode: 500,
-				body: {
-					code: 'ServiceUnavailable',
-				},
-			});
+		cy.intercept('POST', registerUrl, {
+			statusCode: 500,
+			body: {
+				code: 'ServiceUnavailable',
+			},
 		});
 		cy.getBySel('register-form-btn-submit').click();
 		cy.getBySel('toast-container').should('be.visible');
@@ -226,13 +179,11 @@ describe('Register', () => {
 		cy.getBySel('register-form-email').type(user.username);
 		cy.getBySel('form-input-password').type(user.password);
 
-		cy.intercept('POST', apiUrl, (req) => {
-			req.reply({
-				statusCode: 500,
-				body: {
-					code: 'TooManyRequestsException',
-				},
-			});
+		cy.intercept('POST', registerUrl, {
+			statusCode: 500,
+			body: {
+				code: 'TooManyRequestsException',
+			},
 		});
 		cy.getBySel('register-form-btn-submit').click();
 		cy.getBySel('toast-container').should('be.visible');
@@ -241,13 +192,11 @@ describe('Register', () => {
 		cy.getBySel('register-form-email').type(user.username);
 		cy.getBySel('form-input-password').type(user.password);
 
-		cy.intercept('POST', apiUrl, (req) => {
-			req.reply({
-				statusCode: 500,
-				body: {
-					code: 'default',
-				},
-			});
+		cy.intercept('POST', registerUrl, {
+			statusCode: 500,
+			body: {
+				code: 'default',
+			},
 		});
 		cy.getBySel('register-form-btn-submit').click();
 		cy.getBySel('toast-container').should('be.visible');
