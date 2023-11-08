@@ -10,7 +10,7 @@ import { Input } from '../ui/input';
 
 import { useLoginCognitoMutation } from '@/services/auth/api/cognito';
 import { User } from '@/services/auth/domain/user';
-import { AUTH_VALIDATIONS } from '@/services/auth/validators/authResponse';
+import { AUTH_VALIDATIONS } from '@/services/auth/validators/auth-response';
 
 function Login() {
 	const {
@@ -49,10 +49,6 @@ function Login() {
 						name="email"
 						rules={{
 							required: AUTH_VALIDATIONS.EMAIL_REQUIRED,
-							pattern: {
-								value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-								message: AUTH_VALIDATIONS.EMAIL_INVALID,
-							},
 						}}
 						render={({ field }) => (
 							<Input
@@ -79,11 +75,6 @@ function Login() {
 					name="password"
 					rules={{
 						required: AUTH_VALIDATIONS.PASSWORD_REQUIRED,
-						pattern: {
-							value:
-								/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,255}$/,
-							message: AUTH_VALIDATIONS.PASSWORD_INVALID,
-						},
 					}}
 					render={({ field }) => (
 						<PasswordInput value={field.value} onChange={field.onChange} />
