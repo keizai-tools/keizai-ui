@@ -184,7 +184,7 @@ describe('Authentication page management', () => {
 			cy.getBySel('register-form-email').type(user.username);
 			cy.getBySel('form-input-password').type(user.password);
 			cy.getBySel('register-form-btn-submit').click();
-			cy.wait(500);
+			cy.wait(1000);
 			cy.getBySel('register-form-create-error')
 				.should('be.visible')
 				.and('contain', registerForm.erros.emailExist);

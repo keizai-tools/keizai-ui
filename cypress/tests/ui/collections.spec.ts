@@ -3,7 +3,6 @@ import { collectionApiUrl, collections, folders } from './exceptions/contants';
 describe('Collections', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
-		cy.visit('/');
 	});
 
 	it('Should show a collection page of empty state', () => {
@@ -165,10 +164,13 @@ describe('Collections', () => {
 			fixture: './collections/collection-without-folders.json',
 		}).as('getCollections');
 		cy.intercept('PATCH', collectionApiUrl, {
-			fixture: './collections/edited-collection.json',
+			body: { id: '28a5e963-8635-4a26-863b-6fd477230bf0', name: 'Collection1' },
 		}).as('editCollection');
-
 		cy.wait('@getCollections');
+		cy.intercept('GET', collectionApiUrl, {
+			fixture: './collections/edited-collection.json',
+		}).as('editedCollection');
+
 		cy.getBySel('collection-folder-container').should('be.visible');
 		cy.getBySel('collection-folder-title').should('have.text', 'Collection');
 		cy.getBySel('collection-options-btn').click();
