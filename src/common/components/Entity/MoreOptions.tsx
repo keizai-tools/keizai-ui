@@ -25,7 +25,12 @@ const MoreOptions = ({
 				<MoreVerticalIcon className="text-slate-400" size={22} />
 			</DropdownMenuTrigger>
 			<DropdownMenuContent data-test="collection-options-container">
-				<DropdownMenuItem onClick={onClickEdit}>Edit</DropdownMenuItem>
+				<DropdownMenuItem
+					onClick={onClickEdit}
+					data-test="collection-options-edit"
+				>
+					Edit
+				</DropdownMenuItem>
 				<DropdownMenuItem
 					onClick={onClickDelete}
 					data-test="collection-options-delete"
