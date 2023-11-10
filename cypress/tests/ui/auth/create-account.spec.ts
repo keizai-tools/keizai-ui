@@ -1,5 +1,8 @@
+import {
+	AUTH_VALIDATIONS,
+	CREATE_ACCOUNT_RESPONSE,
+} from './exceptions/auth.enum';
 import { user, apiUrl, authPage, registerForm } from './exceptions/constants';
-import { AUTH_VALIDATIONS, CREATE_ACCOUNT_RESPONSE } from './exceptions/enum';
 
 describe('Register', () => {
 	const registerUrl = `${apiUrl}/auth/register`;

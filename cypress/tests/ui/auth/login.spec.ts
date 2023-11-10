@@ -1,3 +1,4 @@
+import { AUTH_VALIDATIONS, AUTH_LOGIN_RESPONSE } from './exceptions/auth.enum';
 import {
 	user,
 	invalidUser,
@@ -5,7 +6,6 @@ import {
 	authPage,
 	loginForm,
 } from './exceptions/constants';
-import { AUTH_VALIDATIONS, AUTH_LOGIN_RESPONSE } from './exceptions/enum';
 
 describe('Login management', () => {
 	beforeEach(() => {
@@ -71,11 +71,10 @@ describe('Login management', () => {
 			.should('be.visible')
 			.and('have.text', AUTH_VALIDATIONS.PASSWORD_REQUIRED);
 	});
-	it.only('Should show an error message when the password is invalid', () => {
+	it('Should show an error message when the password is invalid', () => {
 		cy.getBySel('login-form-email').type(user.username);
 		cy.getBySel('form-input-password').type(invalidUser.password);
 		cy.getBySel('login-form-btn-submit').click();
-		// cy.wait(500);
 		cy.getBySel('login-form-error-message-container').should('be.visible');
 		cy.getBySel('login-form-error-message-title')
 			.should('be.visible')
@@ -84,11 +83,10 @@ describe('Login management', () => {
 			.should('be.visible')
 			.and('have.text', AUTH_LOGIN_RESPONSE.NOT_AUTHORIZED);
 	});
-	it.only('Should show an error message when the email is invalid', () => {
+	it('Should show an error message when the email is invalid', () => {
 		cy.getBySel('login-form-email').type(invalidUser.username);
 		cy.getBySel('form-input-password').type(user.password);
 		cy.getBySel('login-form-btn-submit').click();
-		// cy.wait(500);
 		cy.getBySel('login-form-error-message-container').should('be.visible');
 		cy.getBySel('login-form-error-message-title')
 			.should('be.visible')

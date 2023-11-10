@@ -1,10 +1,13 @@
 import {
+	AUTH_VALIDATIONS,
+	FORGOT_PASSWORD_RESPONSE,
+} from './exceptions/auth.enum';
+import {
 	user,
 	cognitoUrl,
 	authPage,
 	forgotPassword,
 } from './exceptions/constants';
-import { AUTH_VALIDATIONS, FORGOT_PASSWORD_RESPONSE } from './exceptions/enum';
 
 describe('Forgot password', () => {
 	beforeEach(() => {

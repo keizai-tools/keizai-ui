@@ -1,5 +1,5 @@
+import { AUTH_VALIDATIONS } from './exceptions/auth.enum';
 import { user, cognitoUrl, changePassword } from './exceptions/constants';
-import { AUTH_VALIDATIONS, CHANGE_PASSWORD_RESPONSE } from './exceptions/enum';
 
 describe('Change password', () => {
 	beforeEach(() => {
@@ -43,8 +43,8 @@ describe('Change password', () => {
 			.and('have.text', AUTH_VALIDATIONS.CONFIRM_PASSWORD_REQUIRED);
 	});
 	it('Should show an error message when old password and new password are invalid', () => {
-		cy.getBySel('form-input-password').eq(0).type('test0');
 		cy.wait(1000);
+		cy.getBySel('form-input-password').eq(0).type('test0');
 		cy.getBySel('form-input-password').eq(1).type('test0');
 		cy.getBySel('change-password-btn-submit').click();
 		cy.getBySel('old-password-error').should('be.visible');
