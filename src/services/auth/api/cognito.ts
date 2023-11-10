@@ -6,7 +6,7 @@ import { redirect, useNavigate } from 'react-router-dom';
 import { User } from '../domain/user';
 import { CognitoError, BadRequestException } from '../error/cognitoError';
 import { useAuth } from '../hook/useAuth';
-import { AUTH_RESPONSE } from '../validators/auth-response';
+import { AUTH_RESPONSE } from '../validators/auth-response.enum';
 import { exceptionsCognitoErrors } from '../validators/exceptions-cognito';
 
 import { useToast } from '@/common/components/ui/use-toast';

@@ -10,7 +10,7 @@ import { Input } from '../ui/input';
 
 import { useLoginCognitoMutation } from '@/services/auth/api/cognito';
 import { User } from '@/services/auth/domain/user';
-import { AUTH_VALIDATIONS } from '@/services/auth/validators/auth-response';
+import { AUTH_VALIDATIONS } from '@/services/auth/validators/auth-response.enum';
 
 function Login() {
 	const {

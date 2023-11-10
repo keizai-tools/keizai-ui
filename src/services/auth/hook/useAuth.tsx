@@ -2,7 +2,7 @@ import { Auth } from '@aws-amplify/auth';
 import React from 'react';
 
 import { User } from '../domain/user';
-import { FORGOT_PASSWORD_RESPONSE } from '../validators/auth-response';
+import { FORGOT_PASSWORD_RESPONSE } from '../validators/auth-response.enum';
 
 import useAxios from '@/common/hooks/useAxios';
 import { AuthContext } from '@/providers/AuthProvider';

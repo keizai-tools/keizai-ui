@@ -7,7 +7,7 @@ import PasswordInput from '../Input/PasswordInput';
 import { Button } from '../ui/button';
 
 import { useChangePasswordMutation } from '@/services/auth/api/cognito';
-import { AUTH_VALIDATIONS } from '@/services/auth/validators/auth-response';
+import { AUTH_VALIDATIONS } from '@/services/auth/validators/auth-response.enum';
 
 interface IPasswordReset {
 	oldPassword: string;

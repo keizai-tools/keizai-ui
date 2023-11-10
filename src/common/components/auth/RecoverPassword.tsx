@@ -6,7 +6,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
 import { useRecoverPasswordMutation } from '@/services/auth/api/cognito';
-import { AUTH_VALIDATIONS } from '@/services/auth/validators/auth-response';
+import { AUTH_VALIDATIONS } from '@/services/auth/validators/auth-response.enum';
 
 interface Username {
 	username: string;

@@ -10,7 +10,7 @@ import {
 	COGNITO_EXCEPTION,
 	CREATE_ACCOUNT_RESPONSE,
 	FORGOT_PASSWORD_RESPONSE,
-} from './auth-response';
+} from './auth-response.enum';
 
 const authLocation = {
 	login: '/auth/login',

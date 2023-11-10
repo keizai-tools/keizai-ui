@@ -9,7 +9,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
 import { useResetPasswordMutation } from '@/services/auth/api/cognito';
-import { AUTH_VALIDATIONS } from '@/services/auth/validators/auth-response';
+import { AUTH_VALIDATIONS } from '@/services/auth/validators/auth-response.enum';
 
 export interface IPasswordReset {
 	code: string;
