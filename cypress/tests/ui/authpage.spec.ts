@@ -181,10 +181,18 @@ describe('Authentication page management', () => {
 				.and('contain', registerForm.erros.invalidPassword);
 		});
 		it('Should show an error message when the email already exists', () => {
+			cy.intercept('POST', `${Cypress.env('apiUrl')}/auth/register`, {
+				statusCode: 400,
+				body: {
+					statusCode: 400,
+					message: 'The email is already registered',
+					error: 'Bad Request',
+				},
+			}).as('usernameExist');
 			cy.getBySel('register-form-email').type(user.username);
 			cy.getBySel('form-input-password').type(user.password);
 			cy.getBySel('register-form-btn-submit').click();
-			cy.wait(1000);
+			cy.wait('@usernameExist');
 			cy.getBySel('register-form-create-error')
 				.should('be.visible')
 				.and('contain', registerForm.erros.emailExist);

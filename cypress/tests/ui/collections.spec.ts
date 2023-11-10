@@ -164,7 +164,10 @@ describe('Collections', () => {
 			fixture: './collections/collection-without-folders.json',
 		}).as('getCollections');
 		cy.intercept('PATCH', collectionApiUrl, {
-			body: { id: '28a5e963-8635-4a26-863b-6fd477230bf0', name: 'Collection1' },
+			body: {
+				id: '28a5e963-8635-4a26-863b-6fd477230bf0',
+				name: 'Edit Collection',
+			},
 		}).as('editCollection');
 		cy.wait('@getCollections');
 		cy.intercept('GET', collectionApiUrl, {
