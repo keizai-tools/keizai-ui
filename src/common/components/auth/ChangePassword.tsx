@@ -1,14 +1,13 @@
-import { useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 
+import AlertError from '../Form/AlertError';
+import ErrorMessage from '../Form/ErrorMessage';
 import PasswordInput from '../Input/PasswordInput';
 import { Button } from '../ui/button';
-import { useToast } from '../ui/use-toast';
 
-import { useAuth } from '@/services/auth/hook/useAuth';
-import { AUTH_RESPONSE } from '@/services/auth/validators/authResponse';
+import { useChangePasswordMutation } from '@/services/auth/api/cognito';
+import { AUTH_VALIDATIONS } from '@/services/auth/validators/auth-response.enum';
 
 interface IPasswordReset {
 	oldPassword: string;
@@ -21,24 +20,24 @@ interface Input {
 	placeholder: string;
 	rules: {
 		required: string;
+		pattern?: {
+			value: RegExp;
+			message: string;
+		};
 		validate?: (value: string) => string | boolean;
 	};
 	test: string;
 }
 
-enum AUTH_VALIDATIONS {
-	CONFIRM_PASSWORD_PLACEHOLDER = 'Confirm New Password',
-	CONFIRM_PASSWORD_REQUIRED = 'Confirm password is required',
-	CONFIRM_PASSWORD_NOT_MATCH = 'Passwords do not match',
-	NEW_PASSWORD_PLACEHOLDER = 'New Password',
-	NEW_PASSWORD_REQUIRED = 'New password is required',
-	OLD_PASSWORD_PLACEHOLDER = 'Old Password',
-	OLD_PASSWORD_REQUIRED = 'Old password is required',
+enum INPUT_PLACEHOLDER {
+	CONFIRM_PASSWORD = 'Confirm New Password',
+	NEW_PASSWORD = 'New Password',
+	OLD_PASSWORD = 'Old Password',
 }
 
 function ChangePassword() {
-	const navigate = useNavigate();
-	const { toast } = useToast();
+	const { mutation, error } = useChangePasswordMutation();
+	const { mutate, isPending } = mutation;
 	const {
 		control,
 		watch,
@@ -51,24 +50,37 @@ function ChangePassword() {
 			confirmPassword: '',
 		},
 	});
-	const { changePassword } = useAuth();
 
 	const inputs: Input[] = [
 		{
 			name: 'oldPassword',
-			placeholder: AUTH_VALIDATIONS.OLD_PASSWORD_PLACEHOLDER,
-			rules: { required: AUTH_VALIDATIONS.OLD_PASSWORD_REQUIRED },
+			placeholder: INPUT_PLACEHOLDER.OLD_PASSWORD,
+			rules: {
+				required: AUTH_VALIDATIONS.OLD_PASSWORD_REQUIRED,
+				pattern: {
+					value:
+						/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,255}$/,
+					message: AUTH_VALIDATIONS.PASSWORD_INVALID,
+				},
+			},
 			test: 'old-password',
 		},
 		{
 			name: 'newPassword',
-			placeholder: AUTH_VALIDATIONS.NEW_PASSWORD_PLACEHOLDER,
-			rules: { required: AUTH_VALIDATIONS.NEW_PASSWORD_REQUIRED },
+			placeholder: INPUT_PLACEHOLDER.NEW_PASSWORD,
+			rules: {
+				required: AUTH_VALIDATIONS.NEW_PASSWORD_REQUIRED,
+				pattern: {
+					value:
+						/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,255}$/,
+					message: AUTH_VALIDATIONS.PASSWORD_INVALID,
+				},
+			},
 			test: 'new-password',
 		},
 		{
 			name: 'confirmPassword',
-			placeholder: AUTH_VALIDATIONS.CONFIRM_PASSWORD_PLACEHOLDER,
+			placeholder: INPUT_PLACEHOLDER.CONFIRM_PASSWORD,
 			rules: {
 				required: AUTH_VALIDATIONS.CONFIRM_PASSWORD_REQUIRED,
 				validate: (value: string) => {
@@ -81,17 +93,6 @@ function ChangePassword() {
 			test: 'confirm-password',
 		},
 	];
-
-	const { mutate, isPending, error } = useMutation({
-		mutationFn: changePassword,
-		onSuccess: () => {
-			navigate('/');
-			toast({
-				title: 'Successful!',
-				description: AUTH_RESPONSE.PASSWORD_CHANGED,
-			});
-		},
-	});
 
 	const onSubmit = async (values: IPasswordReset) => {
 		const { oldPassword, newPassword } = values;
@@ -125,26 +126,28 @@ function ChangePassword() {
 						)}
 					/>
 					{errors[input.name] && (
-						<p
-							className="text-sm text-red-500 mt-1 pl-4"
-							data-test={`${input.test}-error`}
-						>
-							{errors[input.name]?.message}
-						</p>
+						<ErrorMessage
+							message={errors[input.name]?.message as string}
+							testName={`${input.test}-error`}
+							styles="text-sm"
+							type={`${input.rules.pattern ? 'password' : ''}`}
+						/>
 					)}
 				</div>
 			))}
-			{error && (
-				<p
-					className="text-red-500 mt-1 mb-4 pl-4"
-					data-test="change-password-error-message"
-				>
-					{error.message}
-				</p>
-			)}
+			{!errors.newPassword &&
+				!errors.oldPassword &&
+				!errors.confirmPassword &&
+				error && (
+					<AlertError
+						title="Change password failed"
+						message={error}
+						testName="change-password-error-message"
+					/>
+				)}
 			<Button
 				type="submit"
-				className="w-full"
+				className={`w-full font-semibold ${error ? 'mt-4' : ''}`}
 				data-test="change-password-btn-submit"
 				disabled={isPending}
 			>
