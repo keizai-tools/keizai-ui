@@ -36,13 +36,18 @@ const EditEntityDialog = ({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent>
+			<DialogContent data-test="edit-entity-dialog-container">
 				<DialogHeader>
-					<DialogTitle>{title}</DialogTitle>
-					<DialogDescription>{description}</DialogDescription>
+					<DialogTitle data-test="edit-entity-dialog-title">
+						{title}
+					</DialogTitle>
+					<DialogDescription data-test="edit-entity-dialog-description">
+						{description}
+					</DialogDescription>
 				</DialogHeader>
 				<form
 					className="flex items-start space-x-2 mt-4"
+					data-test="edit-entity-dialog-form-container"
 					onSubmit={handleSubmit(onEdit)}
 				>
 					<div className="grid flex-1 gap-2">
@@ -62,6 +67,7 @@ const EditEntityDialog = ({
 						type="submit"
 						size="sm"
 						className="px-3 mt-1/2"
+						data-test="edit-entity-dialog-btn-submit"
 						disabled={isLoading}
 					>
 						{isLoading ? 'Saving...' : 'Save'}

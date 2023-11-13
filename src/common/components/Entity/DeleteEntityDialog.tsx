@@ -24,16 +24,28 @@ const DeleteEntityDialog = ({
 }) => {
 	return (
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
-			<AlertDialogContent>
+			<AlertDialogContent data-test="delete-entity-dialog-container">
 				<AlertDialogHeader>
-					<AlertDialogTitle>{title}</AlertDialogTitle>
-					<AlertDialogDescription>{description}</AlertDialogDescription>
+					<AlertDialogTitle data-test="delete-entity-dialog-title">
+						{title}
+					</AlertDialogTitle>
+					<AlertDialogDescription data-test="delete-entity-dialog-description">
+						{description}
+					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
-					<AlertDialogCancel onClick={() => onOpenChange()}>
+					<AlertDialogCancel
+						onClick={() => onOpenChange()}
+						data-test="delete-entity-dialog-btn-cancel"
+					>
 						Cancel
 					</AlertDialogCancel>
-					<AlertDialogAction onClick={onConfirm}>Continue</AlertDialogAction>
+					<AlertDialogAction
+						onClick={onConfirm}
+						data-test="delete-entity-dialog-btn-continue"
+					>
+						Continue
+					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>
 		</AlertDialog>
