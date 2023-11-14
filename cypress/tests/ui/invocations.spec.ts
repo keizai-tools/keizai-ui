@@ -156,11 +156,12 @@ describe('Invocations', () => {
 				cy.wait('@invocation');
 				cy.wait('@getInvocation');
 				cy.getBySel('input-contract-name').type(contractId);
-				cy.getBySel('contract-input-btn-load').click();
 				cy.intercept('GET', `${Cypress.env('apiUrl')}/invocation/*`, {
 					fixture: 'invocations/invocation-with-contract-id.json',
 				}).as('getInvocationWithMethods');
+				cy.getBySel('contract-input-btn-load').click();
 				cy.wait('@invocationUpdated');
+				cy.wait('@getInvocationWithMethods');
 			});
 		});
 	});
