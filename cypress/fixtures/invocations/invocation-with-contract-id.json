@@ -1,0 +1,36 @@
+{
+	"name": "Invocation",
+	"secretKey": "SANEPI74NFPALZ4JOUTRBOUJGVFOFRKRQT2BZN3UR5ULVEN4FJKT7GRF",
+	"publicKey": "GA3I3AZQQXV7PSGOZ74JLDV7VEIUDEBMWHUTTTZLIBW3ZIJFWORTL2HF",
+	"contractId": "CAABIHUZVHWJEQZ4LZWK5644HOWRPYHWGRUY4L5TBHUDHFADDVY55BK6",
+	"id": "635bbf80-0787-47e2-900c-f44d5f53559d",
+	"folder": {
+			"name": "Folder",
+			"id": "c1f7a826-acdd-446b-97b2-1600fddc8023"
+	},
+	"methods": [
+			{
+					"name": "hello",
+					"inputs": [
+							{
+									"name": "to",
+									"type": "SC_SPEC_TYPE_SYMBOL"
+							}
+					],
+					"outputs": [
+							{
+									"type": "SC_SPEC_TYPE_VEC"
+							}
+					],
+					"params": [
+							{
+									"name": "to",
+									"value": ""
+							}
+					],
+					"docs": null,
+					"id": "3ba5a830-d7a7-421a-9e04-2c2a8b8e4b84"
+			}
+	],
+	"selectedMethod": null
+}
