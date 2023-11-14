@@ -52,7 +52,11 @@ const FunctionsTab = ({
 						</SelectTrigger>
 						<SelectContent>
 							{methods?.map((method) => (
-								<SelectItem key={method.id} value={method.id}>
+								<SelectItem
+									key={method.id}
+									value={method.id}
+									data-test="tabs-function-select"
+								>
 									{method.name}
 								</SelectItem>
 							))}

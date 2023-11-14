@@ -5,9 +5,9 @@
 		"invocations": [
 			{
 				"name": "Invocation",
-				"secretKey": null,
-				"publicKey": null,
-				"contractId": null,
+				"secretKey": "SDE4CJUP5PCKEH36MA3ZCKKKA4ZB74SYZ3OFF7UCXDKTZW56TKXH7Z2C",
+				"publicKey": "GC65TJQIVP7Q23KE5IR7GEDW7RU6SF3HOIUUIPSD45TR2PNOX5W5VM32",
+				"contractId": "CAMNDFGZCEVIQGKG5USNUFUVT3O4PJWGN4FVATNIRND6TJCG3CC2UW75",
 				"id": "635bbf80-0787-47e2-900c-f44d5f53559d"
 			}
 		]

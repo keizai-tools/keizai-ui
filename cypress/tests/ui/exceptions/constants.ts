@@ -1,5 +1,7 @@
 export const collectionId = 'fe9abbf4-8afc-4109-b31e-fe422b84c5b5';
 export const invocationId = '635bbf80-0787-47e2-900c-f44d5f53559d';
+export const contractId =
+	'CAMNDFGZCEVIQGKG5USNUFUVT3O4PJWGN4FVATNIRND6TJCG3CC2UW75';
 export const stellarFriendBotUrl = '';
 export const keypair = {
 	secretKey: {
