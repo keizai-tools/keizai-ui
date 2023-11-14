@@ -24,8 +24,16 @@ const FunctionsTab = ({
 	return (
 		<>
 			{(methods?.length || 0) > 0 ? (
-				<div className="flex flex-col gap-2 px-1 py-5">
-					<span className="text-primary text-md font-semibold">Function</span>
+				<div
+					className="flex flex-col gap-2 px-1 py-5"
+					data-test="tabs-function-container"
+				>
+					<span
+						className="text-primary text-md font-semibold"
+						data-test="tabs-function-title"
+					>
+						Function
+					</span>
 
 					<Select
 						value={selectedMethod?.id ?? ''}
@@ -36,8 +44,11 @@ const FunctionsTab = ({
 							});
 						}}
 					>
-						<SelectTrigger>
-							<SelectValue placeholder="Select function" />
+						<SelectTrigger data-test="tabs-function-select-container">
+							<SelectValue
+								placeholder="Select function"
+								data-test="tabs-function-select-default"
+							/>
 						</SelectTrigger>
 						<SelectContent>
 							{methods?.map((method) => (
@@ -70,7 +81,10 @@ const FunctionsTab = ({
 							<h2>Let&apos;s Load</h2>
 							<h2>Your Contract.</h2>
 						</div>
-						<span className="text-xl text-slate-400">
+						<span
+							className="text-xl text-slate-400"
+							data-test="tabs-content-contract-description"
+						>
 							Input your contract address above to begin.
 						</span>
 					</div>

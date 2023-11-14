@@ -42,13 +42,16 @@ const NewEntityDialog = ({
 	return (
 		<Dialog>
 			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent>
+			<DialogContent data-test="new-entity-dialog-container">
 				<DialogHeader>
-					<DialogTitle>{title}</DialogTitle>
-					<DialogDescription>{description}</DialogDescription>
+					<DialogTitle data-test="new-entity-dialog-title">{title}</DialogTitle>
+					<DialogDescription data-test="new-entity-dialog-description">
+						{description}
+					</DialogDescription>
 				</DialogHeader>
 				<form
 					className="flex items-center space-x-2 mt-4"
+					data-test="new-entity-dialog-form-container"
 					onSubmit={handleSubmit(submitAndReset)}
 				>
 					<div className="grid flex-1 gap-2">
@@ -64,6 +67,7 @@ const NewEntityDialog = ({
 							type="submit"
 							size="sm"
 							className="px-3"
+							data-test="new-entity-dialog-btn-submit"
 							disabled={isLoading}
 						>
 							{isLoading ? 'Creating...' : 'Create'}

@@ -30,6 +30,7 @@ const NewInvocationButton = ({ folderId }: { folderId: string }) => {
 			<Button
 				variant="link"
 				className="flex gap-2 text-xs text-slate-500 hover:text-slate-100 p-0"
+				data-test="new-invocation-btn-container"
 			>
 				<PlusIcon size={12} /> Add invocation
 			</Button>

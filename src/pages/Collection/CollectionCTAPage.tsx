@@ -1,6 +1,9 @@
 const CollectionCTAPage = () => {
 	return (
-		<div className="flex items-center flex-wrap justify-center w-full h-fit gap-12 mt-48">
+		<div
+			className="flex items-center flex-wrap justify-center w-full h-fit gap-12 mt-48"
+			data-test="collection-empty-invocation-container"
+		>
 			<img
 				src="/moon.svg"
 				width={300}
