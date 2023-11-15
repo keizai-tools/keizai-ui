@@ -53,7 +53,7 @@ const useInvocation = ({ invocationId }: { invocationId: string }) => {
 		setIsRunningInvocation(true);
 		try {
 			const response = await runInvocation();
-			if (response) {
+			if (response && response.method) {
 				setContractResponses((prev) => [
 					...prev,
 					{
@@ -62,6 +62,8 @@ const useInvocation = ({ invocationId }: { invocationId: string }) => {
 						message: response.response || 'No response',
 					},
 				]);
+			} else {
+				throw new Error();
 			}
 		} catch (error) {
 			const errorResponse = handleAxiosError(error);
