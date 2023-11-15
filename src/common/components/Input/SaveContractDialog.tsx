@@ -84,7 +84,7 @@ const SaveContractDialog = ({
 						<AlertCircleIcon className="h-4 w-4" />
 						<AlertTitle>Warning!</AlertTitle>
 						<AlertDescription>
-							This will remove your current parameters.
+							This will remove your current functions and parameters.
 						</AlertDescription>
 					</Alert>
 					<Button disabled={!contractId.trim() || isPending}>
