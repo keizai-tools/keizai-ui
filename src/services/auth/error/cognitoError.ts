@@ -5,3 +5,21 @@ export class CognitoError extends Error {
 		this.code = code;
 	}
 }
+
+export class BadRequestException {
+	public message: string;
+	public status: number;
+	constructor(message: string) {
+		this.status = 400;
+		this.message = message;
+	}
+}
+
+export class InternalServerErrorException {
+	public message: string;
+	public status: number;
+	constructor(message: string) {
+		this.status = 500;
+		this.message = message;
+	}
+}
