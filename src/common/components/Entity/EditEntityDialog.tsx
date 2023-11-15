@@ -49,7 +49,6 @@ const EditEntityDialog = ({
 					className="flex items-start space-x-2 mt-4"
 					data-test="edit-entity-dialog-form-container"
 					onSubmit={handleSubmit(onEdit)}
-					data-test="edit-entity-dialog-form-container"
 				>
 					<div className="grid flex-1 gap-2">
 						<Controller
