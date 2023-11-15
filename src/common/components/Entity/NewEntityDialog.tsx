@@ -67,6 +67,7 @@ const NewEntityDialog = ({
 							type="submit"
 							size="sm"
 							className="px-3"
+							data-test="new-entity-dialog-btn-submit"
 							disabled={isLoading}
 							data-test="new-entity-dialog-btn-submit"
 						>

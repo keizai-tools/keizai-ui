@@ -47,6 +47,7 @@ const EditEntityDialog = ({
 				</DialogHeader>
 				<form
 					className="flex items-start space-x-2 mt-4"
+					data-test="edit-entity-dialog-form-container"
 					onSubmit={handleSubmit(onEdit)}
 					data-test="edit-entity-dialog-form-container"
 				>

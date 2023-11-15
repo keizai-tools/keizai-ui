@@ -86,14 +86,20 @@ const Folder = ({ folder }: { folder: IFolder }) => {
 						</div>
 					</AccordionTrigger>
 					<AccordionContent>
-						<div className="flex flex-col justify-start text-slate-100">
+						<div
+							className="flex flex-col justify-start text-slate-100"
+							data-test="collection-folder-invocation-list"
+						>
 							{folder.invocations?.map((invocation) => (
 								<InvocationListItem
 									key={invocation.id}
 									invocation={invocation}
 								/>
 							))}
-							<div className="ml-4">
+							<div
+								className="ml-4"
+								data-test="collection-folder-new-invocation-btn"
+							>
 								<NewInvocationButton folderId={folder.id} />
 							</div>
 						</div>

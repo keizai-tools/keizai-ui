@@ -37,6 +37,7 @@ const CollectionCard = ({
 			<Button
 				variant="ghost"
 				className="p-6 flex flex-col justify-between items-start gap-4 border-solid border-2 rounded-lg border-primary h-[200px] w-[300px] font-bold"
+				data-test="collection-folder-btn"
 				onClick={() => navigate(`/collection/${id}`)}
 			>
 				<span data-test="collection-folder-title">{name}</span>
