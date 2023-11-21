@@ -42,9 +42,9 @@ const CollectionCard = ({
 				data-test="collection-folder-btn"
 				onClick={() => navigate(`/collection/${id}`)}
 			>
-				<span>{name}</span>
+				<span data-test="collection-folder-title">{name}</span>
 				<div className="flex flex-col justify-start items-start">
-					<span className="text-slate-400 font-medium">
+					<span className="text-slate-400 font-medium" data-test="collection-folder-quantity">
 						{foldersCount === 0
 							? 'No folders'
 							: `${foldersCount} ${foldersCount === 1 ? 'Folder' : 'Folders'}`}
