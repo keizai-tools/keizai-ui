@@ -70,4 +70,3 @@ export const folders = {
 	},
 	newInvocationBtn: 'Add invocation',
 };
-
