@@ -13,6 +13,7 @@ import ProtectedRoute from '@/pages/auth/ProtectedRoute';
 
 import Root from '@pages/Root';
 import Home from '@pages/home/Home';
+import CollectionVariables from '@/common/components/Collections/CollectionVariables';
 
 const router = createBrowserRouter([
 	{
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
 					{
 						index: true,
 						element: <CollectionCTAPage />,
+					},
+					{
+						path: 'variables',
+						element: <CollectionVariables />,
 					},
 					{
 						path: 'invocation/:invocationId',

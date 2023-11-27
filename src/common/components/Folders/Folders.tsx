@@ -20,9 +20,10 @@ const Folders = () => {
 
 	return (
 		<div
-			className="min-w-[250px] flex-col border-r dark:border-r-border h-full px-3 py-1 gap-4"
+			className="min-w-[250px] flex-col justify-between border-r dark:border-r-border h-full px-3 py-1 gap-4"
 			data-test="collections-container"
 		>
+			<div data-test="folders-container">
 			<Button
 				variant="link"
 				className="flex items-center gap-2 text-xs text-primary p-0"
@@ -75,7 +76,19 @@ const Folders = () => {
 					Create your first folder here
 				</span>
 			)}
+			</div>
+			<Button
+					variant="link"
+					className="mb-4 w-full"
+					asChild
+					data-test="collections-variables-btn-link"
+				>
+					<Link to={`collection/${params.collectionId}/variables`}>
+						Collection variables
+					</Link>
+				</Button>
 		</div>
+
 	);
 };
 
