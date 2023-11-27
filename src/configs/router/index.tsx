@@ -1,5 +1,6 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 
+import CollectionVariables from '@/common/components/Collections/CollectionVariables';
 import ChangePassword from '@/common/components/auth/ChangePassword';
 import CreateAccount from '@/common/components/auth/CreateAccount';
 import Login from '@/common/components/auth/Login';
@@ -13,7 +14,6 @@ import ProtectedRoute from '@/pages/auth/ProtectedRoute';
 
 import Root from '@pages/Root';
 import Home from '@pages/home/Home';
-import CollectionVariables from '@/common/components/Collections/CollectionVariables';
 
 const router = createBrowserRouter([
 	{

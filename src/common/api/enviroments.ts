@@ -8,7 +8,7 @@ export const useEnvironmentsQuery = () => {
 	const axios = useAxios();
 
 	const query = useQuery<Environment[]>({
-		queryKey: ['environments'],
+		queryKey: ['environment'],
 		queryFn: async () => axios?.get('/enviroment').then((res) => res.data),
 	});
 
@@ -45,9 +45,9 @@ export const useCreateEnvironmentMutation = () => {
 			axios
 				?.post('/enviroment', { name, value, collectionId })
 				.then((res) => res.data),
-		onSuccess: (_, { collectionId }) => {
+		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['collection', collectionId, 'environments'],
+				queryKey: ['environment'],
 			});
 		},
 	});
