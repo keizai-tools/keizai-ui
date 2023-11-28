@@ -59,7 +59,8 @@
 		"soroban-client": "^1.0.0-beta.3",
 		"sort-by": "^0.0.2",
 		"tailwind-merge": "^1.14.0",
-		"tailwindcss-animate": "^1.0.7"
+		"tailwindcss-animate": "^1.0.7",
+		"use-debounce": "^10.0.0"
 	},
 	"devDependencies": {
 		"@cypress/code-coverage": "^3.10.4",
