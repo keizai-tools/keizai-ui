@@ -5,18 +5,18 @@
 	"contractId": "CAMNDFGZCEVIQGKG5USNUFUVT3O4PJWGN4FVATNIRND6TJCG3CC2UW75",
 	"id": "635bbf80-0787-47e2-900c-f44d5f53559d",
 	"folder": {
-			"name": "Folder",
-			"id": "c1f7a826-acdd-446b-97b2-1600fddc8023"
+		"name": "Folder",
+		"id": "c1f7a826-acdd-446b-97b2-1600fddc8023"
 	},
 	"methods": [
-			{
-					"name": "hello",
-					"inputs": [],
-					"outputs": [],
-					"params": [],
-					"docs": null,
-					"id": "3ba5a830-d7a7-421a-9e04-2c2a8b8e4b84"
-			}
+		{
+			"name": "hello",
+			"inputs": [],
+			"outputs": [],
+			"params": [],
+			"docs": null,
+			"id": "3ba5a830-d7a7-421a-9e04-2c2a8b8e4b84"
+		}
 	],
 	"selectedMethod": null
 }
