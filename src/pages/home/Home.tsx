@@ -22,14 +22,22 @@ export default function Home() {
 				</div>
 			) : (
 				<div className="flex gap-8 flex-wrap">
-					{data.map((collection) => (
-						<CollectionCard
-							key={collection.id}
-							id={collection.id}
-							name={collection.name}
-							foldersCount={collection.folders.length ?? 0}
-						/>
-					))}
+					{data.map((collection) => {
+						const invocationsCount = collection.folders.reduce(
+							(total, folder) => total + folder.invocations.length,
+							0,
+						);
+
+						return (
+							<CollectionCard
+								key={collection.id}
+								id={collection.id}
+								name={collection.name}
+								foldersCount={collection.folders.length ?? 0}
+								invocationsCount={invocationsCount ?? 0}
+							/>
+						);
+					})}
 					<CollectionPlaceholder />
 				</div>
 			)}

@@ -8,9 +8,10 @@ const CollectionCTAPage = () => {
 				src="/moon.svg"
 				width={300}
 				height={300}
+				data-test="collection-empty-invocation-img"
 				alt="No invocation selected"
 			/>
-			<div>
+			<div data-test="collection-empty-invocation-description">
 				<h1 className="text-2xl text-primary">
 					Select an invocation from the sidebar
 				</h1>

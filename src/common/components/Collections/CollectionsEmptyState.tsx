@@ -7,9 +7,20 @@ const CollectionsEmptyState = () => {
 	const { mutate, isPending } = useNewCollectionMutation();
 
 	return (
-		<div className="max-w-[450px] text-center flex flex-col items-center gap-8">
-			<img src="/blocks.svg" alt="Empty state" width={350} />
-			<h1 className="text-xl text-primary">
+		<div
+			className="max-w-[450px] text-center flex flex-col items-center gap-8"
+			data-test="collection-empty-state-container"
+		>
+			<img
+				src="/blocks.svg"
+				alt="Empty state"
+				width={350}
+				data-test="collection-empty-state-img"
+			/>
+			<h1
+				className="text-xl text-primary"
+				data-test="collection-empty-state-img-title"
+			>
 				Group related invocations in collections for quick access and smooth
 				workflows.
 			</h1>

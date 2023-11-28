@@ -15,10 +15,12 @@ const CollectionCard = ({
 	id,
 	name,
 	foldersCount = 0,
+	invocationsCount = 0,
 }: {
 	id: string;
 	name: string;
 	foldersCount?: number;
+	invocationsCount?: number;
 }) => {
 	const [activeDialog, setActiveDialog] = React.useState<
 		'edit' | 'delete' | null
@@ -33,19 +35,30 @@ const CollectionCard = ({
 	};
 
 	return (
-		<div className="relative" data-test="collection-folder-container ">
+		<div className="relative" data-test="collection-folder-container">
 			<Button
 				variant="ghost"
 				className="p-6 flex flex-col justify-between items-start gap-4 border-solid border-2 rounded-lg border-primary h-[200px] w-[300px] font-bold"
 				data-test="collection-folder-btn"
 				onClick={() => navigate(`/collection/${id}`)}
 			>
-				<span>{name}</span>
-				<span className="text-slate-400 font-medium">
-					{foldersCount === 0
-						? 'No folders'
-						: `${foldersCount} ${foldersCount === 1 ? 'Folder' : 'Folders'}`}
-				</span>
+				<span data-test="collection-folder-title">{name}</span>
+				<div className="flex flex-col justify-start items-start">
+					<span
+						className="text-slate-400 font-medium"
+						data-test="collection-folder-quantity"
+					>
+						{foldersCount === 0
+							? 'No folders'
+							: `${foldersCount} ${foldersCount === 1 ? 'Folder' : 'Folders'}`}
+					</span>
+					{foldersCount > 0 && (
+						<span className="text-slate-400 font-medium">
+							{invocationsCount === 0 ? 'No' : invocationsCount}{' '}
+							{invocationsCount === 1 ? 'Invocation' : 'Invocations'}
+						</span>
+					)}
+				</div>
 			</Button>
 			<div className="absolute right-5 top-6 text-white">
 				<MoreOptions
