@@ -1,7 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { UseMutateFunction } from '@tanstack/react-query';
 import { PlusIcon, Trash2 } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import {
+	useForm,
+	useFieldArray,
+	Control,
+	UseFieldArrayRemove,
+	Controller,
+} from 'react-hook-form';
 import { useParams } from 'react-router-dom';
+
+// import { useDebounce } from 'use-debounce';
 
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -9,15 +19,133 @@ import { Input } from '../ui/input';
 import {
 	useCreateEnvironmentMutation,
 	useDeleteEnvironmentMutation,
+	useEditEnvironmentMutation,
 	useEnvironmentsQuery,
 } from '@/common/api/enviroments';
 import { Environment } from '@/common/types/environment';
 
+interface IEnviromentItem {
+	index: number;
+	enviroment: Environment;
+	collectionId: string;
+	control: Control<
+		{
+			environments: Environment[];
+		},
+		any
+	>;
+	removeItem: UseFieldArrayRemove;
+	deleteMutation: UseMutateFunction<
+		any,
+		Error,
+		string,
+		{
+			oldEnvs: Environment[] | undefined;
+		}
+	>;
+}
+
+function EnvironmentItem({
+	enviroment,
+	index,
+	collectionId,
+	control,
+	removeItem,
+	deleteMutation,
+}: IEnviromentItem) {
+	const [name, setName] = useState<string>(enviroment.name);
+	const [value, setValue] = useState<string>(enviroment.value);
+
+	// const [debouncedName] = useDebounce(name, 1000);
+	// const [debouncedValue] = useDebounce(value, 1000);
+
+	const { mutate: editEnviromentMutation } = useEditEnvironmentMutation({
+		collectionId,
+	});
+
+	const generateMutationData = (field: string, value: string) => {
+		const mutationData =
+			field === 'name'
+				? {
+						id: enviroment.id,
+						name: value,
+						value: enviroment.value,
+						collectionId,
+				  }
+				: { id: enviroment.id, name: enviroment.name, value, collectionId };
+
+		editEnviromentMutation(mutationData);
+	};
+
+	return (
+		<li
+			key={index}
+			className="flex flex-row items-center gap-2 pb-2"
+			data-test="collection-variables-input-list"
+		>
+			<Controller
+				render={({ field: nameField }) => (
+					<Input
+						placeholder="Name"
+						className="w-1/3"
+						data-test="collection-variables-input-name"
+						{...nameField}
+						onChange={(e: ChangeEvent<HTMLInputElement>) => {
+							nameField.onChange(e.target.value);
+							setName(e.target.value);
+							generateMutationData(nameField.name, name);
+						}}
+					/>
+				)}
+				name={`environments.${index}.name`}
+				control={control}
+			/>
+			<Controller
+				render={({ field: valueField }) => (
+					<Input
+						placeholder="Value"
+						className="w-2/3"
+						data-test="collection-variables-input-value"
+						{...valueField}
+						onChange={(e: ChangeEvent<HTMLInputElement>) => {
+							valueField.onChange(e.target.value);
+							setValue(e.target.value);
+							generateMutationData(valueField.name, value);
+						}}
+					/>
+				)}
+				name={`environments.${index}.value`}
+				control={control}
+			/>
+			<button
+				type="button"
+				className="font-semibold"
+				onClick={() => {
+					enviroment.id ? deleteMutation(enviroment.id) : removeItem(index);
+				}}
+			>
+				<Trash2 className="w-6 h-6 cursor-pointer text-slate-500 hover:text-primary" />
+			</button>
+		</li>
+	);
+}
+
 export default function CollectionVariables() {
 	const params = useParams();
-	const { data: environmentsData, isLoading } = useEnvironmentsQuery();
-	const { mutate: deleteEnvironmentMutation } = useDeleteEnvironmentMutation();
-	const { mutate: createEnviromentMutation } = useCreateEnvironmentMutation();
+	const collectionId = useMemo(() => {
+		return params.collectionId ? params.collectionId : '';
+	}, [params]);
+
+	const { data: environmentsData, isLoading } = useEnvironmentsQuery({
+		collectionId,
+	});
+	const { mutate: deleteEnvironmentMutation } = useDeleteEnvironmentMutation({
+		collectionId,
+	});
+	const { mutate: createEnviromentMutation } = useCreateEnvironmentMutation({
+		collectionId,
+	});
+
 	const { control, handleSubmit, reset } = useForm({
 		defaultValues: {
 			environments: [] as Environment[],
@@ -27,11 +155,7 @@ export default function CollectionVariables() {
 	const variablesList = useMemo(() => {
 		return environmentsData ? environmentsData : [];
 	}, [environmentsData]);
-	console.log(variablesList);
-
-	const collectionId = useMemo(() => {
-		return params.collectionId ? params.collectionId : '';
-	}, [params]);
+	console.log('variablesList', '\n', variablesList);
 
 	useEffect(() => {
 		if (!isLoading) {
@@ -42,13 +166,14 @@ export default function CollectionVariables() {
 	}, [environmentsData, isLoading, reset, variablesList]);
 
 	const { fields, append, remove } = useFieldArray({
+		keyName: 'key',
 		control,
 		name: 'environments',
 	});
-
+	console.log('fields', '\n', fields);
 	const addNewInputVariable = () => {
 		append({
-			id: collectionId,
+			id: '',
 			name: '',
 			value: '',
 		});
@@ -59,11 +184,16 @@ export default function CollectionVariables() {
 
 		if (environments) {
 			environments.forEach((environment) => {
-				createEnviromentMutation({
-					name: environment.name,
-					value: environment.value,
-					collectionId,
-				});
+				if (!environment.id && environment.name && environment.value) {
+					// console.log(`createEnviromentMutation(name: ${environment.name},
+					// 	value: ${environment.value},
+					// 	collectionId: ${collectionId})`);
+					createEnviromentMutation({
+						name: environment.name,
+						value: environment.value,
+						collectionId,
+					});
+				}
 			});
 		}
 	};
@@ -108,47 +238,15 @@ export default function CollectionVariables() {
 				{variablesList &&
 					variablesList.length > 0 &&
 					fields.map((enviroment, index) => (
-						<li
+						<EnvironmentItem
 							key={index}
-							className="flex flex-row items-center gap-2 pb-2"
-							data-test="collection-variables-input-list"
-						>
-							<Controller
-								render={({ field }) => (
-									<Input
-										placeholder="Name"
-										className="w-1/3"
-										data-test="collection-variables-input-name"
-										{...field}
-									/>
-								)}
-								name={`environments.${index}.name`}
-								control={control}
-							/>
-							<Controller
-								render={({ field }) => (
-									<Input
-										placeholder="Value"
-										className="w-2/3"
-										data-test="collection-variables-input-value"
-										{...field}
-									/>
-								)}
-								name={`environments.${index}.value`}
-								control={control}
-							/>
-							<button
-								type="button"
-								className="font-semibold"
-								onClick={
-									enviroment.id
-										? () => deleteEnvironmentMutation(enviroment.id)
-										: () => remove(index)
-								}
-							>
-								<Trash2 className="w-6 h-6 cursor-pointer text-slate-500 hover:text-primary" />
-							</button>
-						</li>
+							enviroment={enviroment}
+							index={index}
+							collectionId={collectionId}
+							control={control}
+							removeItem={remove}
+							deleteMutation={deleteEnvironmentMutation}
+						/>
 					))}
 			</ul>
 			<div className="flex justify-end pt-4 mr-8">

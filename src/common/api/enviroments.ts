@@ -1,14 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useParams } from 'react-router-dom';
 
 import useAxios from '../hooks/useAxios';
 import { Environment } from '../types/environment';
 
-export const useEnvironmentsQuery = () => {
+export const useEnvironmentsQuery = ({
+	collectionId,
+}: {
+	collectionId?: string;
+}) => {
 	const axios = useAxios();
 
 	const query = useQuery<Environment[]>({
-		queryKey: ['environment'],
+		queryKey: ['environment', collectionId],
 		queryFn: async () => axios?.get('/enviroment').then((res) => res.data),
 	});
 
@@ -28,7 +31,11 @@ export const useEnvironmentQuery = ({ id }: { id?: string }) => {
 	return query;
 };
 
-export const useCreateEnvironmentMutation = () => {
+export const useCreateEnvironmentMutation = ({
+	collectionId,
+}: {
+	collectionId?: string;
+}) => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
 
@@ -47,7 +54,7 @@ export const useCreateEnvironmentMutation = () => {
 				.then((res) => res.data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['environment'],
+				queryKey: ['collection', collectionId, 'variables'],
 			});
 		},
 	});
@@ -55,17 +62,30 @@ export const useCreateEnvironmentMutation = () => {
 	return mutation;
 };
 
-export const useDeleteEnvironmentMutation = () => {
-	const params = useParams();
+export const useDeleteEnvironmentMutation = ({
+	collectionId,
+}: {
+	collectionId?: string;
+}) => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
 
 	const mutation = useMutation({
 		mutationFn: async (id: string) =>
 			axios?.delete(`/enviroment/${id}`).then((res) => res.data),
-		onSuccess: () => {
+		onMutate: (id: string) => {
+			queryClient.cancelQueries({
+				queryKey: ['collection', collectionId, 'variables'],
+			});
+			const oldEnvs = queryClient.getQueryData<Environment[]>(['enviroment']);
+			queryClient.setQueryData<Environment[]>(['enviroment'], (oldData) => {
+				return oldData?.filter((env) => env.id !== id);
+			});
+			return { oldEnvs };
+		},
+		onSettled: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['collection', params.collectionId, 'environments'],
+				queryKey: ['collection', collectionId, 'variables'],
 			});
 		},
 	});
