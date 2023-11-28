@@ -189,3 +189,36 @@ export const useEditInvocationKeysMutation = () => {
 
 	return mutation;
 };
+
+export const useEditPreInvocationMutation = () => {
+	const axios = useAxios();
+	const queryClient = useQueryClient();
+
+	const mutation = useMutation({
+		mutationFn: async ({
+			id,
+			preInvocation,
+		}: {
+			id: string;
+			preInvocation: string;
+		}) => {
+			axios
+				?.patch('/invocation', {
+					id,
+					preInvocation,
+				})
+				.then((res) => res.data);
+		},
+		onSuccess(_, variables) {
+			const oldData = queryClient.getQueryData<Invocation>([
+				'invocation',
+				variables.id,
+			]);
+			queryClient.setQueryData(['invocation', variables.id], {
+				...oldData,
+				preInvocation: variables.preInvocation,
+			});
+		},
+	});
+	return mutation;
+};
