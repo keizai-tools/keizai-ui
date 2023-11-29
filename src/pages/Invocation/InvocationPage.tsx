@@ -150,7 +150,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 				</TabsContent>
 				<TabsContent value="preInvocateScript" className="h-[500px]">
 					<PreInvocateTab
-						setEditorValue={setEditorValue}
+						setPreInvocation={setEditorValue}
 						preInvocation={data.preInvocation}
 					/>
 				</TabsContent>

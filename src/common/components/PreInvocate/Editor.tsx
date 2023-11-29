@@ -1,25 +1,38 @@
 import { Editor as MonacoEditor } from '@monaco-editor/react';
+import { Dispatch, SetStateAction } from 'react';
+
+import EditorHelpers from './EditorHelpers';
 
 function Editor({
-	setEditorValue,
 	defaultValue,
+	editorValue,
+	setPreInvocation,
+	setEditorValue,
 }: {
-	setEditorValue: (value?: string | undefined) => void;
 	defaultValue?: string;
+	editorValue: string;
+	setPreInvocation: (value?: string | undefined) => void;
+	setEditorValue: Dispatch<SetStateAction<string>>;
 }) {
 	function handleEditorChange(value: string | undefined) {
-		setEditorValue(value);
+		setPreInvocation(value);
+		setEditorValue(value ?? '');
 	}
+
 	return (
-		<MonacoEditor
-			data-test="editor"
-			height={'100%'}
-			width={'100%'}
-			defaultLanguage="javascript"
-			onChange={handleEditorChange}
-			theme="vs-dark"
-			defaultValue={defaultValue}
-		/>
+		<div className="flex h-full">
+			<MonacoEditor
+				data-test="editor"
+				height={'100%'}
+				width={'80%'}
+				defaultLanguage="javascript"
+				onChange={handleEditorChange}
+				theme="vs-dark"
+				defaultValue={defaultValue}
+				value={editorValue}
+			/>
+			<EditorHelpers setEditorValue={setEditorValue} />
+		</div>
 	);
 }
 
