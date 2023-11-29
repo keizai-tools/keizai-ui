@@ -20,7 +20,7 @@ const Folders = () => {
 
 	return (
 		<div
-			className="min-w-[250px] flex-col justify-between border-r dark:border-r-border h-full px-3 py-1 gap-4"
+			className="min-w-[250px] flex flex-col justify-between border-r dark:border-r-border h-full px-3 py-1 gap-4"
 			data-test="collections-container"
 		>
 			<div data-test="folders-container">
@@ -83,9 +83,9 @@ const Folders = () => {
 					</span>
 				)}
 			</div>
-			<div>
+			<div className="mb-4 w-full text-center text-base hover:underline font-semibold">
 				<Link
-					className="mb-4 w-full"
+					className="text-primary"
 					data-test="collections-variables-btn-link"
 					to={`/collection/${params.collectionId}/variables`}
 				>
