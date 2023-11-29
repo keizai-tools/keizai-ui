@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { toast } from '../components/ui/use-toast';
 import useAxios from '../hooks/useAxios';
 import { Environment } from '../types/environment';
 
@@ -11,7 +12,7 @@ export const useEnvironmentsQuery = ({
 	const axios = useAxios();
 
 	const query = useQuery<Environment[]>({
-		queryKey: ['environment', collectionId],
+		queryKey: ['enviroment', collectionId],
 		queryFn: async () => axios?.get('/enviroment').then((res) => res.data),
 	});
 
@@ -54,7 +55,18 @@ export const useCreateEnvironmentMutation = ({
 				.then((res) => res.data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['collection', collectionId, 'variables'],
+				queryKey: ['enviroment', collectionId],
+			});
+			toast({
+				title: 'Successfully!',
+				description: 'The variables have been created correctly',
+			});
+		},
+		onError: () => {
+			toast({
+				title: "Couldn't create variables",
+				description: 'Please try again',
+				variant: 'destructive',
 			});
 		},
 	});
@@ -75,17 +87,30 @@ export const useDeleteEnvironmentMutation = ({
 			axios?.delete(`/enviroment/${id}`).then((res) => res.data),
 		onMutate: (id: string) => {
 			queryClient.cancelQueries({
-				queryKey: ['collection', collectionId, 'variables'],
+				queryKey: ['enviroment', collectionId],
 			});
-			const oldEnvs = queryClient.getQueryData<Environment[]>(['enviroment']);
-			queryClient.setQueryData<Environment[]>(['enviroment'], (oldData) => {
-				return oldData?.filter((env) => env.id !== id);
-			});
+			const oldEnvs = queryClient.getQueryData<Environment[]>([
+				'enviroment',
+				collectionId,
+			]);
+			queryClient.setQueryData<Environment[]>(
+				['enviroment', collectionId],
+				(oldData) => {
+					return oldData?.filter((env) => env.id !== id);
+				},
+			);
 			return { oldEnvs };
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['collection', collectionId, 'variables'],
+				queryKey: ['enviroment', collectionId],
+			});
+		},
+		onError: () => {
+			toast({
+				title: "Couldn't delete a variable",
+				description: 'Please try again',
+				variant: 'destructive',
 			});
 		},
 	});
@@ -123,7 +148,14 @@ export const useEditEnvironmentMutation = ({
 				.then((res) => res.data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['collection', collectionId, 'environments'],
+				queryKey: ['enviroment', collectionId],
+			});
+		},
+		onError: (variables: Environment) => {
+			toast({
+				title: 'Something went wrong!',
+				description: `Couldn't edit a variable: ${variables.name}`,
+				variant: 'destructive',
 			});
 		},
 	});
