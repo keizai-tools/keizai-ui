@@ -9,6 +9,7 @@ import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
 import ContractInput from '@/common/components/Input/ContractInput';
 import AuthorizationTab from '@/common/components/Tabs/AuthorizationTab/AuthorizationTab';
 import FunctionsTab from '@/common/components/Tabs/FunctionsTab/FunctionsTab';
+import PreInvocateTab from '@/common/components/Tabs/PreInvocateTab/PreInvocateTab';
 import Terminal from '@/common/components/ui/Terminal';
 import { Button } from '@/common/components/ui/button';
 import {
@@ -22,6 +23,7 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from '@/common/components/ui/tooltip';
+import useEditor from '@/common/hooks/useEditor';
 import { Invocation } from '@/common/types/invocation';
 
 const tabs: Record<string, string> = {
@@ -32,7 +34,7 @@ const tabs: Record<string, string> = {
 	events: 'Events tracker',
 };
 
-const disabledTabs = ['preInvocateScript', 'tests', 'events'];
+const disabledTabs = ['tests', 'events'];
 
 export type InvocationForm = {
 	contractId?: string | null;
@@ -50,6 +52,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 	} = useInvocation({
 		invocationId: data.id ?? '',
 	});
+	const { setEditorValue } = useEditor();
 
 	const isMissingKeys = React.useMemo(() => {
 		return !data.publicKey || !data.secretKey;
@@ -143,6 +146,12 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 							secretKey: data.secretKey,
 							publicKey: data.publicKey,
 						}}
+					/>
+				</TabsContent>
+				<TabsContent value="preInvocateScript" className="h-[500px]">
+					<PreInvocateTab
+						setPreInvocation={setEditorValue}
+						preInvocation={data.preInvocation}
 					/>
 				</TabsContent>
 			</Tabs>

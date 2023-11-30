@@ -13,6 +13,7 @@ export type Invocation = {
 	parameters?: { key: string; value: string }[] | null;
 	secretKey?: string;
 	publicKey?: string;
+	preInvocation?: string;
 };
 
 export const SCSpecTypeMap = {
