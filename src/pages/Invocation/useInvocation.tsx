@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+	createContractResponsePreInvocation,
 	createContractResponseTitle,
 	handleAxiosError,
 } from './invocation.utils';
@@ -53,13 +54,16 @@ const useInvocation = ({ invocationId }: { invocationId: string }) => {
 		setIsRunningInvocation(true);
 		try {
 			const response = await runInvocation();
-			if (response && response.method) {
+			if (response && response.invocation.method) {
 				setContractResponses((prev) => [
 					...prev,
 					{
 						isError: false,
-						title: createContractResponseTitle(response.method),
-						message: response.response || 'No response',
+						preInvocation: createContractResponsePreInvocation(
+							response.preInvocation?.response,
+						),
+						title: createContractResponseTitle(response.invocation.method),
+						message: response.invocation.response || 'No response',
 					},
 				]);
 			} else {

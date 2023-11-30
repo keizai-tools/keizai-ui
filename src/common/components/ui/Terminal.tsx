@@ -1,6 +1,7 @@
 import React from 'react';
 
 export type TerminalEntry = {
+	preInvocation?: React.ReactNode;
 	title?: React.ReactNode;
 	message: string;
 	isError: boolean;
@@ -33,6 +34,7 @@ const Terminal = ({ entries }: { entries: TerminalEntry[] }) => {
 							entry.isError ? 'border-red-500' : 'border-green-700'
 						} border-l-2 pl-2`}
 					>
+						{entry.preInvocation}
 						{entry.title}
 						<span className="ml-4">
 							{entry.isError

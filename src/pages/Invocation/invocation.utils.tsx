@@ -32,6 +32,18 @@ export const createContractResponseTitle = (method: Method) => {
 	);
 };
 
+export const createContractResponsePreInvocation = (
+	preInvocation: string | undefined,
+) => {
+	return (
+		<span className="flex items-center gap-1 tracking-wider">
+			<ChevronRight className="text-primary" size={16} />
+			<span className="text-primary font-semibold">Pre invocation result:</span>
+			<span>{preInvocation}</span>
+		</span>
+	);
+};
+
 export const handleAxiosError = (error: unknown) => {
 	if (isAxiosError(error)) {
 		const axiosError = error as AxiosError;

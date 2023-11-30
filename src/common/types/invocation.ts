@@ -16,6 +16,18 @@ export type Invocation = {
 	preInvocation?: string;
 };
 
+export type InvocationResponse = {
+	preInvocation?: PreInvocationRunned;
+	invocation: InvocationRunned;
+};
+
+type PreInvocationRunned = {
+	response?: string;
+	statusCode: number;
+};
+
+type InvocationRunned = { method: Method; response: string; status: string };
+
 export const SCSpecTypeMap = {
 	SC_SPEC_TYPE_VAL: 'Val',
 	SC_SPEC_TYPE_BOOL: 'Bool',
