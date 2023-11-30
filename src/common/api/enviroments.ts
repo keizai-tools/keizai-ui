@@ -7,12 +7,12 @@ import { Environment } from '../types/environment';
 export const useEnvironmentsQuery = ({
 	collectionId,
 }: {
-	collectionId?: string;
+	collectionId?: string | undefined;
 }) => {
 	const axios = useAxios();
 
 	const query = useQuery<Environment[]>({
-		queryKey: ['enviroment', collectionId],
+		queryKey: ['environment', collectionId],
 		queryFn: async () => axios?.get('/enviroment').then((res) => res.data),
 	});
 
@@ -55,7 +55,7 @@ export const useCreateEnvironmentMutation = ({
 				.then((res) => res.data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['enviroment', collectionId],
+				queryKey: ['environment', collectionId],
 			});
 			toast({
 				title: 'Successfully!',
@@ -87,14 +87,14 @@ export const useDeleteEnvironmentMutation = ({
 			axios?.delete(`/enviroment/${id}`).then((res) => res.data),
 		onMutate: (id: string) => {
 			queryClient.cancelQueries({
-				queryKey: ['enviroment', collectionId],
+				queryKey: ['environment', collectionId],
 			});
 			const oldEnvs = queryClient.getQueryData<Environment[]>([
-				'enviroment',
+				'environment',
 				collectionId,
 			]);
 			queryClient.setQueryData<Environment[]>(
-				['enviroment', collectionId],
+				['environment', collectionId],
 				(oldData) => {
 					return oldData?.filter((env) => env.id !== id);
 				},
@@ -103,7 +103,7 @@ export const useDeleteEnvironmentMutation = ({
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['enviroment', collectionId],
+				queryKey: ['environment', collectionId],
 			});
 		},
 		onError: () => {

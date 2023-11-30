@@ -1,31 +1,25 @@
 import { PlusIcon } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useFieldArray, useForm } from 'react-hook-form';
 
 import EnvironmentItem from '../Environments/EnvironmentItem';
 import { Button } from '../ui/button';
 
-import { useCollectionsQuery } from '@/common/api/collections';
 import {
 	useCreateEnvironmentMutation,
 	useDeleteEnvironmentMutation,
-	useEnvironmentsQuery,
 } from '@/common/api/enviroments';
+import { Collection } from '@/common/types/collection';
 import { Environment } from '@/common/types/environment';
 
-export default function CollectionVariables() {
-	const params = useParams();
-	const { data: collections } = useCollectionsQuery();
-
-	const collectionId = useMemo(() => {
-		return params.collectionId ? params.collectionId : '';
-	}, [params]);
-	const collection = collections?.find((col) => col.id === collectionId);
-
-	const { data: environmentsData, isLoading } = useEnvironmentsQuery({
-		collectionId,
-	});
+export const CollectionVariables = ({
+	collection,
+	collectionId,
+	environments,
+}: {
+	collectionId: string;
+	collection: Collection | undefined;
+	environments: Environment[];
+}) => {
 	const { mutate: deleteEnvironmentMutation } = useDeleteEnvironmentMutation({
 		collectionId,
 	});
@@ -33,15 +27,11 @@ export default function CollectionVariables() {
 		collectionId,
 	});
 
-	const { control, handleSubmit, reset } = useForm({
+	const { control, handleSubmit, setValue } = useForm({
 		defaultValues: {
-			environments: [] as Environment[],
+			environments: environments as Environment[],
 		},
 	});
-
-	const variablesList = useMemo(() => {
-		return environmentsData ? environmentsData : [];
-	}, [environmentsData]);
 
 	const { fields, append, remove } = useFieldArray({
 		keyName: 'key',
@@ -49,20 +39,20 @@ export default function CollectionVariables() {
 		name: 'environments',
 	});
 
-	useEffect(() => {
-		if (!isLoading) {
-			reset({
-				environments: variablesList,
-			});
-		}
-	}, [environmentsData, isLoading, reset, variablesList]);
-
 	const addNewInputVariable = () => {
 		append({
 			id: '',
 			name: '',
 			value: '',
 		});
+	};
+
+	const handleRemoveEnvironment = (id: string) => {
+		setValue(
+			'environments',
+			fields.filter((field) => field.id !== id),
+		);
+		deleteEnvironmentMutation(id);
 	};
 
 	const onSubmit = (data: { environments: Environment[] | undefined }) => {
@@ -80,11 +70,6 @@ export default function CollectionVariables() {
 			});
 		}
 	};
-
-	if (isLoading) {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		return 'Loading...' as any;
-	}
 
 	return (
 		<form
@@ -122,19 +107,17 @@ export default function CollectionVariables() {
 				className="flex flex-col gap-2 px-1 pt-12"
 				data-test="collection-variables-input-container"
 			>
-				{variablesList &&
-					variablesList.length > 0 &&
-					fields.map((enviroment, index) => (
-						<EnvironmentItem
-							key={index}
-							enviroment={enviroment}
-							index={index}
-							collectionId={collectionId}
-							control={control}
-							removeItem={remove}
-							deleteMutation={deleteEnvironmentMutation}
-						/>
-					))}
+				{fields.map((enviroment, index) => (
+					<EnvironmentItem
+						key={index}
+						enviroment={enviroment}
+						index={index}
+						collectionId={collectionId}
+						control={control}
+						removeItem={remove}
+						deleteMutation={handleRemoveEnvironment}
+					/>
+				))}
 			</ul>
 			<div className="flex justify-end pt-4 mr-8">
 				<Button type="submit" className="font-semibold">
@@ -143,4 +126,4 @@ export default function CollectionVariables() {
 			</div>
 		</form>
 	);
-}
+};

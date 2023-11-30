@@ -21,7 +21,6 @@ export default function useEnvironments() {
 		const environment = environments?.find((env: Environment) => env.id === id);
 		if (environment) {
 			setSelectEnvironment(environment);
-			console.log(selectEnvironment);
 			setInputValue((prevValue) =>
 				prevValue
 					? prevValue.replaceAll('{', '') + `{{${environment.name}}}`

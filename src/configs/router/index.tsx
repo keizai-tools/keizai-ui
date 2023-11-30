@@ -1,6 +1,6 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 
-import CollectionVariables from '@/common/components/Collections/CollectionVariables';
+import { CollectionVariablesContainer } from '@/common/components/Collections/CollectionVariablesContainer';
 import ChangePassword from '@/common/components/auth/ChangePassword';
 import CreateAccount from '@/common/components/auth/CreateAccount';
 import Login from '@/common/components/auth/Login';
@@ -42,7 +42,7 @@ const router = createBrowserRouter([
 					},
 					{
 						path: 'variables',
-						element: <CollectionVariables />,
+						element: <CollectionVariablesContainer />,
 					},
 					{
 						path: 'invocation/:invocationId',
