@@ -59,9 +59,11 @@ const useInvocation = ({ invocationId }: { invocationId: string }) => {
 					...prev,
 					{
 						isError: false,
-						preInvocation: createContractResponsePreInvocation(
-							response.preInvocation?.response,
-						),
+						preInvocation: response.preInvocation?.response
+							? createContractResponsePreInvocation(
+									response.preInvocation?.response,
+							  )
+							: '',
 						title: createContractResponseTitle(response.invocation.method),
 						message: response.invocation.response || 'No response',
 					},
