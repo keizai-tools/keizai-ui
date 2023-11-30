@@ -25,7 +25,10 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
 
 	return (
 		<>
-			<div className="flex justify-between items-center w-full text-slate-100 text-sm group">
+			<div
+				className="flex justify-between items-center w-full text-slate-100 text-sm group"
+				data-test="invocation-item"
+			>
 				<Button
 					variant="link"
 					className="text-slate-100 w-full flex justify-start"
