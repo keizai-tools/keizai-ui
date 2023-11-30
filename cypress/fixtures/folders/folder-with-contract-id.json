@@ -1,0 +1,15 @@
+[
+	{
+		"name": "Folder",
+		"id": "c1f7a826-acdd-446b-97b2-1600fddc8023",
+		"invocations": [
+			{
+				"name": "Invocation",
+				"secretKey": "SBZKGDI2OSJCRD5OTTWI4MJONCPTYV47BR4APVZKOVC62FZIWE25T2NN",
+				"publicKey": "GBYGCJYMEVYGFLO537ACT7LVQDSNRRYS3ZJBMJNK3RJTAH4YRVBAFUXG",
+				"contractId": "CAABIHUZVHWJEQZ4LZWK5644HOWRPYHWGRUY4L5TBHUDHFADDVY55BK6",
+				"id": "635bbf80-0787-47e2-900c-f44d5f53559d"
+			}
+		]
+	}
+]

@@ -1,0 +1,13 @@
+{
+	"name": "Invocation",
+	"secretKey": "SBZKGDI2OSJCRD5OTTWI4MJONCPTYV47BR4APVZKOVC62FZIWE25T2NN",
+	"publicKey": "GBYGCJYMEVYGFLO537ACT7LVQDSNRRYS3ZJBMJNK3RJTAH4YRVBAFUXG",
+	"contractId": null,
+	"id": "d0197fe7-b366-449f-8a98-b4ce08ec5760",
+	"folder": {
+		"name": "Folder",
+		"id": "5ffed16a-6c59-4543-afb5-7c0f85e0723e"
+	},
+	"methods": [],
+	"selectedMethod": null
+}

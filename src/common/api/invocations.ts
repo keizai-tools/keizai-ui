@@ -2,8 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
 import useAxios from '../hooks/useAxios';
-import { Invocation } from '../types/invocation';
-import { Method } from '../types/method';
+import { Invocation, InvocationResponse } from '../types/invocation';
 
 export const useInvocationQuery = ({ id }: { id?: string }) => {
 	const axios = useAxios();
@@ -23,9 +22,7 @@ export const useRunInvocationQuery = ({ id }: { id?: string }) => {
 
 	return () => {
 		return axios
-			?.get<{ method: Method; response: string; status: string }>(
-				`/invocation/${id}/run`,
-			)
+			?.get<InvocationResponse>(`/invocation/${id}/run`)
 			.then((res) => res.data);
 	};
 };
@@ -187,5 +184,38 @@ export const useEditInvocationKeysMutation = () => {
 		},
 	});
 
+	return mutation;
+};
+
+export const useEditPreInvocationMutation = () => {
+	const axios = useAxios();
+	const queryClient = useQueryClient();
+
+	const mutation = useMutation({
+		mutationFn: async ({
+			id,
+			preInvocation,
+		}: {
+			id: string;
+			preInvocation: string;
+		}) => {
+			axios
+				?.patch('/invocation', {
+					id,
+					preInvocation,
+				})
+				.then((res) => res.data);
+		},
+		onSuccess(_, variables) {
+			const oldData = queryClient.getQueryData<Invocation>([
+				'invocation',
+				variables.id,
+			]);
+			queryClient.setQueryData(['invocation', variables.id], {
+				...oldData,
+				preInvocation: variables.preInvocation,
+			});
+		},
+	});
 	return mutation;
 };
