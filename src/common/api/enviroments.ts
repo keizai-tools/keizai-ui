@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 import { toast } from '../components/ui/use-toast';
 import useAxios from '../hooks/useAxios';
@@ -148,13 +149,13 @@ export const useEditEnvironmentMutation = ({
 				.then((res) => res.data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['enviroment', collectionId],
+				queryKey: ['environment', collectionId],
 			});
 		},
-		onError: (variables: Environment) => {
+		onError: (variables: AxiosError<Error>) => {
 			toast({
 				title: 'Something went wrong!',
-				description: `Couldn't edit a variable: ${variables.name}`,
+				description: `Couldn't edit a variable: ${variables.response?.data?.message}`,
 				variant: 'destructive',
 			});
 		},
