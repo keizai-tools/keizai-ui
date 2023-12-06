@@ -4,7 +4,7 @@ import {
 	editorHelpers,
 	editorHelpersDescriptions,
 } from '@/common/constants/editor-helpers';
-import { Keizai } from '@/common/constants/keizai';
+import { KeizaiEditorValues } from '@/common/constants/editor/keizai';
 
 function EditorHelpers({
 	setEditorValue,
@@ -25,7 +25,9 @@ function EditorHelpers({
 							key={index}
 							className="text-sm text-slate-500 hover:text-blue-600 my-5 cursor-pointer"
 							data-test={`editor-helper-${helper}`}
-							onClick={() => setEditorValue((prev) => prev + Keizai[helper])}
+							onClick={() =>
+								setEditorValue((prev) => prev + KeizaiEditorValues[helper])
+							}
 						>
 							{editorHelpersDescriptions[helper]}
 						</li>

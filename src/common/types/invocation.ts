@@ -17,16 +17,10 @@ export type Invocation = {
 };
 
 export type InvocationResponse = {
-	preInvocation?: PreInvocationRunned;
-	invocation: InvocationRunned;
+	method: Method;
+	response: string;
+	status: string;
 };
-
-type PreInvocationRunned = {
-	response?: string;
-	statusCode: number;
-};
-
-type InvocationRunned = { method: Method; response: string; status: string };
 
 export const SCSpecTypeMap = {
 	SC_SPEC_TYPE_VAL: 'Val',

@@ -12,10 +12,11 @@ import {
 } from '@/common/api/invocations';
 import { TerminalEntry } from '@/common/components/ui/Terminal';
 import { useToast } from '@/common/components/ui/use-toast';
+import { Invocation } from '@/common/types/invocation';
 
-const useInvocation = ({ invocationId }: { invocationId: string }) => {
+const useInvocation = (invocation: Invocation) => {
 	const { toast } = useToast();
-	const runInvocation = useRunInvocationQuery({ id: invocationId });
+	const runInvocation = useRunInvocationQuery({ id: invocation.id });
 	const [isRunningInvocation, setIsRunningInvocation] = React.useState(false);
 	const [contractResponses, setContractResponses] = React.useState<
 		TerminalEntry[]
@@ -38,14 +39,14 @@ const useInvocation = ({ invocationId }: { invocationId: string }) => {
 
 	const handleLoadContract = async (contractId: string) => {
 		return await editInvocation({
-			id: invocationId,
+			id: invocation.id,
 			contractId,
 		});
 	};
 
 	const handleSelectFunction = (methodId: string) => {
 		editInvocation({
-			id: invocationId,
+			id: invocation.id,
 			selectedMethodId: methodId,
 		});
 	};
@@ -53,17 +54,20 @@ const useInvocation = ({ invocationId }: { invocationId: string }) => {
 	const handleRunInvocation = async () => {
 		setIsRunningInvocation(true);
 		try {
+			const preInvocationResponse = await handleRunPreInvocation(
+				invocation.preInvocation ?? '',
+			);
 			const response = await runInvocation();
-			if (response && response.invocation.method) {
+			if (response && response.method) {
 				setContractResponses((prev) => [
 					...prev,
 					{
 						isError: false,
 						preInvocation: createContractResponsePreInvocation(
-							response.preInvocation?.response,
+							preInvocationResponse,
 						),
-						title: createContractResponseTitle(response.invocation.method),
-						message: response.invocation.response || 'No response',
+						title: createContractResponseTitle(response.method),
+						message: response.response || 'No response',
 					},
 				]);
 			} else {
@@ -74,6 +78,14 @@ const useInvocation = ({ invocationId }: { invocationId: string }) => {
 			setContractResponses((prev) => [...prev, errorResponse]);
 		} finally {
 			setIsRunningInvocation(false);
+		}
+	};
+
+	const handleRunPreInvocation = (preInvocation: string) => {
+		try {
+			return eval(preInvocation);
+		} catch (error) {
+			return error;
 		}
 	};
 
