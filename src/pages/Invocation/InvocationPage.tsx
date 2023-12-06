@@ -49,9 +49,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 		contractResponses,
 		handleRunInvocation,
 		isRunningInvocation,
-	} = useInvocation({
-		invocationId: data.id ?? '',
-	});
+	} = useInvocation(data);
 	const { setEditorValue } = useEditor();
 
 	const isMissingKeys = React.useMemo(() => {
