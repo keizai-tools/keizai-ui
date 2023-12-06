@@ -14,11 +14,12 @@ import { Method, Parameter } from '@/common/types/method';
 export type ParametersFormType = { parameters: Method['params'] };
 const ParametersFormContent = ({ data }: { data: Method }) => {
 	const { mutate: editParameters } = useEditParametersMethodMutation();
-	const { control, watch, formState, reset } = useForm<ParametersFormType>({
-		defaultValues: {
-			parameters: data?.params,
-		},
-	});
+	const { control, watch, formState, reset, setValue } =
+		useForm<ParametersFormType>({
+			defaultValues: {
+				parameters: data?.params,
+			},
+		});
 	const { fields } = useFieldArray({
 		control,
 		name: 'parameters',
@@ -69,6 +70,7 @@ const ParametersFormContent = ({ data }: { data: Method }) => {
 							key={field.name}
 							index={index}
 							control={control}
+							setValue={setValue}
 							defaultParameters={data.inputs ?? []}
 						/>
 					))}

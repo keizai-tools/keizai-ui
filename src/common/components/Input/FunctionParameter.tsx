@@ -1,7 +1,9 @@
+/* eslint-disable prettier/prettier */
 import { DeleteIcon } from 'lucide-react';
 import React from 'react';
-import { Control, Controller } from 'react-hook-form';
+import { Control, Controller, UseFormSetValue } from 'react-hook-form';
 
+import EnvironmentDropdown from '../Environments/EnvironmentDropdown';
 import { ParametersFormType } from '../Tabs/FunctionsTab/ParametersForm';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -14,11 +16,13 @@ const FunctionParameterInput = ({
 	control,
 	index,
 	onDelete,
+	setValue,
 	defaultParameters,
 }: {
 	control: Control<ParametersFormType>;
 	index: number;
 	onDelete?: () => void;
+	setValue: UseFormSetValue<ParametersFormType>;
 	defaultParameters: {
 		name: string;
 		type: string;
@@ -40,15 +44,15 @@ const FunctionParameterInput = ({
 		)?.type;
 	};
 
-	const newParamValue = React.useMemo(() => {
-		return paramValue;
-	}, [paramValue]);
-
 	React.useEffect(() => {
 		if (valueRef.current) {
 			valueRef.current.focus();
 		}
 	}, []);
+
+	React.useEffect(() => {
+		setValue(`parameters.${index}.value`, paramValue);
+	}, [index, paramValue, setValue]);
 
 	return (
 		<div className="flex gap-2 items-center">
@@ -72,46 +76,34 @@ const FunctionParameterInput = ({
 			<Controller
 				control={control}
 				name={`parameters.${index}.value`}
-				render={({ field: valueField }) => (
-					<>
-						<Input
-							{...valueField}
-							ref={valueRef}
-							placeholder="Parameter value"
-							type="text"
-							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-								handleSearchEnvironment(e.target.value, valueField.onChange);
-							}}
-							value={inputValue}
-						/>
-						{showEnvironments && (
-							<div
-								id="dropdown"
-								className="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
-							>
-								<ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-									{environments?.map((env: Environment) => (
-										<li
-											key={env.id}
-											id={env.id}
-											className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-											onClick={(
-												e: React.MouseEvent<HTMLLIElement, MouseEvent>,
-											) => {
-												handleSelectEnvironment(e.currentTarget.id);
-												valueField.onChange(newParamValue);
-											}}
-										>
-											{env.name}: {env.value}
-										</li>
-									))}
-								</ul>
-							</div>
-						)}
-					</>
-				)}
+				render={({ field: valueField }) => {
+					return (
+						<div
+							id="dropdown"
+							className="z-10 divide-slate-800 rounded shadow w-full"
+						>
+							<Input
+								{...valueField}
+								ref={valueRef}
+								placeholder="Parameter value"
+								type="text"
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+									handleSearchEnvironment(e.target.value);
+								}}
+								value={inputValue}
+							/>
+							{showEnvironments && (
+								<EnvironmentDropdown
+									environments={environments as Environment[]}
+									paramValue={paramValue}
+									handleSelect={handleSelectEnvironment}
+									onChange={valueField.onChange}
+								/>
+							)}
+						</div>
+					);
+				}}
 			/>
-
 			{onDelete && (
 				<Button
 					onClick={onDelete}
