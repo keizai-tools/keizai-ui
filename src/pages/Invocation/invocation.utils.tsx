@@ -35,6 +35,10 @@ export const createContractResponseTitle = (method: Method) => {
 export const createContractResponsePreInvocation = (
 	preInvocation: string | undefined,
 ) => {
+	if (!preInvocation) {
+		return;
+	}
+
 	return (
 		<span className="flex items-center gap-1 tracking-wider">
 			<ChevronRight className="text-primary" size={16} />
