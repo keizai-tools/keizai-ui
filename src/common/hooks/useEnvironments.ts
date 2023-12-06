@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useEnvironmentsQuery } from '../api/enviroments';
+import { getParamValue } from '../helpers/environmentValue';
 import { Environment } from '../types/environment';
 
 export default function useEnvironments() {
@@ -23,26 +24,22 @@ export default function useEnvironments() {
 			setSelectEnvironment(environment);
 			setInputValue((prevValue) =>
 				prevValue
-					? prevValue.replaceAll('{', '') + `{{${environment.name}}}`
+					? prevValue.slice(0, -1) + `{{${environment.name}}}`
 					: `{${environment.name}}}`,
 			);
 			setParamValue((prevValue) =>
 				prevValue
-					? prevValue.replaceAll('{', '') + `${environment.value}`
+					? prevValue.slice(0, -1) + `${environment.value}`
 					: `${environment.value}`,
 			);
 			setShowEnvironments(false);
 		}
 	};
 
-	const handleSearchEnvironment = (
-		newSearchEnvironment: string,
-		onChange: (value: string) => void,
-	) => {
-		setShowEnvironments(newSearchEnvironment.includes('{'));
+	const handleSearchEnvironment = (newSearchEnvironment: string) => {
+		setShowEnvironments(newSearchEnvironment.endsWith('{'));
 		setInputValue(newSearchEnvironment);
-		setParamValue(newSearchEnvironment);
-		onChange(newSearchEnvironment);
+		setParamValue(getParamValue(newSearchEnvironment, environments));
 	};
 
 	return {
