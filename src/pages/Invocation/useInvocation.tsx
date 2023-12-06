@@ -54,24 +54,28 @@ const useInvocation = (invocation: Invocation) => {
 	const handleRunInvocation = async () => {
 		setIsRunningInvocation(true);
 		try {
-			const preInvocationResponse = await handleRunPreInvocation(
+			const preInvocationResponse = handleRunPreInvocation(
 				invocation.preInvocation ?? '',
 			);
-			const response = await runInvocation();
-			if (response && response.method) {
-				setContractResponses((prev) => [
-					...prev,
-					{
-						isError: false,
-						preInvocation: createContractResponsePreInvocation(
-							preInvocationResponse,
-						),
-						title: createContractResponseTitle(response.method),
-						message: response.response || 'No response',
-					},
-				]);
+			if (preInvocationResponse.isError) {
+				setContractResponses((prev) => [...prev, preInvocationResponse]);
 			} else {
-				throw new Error();
+				const response = await runInvocation();
+				if (response && response.method) {
+					setContractResponses((prev) => [
+						...prev,
+						{
+							isError: false,
+							preInvocation: createContractResponsePreInvocation(
+								preInvocationResponse?.preInvocation,
+							),
+							title: createContractResponseTitle(response.method),
+							message: response.response || 'No response',
+						},
+					]);
+				} else {
+					throw new Error();
+				}
 			}
 		} catch (error) {
 			const errorResponse = handleAxiosError(error);
@@ -83,9 +87,20 @@ const useInvocation = (invocation: Invocation) => {
 
 	const handleRunPreInvocation = (preInvocation: string) => {
 		try {
-			return eval(preInvocation);
+			const preInvocationResponse = eval(preInvocation);
+			return {
+				isError: false,
+				message: String(preInvocation),
+				title: 'Pre-Invocation',
+				preInvocation: preInvocationResponse,
+			};
 		} catch (error) {
-			return error;
+			return {
+				isError: true,
+				message: String(`${error} from Pre-invocation script`),
+				title: 'Pre-Invocation error',
+				preInvocation: String(preInvocation),
+			};
 		}
 	};
 
