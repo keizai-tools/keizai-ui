@@ -32,7 +32,7 @@ const ParametersFormContent = ({ data }: { data: Method }) => {
 		};
 	});
 
-	const debounceKeyPhrase = React.useMemo(
+	const debounceParams = React.useMemo(
 		() =>
 			debounce((value) => {
 				editParameters({
@@ -53,10 +53,10 @@ const ParametersFormContent = ({ data }: { data: Method }) => {
 	);
 
 	React.useEffect(() => {
-		if (formState.isDirty) {
-			debounceKeyPhrase(controlledFields);
+		if (formState.dirtyFields.parameters) {
+			debounceParams(watchFieldArray);
 		}
-	}, [controlledFields, debounceKeyPhrase, formState.isDirty]);
+	}, [debounceParams, formState.dirtyFields.parameters, watchFieldArray]);
 
 	return (
 		<div className="flex flex-col mt-5">

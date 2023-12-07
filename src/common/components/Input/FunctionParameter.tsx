@@ -30,12 +30,11 @@ const FunctionParameterInput = ({
 }) => {
 	const {
 		environments,
-		inputValue,
 		paramValue,
 		showEnvironments,
 		handleSelectEnvironment,
 		handleSearchEnvironment,
-	} = useEnvironments();
+	} = useEnvironments({ index, setValue });
 	const valueRef = React.useRef<HTMLInputElement>(null);
 
 	const getTypeByParameterName = (parameterName: string) => {
@@ -49,10 +48,6 @@ const FunctionParameterInput = ({
 			valueRef.current.focus();
 		}
 	}, []);
-
-	React.useEffect(() => {
-		setValue(`parameters.${index}.value`, paramValue);
-	}, [index, paramValue, setValue]);
 
 	return (
 		<div className="flex gap-2 items-center">
@@ -86,11 +81,10 @@ const FunctionParameterInput = ({
 								{...valueField}
 								ref={valueRef}
 								placeholder="Parameter value"
-								type="text"
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 									handleSearchEnvironment(e.target.value);
+									valueField.onChange(e);
 								}}
-								value={inputValue}
 							/>
 							{showEnvironments && (
 								<EnvironmentDropdown
