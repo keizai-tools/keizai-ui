@@ -13,7 +13,7 @@ export const useEnvironmentsQuery = ({
 
 	const query = useQuery<Environment[]>({
 		queryKey: ['environment', collectionId],
-		queryFn: async () => axios?.get('/enviroment').then((res) => res.data),
+		queryFn: async () => axios?.get('/environment').then((res) => res.data),
 	});
 
 	return query;
@@ -25,7 +25,7 @@ export const useEnvironmentQuery = ({ id }: { id?: string }) => {
 	const query = useQuery<Environment>({
 		queryKey: ['environment', id],
 		queryFn: async () =>
-			axios?.get(`/enviroment/${id}`).then((res) => res.data),
+			axios?.get(`/environment/${id}`).then((res) => res.data),
 		enabled: !!id,
 	});
 
@@ -51,7 +51,7 @@ export const useCreateEnvironmentMutation = ({
 			collectionId: string;
 		}) =>
 			axios
-				?.post('/enviroment', { name, value, collectionId })
+				?.post('/environment', { name, value, collectionId })
 				.then((res) => res.data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
@@ -84,7 +84,7 @@ export const useDeleteEnvironmentMutation = ({
 
 	const mutation = useMutation({
 		mutationFn: async (id: string) =>
-			axios?.delete(`/enviroment/${id}`).then((res) => res.data),
+			axios?.delete(`/environment/${id}`).then((res) => res.data),
 		onMutate: (id: string) => {
 			queryClient.cancelQueries({
 				queryKey: ['environment', collectionId],
@@ -139,7 +139,7 @@ export const useEditEnvironmentMutation = ({
 			collectionId: string;
 		}) =>
 			axios
-				?.patch('/enviroment', {
+				?.patch('/environment', {
 					id,
 					name,
 					value,

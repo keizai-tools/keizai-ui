@@ -11,9 +11,9 @@ import { Input } from '../ui/input';
 import { useEditEnvironmentMutation } from '@/common/api/enviroments';
 import { Environment } from '@/common/types/environment';
 
-interface IEnviromentItem {
+interface IEnvironmentItem {
 	index: number;
-	enviroment: Environment;
+	environment: Environment;
 	collectionId: string;
 	control: Control<
 		{
@@ -38,34 +38,34 @@ interface ISetValue {
 }
 
 export default function EnvironmentItem({
-	enviroment,
+	environment,
 	index,
 	collectionId,
 	control,
 	removeItem,
 	deleteMutation,
-}: IEnviromentItem) {
+}: IEnvironmentItem) {
 	const [inputValue, setInputValue] = React.useState<ISetValue>({
 		value: '',
 		field: '',
 	});
-	const { mutate: editEnviromentMutation } = useEditEnvironmentMutation({
+	const { mutate: editEnvironmentMutation } = useEditEnvironmentMutation({
 		collectionId,
 	});
 
 	const debounced = useDebouncedCallback((field: string, value: string) => {
 		const shortFieldName = field.split('.').pop();
-		if (shortFieldName && enviroment.id) {
+		if (shortFieldName && environment.id) {
 			const mutationData =
 				shortFieldName === 'name'
 					? {
-							id: enviroment.id,
+							id: environment.id,
 							name: value,
-							value: enviroment.value,
+							value: environment.value,
 							collectionId,
 					  }
-					: { id: enviroment.id, name: enviroment.name, value, collectionId };
-			editEnviromentMutation(mutationData);
+					: { id: environment.id, name: environment.name, value, collectionId };
+			editEnvironmentMutation(mutationData);
 		}
 	}, 700);
 
@@ -116,7 +116,7 @@ export default function EnvironmentItem({
 				type="button"
 				className="font-semibold"
 				onClick={() => {
-					enviroment.id ? deleteMutation(enviroment.id) : removeItem(index);
+					environment.id ? deleteMutation(environment.id) : removeItem(index);
 				}}
 			>
 				<Trash2 className="w-6 h-6 cursor-pointer text-slate-500 hover:text-primary" />

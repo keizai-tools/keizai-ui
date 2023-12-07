@@ -23,7 +23,7 @@ export const CollectionVariables = ({
 	const { mutate: deleteEnvironmentMutation } = useDeleteEnvironmentMutation({
 		collectionId,
 	});
-	const { mutate: createEnviromentMutation } = useCreateEnvironmentMutation({
+	const { mutate: createEnvironmentMutation } = useCreateEnvironmentMutation({
 		collectionId,
 	});
 
@@ -61,7 +61,7 @@ export const CollectionVariables = ({
 		if (environments) {
 			environments.forEach((environment) => {
 				if (!environment.id && environment.name && environment.value) {
-					createEnviromentMutation({
+					createEnvironmentMutation({
 						name: environment.name,
 						value: environment.value,
 						collectionId,
@@ -107,10 +107,10 @@ export const CollectionVariables = ({
 				className="flex flex-col gap-2 px-1 pt-12"
 				data-test="collection-variables-input-container"
 			>
-				{fields.map((enviroment, index) => (
+				{fields.map((environment, index) => (
 					<EnvironmentItem
 						key={index}
-						enviroment={enviroment}
+						environment={environment}
 						index={index}
 						collectionId={collectionId}
 						control={control}

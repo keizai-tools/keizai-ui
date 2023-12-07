@@ -18,6 +18,12 @@ const Folders = () => {
 	const { mutate, isPending } = useCreateFolderMutation();
 	const navigate = useNavigate();
 
+	const onCreateFolder = async ({ name }: { name: string }) => {
+		if (params.collectionId) {
+			await mutate({ name, collectionId: params.collectionId });
+		}
+	};
+
 	return (
 		<div
 			className="min-w-[250px] flex flex-col justify-between border-r dark:border-r-border h-full px-3 py-1 gap-4"
@@ -46,11 +52,7 @@ const Folders = () => {
 						description="Let's name your folder"
 						defaultName="Folder"
 						isLoading={isPending}
-						onSubmit={async ({ name }) => {
-							if (params.collectionId) {
-								await mutate({ name, collectionId: params.collectionId });
-							}
-						}}
+						onSubmit={onCreateFolder}
 					>
 						<Button
 							variant="link"
