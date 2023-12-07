@@ -30,7 +30,6 @@ const FunctionParameterInput = ({
 }) => {
 	const {
 		environments,
-		paramValue,
 		showEnvironments,
 		handleSelectEnvironment,
 		handleSearchEnvironment,
@@ -89,9 +88,7 @@ const FunctionParameterInput = ({
 							{showEnvironments && (
 								<EnvironmentDropdown
 									environments={environments as Environment[]}
-									paramValue={paramValue}
 									handleSelect={handleSelectEnvironment}
-									onChange={valueField.onChange}
 								/>
 							)}
 						</div>

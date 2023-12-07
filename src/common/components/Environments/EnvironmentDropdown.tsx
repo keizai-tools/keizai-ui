@@ -7,9 +7,7 @@ export default function EnvironmentDropdown({
 	handleSelect,
 }: {
 	environments: Environment[];
-	paramValue: string;
 	handleSelect: (id: string) => void;
-	onChange: (value: string) => void;
 }) {
 	return (
 		<ul
