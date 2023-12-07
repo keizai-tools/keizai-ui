@@ -30,12 +30,12 @@ export default function useEnvironments({
 			setSelectEnvironment(environment);
 			setValue(
 				`parameters.${index}.value`,
-				paramValue + `{{${environment.name}}}`,
+				paramValue + `{${environment.name}}}`,
 				{
 					shouldDirty: true,
 				},
 			);
-			setParamValue((prevValue) => prevValue + `{{${environment.name}}}`);
+			setParamValue((prevValue) => prevValue + `{${environment.name}}}`);
 			setShowEnvironments(false);
 		}
 	};
