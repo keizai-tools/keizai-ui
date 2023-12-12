@@ -12,10 +12,11 @@ import {
 } from '@/common/api/invocations';
 import { TerminalEntry } from '@/common/components/ui/Terminal';
 import { useToast } from '@/common/components/ui/use-toast';
+import { Invocation } from '@/common/types/invocation';
 
-const useInvocation = ({ invocationId }: { invocationId: string }) => {
+const useInvocation = (invocation: Invocation) => {
 	const { toast } = useToast();
-	const runInvocation = useRunInvocationQuery({ id: invocationId });
+	const runInvocation = useRunInvocationQuery({ id: invocation.id });
 	const [isRunningInvocation, setIsRunningInvocation] = React.useState(false);
 	const [contractResponses, setContractResponses] = React.useState<
 		TerminalEntry[]
@@ -38,14 +39,14 @@ const useInvocation = ({ invocationId }: { invocationId: string }) => {
 
 	const handleLoadContract = async (contractId: string) => {
 		return await editInvocation({
-			id: invocationId,
+			id: invocation.id,
 			contractId,
 		});
 	};
 
 	const handleSelectFunction = (methodId: string) => {
 		editInvocation({
-			id: invocationId,
+			id: invocation.id,
 			selectedMethodId: methodId,
 		});
 	};
@@ -53,29 +54,53 @@ const useInvocation = ({ invocationId }: { invocationId: string }) => {
 	const handleRunInvocation = async () => {
 		setIsRunningInvocation(true);
 		try {
-			const response = await runInvocation();
-			if (response && response.invocation.method) {
-				setContractResponses((prev) => [
-					...prev,
-					{
-						isError: false,
-						preInvocation: response.preInvocation?.response
-							? createContractResponsePreInvocation(
-									response.preInvocation?.response,
-							  )
-							: '',
-						title: createContractResponseTitle(response.invocation.method),
-						message: response.invocation.response || 'No response',
-					},
-				]);
+			const preInvocationResponse = handleRunPreInvocation(
+				invocation.preInvocation ?? '',
+			);
+			if (preInvocationResponse.isError) {
+				setContractResponses((prev) => [...prev, preInvocationResponse]);
 			} else {
-				throw new Error();
+				const response = await runInvocation();
+				if (response && response.method) {
+					setContractResponses((prev) => [
+						...prev,
+						{
+							isError: false,
+							preInvocation: createContractResponsePreInvocation(
+								preInvocationResponse?.preInvocation,
+							),
+							title: createContractResponseTitle(response.method),
+							message: response.response || 'No response',
+						},
+					]);
+				} else {
+					throw new Error();
+				}
 			}
 		} catch (error) {
 			const errorResponse = handleAxiosError(error);
 			setContractResponses((prev) => [...prev, errorResponse]);
 		} finally {
 			setIsRunningInvocation(false);
+		}
+	};
+
+	const handleRunPreInvocation = (preInvocation: string) => {
+		try {
+			const preInvocationResponse = eval(preInvocation);
+			return {
+				isError: false,
+				message: String(preInvocation),
+				title: 'Pre-Invocation',
+				preInvocation: preInvocationResponse,
+			};
+		} catch (error) {
+			return {
+				isError: true,
+				message: String(`${error} from Pre-invocation script`),
+				title: 'Pre-Invocation error',
+				preInvocation: String(preInvocation),
+			};
 		}
 	};
 
