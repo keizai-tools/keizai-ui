@@ -1,13 +1,24 @@
 import React from 'react';
+import { UseFormSetValue } from 'react-hook-form';
+
+import { ParametersFormType } from '../Tabs/FunctionsTab/ParametersForm';
 
 import { Environment } from '@/common/types/environment';
 
 export default function EnvironmentDropdown({
 	environments,
 	handleSelect,
+	index,
+	setValue,
 }: {
 	environments: Environment[];
-	handleSelect: (id: string) => void;
+	handleSelect: (
+		id: string,
+		index: number,
+		setValue: UseFormSetValue<ParametersFormType>,
+	) => void;
+	index: number;
+	setValue: UseFormSetValue<ParametersFormType>;
 }) {
 	return (
 		<ul
@@ -20,7 +31,7 @@ export default function EnvironmentDropdown({
 					id={env.id}
 					className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600"
 					onClick={(e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-						handleSelect(e.currentTarget.id);
+						handleSelect(e.currentTarget.id, index, setValue);
 					}}
 				>
 					{env.name}: {env.value}

@@ -6,17 +6,18 @@ import { useEnvironmentsQuery } from '../api/enviroments';
 import { ParametersFormType } from '../components/Tabs/FunctionsTab/ParametersForm';
 import { Environment } from '../types/environment';
 
-export default function useEnvironments({
-	index,
-	setValue,
-}: {
-	index: number;
-	setValue: UseFormSetValue<ParametersFormType>;
-}) {
+export default function useEnvironments() {
+	const [environments, setEnvironments] = React.useState<Environment[]>([]);
 	const { collectionId } = useParams();
-	const { data: environments } = useEnvironmentsQuery({
+	const { data, isLoading } = useEnvironmentsQuery({
 		collectionId,
 	});
+
+	React.useEffect(() => {
+		if (data) {
+			setEnvironments(data);
+		}
+	}, [collectionId, data]);
 
 	const [selectEnvironment, setSelectEnvironment] =
 		React.useState<Environment | null>(null);
@@ -24,7 +25,11 @@ export default function useEnvironments({
 		React.useState<boolean>(false);
 	const [paramValue, setParamValue] = React.useState<string>('');
 
-	const handleSelectEnvironment = (id: string) => {
+	const handleSelectEnvironment = (
+		id: string,
+		index: number,
+		setValue: UseFormSetValue<ParametersFormType>,
+	) => {
 		const environment = environments?.find((env: Environment) => env.id === id);
 		if (environment) {
 			setSelectEnvironment(environment);
@@ -47,6 +52,7 @@ export default function useEnvironments({
 
 	return {
 		environments,
+		isLoading,
 		showEnvironments,
 		selectEnvironment,
 		handleSearchEnvironment,

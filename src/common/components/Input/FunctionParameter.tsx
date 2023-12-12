@@ -33,7 +33,7 @@ const FunctionParameterInput = ({
 		showEnvironments,
 		handleSelectEnvironment,
 		handleSearchEnvironment,
-	} = useEnvironments({ index, setValue });
+	} = useEnvironments();
 	const valueRef = React.useRef<HTMLInputElement>(null);
 
 	const getTypeByParameterName = (parameterName: string) => {
@@ -89,6 +89,8 @@ const FunctionParameterInput = ({
 								<EnvironmentDropdown
 									environments={environments as Environment[]}
 									handleSelect={handleSelectEnvironment}
+									index={index}
+									setValue={setValue}
 								/>
 							)}
 						</div>
