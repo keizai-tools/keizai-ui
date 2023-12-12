@@ -1,27 +1,20 @@
 import { Loader } from 'lucide-react';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 
 import { CollectionVariables } from './CollectionVariables';
 
 import { useCollectionQuery } from '@/common/api/collections';
-import { useEnvironmentsQuery } from '@/common/api/enviroments';
+import useEnvironments from '@/common/hooks/useEnvironments';
 
 export const CollectionVariablesContainer = () => {
 	const params = useParams();
+	const { environments, isLoading } = useEnvironments();
 
 	const collectionId = React.useMemo(() => {
 		return params.collectionId ?? '';
 	}, [params]);
 	const { data: collection } = useCollectionQuery(collectionId);
-
-	const { data: environmentsData, isLoading } = useEnvironmentsQuery({
-		collectionId: collectionId,
-	});
-
-	const environments = useMemo(() => {
-		return environmentsData ? environmentsData : [];
-	}, [environmentsData]);
 
 	if (isLoading) {
 		return (
