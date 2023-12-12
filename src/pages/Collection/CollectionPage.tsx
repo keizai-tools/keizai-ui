@@ -1,13 +1,16 @@
 import { Outlet } from 'react-router-dom';
 
 import Folders from '@/common/components/Folders/Folders';
+import { EnvironmentProvider } from '@/providers/EnvironmentProvider';
 
 const CollectionPage = () => {
 	return (
-		<main className="flex flex-1" data-test="collection-page-container">
-			<Folders />
-			<Outlet />
-		</main>
+		<EnvironmentProvider>
+			<main className="flex flex-1" data-test="collection-page-container">
+				<Folders />
+				<Outlet />
+			</main>
+		</EnvironmentProvider>
 	);
 };
 
