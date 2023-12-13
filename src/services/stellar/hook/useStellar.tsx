@@ -1,4 +1,4 @@
-import { Keypair } from 'soroban-client';
+import { Keypair } from 'stellar-sdk';
 
 import { IKeypair } from '../domain/keypair';
 import { STELLAR_RESPONSE } from '../validators/stellarExceptions';
