@@ -265,6 +265,7 @@ describe('Environments management', () => {
 			cy.getBySel('collection-variables-input-container').should('be.visible');
 			cy.getBySel('collection-variables-btn-delete').click({ force: true });
 			cy.wait('@deleteEnvironment');
+			cy.wait('@getEnvironments');
 			cy.getBySel('collection-variables-input-container').should('not.exist');
 		});
 	});
