@@ -56,3 +56,46 @@ export const invocations = {
 		},
 	},
 };
+
+export const environments = {
+	id: 'e3133823-566a-4436-948d-832672cf44bc',
+	linkName: 'Collection variables',
+	header: {
+		title: 'Collections variables',
+		collectionName: 'Collection 1',
+	},
+	button: {
+		addName: 'Add new',
+		saveName: 'Save',
+	},
+	input: {
+		namePlaceholder: 'Name',
+		valuePlaceholder: 'Value',
+		key: 'name',
+		value: 'test',
+		editedKey: 'edit name',
+		editedValue: 'edit test',
+	},
+	list: [
+		{
+			name: 'inc3',
+			value: '3',
+		},
+		{
+			name: 'inc2',
+			value: '2',
+		},
+		{
+			name: 'inc5',
+			value: '5',
+		},
+		{
+			name: 'inc1',
+			value: '1',
+		},
+		{
+			name: 'inc10',
+			value: '10',
+		},
+	],
+};
