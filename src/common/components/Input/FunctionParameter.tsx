@@ -9,7 +9,6 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
 import useEnvironments from '@/common/hooks/useEnvironments';
-import { Environment } from '@/common/types/environment';
 import { SCSpecTypeMap, isKeyOfSCSpecTypeMap } from '@/common/types/invocation';
 
 const FunctionParameterInput = ({
@@ -80,6 +79,7 @@ const FunctionParameterInput = ({
 								{...valueField}
 								ref={valueRef}
 								placeholder="Parameter value"
+								data-test="function-tab-parameter-input-value"
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 									handleSearchEnvironment(e.target.value);
 									valueField.onChange(e);
@@ -87,7 +87,7 @@ const FunctionParameterInput = ({
 							/>
 							{showEnvironments && (
 								<EnvironmentDropdown
-									environments={environments as Environment[]}
+									environments={environments}
 									handleSelect={handleSelectEnvironment}
 									index={index}
 									setValue={setValue}
