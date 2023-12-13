@@ -1,0 +1,88 @@
+[
+	{
+		"id": "45cb5f2a-5c38-4cef-a0ac-bb292682c018",
+		"name": "Collection 1",
+		"folders": [
+			{
+				"name": "Folder",
+				"id": "758947e5-67b0-4780-896c-0a9b021f3dd3",
+				"invocations": [
+					{
+						"name": "Invocation",
+						"secretKey": "SAZ5DSGOPND2QGQDNQXDTFDHGHQWLOYKRX5353ONTCDM3TKC2SXUCKCG",
+						"publicKey": "GDPKVZXFCVDJOJ4OVZBDFE4TGKFRE553GF6LOKP5H53XT74UB7NNAVKO",
+						"contractId": "CAMNDFGZCEVIQGKG5USNUFUVT3O4PJWGN4FVATNIRND6TJCG3CC2UW75",
+						"id": "e5012332-1ad0-47fd-b826-b20d1721340d",
+						"methods": [
+							{
+								"name": "clear",
+								"inputs": [],
+								"outputs": [],
+								"params": [],
+								"docs": null,
+								"id": "f351457c-dce0-4bbb-99f4-916f8ce53bc2"
+							},
+							{
+								"name": "increment",
+								"inputs": [],
+								"outputs": [
+									{
+										"type": "SC_SPEC_TYPE_U32"
+									}
+								],
+								"params": [],
+								"docs": null,
+								"id": "c93e57e7-227d-4185-b67c-cd82e4b66c84"
+							},
+							{
+								"name": "inc_by",
+								"inputs": [
+									{
+										"name": "increment",
+										"type": "SC_SPEC_TYPE_U32"
+									}
+								],
+								"outputs": [
+									{
+										"type": "SC_SPEC_TYPE_U32"
+									}
+								],
+								"params": [
+									{
+										"name": "increment",
+										"value": ""
+									}
+								],
+								"docs": "Increment by a specified integer.",
+								"id": "7f157556-28c2-4c67-8117-8606427fdc1f"
+							}
+						],
+						"selectedMethod": {
+							"name": "inc_by",
+							"inputs": [
+								{
+									"name": "increment",
+									"type": "SC_SPEC_TYPE_U32"
+								}
+							],
+							"outputs": [
+								{
+									"type": "SC_SPEC_TYPE_U32"
+								}
+							],
+							"params": [
+								{
+									"name": "increment",
+									"value": ""
+								}
+							],
+							"docs": "Increment by a specified integer.",
+							"id": "7f157556-28c2-4c67-8117-8606427fdc1f"
+						}
+					}
+				]
+			}
+		],
+		"enviroments": []
+	}
+]
