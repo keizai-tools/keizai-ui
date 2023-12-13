@@ -5,16 +5,19 @@ import { useParams } from 'react-router-dom';
 import { CollectionVariables } from './CollectionVariables';
 
 import { useCollectionQuery } from '@/common/api/collections';
-import useEnvironments from '@/common/hooks/useEnvironments';
+import { useEnvironmentsQuery } from '@/common/api/enviroments';
 
 export const CollectionVariablesContainer = () => {
 	const params = useParams();
-	const { environments, isLoading } = useEnvironments();
-
 	const collectionId = React.useMemo(() => {
 		return params.collectionId ?? '';
 	}, [params]);
 	const { data: collection } = useCollectionQuery(collectionId);
+	const { data, isLoading } = useEnvironmentsQuery({ collectionId });
+
+	const environmentsValue = React.useMemo(() => {
+		return data ? data : [];
+	}, [data]);
 
 	if (isLoading) {
 		return (
@@ -28,7 +31,7 @@ export const CollectionVariablesContainer = () => {
 		<CollectionVariables
 			collection={collection}
 			collectionId={collectionId}
-			environments={environments}
+			environments={environmentsValue}
 		/>
 	);
 };

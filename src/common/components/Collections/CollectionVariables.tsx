@@ -107,17 +107,18 @@ export const CollectionVariables = ({
 				className="flex flex-col gap-2 px-1 pt-12"
 				data-test="collection-variables-input-container"
 			>
-				{fields.map((environment, index) => (
-					<EnvironmentItem
-						key={index}
-						environment={environment}
-						index={index}
-						collectionId={collectionId}
-						control={control}
-						removeItem={remove}
-						deleteMutation={handleRemoveEnvironment}
-					/>
-				))}
+				{fields.length > 0 &&
+					fields.map((environment, index) => (
+						<EnvironmentItem
+							key={index}
+							environment={environment}
+							index={index}
+							collectionId={collectionId}
+							control={control}
+							removeItem={remove}
+							deleteMutation={handleRemoveEnvironment}
+						/>
+					))}
 			</ul>
 			<div className="flex justify-end pt-4 mr-8">
 				<Button type="submit" className="font-semibold">
