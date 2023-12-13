@@ -14,11 +14,12 @@ import { Method, Parameter } from '@/common/types/method';
 export type ParametersFormType = { parameters: Method['params'] };
 const ParametersFormContent = ({ data }: { data: Method }) => {
 	const { mutate: editParameters } = useEditParametersMethodMutation();
-	const { control, watch, formState, reset } = useForm<ParametersFormType>({
-		defaultValues: {
-			parameters: data?.params,
-		},
-	});
+	const { control, watch, formState, reset, setValue } =
+		useForm<ParametersFormType>({
+			defaultValues: {
+				parameters: data?.params,
+			},
+		});
 	const { fields } = useFieldArray({
 		control,
 		name: 'parameters',
@@ -31,7 +32,7 @@ const ParametersFormContent = ({ data }: { data: Method }) => {
 		};
 	});
 
-	const debounceKeyPhrase = React.useMemo(
+	const debounceParams = React.useMemo(
 		() =>
 			debounce((value) => {
 				editParameters({
@@ -52,10 +53,10 @@ const ParametersFormContent = ({ data }: { data: Method }) => {
 	);
 
 	React.useEffect(() => {
-		if (formState.isDirty) {
-			debounceKeyPhrase(controlledFields);
+		if (formState.dirtyFields.parameters) {
+			debounceParams(watchFieldArray);
 		}
-	}, [controlledFields, debounceKeyPhrase, formState.isDirty]);
+	}, [debounceParams, formState.dirtyFields.parameters, watchFieldArray]);
 
 	return (
 		<div className="flex flex-col mt-5">
@@ -69,6 +70,7 @@ const ParametersFormContent = ({ data }: { data: Method }) => {
 							key={field.name}
 							index={index}
 							control={control}
+							setValue={setValue}
 							defaultParameters={data.inputs ?? []}
 						/>
 					))}

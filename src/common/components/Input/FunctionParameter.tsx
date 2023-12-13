@@ -1,27 +1,39 @@
+/* eslint-disable prettier/prettier */
 import { DeleteIcon } from 'lucide-react';
 import React from 'react';
-import { Control, Controller } from 'react-hook-form';
+import { Control, Controller, UseFormSetValue } from 'react-hook-form';
 
+import EnvironmentDropdown from '../Environments/EnvironmentDropdown';
 import { ParametersFormType } from '../Tabs/FunctionsTab/ParametersForm';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
+import useEnvironments from '@/common/hooks/useEnvironments';
+import { Environment } from '@/common/types/environment';
 import { SCSpecTypeMap, isKeyOfSCSpecTypeMap } from '@/common/types/invocation';
 
 const FunctionParameterInput = ({
 	control,
 	index,
 	onDelete,
+	setValue,
 	defaultParameters,
 }: {
 	control: Control<ParametersFormType>;
 	index: number;
 	onDelete?: () => void;
+	setValue: UseFormSetValue<ParametersFormType>;
 	defaultParameters: {
 		name: string;
 		type: string;
 	}[];
 }) => {
+	const {
+		environments,
+		showEnvironments,
+		handleSelectEnvironment,
+		handleSearchEnvironment,
+	} = useEnvironments();
 	const valueRef = React.useRef<HTMLInputElement>(null);
 
 	const getTypeByParameterName = (parameterName: string) => {
@@ -43,7 +55,6 @@ const FunctionParameterInput = ({
 				name={`parameters.${index}.name`}
 				render={({ field }) => {
 					const parameterType = getTypeByParameterName(field.value);
-
 					return (
 						<div className="relative min-w-[250px]">
 							<Input {...field} placeholder="Parameter key" type="text" />
@@ -59,16 +70,33 @@ const FunctionParameterInput = ({
 			<Controller
 				control={control}
 				name={`parameters.${index}.value`}
-				render={({ field }) => (
-					<Input
-						{...field}
-						ref={valueRef}
-						placeholder="Parameter value"
-						type="text"
-					/>
-				)}
+				render={({ field: valueField }) => {
+					return (
+						<div
+							id="dropdown"
+							className="z-10 divide-slate-800 rounded shadow w-full"
+						>
+							<Input
+								{...valueField}
+								ref={valueRef}
+								placeholder="Parameter value"
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+									handleSearchEnvironment(e.target.value);
+									valueField.onChange(e);
+								}}
+							/>
+							{showEnvironments && (
+								<EnvironmentDropdown
+									environments={environments as Environment[]}
+									handleSelect={handleSelectEnvironment}
+									index={index}
+									setValue={setValue}
+								/>
+							)}
+						</div>
+					);
+				}}
 			/>
-
 			{onDelete && (
 				<Button
 					onClick={onDelete}

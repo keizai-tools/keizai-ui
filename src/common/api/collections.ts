@@ -15,6 +15,18 @@ export const useCollectionsQuery = () => {
 	return query;
 };
 
+export const useCollectionQuery = (collectionId: string | undefined) => {
+	const axios = useAxios();
+
+	const query = useQuery<Collection>({
+		queryKey: ['collection', collectionId],
+		queryFn: async () =>
+			axios?.get(`/collection/${collectionId}`).then((res) => res.data),
+	});
+
+	return query;
+};
+
 export const useNewCollectionMutation = () => {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
