@@ -1,4 +1,5 @@
 import { PlusIcon } from 'lucide-react';
+import React from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 import EnvironmentItem from '../Environments/EnvironmentItem';
@@ -27,11 +28,17 @@ export const CollectionVariables = ({
 		collectionId,
 	});
 
-	const { control, handleSubmit, setValue } = useForm({
+	const { control, handleSubmit, setValue, reset } = useForm({
 		defaultValues: {
-			environments: environments as Environment[],
+			environments: environments,
 		},
 	});
+
+	React.useEffect(() => {
+		reset({
+			environments: environments,
+		});
+	}, [reset, environments]);
 
 	const { fields, append, remove } = useFieldArray({
 		keyName: 'key',
@@ -96,6 +103,7 @@ export const CollectionVariables = ({
 					<Button
 						type="button"
 						className="font-semibold"
+						data-test="collection-variables-btn-add"
 						onClick={addNewInputVariable}
 					>
 						<PlusIcon size={12} className="mr-2" />
@@ -105,7 +113,7 @@ export const CollectionVariables = ({
 			</header>
 			<ul
 				className="flex flex-col gap-2 px-1 pt-12"
-				data-test="collection-variables-input-container"
+				data-test="collection-variables-container"
 			>
 				{fields.map((environment, index) => (
 					<EnvironmentItem
@@ -120,7 +128,11 @@ export const CollectionVariables = ({
 				))}
 			</ul>
 			<div className="flex justify-end pt-4 mr-8">
-				<Button type="submit" className="font-semibold">
+				<Button
+					type="submit"
+					className="font-semibold"
+					data-test="collection-variables-btn-save"
+				>
 					Save
 				</Button>
 			</div>
