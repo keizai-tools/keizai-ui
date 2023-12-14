@@ -9,8 +9,8 @@ export class KeizaiService {
 		this.apiUrl = apiUrl;
 	}
 
-	setEnviromentVariable(name: string, value: string) {
-		fetch(this.apiUrl + '/environment', {
+	async setEnviromentVariable(name: string, value: string) {
+		await fetch(this.apiUrl + '/environment', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -24,8 +24,8 @@ export class KeizaiService {
 		});
 	}
 
-	clearEnviromentVariable(name: string) {
-		fetch(
+	async clearEnviromentVariable(name: string) {
+		await fetch(
 			this.apiUrl +
 				`/environment?name=${name}&collectionId=${this.collectionId}`,
 			{
@@ -38,8 +38,8 @@ export class KeizaiService {
 		);
 	}
 
-	clearAllEnviromentVariables() {
-		fetch(this.apiUrl + `/collection/${this.collectionId}/environments`, {
+	async clearAllEnviromentVariables() {
+		await fetch(this.apiUrl + `/collection/${this.collectionId}/environments`, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',

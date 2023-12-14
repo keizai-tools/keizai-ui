@@ -1,5 +1,5 @@
 export const KeizaiEditorValues: { [key: string]: string } = {
-	setEnviromentVariable: 'Keizai.setEnviromentVariable("key", "value");',
-	clearEnviromentVariable: 'Keizai.clearEnviromentVariable("key");',
-	clearAllEnviromentVariables: 'Keizai.clearAllEnviromentVariables();',
+	setEnviromentVariable: 'await Keizai.setEnviromentVariable("key", "value");',
+	clearEnviromentVariable: 'await Keizai.clearEnviromentVariable("key");',
+	clearAllEnviromentVariables: 'await Keizai.clearAllEnviromentVariables();',
 };
