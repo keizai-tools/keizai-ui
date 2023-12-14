@@ -114,8 +114,8 @@ export default function EnvironmentItem({
 			/>
 			<button
 				type="button"
-				className="font-semibold"
 				data-test="collection-variables-btn-delete"
+				className="font-semibold"
 				onClick={() => {
 					environment.id ? deleteMutation(environment.id) : removeItem(index);
 				}}
