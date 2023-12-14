@@ -60,7 +60,7 @@ const useInvocation = (invocation: Invocation) => {
 	const handleRunInvocation = async () => {
 		setIsRunningInvocation(true);
 		try {
-			const preInvocationResponse = handleRunPreInvocation(
+			const preInvocationResponse = await handleRunPreInvocation(
 				invocation.preInvocation ?? '',
 			);
 			if (preInvocationResponse.isError) {
@@ -91,7 +91,7 @@ const useInvocation = (invocation: Invocation) => {
 		}
 	};
 
-	const handleRunPreInvocation = (preInvocation: string) => {
+	const handleRunPreInvocation = async (preInvocation: string) => {
 		const Keizai = new KeizaiService(
 			user?.accessToken ?? '',
 			collectionId ?? '',
@@ -99,11 +99,11 @@ const useInvocation = (invocation: Invocation) => {
 		);
 
 		try {
-			const contextFunction = function () {
-				eval(preInvocation);
+			const contextFunction = async function () {
+				return await eval(`(async () => { ${preInvocation} })()`);
 			}.bind({ Keizai });
 
-			const preInvocationResponse = contextFunction();
+			const preInvocationResponse = await contextFunction();
 
 			return {
 				isError: false,
