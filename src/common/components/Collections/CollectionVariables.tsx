@@ -27,7 +27,7 @@ export const CollectionVariables = ({
 		collectionId,
 	});
 
-	const { control, handleSubmit, setValue } = useForm({
+	const { control, handleSubmit, reset } = useForm({
 		defaultValues: {
 			environments: environments as Environment[],
 		},
@@ -48,10 +48,9 @@ export const CollectionVariables = ({
 	};
 
 	const handleRemoveEnvironment = (id: string) => {
-		setValue(
-			'environments',
-			fields.filter((field) => field.id !== id),
-		);
+		reset({
+			environments: fields.filter((field) => field.id !== id),
+		});
 		deleteEnvironmentMutation(id);
 	};
 
@@ -105,7 +104,7 @@ export const CollectionVariables = ({
 			</header>
 			<ul
 				className="flex flex-col gap-2 px-1 pt-12"
-				data-test="collection-variables-input-container"
+				data-test="collection-variables-container"
 			>
 				{fields.length > 0 &&
 					fields.map((environment, index) => (
