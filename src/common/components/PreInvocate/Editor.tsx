@@ -4,18 +4,13 @@ import { Dispatch, SetStateAction } from 'react';
 import EditorHelpers from './EditorHelpers';
 
 function Editor({
-	defaultValue,
 	editorValue,
-	setPreInvocation,
 	setEditorValue,
 }: {
-	defaultValue?: string;
 	editorValue: string;
-	setPreInvocation: (value?: string | undefined) => void;
 	setEditorValue: Dispatch<SetStateAction<string>>;
 }) {
 	function handleEditorChange(value: string | undefined) {
-		setPreInvocation(value);
 		setEditorValue(value ?? '');
 	}
 
@@ -28,7 +23,7 @@ function Editor({
 				defaultLanguage="javascript"
 				onChange={handleEditorChange}
 				theme="vs-dark"
-				defaultValue={defaultValue}
+				defaultValue={editorValue}
 				value={editorValue}
 			/>
 			<EditorHelpers setEditorValue={setEditorValue} />
