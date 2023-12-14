@@ -99,7 +99,12 @@ const useInvocation = (invocation: Invocation) => {
 		);
 
 		try {
-			const preInvocationResponse = eval(preInvocation);
+			const contextFunction = function () {
+				eval(preInvocation);
+			}.bind({ Keizai });
+
+			const preInvocationResponse = contextFunction();
+
 			return {
 				isError: false,
 				message: String(preInvocation),
