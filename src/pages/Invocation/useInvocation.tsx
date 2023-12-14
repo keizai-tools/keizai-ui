@@ -1,10 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
+import { useParams } from 'react-router-dom';
 
 import {
 	createContractResponsePreInvocation,
 	createContractResponseTitle,
 	handleAxiosError,
 } from './invocation.utils';
+import { KeizaiService } from './preInvocation/keizai/keizai.service';
 
 import {
 	useEditInvocationMutation,
@@ -13,9 +16,12 @@ import {
 import { TerminalEntry } from '@/common/components/ui/Terminal';
 import { useToast } from '@/common/components/ui/use-toast';
 import { Invocation } from '@/common/types/invocation';
+import { useAuth } from '@/services/auth/hook/useAuth';
 
 const useInvocation = (invocation: Invocation) => {
 	const { toast } = useToast();
+	const { user } = useAuth();
+	const { collectionId } = useParams();
 	const runInvocation = useRunInvocationQuery({ id: invocation.id });
 	const [isRunningInvocation, setIsRunningInvocation] = React.useState(false);
 	const [contractResponses, setContractResponses] = React.useState<
@@ -86,6 +92,12 @@ const useInvocation = (invocation: Invocation) => {
 	};
 
 	const handleRunPreInvocation = (preInvocation: string) => {
+		const Keizai = new KeizaiService(
+			user?.accessToken ?? '',
+			collectionId ?? '',
+			import.meta.env.VITE_URL_API_BASE,
+		);
+
 		try {
 			const preInvocationResponse = eval(preInvocation);
 			return {

@@ -1,20 +1,17 @@
 import loader from '@monaco-editor/loader';
-import React, { useEffect } from 'react';
+import { Dispatch, SetStateAction, useEffect } from 'react';
 
 import Editor from '../../PreInvocate/Editor';
 
 const extraLib = `declare const Keizai: {};`;
 
 function PreInvocateTab({
-	setPreInvocation,
+	setEditorValue,
 	preInvocation,
 }: {
-	setPreInvocation: (value?: string | undefined) => void;
-	preInvocation?: string;
+	setEditorValue: Dispatch<SetStateAction<string>>;
+	preInvocation: string;
 }) {
-	const [editorValue, setEditorValue] = React.useState<string>(
-		preInvocation ?? '',
-	);
 	useEffect(() => {
 		const initEditor = async () => {
 			const monaco = await loader.init();
@@ -26,12 +23,7 @@ function PreInvocateTab({
 
 	return (
 		<div className="w-full h-full h-[500px]" id="editor">
-			<Editor
-				setPreInvocation={setPreInvocation}
-				defaultValue={preInvocation}
-				setEditorValue={setEditorValue}
-				editorValue={editorValue}
-			/>
+			<Editor editorValue={preInvocation} setEditorValue={setEditorValue} />
 		</div>
 	);
 }
