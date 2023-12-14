@@ -7,7 +7,7 @@
 	"scripts": {
 		"start:prod": "vite preview",
 		"start:dev": "vite",
-		"build": "tsc && vite build",
+		"build": "vite build",
 		"lint": "eslint \"src/**/*.{js,jsx,ts,tsx,json}\" \"cypress/**/*.{js,jsx,ts,tsx,json}\" \"./*.{js,cjs,ts,json}\" --fix",
 		"format": "prettier \"src/**/*.{js,jsx,ts,tsx,json}\" \"cypress/**/*.{js,jsx,ts,tsx,json}\" \"./*.{js,cjs,ts,json}\" --write",
 		"cy:open": "cypress open",

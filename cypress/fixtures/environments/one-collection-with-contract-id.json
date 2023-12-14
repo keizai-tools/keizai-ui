@@ -1,0 +1,19 @@
+{
+	"id": "45cb5f2a-5c38-4cef-a0ac-bb292682c018",
+	"name": "Collection 1",
+	"folders": [
+		{
+			"name": "Folder",
+			"id": "758947e5-67b0-4780-896c-0a9b021f3dd3",
+			"invocations": [
+				{
+					"name": "Invocation",
+					"secretKey": "SAZ5DSGOPND2QGQDNQXDTFDHGHQWLOYKRX5353ONTCDM3TKC2SXUCKCG",
+					"publicKey": "GDPKVZXFCVDJOJ4OVZBDFE4TGKFRE553GF6LOKP5H53XT74UB7NNAVKO",
+					"contractId": "CDTG5MIVE64COIPDC7I4F4A6CIVAEZX2WOC5CIVP2U35M6B5GVYAQWYZ",
+					"id": "e5012332-1ad0-47fd-b826-b20d1721340d"
+				}
+			]
+		}
+	]
+}
