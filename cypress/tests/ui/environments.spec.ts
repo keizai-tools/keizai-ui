@@ -1,7 +1,4 @@
-import {
-	collectionId,
-	collectionWithEnvironments,
-} from './exceptions/constants';
+import { collectionId, environment } from './exceptions/constants';
 
 const environments = [
 	{
@@ -102,7 +99,7 @@ describe('Environments management', () => {
 			cy.wrap(li).realHover();
 			cy.getBySel('dropdown-hover-enviroment-value').should(
 				'have.text',
-				collectionWithEnvironments.list[index].value,
+				environment.list[index].value,
 			);
 		});
 	});
@@ -111,7 +108,7 @@ describe('Environments management', () => {
 		cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
 		cy.getBySel('function-tab-parameter-input-value').should(
 			'have.value',
-			`{{${collectionWithEnvironments.list[0].name}}}`,
+			`{{${environment.list[0].name}}}`,
 		);
 
 		cy.getBySel('collection-variables-input-container').should(
