@@ -1,0 +1,22 @@
+{
+	"name": "inc_by",
+	"inputs": [
+		{
+			"name": "increment",
+			"type": "SC_SPEC_TYPE_U32"
+		}
+	],
+	"outputs": [
+		{
+			"type": "SC_SPEC_TYPE_U32"
+		}
+	],
+	"params": [
+		{
+			"name": "increment",
+			"value": ""
+		}
+	],
+	"docs": "Increment by a specified integer.",
+	"id": "74de9a5b-e756-4464-8944-162efa4ab803"
+}

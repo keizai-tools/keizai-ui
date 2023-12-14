@@ -95,6 +95,7 @@ export const CollectionVariables = ({
 					<Button
 						type="button"
 						className="font-semibold"
+						data-test="collection-variables-btn-add"
 						onClick={addNewInputVariable}
 					>
 						<PlusIcon size={12} className="mr-2" />
@@ -120,7 +121,11 @@ export const CollectionVariables = ({
 					))}
 			</ul>
 			<div className="flex justify-end pt-4 mr-8">
-				<Button type="submit" className="font-semibold">
+				<Button
+					type="submit"
+					className="font-semibold"
+					data-test="collection-variables-btn-save"
+				>
 					Save
 				</Button>
 			</div>
