@@ -78,7 +78,7 @@ export default function EnvironmentItem({
 		<li
 			key={index}
 			className="flex flex-row items-center gap-2 pb-2"
-			data-test="collection-variables-input-list"
+			data-test="collection-variables-input-container"
 		>
 			<Controller
 				render={({ field: nameField }) => (
@@ -114,6 +114,7 @@ export default function EnvironmentItem({
 			/>
 			<button
 				type="button"
+				data-test="collection-variables-btn-delete"
 				className="font-semibold"
 				onClick={() => {
 					environment.id ? deleteMutation(environment.id) : removeItem(index);
