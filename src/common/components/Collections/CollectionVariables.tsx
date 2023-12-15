@@ -49,7 +49,6 @@ export const CollectionVariables = ({
 	};
 
 	React.useEffect(() => {
-		console.log(environmentsValue);
 		reset({ environments: environmentsValue });
 	}, [environmentsValue, reset]);
 
