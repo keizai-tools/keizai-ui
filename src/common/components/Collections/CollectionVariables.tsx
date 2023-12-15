@@ -122,10 +122,6 @@ export const CollectionVariables = ({
 						/>
 					))}
 			</ul>
-			<ul
-				className="flex flex-col gap-2 px-1 pt-12"
-				data-test="collection-variables-container"
-			></ul>
 			<div className="flex justify-end pt-4 mr-8">
 				<Button
 					type="submit"
