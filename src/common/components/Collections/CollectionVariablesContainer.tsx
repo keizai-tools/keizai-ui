@@ -31,7 +31,7 @@ export const CollectionVariablesContainer = () => {
 		<CollectionVariables
 			collection={collection}
 			collectionId={collectionId}
-			environments={environmentsValue}
+			environmentsValue={environmentsValue}
 		/>
 	);
 };

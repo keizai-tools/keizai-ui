@@ -1,4 +1,5 @@
 import { PlusIcon } from 'lucide-react';
+import React from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 import EnvironmentItem from '../Environments/EnvironmentItem';
@@ -14,11 +15,11 @@ import { Environment } from '@/common/types/environment';
 export const CollectionVariables = ({
 	collection,
 	collectionId,
-	environments,
+	environmentsValue,
 }: {
 	collectionId: string;
 	collection: Collection | undefined;
-	environments: Environment[];
+	environmentsValue: Environment[];
 }) => {
 	const { mutate: deleteEnvironmentMutation } = useDeleteEnvironmentMutation({
 		collectionId,
@@ -29,7 +30,7 @@ export const CollectionVariables = ({
 
 	const { control, handleSubmit, reset } = useForm({
 		defaultValues: {
-			environments: environments as Environment[],
+			environments: environmentsValue as Environment[],
 		},
 	});
 
@@ -47,10 +48,12 @@ export const CollectionVariables = ({
 		});
 	};
 
+	React.useEffect(() => {
+		console.log(environmentsValue);
+		reset({ environments: environmentsValue });
+	}, [environmentsValue, reset]);
+
 	const handleRemoveEnvironment = (id: string) => {
-		reset({
-			environments: fields.filter((field) => field.id !== id),
-		});
 		deleteEnvironmentMutation(id);
 	};
 
@@ -120,6 +123,10 @@ export const CollectionVariables = ({
 						/>
 					))}
 			</ul>
+			<ul
+				className="flex flex-col gap-2 px-1 pt-12"
+				data-test="collection-variables-container"
+			></ul>
 			<div className="flex justify-end pt-4 mr-8">
 				<Button
 					type="submit"
