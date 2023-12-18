@@ -16,6 +16,7 @@ import ErrorMessage from '../Form/ErrorMessage';
 import { Input } from '../ui/input';
 
 import { useEditEnvironmentMutation } from '@/common/api/enviroments';
+import { ENVIRONMENTS_FORM } from '@/common/exceptions/environments';
 import { Environment } from '@/common/types/environment';
 
 interface IEnvironmentItem {
@@ -92,19 +93,19 @@ export default function EnvironmentItem({
 	const inputRules = {
 		name: {
 			validate: (name: string) => {
-				if (name === '') return 'The name cannot be empty';
+				if (name === '') return ENVIRONMENTS_FORM.NAME_EMPTY;
 				const environments = watch('environments').filter(
 					(_env, envIndex) => envIndex !== index,
 				);
 				const nameExist = environments.some(
 					(environment) => environment.name === name,
 				);
-				if (nameExist) return 'A variable with this name already exists';
+				if (nameExist) return ENVIRONMENTS_FORM.NAME_ALREADY_EXISTS;
 			},
 		},
 		value: {
 			validate: (value: string) => {
-				if (value === '') return 'The value cannot be empty';
+				if (value === '') return ENVIRONMENTS_FORM.VALUE_EMPTY;
 			},
 		},
 	};
