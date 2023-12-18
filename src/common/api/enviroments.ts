@@ -93,7 +93,7 @@ export const useCreateAllEnvironmentsMutation = ({
 				.then((res) => res.data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['collection', collectionId, 'environments'],
+				queryKey: ['environment', collectionId],
 			});
 			toast({
 				title: 'Successfully!',
@@ -185,7 +185,7 @@ export const useEditEnvironmentMutation = ({
 				.then((res) => res.data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['enviroment', collectionId],
+				queryKey: ['environment', collectionId],
 			});
 		},
 		onError: (variables: Environment) => {
