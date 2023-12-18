@@ -24,7 +24,7 @@ export default function EnvironmentDropdown({
 		React.useState<string>('');
 	return (
 		<div
-			className="dropdown-menu absolute bg-background text-white border w-80 max-h-64 rounded mt-0.5 mx-2 flex"
+			className="dropdown-menu absolute bg-background text-white border w-96 max-h-64 rounded mt-0.5 mx-2 flex"
 			data-test="dropdown-environments-container"
 		>
 			<ul
@@ -46,10 +46,14 @@ export default function EnvironmentDropdown({
 					</li>
 				))}
 			</ul>
-			<div className="w-3/5 p-4 text-xs flex gap-4 border-l-[1px]">
+			<div
+				className={`w-3/5 text-xs flex gap-4 border-l-[1px] ${
+					environments.length > 1 ? 'p-4' : 'p-2'
+				}`}
+			>
 				<span className="text-slate-400">VALUE</span>
 				<span
-					className="overflow-y-hidden break-all"
+					className="overflow-y-hidden truncate"
 					data-test="dropdown-hover-enviroment-value"
 				>
 					{hoveredEnvironment}
