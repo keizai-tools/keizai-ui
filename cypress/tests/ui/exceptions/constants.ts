@@ -57,7 +57,7 @@ export const invocations = {
 	},
 };
 
-export const environments = {
+export const environment = {
 	id: 'e3133823-566a-4436-948d-832672cf44bc',
 	linkName: 'Collection variables',
 	header: {

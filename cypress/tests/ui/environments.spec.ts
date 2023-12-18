@@ -1,4 +1,4 @@
-import { collectionId } from './exceptions/constants';
+import { collectionId, environment } from './exceptions/constants';
 
 const environments = [
 	{
@@ -147,7 +147,6 @@ describe('Environments management', () => {
 			cy.getBySel('dropdown-environments-container')
 				.should('exist')
 				.and('be.visible');
-
 			cy.getBySel('function-tab-parameter-input-value').clear();
 			cy.getBySel('function-tab-parameter-input-value').type('hola');
 			cy.getBySel('dropdown-environments-container').should('not.exist');
