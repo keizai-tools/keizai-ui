@@ -190,7 +190,6 @@ export const useEditInvocationKeysMutation = () => {
 export const useEditPreInvocationMutation = () => {
 	const axios = useAxios();
 	const queryClient = useQueryClient();
-
 	const mutation = useMutation({
 		mutationFn: async ({
 			id,

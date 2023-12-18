@@ -27,7 +27,7 @@ export const CollectionVariables = ({
 		collectionId,
 	});
 
-	const { control, handleSubmit, setValue } = useForm({
+	const { control, handleSubmit, reset } = useForm({
 		defaultValues: {
 			environments: environments as Environment[],
 		},
@@ -48,10 +48,9 @@ export const CollectionVariables = ({
 	};
 
 	const handleRemoveEnvironment = (id: string) => {
-		setValue(
-			'environments',
-			fields.filter((field) => field.id !== id),
-		);
+		reset({
+			environments: fields.filter((field) => field.id !== id),
+		});
 		deleteEnvironmentMutation(id);
 	};
 

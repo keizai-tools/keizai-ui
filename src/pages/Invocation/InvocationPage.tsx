@@ -50,7 +50,12 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 		handleRunInvocation,
 		isRunningInvocation,
 	} = useInvocation(data);
-	const { setEditorValue } = useEditor();
+
+	const preInvocationValue = React.useMemo(() => {
+		return data.preInvocation ?? '';
+	}, [data]);
+
+	const { setEditorValue } = useEditor(preInvocationValue);
 
 	const isMissingKeys = React.useMemo(() => {
 		return !data.publicKey || !data.secretKey;
@@ -148,8 +153,8 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 				</TabsContent>
 				<TabsContent value="preInvocateScript" className="h-[500px]">
 					<PreInvocateTab
-						setPreInvocation={setEditorValue}
-						preInvocation={data.preInvocation}
+						setEditorValue={setEditorValue}
+						preInvocation={preInvocationValue}
 					/>
 				</TabsContent>
 			</Tabs>

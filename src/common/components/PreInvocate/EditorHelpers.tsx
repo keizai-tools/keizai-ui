@@ -11,6 +11,9 @@ function EditorHelpers({
 }: {
 	setEditorValue: Dispatch<SetStateAction<string>>;
 }) {
+	const handleChangeEditorValues = (value: string) => {
+		setEditorValue((prev) => (prev ? `${prev}\n${value}` : value));
+	};
 	return (
 		<div className="m-2 p-4">
 			<p className="text-sm text-gray-400">
@@ -26,7 +29,7 @@ function EditorHelpers({
 							className="text-sm text-slate-500 hover:text-blue-600 my-5 cursor-pointer"
 							data-test={`editor-helper-${helper}`}
 							onClick={() =>
-								setEditorValue((prev) => prev + KeizaiEditorValues[helper])
+								handleChangeEditorValues(KeizaiEditorValues[helper])
 							}
 						>
 							{editorHelpersDescriptions[helper]}

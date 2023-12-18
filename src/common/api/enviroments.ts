@@ -13,6 +13,7 @@ export const useEnvironmentsQuery = ({
 
 	const query = useQuery<Environment[]>({
 		queryKey: ['environment', collectionId],
+		refetchOnMount: 'always',
 		queryFn: async () =>
 			axios
 				?.get(`/collection/${collectionId}/environments`)
