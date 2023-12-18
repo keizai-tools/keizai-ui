@@ -78,6 +78,39 @@ export const useCreateEnvironmentMutation = ({
 	return mutation;
 };
 
+export const useCreateAllEnvironmentsMutation = ({
+	collectionId,
+}: {
+	collectionId?: string;
+}) => {
+	const queryClient = useQueryClient();
+	const axios = useAxios();
+
+	const mutation = useMutation({
+		mutationFn: async (environments: Environment[]) =>
+			axios
+				?.post(`/collection/${collectionId}/environments`, environments)
+				.then((res) => res.data),
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ['collection', collectionId, 'environments'],
+			});
+			toast({
+				title: 'Successfully!',
+				description: 'The variables have been created correctly',
+			});
+		},
+		onError: () => {
+			toast({
+				title: "Couldn't create variables",
+				description: 'Please try again',
+				variant: 'destructive',
+			});
+		},
+	});
+	return mutation;
+};
+
 export const useDeleteEnvironmentMutation = ({
 	collectionId,
 }: {
