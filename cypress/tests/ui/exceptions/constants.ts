@@ -1,5 +1,6 @@
 export const collectionId = 'fe9abbf4-8afc-4109-b31e-fe422b84c5b5';
 export const invocationId = '635bbf80-0787-47e2-900c-f44d5f53559d';
+export const environmentId = 'e3133823-566a-4436-948d-832672cf44bc';
 export const contractId =
 	'CAMNDFGZCEVIQGKG5USNUFUVT3O4PJWGN4FVATNIRND6TJCG3CC2UW75';
 export const stellarFriendBotUrl = '';
@@ -58,7 +59,6 @@ export const invocations = {
 };
 
 export const environments = {
-	id: 'e3133823-566a-4436-948d-832672cf44bc',
 	linkName: 'Collection variables',
 	header: {
 		title: 'Collections variables',
