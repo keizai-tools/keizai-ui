@@ -3,7 +3,6 @@ import { keypair, contractId } from './exceptions/constants';
 describe('Invocations', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
-		cy.visit('/');
 	});
 	describe('Invocations with data', () => {
 		beforeEach(() => {
@@ -20,6 +19,9 @@ describe('Invocations', () => {
 			cy.intercept(`${Cypress.env('apiUrl')}/invocation/*`, {
 				fixture: 'invocations/invocation-with-contract-id.json',
 			});
+			cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
+				fixture: 'invocations/one-invocation.json',
+			}).as('invocation');
 		});
 
 		it('should get invocation data', () => {
@@ -50,6 +52,9 @@ describe('Invocations', () => {
 				fixture: 'folders/one-folder-with-out-invocation.json',
 			}).as('folders');
 			cy.wait('@folders');
+			cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
+				fixture: 'invocations/one-invocation.json',
+			}).as('invocation');
 			cy.getBySel('collection-folder-container').click();
 		});
 
