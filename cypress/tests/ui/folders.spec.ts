@@ -1,9 +1,9 @@
-import { collectionId, folders } from './exceptions/contants';
+import { apiUrl, folderId, folders } from './exceptions/constants';
 
 describe('Folders', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
-		cy.intercept('GET', `${Cypress.env('apiUrl')}/collection`, {
+		cy.intercept('GET', `${apiUrl}/collection`, {
 			fixture: './collections/collection-without-folders.json',
 		}).as('getCollections');
 		cy.wait('@getCollections');
@@ -23,12 +23,10 @@ describe('Folders', () => {
 			.and('have.text', folders.emptyFolderDescription);
 	});
 	it('Should add a new folder', () => {
-		cy.intercept(
-			'GET',
-			`${Cypress.env('apiUrl')}/collection/${collectionId}/folders`,
-			{ fixture: './folders/one-folder-length.json' },
-		);
-		cy.intercept('POST', `${Cypress.env('apiUrl')}/folder`, {
+		cy.intercept('GET', `${apiUrl}/collection/*/folders`, {
+			fixture: './folders/one-folder-length.json',
+		});
+		cy.intercept('POST', `${apiUrl}/folder`, {
 			fixture: './folders/new-folder.json',
 		});
 
@@ -54,12 +52,10 @@ describe('Folders', () => {
 			.and('have.text', 'Folder');
 	});
 	it('Should show a folder', () => {
-		cy.intercept(
-			'GET',
-			`${Cypress.env('apiUrl')}/collection/${collectionId}/folders`,
-			{ fixture: './folders/one-folder-length.json' },
-		);
-		cy.intercept('POST', `${Cypress.env('apiUrl')}/folder`, {
+		cy.intercept('GET', `${apiUrl}/collection/*/folders`, {
+			fixture: './folders/one-folder-length.json',
+		});
+		cy.intercept('POST', `${apiUrl}/folder`, {
 			fixture: './folders/new-folder.json',
 		}).as('createFolder');
 		cy.getBySel('collections-header-btn-new').click();
@@ -89,22 +85,16 @@ describe('Folders', () => {
 	it('Should edit a folder', () => {
 		const editedFolder = 'Edit Folder';
 
-		cy.intercept(
-			'GET',
-			`${Cypress.env('apiUrl')}/collection/${collectionId}/folders`,
-			{ fixture: './folders/one-folder-length.json' },
-		).as('getOneFolder');
+		cy.intercept('GET', `${apiUrl}/collection/*/folders`, {
+			fixture: './folders/one-folder-length.json',
+		}).as('getOneFolder');
 		cy.wait('@getOneFolder');
-		cy.intercept('PATCH', `${Cypress.env('apiUrl')}/folder`, {
-			body: { name: editedFolder, id: folders.folderId },
+		cy.intercept('PATCH', `${apiUrl}/folder`, {
+			body: { name: editedFolder, id: folderId },
 		}).as('editFolder');
-		cy.intercept(
-			'GET',
-			`${Cypress.env('apiUrl')}/collection/${collectionId}/folders`,
-			{
-				fixture: './folders/edited-folder.json',
-			},
-		).as('getEditedFolder');
+		cy.intercept('GET', `${apiUrl}/collection/*/folders`, {
+			fixture: './folders/edited-folder.json',
+		}).as('getEditedFolder');
 
 		cy.getBySel('collection-folder-container').should('be.visible');
 		cy.getBySel('collection-folder-name').should('have.text', 'Folder');
@@ -140,24 +130,16 @@ describe('Folders', () => {
 		cy.getBySel('collection-folder-name').should('have.text', editedFolder);
 	});
 	it('Should delete a folder', () => {
-		cy.intercept(
-			'GET',
-			`${Cypress.env('apiUrl')}/collection/${collectionId}/folders`,
-			{ fixture: './folders/one-folder-length.json' },
-		).as('getOneFolder');
+		cy.intercept('GET', `${apiUrl}/collection/*/folders`, {
+			fixture: './folders/one-folder-length.json',
+		}).as('getOneFolder');
 		cy.wait('@getOneFolder');
-		cy.intercept(
-			'DELETE',
-			`${Cypress.env('apiUrl')}/folder/${folders.folderId}`,
-			{ fixture: './folders/one-folder-length.json' },
-		).as('deleteFolder');
-		cy.intercept(
-			'GET',
-			`${Cypress.env('apiUrl')}/collection/${collectionId}/folders`,
-			{
-				body: [],
-			},
-		).as('getWithoutFolder');
+		cy.intercept('DELETE', `${apiUrl}/folder/*`, {
+			fixture: './folders/one-folder-length.json',
+		}).as('deleteFolder');
+		cy.intercept('GET', `${apiUrl}/collection/*/folders`, {
+			body: [],
+		}).as('getWithoutFolder');
 
 		cy.getBySel('collection-folder-container').should('be.visible');
 		cy.getBySel('collection-options-btn').click();
