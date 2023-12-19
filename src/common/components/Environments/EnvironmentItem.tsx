@@ -3,12 +3,20 @@
 import { UseMutateFunction } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
 import React from 'react';
-import { Control, Controller, UseFieldArrayRemove } from 'react-hook-form';
+import {
+	Control,
+	Controller,
+	FieldErrors,
+	UseFieldArrayRemove,
+	UseFormWatch,
+} from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
 
+import ErrorMessage from '../Form/ErrorMessage';
 import { Input } from '../ui/input';
 
 import { useEditEnvironmentMutation } from '@/common/api/enviroments';
+import { ENVIRONMENTS_FORM } from '@/common/exceptions/environments';
 import { Environment } from '@/common/types/environment';
 
 interface IEnvironmentItem {
@@ -21,6 +29,12 @@ interface IEnvironmentItem {
 		},
 		any
 	>;
+	errors: FieldErrors<{
+		environments: Environment[];
+	}>;
+	watch: UseFormWatch<{
+		environments: Environment[];
+	}>;
 	removeItem: UseFieldArrayRemove;
 	deleteMutation: UseMutateFunction<
 		any,
@@ -42,6 +56,8 @@ export default function EnvironmentItem({
 	index,
 	collectionId,
 	control,
+	watch,
+	errors,
 	removeItem,
 	deleteMutation,
 }: IEnvironmentItem) {
@@ -74,48 +90,99 @@ export default function EnvironmentItem({
 		debounced(field, value);
 	}, [inputValue, debounced]);
 
+	const inputRules = {
+		name: {
+			validate: (name: string) => {
+				if (name === '') return ENVIRONMENTS_FORM.NAME_EMPTY;
+				const environments = watch('environments').filter(
+					(_env, envIndex) => envIndex !== index,
+				);
+				const nameExist = environments.some(
+					(environment) => environment.name === name,
+				);
+				if (nameExist) return ENVIRONMENTS_FORM.NAME_ALREADY_EXISTS;
+			},
+		},
+		value: {
+			validate: (value: string) => {
+				if (value === '') return ENVIRONMENTS_FORM.VALUE_EMPTY;
+			},
+		},
+	};
+
 	return (
 		<li
 			key={index}
-			className="flex flex-row items-center gap-2 pb-2"
+			className="flex flex-row gap-2 pb-2"
 			data-test="collection-variables-input-container"
 		>
-			<Controller
-				render={({ field: nameField }) => (
-					<Input
-						placeholder="Name"
-						className="w-1/3"
-						data-test="collection-variables-input-name"
-						{...nameField}
-						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-							nameField.onChange(e.target.value);
-							setInputValue({ value: e.target.value, field: nameField.name });
-						}}
+			<div className="flex flex-col w-1/3">
+				<Controller
+					name={`environments.${index}.name`}
+					control={control}
+					rules={inputRules.name}
+					render={({ field: nameField }) => (
+						<Input
+							placeholder="Name"
+							className={`${
+								!environment.id && errors.environments?.[index]?.name
+									? 'border-red-500'
+									: ''
+							}`}
+							data-test="collection-variables-input-name"
+							{...nameField}
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+								nameField.onChange(e.target.value);
+								setInputValue({ value: e.target.value, field: nameField.name });
+							}}
+						/>
+					)}
+				/>
+				{!environment.id && errors.environments?.[index]?.name && (
+					<ErrorMessage
+						message={errors.environments?.[index]?.name?.message as string}
+						testName="collection-variables-input-name-error"
+						styles="text-xs"
 					/>
 				)}
-				name={`environments.${index}.name`}
-				control={control}
-			/>
-			<Controller
-				render={({ field: valueField }) => (
-					<Input
-						{...valueField}
-						placeholder="Value"
-						className="w-2/3"
-						data-test="collection-variables-input-value"
-						onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-							valueField.onChange(e.target.value);
-							setInputValue({ value: e.target.value, field: valueField.name });
-						}}
+			</div>
+			<div className="flex flex-col w-2/3">
+				<Controller
+					name={`environments.${index}.value`}
+					control={control}
+					rules={inputRules.value}
+					render={({ field: valueField }) => (
+						<Input
+							{...valueField}
+							placeholder="Value"
+							className={`${
+								errors.environments?.[index]?.value ? 'border-red-500' : ''
+							}`}
+							data-test="collection-variables-input-value"
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+								valueField.onChange(e.target.value);
+								setInputValue({
+									value: e.target.value,
+									field: valueField.name,
+								});
+							}}
+						/>
+					)}
+				/>
+				{!environment.id && errors.environments?.[index]?.value && (
+					<ErrorMessage
+						message={errors.environments?.[index]?.value?.message as string}
+						testName="collection-variables-input-value-error"
+						styles="text-xs"
 					/>
 				)}
-				name={`environments.${index}.value`}
-				control={control}
-			/>
+			</div>
 			<button
 				type="button"
 				data-test="collection-variables-btn-delete"
-				className="font-semibold"
+				className={`font-semibold ${
+					errors.environments?.[index] ? 'mt-2 self-baseline' : ''
+				}`}
 				onClick={() => {
 					environment.id ? deleteMutation(environment.id) : removeItem(index);
 				}}

@@ -5,7 +5,7 @@ import EnvironmentItem from '../Environments/EnvironmentItem';
 import { Button } from '../ui/button';
 
 import {
-	useCreateEnvironmentMutation,
+	useCreateAllEnvironmentsMutation,
 	useDeleteEnvironmentMutation,
 } from '@/common/api/enviroments';
 import { Collection } from '@/common/types/collection';
@@ -23,11 +23,18 @@ export const CollectionVariables = ({
 	const { mutate: deleteEnvironmentMutation } = useDeleteEnvironmentMutation({
 		collectionId,
 	});
-	const { mutate: createEnvironmentMutation } = useCreateEnvironmentMutation({
-		collectionId,
-	});
+	const { mutate: createEnvironmentsMutation } =
+		useCreateAllEnvironmentsMutation({
+			collectionId,
+		});
 
-	const { control, handleSubmit, reset } = useForm({
+	const {
+		control,
+		handleSubmit,
+		reset,
+		watch,
+		formState: { errors },
+	} = useForm({
 		defaultValues: {
 			environments: environments as Environment[],
 		},
@@ -55,18 +62,11 @@ export const CollectionVariables = ({
 	};
 
 	const onSubmit = (data: { environments: Environment[] | undefined }) => {
-		const { environments } = data;
-
-		if (environments) {
-			environments.forEach((environment) => {
-				if (!environment.id && environment.name && environment.value) {
-					createEnvironmentMutation({
-						name: environment.name,
-						value: environment.value,
-						collectionId,
-					});
-				}
-			});
+		const environmentsToCreate = data.environments?.filter(
+			(environment) => environment.id === '',
+		);
+		if (environmentsToCreate) {
+			createEnvironmentsMutation(environmentsToCreate);
 		}
 	};
 
@@ -115,6 +115,8 @@ export const CollectionVariables = ({
 							index={index}
 							collectionId={collectionId}
 							control={control}
+							watch={watch}
+							errors={errors}
 							removeItem={remove}
 							deleteMutation={handleRemoveEnvironment}
 						/>

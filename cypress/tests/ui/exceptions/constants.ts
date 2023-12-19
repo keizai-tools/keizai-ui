@@ -75,6 +75,15 @@ export const environments = {
 		value: 'test',
 		editedKey: 'edit name',
 		editedValue: 'edit test',
+		error: {
+			name: {
+				empty: 'The name cannot be empty',
+				exist: 'A variable with this name already exists',
+			},
+			value: {
+				empty: 'The value cannot be empty',
+			},
+		},
 	},
 	list: [
 		{

@@ -8,7 +8,6 @@ describe('Environments management', () => {
 		}).as('getCollections');
 		cy.wait('@getCollections');
 	});
-
 	describe('Environment page with variables', () => {
 		beforeEach(() => {
 			cy.intercept(`${Cypress.env('apiUrl')}/collection/*/environments`, {
@@ -20,6 +19,85 @@ describe('Environments management', () => {
 			cy.getBySel('collection-folder-btn').click();
 			cy.getBySel('collections-variables-btn-link').click();
 			cy.wait('@getEnvironments');
+		});
+		it('Should show an error message when trying to create the variables with empty fields', () => {
+			cy.getBySel('collection-variables-container').should('be.visible');
+			cy.getBySel('collection-variables-btn-add').click();
+			cy.getBySel('collection-variables-btn-save').click();
+
+			cy.getBySel('collection-variables-input-name-error')
+				.last()
+				.should('be.visible')
+				.and('have.text', environments.input.error.name.empty);
+			cy.getBySel('collection-variables-input-value-error')
+				.last()
+				.should('be.visible')
+				.and('have.text', environments.input.error.value.empty);
+		});
+		it('Should show an error message when trying to create variables with repeated names', () => {
+			cy.getBySel('collection-variables-container').should('be.visible');
+			cy.getBySel('collection-variables-btn-add').click();
+			cy.getBySel('collection-variables-input-name')
+				.last()
+				.type(environments.list[0].name);
+			cy.getBySel('collection-variables-btn-save').click();
+
+			cy.getBySel('collection-variables-input-name-error')
+				.last()
+				.should('be.visible')
+				.and('have.text', environments.input.error.name.exist);
+		});
+		it('Should show an error message when the variables cannot be created', () => {
+			cy.intercept(
+				'POST',
+				`${Cypress.env('apiUrl')}/collection/*/environments`,
+				{
+					statusCode: 400,
+				},
+			).as('postEnvironments');
+			cy.getBySel('collection-variables-container').should('be.visible');
+			cy.getBySel('collection-variables-btn-add').click();
+			cy.getBySel('collection-variables-btn-add').click();
+			cy.getBySel('collection-variables-btn-add').click();
+
+			cy.getBySel('collection-variables-input-name').eq(3).type('inc4');
+			cy.getBySel('collection-variables-input-value').eq(3).type('4');
+
+			cy.getBySel('collection-variables-input-name').eq(4).type('inc5');
+			cy.getBySel('collection-variables-input-value').eq(4).type('5');
+
+			cy.getBySel('collection-variables-input-name').eq(5).type('inc6');
+			cy.getBySel('collection-variables-input-value').eq(5).type('6');
+
+			cy.getBySel('collection-variables-btn-save').click();
+			cy.wait('@postEnvironments');
+			cy.getBySel('toast-container').should('exist').and('be.visible');
+		});
+		it('Should create 3 new variables correctly', () => {
+			cy.intercept(
+				'POST',
+				`${Cypress.env('apiUrl')}/collection/*/environments`,
+				{
+					fixture: './environments/three-length-environments.json',
+				},
+			).as('postEnvironments');
+			cy.getBySel('collection-variables-container').should('be.visible');
+			cy.getBySel('collection-variables-btn-add').click();
+			cy.getBySel('collection-variables-btn-add').click();
+			cy.getBySel('collection-variables-btn-add').click();
+
+			cy.getBySel('collection-variables-input-name').eq(3).type('inc4');
+			cy.getBySel('collection-variables-input-value').eq(3).type('4');
+
+			cy.getBySel('collection-variables-input-name').eq(4).type('inc5');
+			cy.getBySel('collection-variables-input-value').eq(4).type('5');
+
+			cy.getBySel('collection-variables-input-name').eq(5).type('inc6');
+			cy.getBySel('collection-variables-input-value').eq(5).type('6');
+
+			cy.getBySel('collection-variables-btn-save').click();
+			cy.wait('@postEnvironments');
+			cy.getBySel('toast-container').should('exist').and('be.visible');
 		});
 		it('Should delete all environments', () => {
 			cy.intercept(
@@ -157,7 +235,6 @@ describe('Environments management', () => {
 				'have.value',
 				`{{${environments.list[0].name}}}`,
 			);
-
 			cy.getBySel('function-tab-parameter-input-value').clear();
 			cy.getBySel('function-tab-parameter-input-value').type('hola {');
 			cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
@@ -165,7 +242,6 @@ describe('Environments management', () => {
 				'have.value',
 				`hola {{${environments.list[0].name}}}`,
 			);
-
 			cy.getBySel('function-tab-parameter-input-value').clear();
 			cy.getBySel('function-tab-parameter-input-value').type('url/{');
 			cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
