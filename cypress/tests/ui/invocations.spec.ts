@@ -3,13 +3,13 @@ import { keypair, contractId } from './exceptions/constants';
 describe('Invocations', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
+		cy.intercept(`${Cypress.env('apiUrl')}/collection`, {
+			fixture: 'collections/collection-with-one-invocation.json',
+		}).as('collection');
+		cy.wait('@collection');
 	});
 	describe('Invocations with data', () => {
 		beforeEach(() => {
-			cy.intercept(`${Cypress.env('apiUrl')}/collection`, {
-				fixture: 'collections/collection-with-one-invocation.json',
-			}).as('collection');
-			cy.wait('@collection');
 			cy.getBySel('collection-folder-btn').click();
 			cy.intercept(`${Cypress.env('apiUrl')}/collection/*/folders`, {
 				fixture: 'folders/folder-with-contract-id.json',
@@ -22,8 +22,6 @@ describe('Invocations', () => {
 			cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
 				fixture: 'invocations/one-invocation.json',
 			}).as('invocation');
-		});
-		it('should get invocation data', () => {
 			cy.getBySel('invocation-item').first().click();
 			cy.getBySel('tabs-container').should('be.visible');
 		});
@@ -37,14 +35,35 @@ describe('Invocations', () => {
 			cy.getBySel('tabs-function-select').first().click();
 			cy.wait('@method');
 		});
+		describe('Events tracker tab', () => {
+			it('Should show the content of the tab', () => {
+				cy.getBySel('functions-tabs-events').click();
+				cy.getBySel('events-tab-container').should('be.visible');
+				cy.getBySel('events-tab-event-container').should('be.visible');
+				cy.getBySel('events-tab-event-title')
+					.should('be.visible')
+					.and('have.text', 'Event');
+				cy.getBySel('events-tab-btn-copy').should('be.visible');
+				cy.getBySel('events-tab-copy-tooltip').should('not.exist');
+				cy.getBySel('events-tab-event-content').should('be.visible');
+			});
+			it('Should copy the content of an event', () => {
+				cy.getBySel('functions-tabs-events').click();
+				cy.getBySel('events-tab-container').should('be.visible');
+				cy.getBySel('events-tab-copy-tooltip').should('not.exist');
+				cy.getBySel('events-tab-btn-copy').should('be.visible').realClick();
+				cy.getBySel('events-tab-copy-tooltip')
+					.should('exist')
+					.and('be.visible')
+					.contains('Copied!');
+				cy.wait(1000);
+				cy.getBySel('events-tab-copy-tooltip').should('not.exist');
+			});
+		});
 	});
 
 	describe('Invocation without data', () => {
 		beforeEach(() => {
-			cy.intercept(`${Cypress.env('apiUrl')}/collection`, {
-				fixture: 'collections/collection-with-one-folder.json',
-			}).as('collection');
-			cy.wait('@collection');
 			cy.getBySel('collection-folder-btn').click();
 			cy.intercept(`${Cypress.env('apiUrl')}/collection/*/folders`, {
 				fixture: 'folders/one-folder-with-out-invocation.json',
