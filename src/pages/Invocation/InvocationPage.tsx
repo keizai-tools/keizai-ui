@@ -8,6 +8,7 @@ import { useInvocationQuery } from '@/common/api/invocations';
 import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
 import ContractInput from '@/common/components/Input/ContractInput';
 import AuthorizationTab from '@/common/components/Tabs/AuthorizationTab/AuthorizationTab';
+import EventsTab from '@/common/components/Tabs/EventsTab/EventsTab';
 import FunctionsTab from '@/common/components/Tabs/FunctionsTab/FunctionsTab';
 import PreInvocateTab from '@/common/components/Tabs/PreInvocateTab/PreInvocateTab';
 import Terminal from '@/common/components/ui/Terminal';
@@ -34,7 +35,7 @@ const tabs: Record<string, string> = {
 	events: 'Events tracker',
 };
 
-const disabledTabs = ['tests', 'events'];
+const disabledTabs = ['tests'];
 
 export type InvocationForm = {
 	contractId?: string | null;
@@ -156,6 +157,9 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 						setEditorValue={setEditorValue}
 						preInvocation={preInvocationValue}
 					/>
+				</TabsContent>
+				<TabsContent value="events">
+					<EventsTab />
 				</TabsContent>
 			</Tabs>
 			<Terminal entries={contractResponses} />
