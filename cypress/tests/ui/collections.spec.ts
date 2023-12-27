@@ -1,4 +1,9 @@
-import { collectionApiUrl, collections, folders } from './exceptions/contants';
+import {
+	apiUrl,
+	collectionId,
+	collections,
+	folders,
+} from './exceptions/constants';
 
 describe('Collections', () => {
 	beforeEach(() => {
@@ -6,7 +11,7 @@ describe('Collections', () => {
 	});
 
 	it('Should show a collection page of empty state', () => {
-		cy.intercept('GET', collectionApiUrl, {
+		cy.intercept('GET', `${apiUrl}/collection`, {
 			body: [],
 		}).as('getCollections');
 
@@ -28,7 +33,7 @@ describe('Collections', () => {
 			.and('have.text', collections.btnCreateText);
 	});
 	it('Should redirect to the Home page when navigating to other paths', () => {
-		cy.intercept('GET', collectionApiUrl, {
+		cy.intercept('GET', `${apiUrl}/collection`, {
 			body: [],
 		}).as('getCollections');
 
@@ -39,7 +44,7 @@ describe('Collections', () => {
 		cy.url().should('not.include', '/test');
 	});
 	it('Should show a create collection dialog', () => {
-		cy.intercept('GET', collectionApiUrl, {
+		cy.intercept('GET', `${apiUrl}/collection`, {
 			body: [],
 		}).as('getCollections');
 
@@ -63,10 +68,10 @@ describe('Collections', () => {
 			.and('have.text', collections.dialog.create.btnText);
 	});
 	it('Should create a new collection', () => {
-		cy.intercept('GET', collectionApiUrl, {
+		cy.intercept('GET', `${apiUrl}/collection`, {
 			body: [],
 		}).as('getCollections');
-		cy.intercept('POST', collectionApiUrl, {
+		cy.intercept('POST', `${apiUrl}/collection`, {
 			fixture: './collections/new-collection.json',
 		});
 
@@ -104,7 +109,7 @@ describe('Collections', () => {
 			.and('have.text', folders.emptyFolderDescription);
 	});
 	it('Should show a collection without folders when logging in', () => {
-		cy.intercept('GET', collectionApiUrl, {
+		cy.intercept('GET', `${apiUrl}/collection`, {
 			fixture: './collections/collection-without-folders.json',
 		}).as('getCollections');
 
@@ -122,7 +127,7 @@ describe('Collections', () => {
 			.and('have.text', collections.btnCreateText);
 	});
 	it('Should show a collection with one folder when logging in', () => {
-		cy.intercept('GET', collectionApiUrl, {
+		cy.intercept('GET', `${apiUrl}/collection`, {
 			fixture: './collections/collection-with-one-folder.json',
 		}).as('getCollections');
 
@@ -140,7 +145,7 @@ describe('Collections', () => {
 			.and('have.text', collections.btnCreateText);
 	});
 	it('Should show a collection with two folders when logging in', () => {
-		cy.intercept('GET', collectionApiUrl, {
+		cy.intercept('GET', `${apiUrl}/collection`, {
 			fixture: './collections/collection-with-two-folders.json',
 		}).as('getCollections');
 
@@ -160,17 +165,17 @@ describe('Collections', () => {
 	it('Should edit a collection name', () => {
 		const editedCollection = 'Edit Collection';
 
-		cy.intercept('GET', collectionApiUrl, {
+		cy.intercept('GET', `${apiUrl}/collection`, {
 			fixture: './collections/collection-without-folders.json',
 		}).as('getCollections');
-		cy.intercept('PATCH', collectionApiUrl, {
+		cy.intercept('PATCH', `${apiUrl}/collection`, {
 			body: {
 				id: '28a5e963-8635-4a26-863b-6fd477230bf0',
 				name: 'Edit Collection',
 			},
 		}).as('editCollection');
 		cy.wait('@getCollections');
-		cy.intercept('GET', collectionApiUrl, {
+		cy.intercept('GET', `${apiUrl}/collection`, {
 			fixture: './collections/edited-collection.json',
 		}).as('editedCollection');
 
@@ -210,14 +215,14 @@ describe('Collections', () => {
 		);
 	});
 	it('Should delete a collection', () => {
-		cy.intercept('GET', collectionApiUrl, {
+		cy.intercept('GET', `${apiUrl}/collection`, {
 			fixture: './collections/collection-without-folders.json',
 		}).as('getCollections');
-		cy.intercept('DELETE', `${collectionApiUrl}/${collections.id}`, {
-			body: collections.id,
+		cy.intercept('DELETE', `${`${apiUrl}/collection`}/*`, {
+			body: collectionId,
 		}).as('deleteCollection');
 		cy.wait('@getCollections');
-		cy.intercept('GET', collectionApiUrl, {
+		cy.intercept('GET', `${apiUrl}/collection`, {
 			body: [],
 		}).as('getCollectionsWithoutCollection');
 
