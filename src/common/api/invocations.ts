@@ -194,14 +194,17 @@ export const useEditPreInvocationMutation = () => {
 		mutationFn: async ({
 			id,
 			preInvocation,
+			postInvocation,
 		}: {
 			id: string;
-			preInvocation: string;
+			preInvocation?: string;
+			postInvocation?: string;
 		}) => {
 			axios
 				?.patch('/invocation', {
 					id,
 					preInvocation,
+					postInvocation,
 				})
 				.then((res) => res.data);
 		},
@@ -212,7 +215,8 @@ export const useEditPreInvocationMutation = () => {
 			]);
 			queryClient.setQueryData(['invocation', variables.id], {
 				...oldData,
-				preInvocation: variables.preInvocation,
+				preInvocation: variables.preInvocation ?? oldData?.preInvocation,
+				postInvocation: variables.postInvocation ?? oldData?.postInvocation,
 			});
 		},
 	});
