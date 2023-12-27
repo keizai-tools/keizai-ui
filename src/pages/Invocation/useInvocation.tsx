@@ -3,7 +3,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 
 import {
-	createContractResponsePreInvocation,
+	createContractResponse,
 	createContractResponseTitle,
 	handleAxiosError,
 } from './invocation.utils';
@@ -43,8 +43,48 @@ const useInvocation = (invocation: Invocation) => {
 		}
 	}, [status, toast]);
 
-	const handleLoadContract = async (contractId: string) => {
-		return await editInvocation({
+	const Keizai = React.useMemo(() => {
+		return new KeizaiService(
+			user?.accessToken ?? '',
+			collectionId ?? '',
+			import.meta.env.VITE_URL_API_BASE,
+		);
+	}, [user?.accessToken, collectionId]);
+
+	const runKeizaiService = async (
+		serviceToRun: string,
+		invocation?: string,
+	) => {
+		if (invocation) Keizai.invocationResponse = invocation;
+		const contextFunction = async function () {
+			return await eval(`(async () => { ${serviceToRun} })()`);
+		}.bind({ Keizai });
+
+		return contextFunction();
+	};
+	const handleRunService = async (
+		serviceToRun: string,
+		invocation?: string,
+	) => {
+		try {
+			return {
+				isError: false,
+				message: String(serviceToRun),
+				title: 'Pre-Invocation',
+				serviceResponse: await runKeizaiService(serviceToRun, invocation),
+			};
+		} catch (error) {
+			return {
+				isError: true,
+				message: String(`${error} from Pre-invocation script`),
+				title: 'Pre-Invocation error',
+				serviceToRun: String(serviceToRun),
+			};
+		}
+	};
+
+	const handleLoadContract = (contractId: string) => {
+		return editInvocation({
 			id: invocation.id,
 			contractId,
 		});
@@ -60,20 +100,27 @@ const useInvocation = (invocation: Invocation) => {
 	const handleRunInvocation = async () => {
 		setIsRunningInvocation(true);
 		try {
-			const preInvocationResponse = await handleRunPreInvocation(
+			const preInvocationResponse = await handleRunService(
 				invocation.preInvocation ?? '',
 			);
 			if (preInvocationResponse.isError) {
 				setContractResponses((prev) => [...prev, preInvocationResponse]);
 			} else {
 				const response = await runInvocation();
+				const postInvocationResponse = await handleRunService(
+					invocation.postInvocation ?? '',
+					response?.response,
+				);
 				if (response && response.method) {
 					setContractResponses((prev) => [
 						...prev,
 						{
 							isError: false,
-							preInvocation: createContractResponsePreInvocation(
-								preInvocationResponse?.preInvocation,
+							preInvocation: createContractResponse(
+								preInvocationResponse?.serviceResponse,
+							),
+							postInvocation: createContractResponse(
+								postInvocationResponse?.serviceResponse,
 							),
 							title: createContractResponseTitle(response.method),
 							message: response.response || 'No response',
@@ -88,36 +135,6 @@ const useInvocation = (invocation: Invocation) => {
 			setContractResponses((prev) => [...prev, errorResponse]);
 		} finally {
 			setIsRunningInvocation(false);
-		}
-	};
-
-	const handleRunPreInvocation = async (preInvocation: string) => {
-		const Keizai = new KeizaiService(
-			user?.accessToken ?? '',
-			collectionId ?? '',
-			import.meta.env.VITE_URL_API_BASE,
-		);
-
-		try {
-			const contextFunction = async function () {
-				return await eval(`(async () => { ${preInvocation} })()`);
-			}.bind({ Keizai });
-
-			const preInvocationResponse = await contextFunction();
-
-			return {
-				isError: false,
-				message: String(preInvocation),
-				title: 'Pre-Invocation',
-				preInvocation: preInvocationResponse,
-			};
-		} catch (error) {
-			return {
-				isError: true,
-				message: String(`${error} from Pre-invocation script`),
-				title: 'Pre-Invocation error',
-				preInvocation: String(preInvocation),
-			};
 		}
 	};
 
