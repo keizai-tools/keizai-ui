@@ -1,9 +1,10 @@
 import loader from '@monaco-editor/loader';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 
-import Editor from '../../PreInvocate/Editor';
+import PreInvocationEditor from '../../PreInvocate/PreInvocationEditor';
 
-const extraLib = `declare const Keizai: {};`;
+const extraLib = `declare const Keizai ={
+};`;
 
 function PreInvocateTab({
 	setEditorValue,
@@ -23,7 +24,10 @@ function PreInvocateTab({
 
 	return (
 		<div className="w-full h-full h-[500px]" id="editor">
-			<Editor editorValue={preInvocation} setEditorValue={setEditorValue} />
+			<PreInvocationEditor
+				editorValue={preInvocation}
+				setEditorValue={setEditorValue}
+			/>
 		</div>
 	);
 }
