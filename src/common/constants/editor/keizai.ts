@@ -3,4 +3,5 @@ export const KeizaiEditorValues: { [key: string]: string } = {
 	clearEnviromentVariable: 'await Keizai.clearEnviromentVariable("key");',
 	clearAllEnviromentVariables: 'await Keizai.clearAllEnviromentVariables();',
 	getCollectionVariableValue: 'await Keizai.getCollectionVariableValue("key");',
+	getInvocationResponse: 'await Keizai.getInvocationResponse();',
 };
