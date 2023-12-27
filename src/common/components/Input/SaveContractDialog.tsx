@@ -40,7 +40,6 @@ const SaveContractDialog = ({
 		}
 
 		try {
-			console.log('submit', invocationId);
 			await mutate(
 				{
 					id: invocationId,
