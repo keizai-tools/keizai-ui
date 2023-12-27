@@ -83,8 +83,8 @@ const useInvocation = (invocation: Invocation) => {
 		}
 	};
 
-	const handleLoadContract = (contractId: string) => {
-		return editInvocation({
+	const handleLoadContract = async (contractId: string) => {
+		return await editInvocation({
 			id: invocation.id,
 			contractId,
 		});
