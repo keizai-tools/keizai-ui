@@ -13,7 +13,6 @@ import FunctionsTab from '@/common/components/Tabs/FunctionsTab/FunctionsTab';
 import PreInvocateTab from '@/common/components/Tabs/PreInvocateTab/PreInvocateTab';
 import TestsTab from '@/common/components/Tabs/TestsTab/TestsTab';
 import Terminal from '@/common/components/ui/Terminal';
-import { Button } from '@/common/components/ui/button';
 import {
 	Tabs,
 	TabsContent,
@@ -95,24 +94,6 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 			>
 				<TabsList className="" data-test="tabs-list-container">
 					{Object.keys(tabs).map((tab) => {
-						if (disabledTabs.includes(tab)) {
-							return (
-								<Tooltip key={tab} delayDuration={50}>
-									<TooltipTrigger asChild>
-										<Button
-											variant="link"
-											className="hover:no-underline text-slate-600"
-										>
-											{tabs[tab]}
-										</Button>
-									</TooltipTrigger>
-									<TooltipContent>
-										<p>Coming soon</p>
-									</TooltipContent>
-								</Tooltip>
-							);
-						}
-
 						if (tab === 'authorization' && isMissingKeys) {
 							return (
 								<Tooltip delayDuration={0}>
@@ -120,7 +101,6 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 										<TabsTrigger
 											key={tab}
 											value={tab}
-											disabled={disabledTabs.includes(tab)}
 											data-test={`functions-tabs-${tab}`}
 										>
 											{tabs[tab]}
@@ -138,7 +118,6 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 							<TabsTrigger
 								key={tab}
 								value={tab}
-								disabled={disabledTabs.includes(tab)}
 								data-test={`functions-tabs-${tab}`}
 							>
 								{tabs[tab]}
@@ -174,9 +153,9 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 						postInvocation={postInvocationValue}
 					/>
 				</TabsContent>
-        <TabsContent value="events">
+				<TabsContent value="events">
 					<EventsTab events={events} />
-        </TabsContent>
+				</TabsContent>
 			</Tabs>
 			<Terminal entries={contractResponses} />
 		</div>
