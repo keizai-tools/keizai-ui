@@ -15,6 +15,7 @@ import {
 } from '@/common/api/invocations';
 import { TerminalEntry } from '@/common/components/ui/Terminal';
 import { useToast } from '@/common/components/ui/use-toast';
+import { EventResponse } from '@/common/types/contract-events';
 import { Invocation } from '@/common/types/invocation';
 import { useAuth } from '@/services/auth/hook/useAuth';
 
@@ -27,6 +28,9 @@ const useInvocation = (invocation: Invocation) => {
 	const [contractResponses, setContractResponses] = React.useState<
 		TerminalEntry[]
 	>([]);
+	const [contractEvents, setContractEvents] = React.useState<EventResponse[]>(
+		JSON.parse(sessionStorage.getItem('events') || '[]'),
+	);
 	const {
 		mutate: editInvocation,
 		isPending,
@@ -79,6 +83,10 @@ const useInvocation = (invocation: Invocation) => {
 							message: response.response || 'No response',
 						},
 					]);
+					if (response.events) {
+						setContractEvents(response.events);
+						sessionStorage.setItem('events', JSON.stringify(response.events));
+					}
 				} else {
 					throw new Error();
 				}
@@ -126,6 +134,7 @@ const useInvocation = (invocation: Invocation) => {
 		isLoadingContract: isPending,
 		handleSelectFunction,
 		contractResponses,
+		contractEvents,
 		handleRunInvocation,
 		isRunningInvocation,
 	};

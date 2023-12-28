@@ -1,3 +1,4 @@
+import { EventResponse } from './contract-events';
 import { Method } from './method';
 
 export type Invocation = {
@@ -20,6 +21,7 @@ export type InvocationResponse = {
 	method: Method;
 	response: string;
 	status: string;
+	events: EventResponse[];
 };
 
 export const SCSpecTypeMap = {
