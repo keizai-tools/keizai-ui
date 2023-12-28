@@ -48,10 +48,10 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 		handleLoadContract,
 		isLoadingContract,
 		contractResponses,
+		contractEvents,
 		handleRunInvocation,
 		isRunningInvocation,
 	} = useInvocation(data);
-
 	const preInvocationValue = React.useMemo(() => {
 		return data.preInvocation ?? '';
 	}, [data]);
@@ -61,6 +61,10 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 	const isMissingKeys = React.useMemo(() => {
 		return !data.publicKey || !data.secretKey;
 	}, [data.publicKey, data.secretKey]);
+
+	const events = React.useMemo(() => {
+		return contractEvents;
+	}, [contractEvents]);
 
 	return (
 		<div
@@ -159,7 +163,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 					/>
 				</TabsContent>
 				<TabsContent value="events">
-					<EventsTab />
+					<EventsTab events={events} />
 				</TabsContent>
 			</Tabs>
 			<Terminal entries={contractResponses} />
