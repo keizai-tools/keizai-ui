@@ -1,4 +1,4 @@
-import { keypair, contractId } from './exceptions/constants';
+import { keypair, contractId, invocations } from './exceptions/constants';
 
 describe('Invocations', () => {
 	beforeEach(() => {
@@ -18,46 +18,78 @@ describe('Invocations', () => {
 			cy.getBySel('collection-folder-container').click();
 			cy.intercept(`${Cypress.env('apiUrl')}/invocation/*`, {
 				fixture: 'invocations/invocation-with-contract-id.json',
-			});
+			}).as('invocationWithSelectedMethod');
 			cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
 				fixture: 'invocations/one-invocation.json',
 			}).as('invocation');
 			cy.getBySel('invocation-item').first().click();
 			cy.getBySel('tabs-container').should('be.visible');
-		});
-		it('should select a method from invocation', () => {
 			cy.intercept(`${Cypress.env('apiUrl')}/method/*`, {
 				fixture: 'methods/method.json',
 			}).as('method');
+		});
+		it('should select a method from invocation', () => {
 			cy.getBySel('invocation-item').first().click();
 			cy.getBySel('tabs-container').should('be.visible');
 			cy.getBySel('tabs-function-select-container').first().click();
 			cy.getBySel('tabs-function-select').first().click();
 			cy.wait('@method');
 		});
+		it('Should show the content of the tab without events', () => {
+			cy.getBySel('functions-tabs-events').click();
+			cy.getBySel('events-tab-container').should('be.visible');
+			cy.getBySel('events-tab-content-container').should('be.visible');
+			cy.getBySel('events-tab-content-img')
+				.should('be.visible')
+				.and('have.attr', 'alt', invocations.tabs.events.imgAlt);
+			cy.getBySel('events-tab-content-text')
+				.should('be.visible')
+				.find('h2')
+				.each((title, index) =>
+					cy
+						.wrap(title)
+						.should('contain.text', invocations.tabs.events.title[index]),
+				);
+		});
 		describe('Events tracker tab', () => {
-			it('Should show the content of the tab', () => {
+			beforeEach(() => {
+				cy.wait('@method');
+				cy.intercept(`${Cypress.env('apiUrl')}/invocation/*/run`, {
+					fixture: 'invocations/run-invocation.json',
+				}).as('runInvocation');
+				cy.getBySel('contract-input-btn-load').click();
+				cy.wait('@runInvocation');
 				cy.getBySel('functions-tabs-events').click();
+			});
+			it('Should show the content of the tab with events', () => {
 				cy.getBySel('events-tab-container').should('be.visible');
 				cy.getBySel('events-tab-event-container').should('be.visible');
-				cy.getBySel('events-tab-event-title')
-					.should('be.visible')
-					.and('have.text', 'Event');
+				cy.getBySel('events-tab-event-title').should('be.visible');
 				cy.getBySel('events-tab-btn-copy').should('be.visible');
 				cy.getBySel('events-tab-copy-tooltip').should('not.exist');
 				cy.getBySel('events-tab-event-content').should('be.visible');
 			});
 			it('Should copy the content of an event', () => {
-				cy.getBySel('functions-tabs-events').click();
 				cy.getBySel('events-tab-container').should('be.visible');
 				cy.getBySel('events-tab-copy-tooltip').should('not.exist');
-				cy.getBySel('events-tab-btn-copy').should('be.visible').realClick();
+				cy.getBySel('events-tab-btn-copy')
+					.eq(0)
+					.should('be.visible')
+					.realClick();
 				cy.getBySel('events-tab-copy-tooltip')
 					.should('exist')
 					.and('be.visible')
 					.contains('Copied!');
 				cy.wait(1000);
 				cy.getBySel('events-tab-copy-tooltip').should('not.exist');
+			});
+			it('Should persist events when change to other path', () => {
+				cy.getBySel('events-tab-container').should('be.visible');
+				cy.getBySel('collections-variables-btn-link').click();
+				cy.getBySel('collection-variables-container').should('be.visible');
+				cy.getBySel('invocation-item').first().click();
+				cy.getBySel('functions-tabs-events').click();
+				cy.getBySel('events-tab-container').should('be.visible');
 			});
 		});
 	});
