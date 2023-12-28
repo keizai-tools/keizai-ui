@@ -1,7 +1,6 @@
 describe('Sidebar', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
-		cy.visit('/');
 	});
 
 	it('Should show the sidebar', () => {

@@ -1,17 +1,16 @@
 import loader from '@monaco-editor/loader';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 
-import PreInvocationEditor from '../../PreInvocate/PreInvocationEditor';
+import TestsEditor from '../../PostInvocation/TestsEditor';
 
-const extraLib = `declare const Keizai ={
-};`;
+const extraLib = `declare const Keizai: {};`;
 
-function PreInvocateTab({
-	setEditorValue,
-	preInvocation,
+function TestsTab({
+	setPostInvocationValue,
+	postInvocation,
 }: {
-	setEditorValue: Dispatch<SetStateAction<string>>;
-	preInvocation: string;
+	setPostInvocationValue: Dispatch<SetStateAction<string>>;
+	postInvocation: string;
 }) {
 	useEffect(() => {
 		const initEditor = async () => {
@@ -24,12 +23,12 @@ function PreInvocateTab({
 
 	return (
 		<div className="w-full h-full h-[500px]" id="editor">
-			<PreInvocationEditor
-				editorValue={preInvocation}
-				setEditorValue={setEditorValue}
+			<TestsEditor
+				postInvocationValue={postInvocation}
+				setPostInvocationValue={setPostInvocationValue}
 			/>
 		</div>
 	);
 }
 
-export default PreInvocateTab;
+export default TestsTab;

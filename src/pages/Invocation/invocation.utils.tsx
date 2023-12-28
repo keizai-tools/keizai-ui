@@ -32,9 +32,7 @@ export const createContractResponseTitle = (method: Method) => {
 	);
 };
 
-export const createContractResponsePreInvocation = (
-	preInvocation: string | undefined,
-) => {
+export const createContractResponse = (preInvocation: string | undefined) => {
 	if (!preInvocation) {
 		return;
 	}

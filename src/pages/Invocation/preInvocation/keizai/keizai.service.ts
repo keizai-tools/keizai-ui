@@ -2,6 +2,7 @@ export class KeizaiService {
 	private accessToken: string;
 	private collectionId: string;
 	private apiUrl: string;
+	invocationResponse?: string;
 
 	constructor(accessToken: string, collectionId: string, apiUrl: string) {
 		this.accessToken = accessToken;
@@ -46,5 +47,22 @@ export class KeizaiService {
 				Authorization: `Bearer ${this.accessToken}`,
 			},
 		});
+	}
+
+	async getCollectionVariableValue(name: string) {
+		return await fetch(
+			this.apiUrl + `/collection/${this.collectionId}/environment?name=${name}`,
+			{
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${this.accessToken}`,
+				},
+			},
+		).then((res) => res.json().then((data) => data.value));
+	}
+
+	getInvocationResponse() {
+		return this.invocationResponse;
 	}
 }

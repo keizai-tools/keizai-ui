@@ -11,6 +11,7 @@ import AuthorizationTab from '@/common/components/Tabs/AuthorizationTab/Authoriz
 import EventsTab from '@/common/components/Tabs/EventsTab/EventsTab';
 import FunctionsTab from '@/common/components/Tabs/FunctionsTab/FunctionsTab';
 import PreInvocateTab from '@/common/components/Tabs/PreInvocateTab/PreInvocateTab';
+import TestsTab from '@/common/components/Tabs/TestsTab/TestsTab';
 import Terminal from '@/common/components/ui/Terminal';
 import { Button } from '@/common/components/ui/button';
 import {
@@ -35,8 +36,6 @@ const tabs: Record<string, string> = {
 	events: 'Events tracker',
 };
 
-const disabledTabs = ['tests'];
-
 export type InvocationForm = {
 	contractId?: string | null;
 	selectedMethod?: string | null;
@@ -56,7 +55,14 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 		return data.preInvocation ?? '';
 	}, [data]);
 
-	const { setEditorValue } = useEditor(preInvocationValue);
+	const postInvocationValue = React.useMemo(() => {
+		return data.postInvocation ?? '';
+	}, [data]);
+
+	const { setPreInvocationValue, setPostInvocationValue } = useEditor(
+		preInvocationValue,
+		postInvocationValue,
+	);
 
 	const isMissingKeys = React.useMemo(() => {
 		return !data.publicKey || !data.secretKey;
@@ -158,13 +164,19 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 				</TabsContent>
 				<TabsContent value="preInvocateScript" className="h-[500px]">
 					<PreInvocateTab
-						setEditorValue={setEditorValue}
+						setEditorValue={setPreInvocationValue}
 						preInvocation={preInvocationValue}
 					/>
 				</TabsContent>
-				<TabsContent value="events">
-					<EventsTab events={events} />
+				<TabsContent value="tests" className="h-[500px]">
+					<TestsTab
+						setPostInvocationValue={setPostInvocationValue}
+						postInvocation={postInvocationValue}
+					/>
 				</TabsContent>
+        <TabsContent value="events">
+					<EventsTab events={events} />
+        </TabsContent>
 			</Tabs>
 			<Terminal entries={contractResponses} />
 		</div>

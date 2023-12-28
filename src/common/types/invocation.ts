@@ -15,6 +15,7 @@ export type Invocation = {
 	secretKey?: string;
 	publicKey?: string;
 	preInvocation?: string;
+	postInvocation?: string;
 };
 
 export type InvocationResponse = {

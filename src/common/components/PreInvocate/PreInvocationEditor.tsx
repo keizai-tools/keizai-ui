@@ -3,7 +3,12 @@ import { Dispatch, SetStateAction } from 'react';
 
 import EditorHelpers from './EditorHelpers';
 
-function Editor({
+import {
+	editorHelpers,
+	editorHelpersDescriptions,
+} from '@/common/constants/editor-helpers';
+
+function PreInvocationEditor({
 	editorValue,
 	setEditorValue,
 }: {
@@ -26,9 +31,15 @@ function Editor({
 				defaultValue={editorValue}
 				value={editorValue}
 			/>
-			<EditorHelpers setEditorValue={setEditorValue} />
+			<EditorHelpers
+				setEditorValue={setEditorValue}
+				title="Pre invocations are written in Javascript, and are run before the
+				invocation."
+				editorHelpers={editorHelpers}
+				editorHelpersDescriptions={editorHelpersDescriptions}
+			/>
 		</div>
 	);
 }
 
-export default Editor;
+export default PreInvocationEditor;
