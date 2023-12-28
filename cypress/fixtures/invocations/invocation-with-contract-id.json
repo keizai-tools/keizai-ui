@@ -10,13 +10,68 @@
 	},
 	"methods": [
 		{
-			"name": "hello",
+			"name": "inc_by",
+			"inputs": [
+				{
+					"name": "increment",
+					"type": "SC_SPEC_TYPE_U32"
+				}
+			],
+			"outputs": [
+				{
+					"type": "SC_SPEC_TYPE_U32"
+				}
+			],
+			"params": [
+				{
+					"name": "increment",
+					"value": 1
+				}
+			],
+			"docs": "Increment by a specified integer.",
+			"id": "726a37e7-0abd-4469-b9ed-3a06bf1c75c7"
+		},
+		{
+			"name": "clear",
 			"inputs": [],
 			"outputs": [],
 			"params": [],
 			"docs": null,
-			"id": "3ba5a830-d7a7-421a-9e04-2c2a8b8e4b84"
+			"id": "957cdeaf-7343-454e-978f-20e6ce9e4687"
+		},
+		{
+			"name": "increment",
+			"inputs": [],
+			"outputs": [
+				{
+					"type": "SC_SPEC_TYPE_U32"
+				}
+			],
+			"params": [],
+			"docs": null,
+			"id": "f8f008ed-cb01-44c2-adfa-6e9982346edc"
 		}
 	],
-	"selectedMethod": null
+	"selectedMethod": {
+		"name": "inc_by",
+		"inputs": [
+			{
+				"name": "increment",
+				"type": "SC_SPEC_TYPE_U32"
+			}
+		],
+		"outputs": [
+			{
+				"type": "SC_SPEC_TYPE_U32"
+			}
+		],
+		"params": [
+			{
+				"name": "increment",
+				"value": 1
+			}
+		],
+		"docs": "Increment by a specified integer.",
+		"id": "726a37e7-0abd-4469-b9ed-3a06bf1c75c7"
+	}
 }
