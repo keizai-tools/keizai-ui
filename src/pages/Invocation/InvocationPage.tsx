@@ -67,10 +67,6 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 		return !data.publicKey || !data.secretKey;
 	}, [data.publicKey, data.secretKey]);
 
-	const events = React.useMemo(() => {
-		return contractEvents;
-	}, [contractEvents]);
-
 	return (
 		<div
 			className="flex flex-col p-3 w-full gap-4 max-h-screen"
@@ -154,7 +150,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 					/>
 				</TabsContent>
 				<TabsContent value="events">
-					<EventsTab events={events} />
+					<EventsTab events={contractEvents} />
 				</TabsContent>
 			</Tabs>
 			<Terminal entries={contractResponses} />
