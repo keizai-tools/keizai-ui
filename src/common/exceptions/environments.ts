@@ -3,3 +3,7 @@ export enum ENVIRONMENTS_FORM {
 	NAME_ALREADY_EXISTS = 'A variable with this name already exists',
 	VALUE_EMPTY = 'The value cannot be empty',
 }
+
+export enum ENVIRONMENTS {
+	EMPTY_STATE = "You don't have any variables created",
+}

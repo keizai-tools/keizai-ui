@@ -8,6 +8,7 @@ import {
 	useCreateAllEnvironmentsMutation,
 	useDeleteEnvironmentMutation,
 } from '@/common/api/enviroments';
+import { ENVIRONMENTS } from '@/common/exceptions/environments';
 import { Collection } from '@/common/types/collection';
 import { Environment } from '@/common/types/environment';
 
@@ -103,34 +104,44 @@ export const CollectionVariables = ({
 					</Button>
 				</div>
 			</header>
-			<ul
-				className="flex flex-col gap-2 px-1 pt-12"
-				data-test="collection-variables-container"
-			>
-				{fields.length > 0 &&
-					fields.map((environment, index) => (
-						<EnvironmentItem
-							key={index}
-							environment={environment}
-							index={index}
-							collectionId={collectionId}
-							control={control}
-							watch={watch}
-							errors={errors}
-							removeItem={remove}
-							deleteMutation={handleRemoveEnvironment}
-						/>
-					))}
-			</ul>
-			<div className="flex justify-end pt-4 mr-8">
-				<Button
-					type="submit"
-					className="font-semibold"
-					data-test="collection-variables-btn-save"
+			{fields.length > 0 ? (
+				<>
+					<ul
+						className="flex flex-col gap-2 px-1 pt-12"
+						data-test="collection-variables-container"
+					>
+						{fields.map((environment, index) => (
+							<EnvironmentItem
+								key={index}
+								environment={environment}
+								index={index}
+								collectionId={collectionId}
+								control={control}
+								watch={watch}
+								errors={errors}
+								removeItem={remove}
+								deleteMutation={handleRemoveEnvironment}
+							/>
+						))}
+					</ul>
+					<div className="flex justify-end pt-4 mr-8">
+						<Button
+							type="submit"
+							className="font-semibold"
+							data-test="collection-variables-btn-save"
+						>
+							Save
+						</Button>
+					</div>
+				</>
+			) : (
+				<p
+					className="px-4 py-8 text-base italic text-slate-400"
+					data-test="collection-variables-empty-state"
 				>
-					Save
-				</Button>
-			</div>
+					{ENVIRONMENTS.EMPTY_STATE}
+				</p>
+			)}
 		</form>
 	);
 };
