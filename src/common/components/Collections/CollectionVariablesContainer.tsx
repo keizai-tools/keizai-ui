@@ -13,13 +13,15 @@ export const CollectionVariablesContainer = () => {
 		return params.collectionId ?? '';
 	}, [params]);
 	const { data: collection } = useCollectionQuery(collectionId);
-	const { data, isLoading } = useEnvironmentsQuery({ collectionId });
+	const { data, isLoading, isRefetching } = useEnvironmentsQuery({
+		collectionId,
+	});
 
 	const environmentsValue = React.useMemo(() => {
 		return data ? data : [];
 	}, [data]);
 
-	if (isLoading) {
+	if (isLoading || isRefetching) {
 		return (
 			<div className="flex flex-1 h-full w-full justify-center items-center">
 				<Loader className="animate-spin" size="36" />
