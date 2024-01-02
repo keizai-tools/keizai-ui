@@ -2,6 +2,7 @@ import React from 'react';
 
 export type TerminalEntry = {
 	preInvocation?: React.ReactNode;
+	postInvocation?: React.ReactNode;
 	title?: React.ReactNode;
 	message: string;
 	isError: boolean;
@@ -41,6 +42,7 @@ const Terminal = ({ entries }: { entries: TerminalEntry[] }) => {
 								? entry.message
 								: JSON.stringify(entry.message, null, 2)}
 						</span>
+						{entry.postInvocation}
 					</div>
 				))}
 			</div>
