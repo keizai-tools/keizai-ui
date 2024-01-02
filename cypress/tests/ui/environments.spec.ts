@@ -99,7 +99,7 @@ describe('Environments management', () => {
 			cy.wait('@postEnvironments');
 			cy.getBySel('toast-container').should('exist').and('be.visible');
 		});
-		it.only('Should delete all environments', () => {
+		it('Should delete all environments', () => {
 			cy.intercept(
 				'DELETE',
 				`${Cypress.env('apiUrl')}/environment/${environments.list[0].id}`,
