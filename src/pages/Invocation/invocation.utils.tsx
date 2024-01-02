@@ -44,7 +44,7 @@ export const createContractResponse = (
 		<span className="flex items-center gap-1 tracking-wider">
 			<ChevronRight className="text-primary" size={16} />
 			<span className="text-primary font-semibold">{description}</span>
-			<span>{serviceResponse}</span>
+			<span>{JSON.stringify(serviceResponse)}</span>
 		</span>
 	);
 };

@@ -118,6 +118,10 @@ const useInvocation = (invocation: Invocation) => {
 					invocation.postInvocation ?? '',
 					response?.response,
 				);
+				if (postInvocationResponse.isError) {
+					setContractResponses((prev) => [...prev, postInvocationResponse]);
+				}
+				console.log(postInvocationResponse);
 				if (response && response.method) {
 					setContractResponses((prev) => [
 						...prev,
