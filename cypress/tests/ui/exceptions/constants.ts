@@ -107,6 +107,10 @@ export const invocations = {
 			title: 'Function',
 			selectPlaceholder: 'Select function',
 		},
+		events: {
+			imgAlt: 'Search events',
+			title: ['Run the contract', 'to see the events'],
+		},
 	},
 	dialog: {
 		create: {
