@@ -67,6 +67,7 @@ const useInvocation = (invocation: Invocation) => {
 		return contextFunction();
 	};
 	const handleRunService = async (
+		title: string,
 		serviceToRun: string,
 		invocation?: string,
 	) => {
@@ -74,14 +75,14 @@ const useInvocation = (invocation: Invocation) => {
 			return {
 				isError: false,
 				message: String(serviceToRun),
-				title: 'Pre-Invocation',
+				title,
 				serviceResponse: await runKeizaiService(serviceToRun, invocation),
 			};
 		} catch (error) {
 			return {
 				isError: true,
 				message: String(`${error} from Pre-invocation script`),
-				title: 'Pre-Invocation error',
+				title: `${title} Error`,
 				serviceToRun: String(serviceToRun),
 			};
 		}
@@ -105,6 +106,7 @@ const useInvocation = (invocation: Invocation) => {
 		setIsRunningInvocation(true);
 		try {
 			const preInvocationResponse = await handleRunService(
+				'Pre-Invocation',
 				invocation.preInvocation ?? '',
 			);
 			if (preInvocationResponse.isError) {
@@ -112,6 +114,7 @@ const useInvocation = (invocation: Invocation) => {
 			} else {
 				const response = await runInvocation();
 				const postInvocationResponse = await handleRunService(
+					'Post-Invocation',
 					invocation.postInvocation ?? '',
 					response?.response,
 				);
@@ -122,9 +125,11 @@ const useInvocation = (invocation: Invocation) => {
 							isError: false,
 							preInvocation: createContractResponse(
 								preInvocationResponse?.serviceResponse,
+								'Pre-Invocation response',
 							),
 							postInvocation: createContractResponse(
 								postInvocationResponse?.serviceResponse,
+								'Post-Invocation response',
 							),
 							title: createContractResponseTitle(response.method),
 							message: response.response || 'No response',

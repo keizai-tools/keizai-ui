@@ -32,16 +32,19 @@ export const createContractResponseTitle = (method: Method) => {
 	);
 };
 
-export const createContractResponse = (preInvocation: string | undefined) => {
-	if (!preInvocation) {
+export const createContractResponse = (
+	serviceResponse: string | undefined,
+	description: string,
+) => {
+	if (!serviceResponse) {
 		return;
 	}
 
 	return (
 		<span className="flex items-center gap-1 tracking-wider">
 			<ChevronRight className="text-primary" size={16} />
-			<span className="text-primary font-semibold">Pre invocation result:</span>
-			<span>{preInvocation}</span>
+			<span className="text-primary font-semibold">{description}</span>
+			<span>{serviceResponse}</span>
 		</span>
 	);
 };
