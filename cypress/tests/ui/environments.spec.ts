@@ -104,27 +104,21 @@ describe('Environments management', () => {
 				'DELETE',
 				`${Cypress.env('apiUrl')}/environment/${environments.list[0].id}`,
 				{
-					body: {
-						id: environments.list[0].id,
-					},
+					body: true,
 				},
 			).as('deleteThirdEnvironment');
 			cy.intercept(
 				'DELETE',
 				`${Cypress.env('apiUrl')}/environment/${environments.list[1].id}`,
 				{
-					body: {
-						id: environments.list[1].id,
-					},
+					body: true,
 				},
 			).as('deleteSecondEnvironment');
 			cy.intercept(
 				'DELETE',
 				`${Cypress.env('apiUrl')}/environment/${environments.list[2].id}`,
 				{
-					body: {
-						id: environments.list[2].id,
-					},
+					body: true,
 				},
 			).as('deleteFirstEnvironment');
 
@@ -139,9 +133,18 @@ describe('Environments management', () => {
 						.find('[data-test="collection-variables-input-value"]')
 						.should('have.value', environments.list[index].value);
 				});
+			cy.intercept(
+				'GET',
+				`${Cypress.env('apiUrl')}/collection/*/environments`,
+				{
+					body: [environments.list[0], environments.list[1]],
+				},
+			).as('get2Environments');
 			cy.getBySel('collection-variables-btn-delete')
 				.eq(environments.list.length - 1)
 				.click();
+
+			cy.wait('@get2Environments');
 			cy.wait('@deleteFirstEnvironment');
 
 			cy.getBySel('collection-variables-input-container')
@@ -154,9 +157,18 @@ describe('Environments management', () => {
 						.find('[data-test="collection-variables-input-value"]')
 						.should('have.value', environments.list[index].value);
 				});
+			cy.intercept(
+				'GET',
+				`${Cypress.env('apiUrl')}/collection/*/environments`,
+				{
+					body: [environments.list[0]],
+				},
+			).as('get1Environment');
 			cy.getBySel('collection-variables-btn-delete')
 				.eq(environments.list.length - 2)
 				.click();
+
+			cy.wait('@get1Environment');
 			cy.wait('@deleteSecondEnvironment');
 
 			cy.getBySel('collection-variables-input-container').should(
@@ -171,7 +183,16 @@ describe('Environments management', () => {
 				'have.value',
 				environments.list[0].value,
 			);
+			cy.intercept(
+				'GET',
+				`${Cypress.env('apiUrl')}/collection/*/environments`,
+				{
+					body: [],
+				},
+			).as('emptyEnvironments');
 			cy.getBySel('collection-variables-btn-delete').click();
+
+			cy.wait('@emptyEnvironments');
 			cy.wait('@deleteThirdEnvironment');
 
 			cy.getBySel('collection-variables-input-container').should('not.exist');
