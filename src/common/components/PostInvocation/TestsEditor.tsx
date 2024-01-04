@@ -8,7 +8,7 @@ import {
 	editorTestsHelpersDescriptions,
 } from '@/common/constants/editor-helpers';
 
-function PostInvocationEditor({
+function TestsEditor({
 	postInvocationValue,
 	setPostInvocationValue,
 }: {
@@ -42,4 +42,4 @@ function PostInvocationEditor({
 	);
 }
 
-export default PostInvocationEditor;
+export default TestsEditor;
