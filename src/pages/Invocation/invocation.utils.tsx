@@ -1,8 +1,9 @@
 import { AxiosError, isAxiosError } from 'axios';
 import { AlertCircle, ChevronRight } from 'lucide-react';
 
-import { INVOCATION_RESPONSE } from '@/common/exceptions/invocations';
+import { INVOCATION_RESPONSE, STATUS } from '@/common/exceptions/invocations';
 import { ApiError, isApiError } from '@/common/hooks/useAxios';
+import { InvocationResponse } from '@/common/types/invocation';
 import { Method } from '@/common/types/method';
 
 const createContractResponseParam = (params: Method['params']) => {
@@ -84,4 +85,29 @@ export const failedRunContract = () => {
 		),
 		message: INVOCATION_RESPONSE.FAILED_RUN_CONTRACT,
 	};
+};
+
+export const getInvocationResponse = (
+	response: InvocationResponse,
+	preInvocationResponse: string | undefined,
+	postInvocationResponse: string | undefined,
+) => {
+	if (response && response.method) {
+		switch (response.status) {
+			case STATUS.SUCCESS:
+				return {
+					isError: false,
+					preInvocation: createContractResponse(preInvocationResponse),
+					postInvocation: createContractResponse(postInvocationResponse),
+					title: createContractResponseTitle(response.method),
+					message: response.response || 'No response',
+				};
+			case STATUS.FAILED:
+				return failedRunContract();
+			default:
+				throw new Error();
+		}
+	} else {
+		throw new Error();
+	}
 };

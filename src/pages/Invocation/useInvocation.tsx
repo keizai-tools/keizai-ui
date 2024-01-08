@@ -2,12 +2,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-import {
-	createContractResponse,
-	createContractResponseTitle,
-	failedRunContract,
-	handleAxiosError,
-} from './invocation.utils';
+import { getInvocationResponse, handleAxiosError } from './invocation.utils';
 import { KeizaiService } from './preInvocation/keizai/keizai.service';
 
 import {
@@ -116,34 +111,16 @@ const useInvocation = (invocation: Invocation) => {
 					invocation.postInvocation ?? '',
 					response?.response,
 				);
-				if (response && response.status === 'SUCCESS' && response.method) {
-					setContractResponses((prev) => [
-						...prev,
-						{
-							isError: false,
-							preInvocation: createContractResponse(
-								preInvocationResponse?.serviceResponse,
-							),
-							postInvocation: createContractResponse(
-								postInvocationResponse?.serviceResponse,
-							),
-							title: createContractResponseTitle(response.method),
-							message: response.response || 'No response',
-						},
-					]);
-					if (response.events) {
-						setContractEvents(response.events);
-						sessionStorage.setItem('events', JSON.stringify(response.events));
-					}
-				} else if (
-					response &&
-					response.status === 'FAILED' &&
-					response.method
-				) {
-					const errorResponse = failedRunContract();
-					setContractResponses((prev) => [...prev, errorResponse]);
-				} else {
-					throw new Error();
+				const invocationResponse = getInvocationResponse(
+					response,
+					preInvocationResponse?.serviceResponse,
+					postInvocationResponse?.serviceResponse,
+				);
+				setContractResponses((prev) => [...prev, invocationResponse]);
+
+				if (response.events) {
+					setContractEvents(response.events);
+					sessionStorage.setItem('events', JSON.stringify(response.events));
 				}
 			}
 		} catch (error) {
