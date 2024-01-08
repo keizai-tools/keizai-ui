@@ -1,33 +1,23 @@
-import loader from '@monaco-editor/loader';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
 import TestsEditor from '../../PostInvocation/TestsEditor';
-
-const extraLib = `declare const Keizai: {};`;
+import { EditorTab } from '../Editor/EditorTab';
+import { customKeizaiToTests } from '../Editor/constant/customKeizaiEditor';
 
 function TestsTab({
-	setPostInvocationValue,
-	postInvocation,
+	testsInvocationValue,
+	setTestsInvocationValue,
 }: {
-	setPostInvocationValue: Dispatch<SetStateAction<string>>;
-	postInvocation: string;
+	testsInvocationValue: string;
+	setTestsInvocationValue: Dispatch<SetStateAction<string>>;
 }) {
-	useEffect(() => {
-		const initEditor = async () => {
-			const monaco = await loader.init();
-
-			monaco.languages.typescript.javascriptDefaults.addExtraLib(extraLib);
-		};
-		initEditor();
-	}, []);
-
 	return (
-		<div className="w-full h-full h-[500px]" id="editor">
+		<EditorTab customKeizaiEditor={customKeizaiToTests}>
 			<TestsEditor
-				postInvocationValue={postInvocation}
-				setPostInvocationValue={setPostInvocationValue}
+				setPostInvocationValue={setTestsInvocationValue}
+				postInvocationValue={testsInvocationValue}
 			/>
-		</div>
+		</EditorTab>
 	);
 }
 
