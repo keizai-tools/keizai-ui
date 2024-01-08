@@ -1,6 +1,7 @@
 import { AxiosError, isAxiosError } from 'axios';
 import { AlertCircle, ChevronRight } from 'lucide-react';
 
+import { INVOCATION_RESPONSE } from '@/common/exceptions/invocations';
 import { ApiError, isApiError } from '@/common/hooks/useAxios';
 import { Method } from '@/common/types/method';
 
@@ -60,7 +61,7 @@ export const handleAxiosError = (error: unknown) => {
 				),
 				message:
 					(axiosError.response?.data as ApiError).message ||
-					'There was a problem running the invocation',
+					INVOCATION_RESPONSE.ERROR_RUN_INVOCATION,
 			};
 		}
 	}
@@ -68,6 +69,19 @@ export const handleAxiosError = (error: unknown) => {
 	return {
 		isError: true,
 		title: 'Error',
-		message: 'There was an unexpected error',
+		message: INVOCATION_RESPONSE.ERROR_DEFAULT,
+	};
+};
+
+export const failedRunContract = () => {
+	return {
+		isError: true,
+		title: (
+			<div className="flex items-center gap-2 text-red-500 font-semibold">
+				<AlertCircle size={16} />
+				Failed
+			</div>
+		),
+		message: INVOCATION_RESPONSE.FAILED_RUN_CONTRACT,
 	};
 };

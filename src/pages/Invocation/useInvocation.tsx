@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import {
 	createContractResponse,
 	createContractResponseTitle,
+	failedRunContract,
 	handleAxiosError,
 } from './invocation.utils';
 import { KeizaiService } from './preInvocation/keizai/keizai.service';
@@ -115,7 +116,7 @@ const useInvocation = (invocation: Invocation) => {
 					invocation.postInvocation ?? '',
 					response?.response,
 				);
-				if (response && response.method) {
+				if (response && response.status === 'SUCCESS' && response.method) {
 					setContractResponses((prev) => [
 						...prev,
 						{
@@ -134,6 +135,13 @@ const useInvocation = (invocation: Invocation) => {
 						setContractEvents(response.events);
 						sessionStorage.setItem('events', JSON.stringify(response.events));
 					}
+				} else if (
+					response &&
+					response.status === 'FAILED' &&
+					response.method
+				) {
+					const errorResponse = failedRunContract();
+					setContractResponses((prev) => [...prev, errorResponse]);
 				} else {
 					throw new Error();
 				}
