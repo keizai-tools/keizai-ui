@@ -10,7 +10,7 @@ import ContractInput from '@/common/components/Input/ContractInput';
 import AuthorizationTab from '@/common/components/Tabs/AuthorizationTab/AuthorizationTab';
 import EventsTab from '@/common/components/Tabs/EventsTab/EventsTab';
 import FunctionsTab from '@/common/components/Tabs/FunctionsTab/FunctionsTab';
-import PreInvocateTab from '@/common/components/Tabs/PreInvocateTab/PreInvocateTab';
+import PreInvocationTab from '@/common/components/Tabs/PreInvocationTab/PreInvocationTab';
 import TestsTab from '@/common/components/Tabs/TestsTab/TestsTab';
 import Terminal from '@/common/components/ui/Terminal';
 import {
@@ -138,15 +138,15 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 					/>
 				</TabsContent>
 				<TabsContent value="preInvocateScript" className="h-[500px]">
-					<PreInvocateTab
-						setEditorValue={setPreInvocationValue}
-						preInvocation={preInvocationValue}
+					<PreInvocationTab
+						preInvocationValue={preInvocationValue}
+						setPreInvocationValu={setPreInvocationValue}
 					/>
 				</TabsContent>
 				<TabsContent value="tests" className="h-[500px]">
 					<TestsTab
-						setPostInvocationValue={setPostInvocationValue}
-						postInvocation={postInvocationValue}
+						testsInvocationValue={postInvocationValue}
+						setTestsInvocationValue={setPostInvocationValue}
 					/>
 				</TabsContent>
 				<TabsContent value="events">
