@@ -1,4 +1,4 @@
-import { collectionId, environments } from './exceptions/constants';
+import { environments } from './exceptions/constants';
 
 describe('Environments management', () => {
 	beforeEach(() => {
@@ -8,17 +8,140 @@ describe('Environments management', () => {
 		}).as('getCollections');
 		cy.wait('@getCollections');
 	});
+	describe('Environment page without variables', () => {
+		beforeEach(() => {
+			cy.intercept(
+				'GET',
+				`${Cypress.env('apiUrl')}/collection/*/environments`,
+				{
+					body: [],
+				},
+			).as('getEnvironments');
+			cy.intercept('GET', `${Cypress.env('apiUrl')}/collection/*/folders`, {
+				fixture: './environments/folder-with-contract-id.json',
+			});
+			cy.getBySel('collection-folder-btn').click();
+		});
+		it('Should show collection variables link', () => {
+			cy.getBySel('collections-variables-btn-link').should(
+				'have.text',
+				environments.linkName,
+			);
+		});
+		it('Should navigate to the collection variables without variables', () => {
+			cy.intercept('GET', `${Cypress.env('apiUrl')}/collection/*`, {
+				fixture: './environments/one-collection-with-contract-id.json',
+			}).as('getCollection');
+
+			cy.getBySel('collections-variables-btn-link').click();
+			cy.url().should('include', '/variables');
+			cy.getBySel('collection-variables-container').should('be.visible');
+			cy.getBySel('collection-variables-title')
+				.should('be.visible')
+				.and('have.text', environments.header.title);
+			cy.getBySel('collection-variables-collection-name')
+				.should('be.visible')
+				.and('have.text', environments.header.collectionName);
+			cy.getBySel('collection-variables-btn-add')
+				.should('be.visible')
+				.and('have.text', environments.button.addName);
+			cy.getBySel('collection-variables-input-container').should('not.exist');
+			cy.getBySel('collection-variables-btn-save').should('not.exist');
+			cy.getBySel('collection-variables-empty-state')
+				.should('be.visible')
+				.and('have.text', environments.emptyStateText);
+		});
+	});
 	describe('Environment page with variables', () => {
 		beforeEach(() => {
 			cy.intercept(`${Cypress.env('apiUrl')}/collection/*/environments`, {
 				fixture: './environments/three-length-environments.json',
 			}).as('getEnvironments');
-			cy.intercept(`${Cypress.env('apiUrl')}/collection/${collectionId}`, {
-				fixture: './collections/collection-with-one-folder.json',
+			cy.intercept(`${Cypress.env('apiUrl')}/collection/*/folders`, {
+				fixture: './environments/folder-with-contract-id.json',
 			}).as('getCollection');
 			cy.getBySel('collection-folder-btn').click();
 			cy.getBySel('collections-variables-btn-link').click();
 			cy.wait('@getEnvironments');
+		});
+		it('Should navigate to the collection variables with a variable', () => {
+			cy.intercept('GET', `${Cypress.env('apiUrl')}/collection/*`, {
+				fixture: './environments/one-collection-with-contract-id.json',
+			}).as('getCollection');
+
+			cy.getBySel('collection-variables-container').should('be.visible');
+			cy.getBySel('collection-variables-title')
+				.should('be.visible')
+				.and('have.text', environments.header.title);
+			cy.getBySel('collection-variables-collection-name')
+				.should('be.visible')
+				.and('have.text', environments.header.collectionName);
+			cy.getBySel('collection-variables-btn-add')
+				.should('be.visible')
+				.and('have.text', environments.button.addName);
+			cy.getBySel('collection-variables-input-container').should('be.visible');
+			cy.getBySel('collection-variables-input-name')
+				.should('be.visible')
+				.and('have.attr', 'placeholder', environments.input.namePlaceholder);
+			cy.getBySel('collection-variables-input-value')
+				.should('be.visible')
+				.and('have.attr', 'placeholder', environments.input.valuePlaceholder);
+			cy.getBySel('collection-variables-btn-delete').should('be.visible');
+			cy.getBySel('collection-variables-btn-save')
+				.should('be.visible')
+				.and('have.text', environments.button.saveName);
+		});
+		it('Should edit a variable successfully', () => {
+			cy.intercept('GET', `${Cypress.env('apiUrl')}/collection/*`, {
+				fixture: './environments/one-collection-with-contract-id.json',
+			}).as('getCollection');
+			cy.intercept('PATCH', `${Cypress.env('apiUrl')}/environment`, {
+				fixture: './environments/edited-environment.json',
+			}).as('editEnvironments');
+			cy.intercept(
+				'GET',
+				`${Cypress.env('apiUrl')}/collection/*/environments`,
+				{
+					fixture: './environments/edited-environment.json',
+				},
+			).as('getEditedEnvironments');
+			cy.getBySel('collections-variables-btn-link').click();
+
+			cy.getBySel('collection-variables-input-name').clear();
+			cy.getBySel('collection-variables-input-value').clear();
+
+			cy.getBySel('collection-variables-input-name')
+				.eq(0)
+				.should('be.visible')
+				.type(environments.input.editedKey);
+			cy.getBySel('collection-variables-input-value')
+				.eq(0)
+				.should('be.visible')
+				.type(environments.input.editedValue);
+			cy.wait('@editEnvironments');
+			cy.reload();
+
+			cy.wait('@getEditedEnvironments');
+			cy.getBySel('collection-variables-input-name')
+				.should('be.visible')
+				.should('have.value', environments.input.editedKey);
+			cy.getBySel('collection-variables-input-value')
+				.should('be.visible')
+				.should('have.value', environments.input.editedValue);
+		});
+		it('Should show an error toast when editing a variable', () => {
+			cy.intercept('PATCH', `${Cypress.env('apiUrl')}/environment`, {
+				statusCode: 400,
+			}).as('editEnvironments');
+
+			cy.getBySel('collections-variables-btn-link').click();
+			cy.getBySel('collection-variables-input-name').eq(0).clear();
+			cy.getBySel('collection-variables-input-name')
+				.eq(0)
+				.should('be.visible')
+				.type(environments.input.editedKey);
+			cy.wait('@editEnvironments');
+			cy.getBySel('toast-container').should('exist').and('be.visible');
 		});
 		it('Should show an error message when trying to create the variables with empty fields', () => {
 			cy.getBySel('collection-variables-container').should('be.visible');
@@ -97,6 +220,18 @@ describe('Environments management', () => {
 
 			cy.getBySel('collection-variables-btn-save').click();
 			cy.wait('@postEnvironments');
+			cy.getBySel('toast-container').should('exist').and('be.visible');
+		});
+		it('Should show an error toast when deleting a variable', () => {
+			cy.intercept('GET', `${Cypress.env('apiUrl')}/collection/*`, {
+				fixture: './environments/one-collection-with-contract-id.json',
+			}).as('getCollection');
+			cy.intercept('DELETE', `${Cypress.env('apiUrl')}/environment/*`, {
+				statusCode: 400,
+			});
+			cy.getBySel('collections-variables-btn-link').click();
+			cy.getBySel('collection-variables-input-container').should('be.visible');
+			cy.getBySel('collection-variables-btn-delete').eq(0).click();
 			cy.getBySel('toast-container').should('exist').and('be.visible');
 		});
 		it('Should delete all environments', () => {
@@ -221,57 +356,138 @@ describe('Environments management', () => {
 			cy.getBySel('invocation-item').first().click();
 			cy.getBySel('tabs-container').should('be.visible');
 		});
-		it('Should show the environment dropdown', () => {
-			cy.getBySel('dropdown-environments-container').should('not.exist');
-			cy.getBySel('function-tab-parameter-input-value').type('{');
-			cy.getBySel('dropdown-environments-container')
-				.should('exist')
-				.and('be.visible');
-			cy.getBySel('function-tab-parameter-input-value').clear();
-			cy.getBySel('function-tab-parameter-input-value').type('hola');
-			cy.getBySel('dropdown-environments-container').should('not.exist');
-			cy.getBySel('function-tab-parameter-input-value').type('{');
-			cy.getBySel('dropdown-environments-container')
-				.should('exist')
-				.and('be.visible');
+		describe('Without environments', () => {
+			beforeEach(() => {
+				cy.intercept(`${Cypress.env('apiUrl')}/collection/*/environments`, {
+					body: [],
+				}).as('getEnvironments');
+				cy.getBySel('invocation-item').first().click();
+				cy.getBySel('tabs-container').should('be.visible');
+			});
+			it('Should show the environment dropdown', () => {
+				cy.getBySel('dropdown-environments-container').should('not.exist');
+				cy.getBySel('function-tab-parameter-input-value').type('{');
+				cy.getBySel('dropdown-environments-container')
+					.should('exist')
+					.and('be.visible');
+				cy.getBySel('dropdown-enviroments-empty-state')
+					.should('be.visible')
+					.and('have.text', environments.emptyStateText);
+			});
+
+			// it('Should show the environment dropdown', () => {
+			// 	cy.getBySel('dropdown-environments-container').should('not.exist');
+			// 	cy.getBySel('function-tab-parameter-input-value').type('{');
+			// 	cy.getBySel('dropdown-environments-container')
+			// 		.should('exist')
+			// 		.and('be.visible');
+			// 	cy.getBySel('function-tab-parameter-input-value').clear();
+			// 	cy.getBySel('function-tab-parameter-input-value').type('hola');
+			// 	cy.getBySel('dropdown-environments-container').should('not.exist');
+			// 	cy.getBySel('function-tab-parameter-input-value').type('{');
+			// 	cy.getBySel('dropdown-environments-container')
+			// 		.should('exist')
+			// 		.and('be.visible');
+			// });
+			// it('Should show different environment values in the environment dropdown', () => {
+			// 	cy.getBySel('dropdown-environments-container').should('not.exist');
+			// 	cy.getBySel('function-tab-parameter-input-value').type('{');
+			// 	cy.getBySel('dropdown-environments-container')
+			// 		.should('exist')
+			// 		.and('be.visible');
+			// 	cy.getBySel('dropdown-enviroment-li-container').each((li, index) => {
+			// 		cy.wrap(li).realHover();
+			// 		cy.getBySel('dropdown-hover-enviroment-value').should(
+			// 			'have.text',
+			// 			environments.list[index].value,
+			// 		);
+			// 	});
+			// });
+			// it('Should show the variables between {{ }}', () => {
+			// 	cy.getBySel('function-tab-parameter-input-value').type('{');
+			// 	cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
+			// 	cy.getBySel('function-tab-parameter-input-value').should(
+			// 		'have.value',
+			// 		`{{${environments.list[0].name}}}`,
+			// 	);
+			// 	cy.getBySel('function-tab-parameter-input-value').clear();
+			// 	cy.getBySel('function-tab-parameter-input-value').type('hola {');
+			// 	cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
+			// 	cy.getBySel('function-tab-parameter-input-value').should(
+			// 		'have.value',
+			// 		`hola {{${environments.list[0].name}}}`,
+			// 	);
+			// 	cy.getBySel('function-tab-parameter-input-value').clear();
+			// 	cy.getBySel('function-tab-parameter-input-value').type('url/{');
+			// 	cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
+			// 	cy.getBySel('function-tab-parameter-input-value').type('/collection/{');
+			// 	cy.getBySel('dropdown-enviroment-li-container').eq(1).click();
+			// 	cy.getBySel('function-tab-parameter-input-value').should(
+			// 		'have.value',
+			// 		`url/{{${environments.list[0].name}}}/collection/{{${environments.list[1].name}}}`,
+			// 	);
+			// });
 		});
-		it('Should show different environment values in the environment dropdown', () => {
-			cy.getBySel('dropdown-environments-container').should('not.exist');
-			cy.getBySel('function-tab-parameter-input-value').type('{');
-			cy.getBySel('dropdown-environments-container')
-				.should('exist')
-				.and('be.visible');
-			cy.getBySel('dropdown-enviroment-li-container').each((li, index) => {
-				cy.wrap(li).realHover();
-				cy.getBySel('dropdown-hover-enviroment-value').should(
-					'have.text',
-					environments.list[index].value,
+		describe('With environments', () => {
+			beforeEach(() => {
+				cy.intercept(`${Cypress.env('apiUrl')}/collection/*/environments`, {
+					fixture: './environments/three-length-environments.json',
+				}).as('getEnvironments');
+				cy.getBySel('invocation-item').first().click();
+				cy.getBySel('tabs-container').should('be.visible');
+			});
+			it('Should show the environment dropdown', () => {
+				cy.getBySel('dropdown-environments-container').should('not.exist');
+				cy.getBySel('function-tab-parameter-input-value').type('{');
+				cy.getBySel('dropdown-environments-container')
+					.should('exist')
+					.and('be.visible');
+				cy.getBySel('function-tab-parameter-input-value').clear();
+				cy.getBySel('function-tab-parameter-input-value').type('hola');
+				cy.getBySel('dropdown-environments-container').should('not.exist');
+				cy.getBySel('function-tab-parameter-input-value').type('{');
+				cy.getBySel('dropdown-environments-container')
+					.should('exist')
+					.and('be.visible');
+			});
+			it('Should show different environment values in the environment dropdown', () => {
+				cy.getBySel('dropdown-environments-container').should('not.exist');
+				cy.getBySel('function-tab-parameter-input-value').type('{');
+				cy.getBySel('dropdown-environments-container')
+					.should('exist')
+					.and('be.visible');
+				cy.getBySel('dropdown-enviroment-li-container').each((li, index) => {
+					cy.wrap(li).realHover();
+					cy.getBySel('dropdown-hover-enviroment-value').should(
+						'have.text',
+						environments.list[index].value,
+					);
+				});
+			});
+			it('Should show the variables between {{ }}', () => {
+				cy.getBySel('function-tab-parameter-input-value').type('{');
+				cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
+				cy.getBySel('function-tab-parameter-input-value').should(
+					'have.value',
+					`{{${environments.list[0].name}}}`,
+				);
+				cy.getBySel('function-tab-parameter-input-value').clear();
+				cy.getBySel('function-tab-parameter-input-value').type('hola {');
+				cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
+				cy.getBySel('function-tab-parameter-input-value').should(
+					'have.value',
+					`hola {{${environments.list[0].name}}}`,
+				);
+				cy.getBySel('function-tab-parameter-input-value').clear();
+				cy.getBySel('function-tab-parameter-input-value').type('url/{');
+				cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
+				cy.getBySel('function-tab-parameter-input-value').type('/collection/{');
+				cy.getBySel('dropdown-enviroment-li-container').eq(1).click();
+				cy.getBySel('function-tab-parameter-input-value').should(
+					'have.value',
+					`url/{{${environments.list[0].name}}}/collection/{{${environments.list[1].name}}}`,
 				);
 			});
-		});
-		it('Should show the variables between {{ }}', () => {
-			cy.getBySel('function-tab-parameter-input-value').type('{');
-			cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
-			cy.getBySel('function-tab-parameter-input-value').should(
-				'have.value',
-				`{{${environments.list[0].name}}}`,
-			);
-			cy.getBySel('function-tab-parameter-input-value').clear();
-			cy.getBySel('function-tab-parameter-input-value').type('hola {');
-			cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
-			cy.getBySel('function-tab-parameter-input-value').should(
-				'have.value',
-				`hola {{${environments.list[0].name}}}`,
-			);
-			cy.getBySel('function-tab-parameter-input-value').clear();
-			cy.getBySel('function-tab-parameter-input-value').type('url/{');
-			cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
-			cy.getBySel('function-tab-parameter-input-value').type('/collection/{');
-			cy.getBySel('dropdown-enviroment-li-container').eq(1).click();
-			cy.getBySel('function-tab-parameter-input-value').should(
-				'have.value',
-				`url/{{${environments.list[0].name}}}/collection/{{${environments.list[1].name}}}`,
-			);
 		});
 	});
 });
