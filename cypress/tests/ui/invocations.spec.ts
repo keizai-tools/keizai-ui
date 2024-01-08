@@ -1,4 +1,9 @@
-import { keypair, contractId, invocations } from './exceptions/constants';
+import {
+	keypair,
+	contractId,
+	invocations,
+	terminal,
+} from './exceptions/constants';
 
 describe('Invocations', () => {
 	beforeEach(() => {
@@ -34,6 +39,22 @@ describe('Invocations', () => {
 			cy.getBySel('tabs-function-select-container').first().click();
 			cy.getBySel('tabs-function-select').first().click();
 			cy.wait('@method');
+		});
+		it('Should show an error message when the contract is down', () => {
+			cy.wait('@method');
+			cy.intercept(`${Cypress.env('apiUrl')}/invocation/*/run`, {
+				fixture: 'invocations/failed-run-invocation.json',
+			}).as('runInvocation');
+			cy.getBySel('contract-input-btn-load').click();
+			cy.wait('@runInvocation');
+			cy.getBySel('terminal-entry-container').should('be.visible');
+			cy.getBySel('terminal-entry-title')
+				.find('div')
+				.should('be.visible')
+				.and('have.text', terminal.error[0].title);
+			cy.getBySel('terminal-entry-message')
+				.should('be.visible')
+				.and('have.text', terminal.error[0].message);
 		});
 		it('Should show the content of the tab without events', () => {
 			cy.getBySel('functions-tabs-events').click();
