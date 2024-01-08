@@ -100,8 +100,14 @@ export const getInvocationResponse = (
 			case STATUS.SUCCESS:
 				return {
 					isError: false,
-					preInvocation: createContractResponse(preInvocationResponse),
-					postInvocation: createContractResponse(postInvocationResponse),
+					preInvocation: createContractResponse(
+						preInvocationResponse,
+						'Pre-Invocation response',
+					),
+					postInvocation: createContractResponse(
+						postInvocationResponse,
+						'Post-Invocation response',
+					),
 					title: createContractResponseTitle(response.method),
 					message: response.response || 'No response',
 				};
