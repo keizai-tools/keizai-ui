@@ -374,59 +374,6 @@ describe('Environments management', () => {
 					.should('be.visible')
 					.and('have.text', environments.emptyStateText);
 			});
-
-			// it('Should show the environment dropdown', () => {
-			// 	cy.getBySel('dropdown-environments-container').should('not.exist');
-			// 	cy.getBySel('function-tab-parameter-input-value').type('{');
-			// 	cy.getBySel('dropdown-environments-container')
-			// 		.should('exist')
-			// 		.and('be.visible');
-			// 	cy.getBySel('function-tab-parameter-input-value').clear();
-			// 	cy.getBySel('function-tab-parameter-input-value').type('hola');
-			// 	cy.getBySel('dropdown-environments-container').should('not.exist');
-			// 	cy.getBySel('function-tab-parameter-input-value').type('{');
-			// 	cy.getBySel('dropdown-environments-container')
-			// 		.should('exist')
-			// 		.and('be.visible');
-			// });
-			// it('Should show different environment values in the environment dropdown', () => {
-			// 	cy.getBySel('dropdown-environments-container').should('not.exist');
-			// 	cy.getBySel('function-tab-parameter-input-value').type('{');
-			// 	cy.getBySel('dropdown-environments-container')
-			// 		.should('exist')
-			// 		.and('be.visible');
-			// 	cy.getBySel('dropdown-enviroment-li-container').each((li, index) => {
-			// 		cy.wrap(li).realHover();
-			// 		cy.getBySel('dropdown-hover-enviroment-value').should(
-			// 			'have.text',
-			// 			environments.list[index].value,
-			// 		);
-			// 	});
-			// });
-			// it('Should show the variables between {{ }}', () => {
-			// 	cy.getBySel('function-tab-parameter-input-value').type('{');
-			// 	cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
-			// 	cy.getBySel('function-tab-parameter-input-value').should(
-			// 		'have.value',
-			// 		`{{${environments.list[0].name}}}`,
-			// 	);
-			// 	cy.getBySel('function-tab-parameter-input-value').clear();
-			// 	cy.getBySel('function-tab-parameter-input-value').type('hola {');
-			// 	cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
-			// 	cy.getBySel('function-tab-parameter-input-value').should(
-			// 		'have.value',
-			// 		`hola {{${environments.list[0].name}}}`,
-			// 	);
-			// 	cy.getBySel('function-tab-parameter-input-value').clear();
-			// 	cy.getBySel('function-tab-parameter-input-value').type('url/{');
-			// 	cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
-			// 	cy.getBySel('function-tab-parameter-input-value').type('/collection/{');
-			// 	cy.getBySel('dropdown-enviroment-li-container').eq(1).click();
-			// 	cy.getBySel('function-tab-parameter-input-value').should(
-			// 		'have.value',
-			// 		`url/{{${environments.list[0].name}}}/collection/{{${environments.list[1].name}}}`,
-			// 	);
-			// });
 		});
 		describe('With environments', () => {
 			beforeEach(() => {
