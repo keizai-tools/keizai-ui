@@ -158,6 +158,41 @@ export const useDeleteInvocationMutation = () => {
 	return mutation;
 };
 
+export const useEditNetworkMutation = () => {
+	const queryClient = useQueryClient();
+	const axios = useAxios();
+
+	const mutation = useMutation({
+		mutationFn: async ({
+			network,
+			invocationId,
+		}: {
+			network: string;
+			invocationId: string;
+		}) =>
+			axios?.patch(`/invocation/${invocationId}/network`, {
+				network,
+				invocationId,
+			}),
+		onMutate: ({ network, invocationId }) => {
+			const previousInvocation = queryClient.getQueryData<Invocation>([
+				'invocation',
+				invocationId,
+			]);
+
+			queryClient.setQueryData(['invocation', invocationId], {
+				...previousInvocation,
+				network,
+			});
+
+			return {
+				previousInvocation,
+			};
+		},
+	});
+	return mutation;
+};
+
 export const useEditInvocationKeysMutation = () => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
