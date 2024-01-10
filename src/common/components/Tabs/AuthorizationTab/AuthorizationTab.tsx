@@ -10,9 +10,11 @@ import { IKeypair } from '@/services/stellar/domain/keypair';
 
 const AuthorizationTab = ({
 	invocationId,
+	network,
 	defaultValues,
 }: {
 	invocationId: string;
+	network: string;
 	defaultValues: IKeypair;
 }) => {
 	const { mutate: editKeys, data } = useEditInvocationKeysMutation();
@@ -56,7 +58,11 @@ const AuthorizationTab = ({
 				</div>
 			</div>
 			<div className="flex justify-end gap-4 px-2">
-				<CreateNewAccount invocationId={invocationId} editKeys={editKeys} />
+				<CreateNewAccount
+					invocationId={invocationId}
+					editKeys={editKeys}
+					network={network}
+				/>
 				<ImportAccount invocationId={invocationId} editKeys={editKeys} />
 			</div>
 		</section>

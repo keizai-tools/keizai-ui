@@ -79,6 +79,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 			/>
 			<ContractInput
 				defaultValue={data.contractId || ''}
+				defaultNetwork={data.network}
 				loadContract={handleLoadContract}
 				runInvocation={handleRunInvocation}
 				loading={isLoadingContract || isRunningInvocation}
@@ -131,6 +132,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 				<TabsContent value="authorization">
 					<AuthorizationTab
 						invocationId={data.id}
+						network={data.network}
 						defaultValues={{
 							secretKey: data.secretKey,
 							publicKey: data.publicKey,
