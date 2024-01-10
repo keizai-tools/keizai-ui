@@ -178,3 +178,8 @@ export const environments = {
 		},
 	],
 };
+
+export const network = {
+	futurenet: 'FUTURENET',
+	testnet: 'TESTNET',
+};

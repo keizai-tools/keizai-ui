@@ -1,4 +1,9 @@
-import { keypair, contractId, invocations } from './exceptions/constants';
+import {
+	keypair,
+	contractId,
+	invocations,
+	network,
+} from './exceptions/constants';
 
 describe('Invocations', () => {
 	beforeEach(() => {
@@ -51,47 +56,101 @@ describe('Invocations', () => {
 						.should('contain.text', invocations.tabs.events.title[index]),
 				);
 		});
-		describe('Events tracker tab', () => {
-			beforeEach(() => {
-				cy.wait('@method');
-				cy.intercept(`${Cypress.env('apiUrl')}/invocation/*/run`, {
-					fixture: 'invocations/run-invocation.json',
-				}).as('runInvocation');
-				cy.getBySel('contract-input-btn-load').click();
-				cy.wait('@runInvocation');
-				cy.getBySel('functions-tabs-events').click();
-			});
-			it('Should show the content of the tab with events', () => {
-				cy.getBySel('events-tab-container').should('be.visible');
-				cy.getBySel('events-tab-event-container').should('be.visible');
-				cy.getBySel('events-tab-event-title').should('be.visible');
-				cy.getBySel('events-tab-btn-copy').should('be.visible');
-				cy.getBySel('events-tab-copy-tooltip').should('not.exist');
-				cy.getBySel('events-tab-event-content').should('be.visible');
-			});
-			it('Should copy the content of an event', () => {
-				cy.getBySel('events-tab-container').should('be.visible');
-				cy.getBySel('events-tab-copy-tooltip').should('not.exist');
-				cy.getBySel('events-tab-btn-copy')
-					.eq(0)
-					.should('be.visible')
-					.realClick();
-				cy.getBySel('events-tab-copy-tooltip')
+		describe('Change Network', () => {
+			it('Should show a dropdown with different networks', () => {
+				cy.getBySel('contract-input-container').should('be.visible');
+				cy.getBySel('contract-input-selected-network').should(
+					'have.text',
+					network.futurenet,
+				);
+				cy.getBySel('contract-select-networks-container').should('not.exist');
+				cy.getBySel('contract-input-network').should('be.visible').click();
+				cy.getBySel('contract-select-networks-container')
 					.should('exist')
-					.and('be.visible')
-					.contains('Copied!');
-				cy.wait(1000);
-				cy.getBySel('events-tab-copy-tooltip').should('not.exist');
+					.and('be.visible');
+				cy.getBySel('contract-select-network-futurenet')
+					.should('be.visible')
+					.and('have.text', network.futurenet);
+				cy.getBySel('contract-select-network-testnet')
+					.should('be.visible')
+					.and('have.text', network.testnet);
 			});
-			it('Should persist events when change to other path', () => {
-				cy.getBySel('events-tab-container').should('be.visible');
+			it('Should change to testnet network', () => {
+				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation/*/network`, {
+					body: { network: 'TESTNET' },
+				});
+				cy.getBySel('contract-input-selected-network')
+					.should('be.visible')
+					.and('have.text', network.futurenet);
+				cy.getBySel('contract-input-network').should('be.visible').click();
+				cy.getBySel('contract-select-network-testnet').click();
+				cy.getBySel('contract-input-selected-network')
+					.should('be.visible')
+					.and('have.text', network.testnet);
+			});
+			it('Should persist the network when changing routes', () => {
+				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation/*/network`, {
+					body: { network: 'TESTNET' },
+				});
+				cy.intercept(`${Cypress.env('apiUrl')}/invocation/*`, {
+					fixture: 'invocations/one-invocation-with-keypair.json',
+				}).as('invocationWithTestnetNetwork');
+				cy.getBySel('contract-input-network').should('be.visible').click();
+				cy.getBySel('contract-select-network-testnet').click();
+				cy.getBySel('contract-input-selected-network')
+					.should('be.visible')
+					.and('have.text', network.testnet);
 				cy.getBySel('collections-variables-btn-link').click();
 				cy.getBySel('collection-variables-container').should('be.visible');
 				cy.getBySel('invocation-item').first().click();
-				cy.getBySel('functions-tabs-events').click();
-				cy.getBySel('events-tab-container').should('be.visible');
+				cy.wait('@invocationWithTestnetNetwork');
+				cy.getBySel('contract-input-selected-network').should(
+					'have.text',
+					network.testnet,
+				);
 			});
-		});
+		}),
+			describe('Events tracker tab', () => {
+				beforeEach(() => {
+					cy.wait('@method');
+					cy.intercept(`${Cypress.env('apiUrl')}/invocation/*/run`, {
+						fixture: 'invocations/run-invocation.json',
+					}).as('runInvocation');
+					cy.getBySel('contract-input-btn-load').click();
+					cy.wait('@runInvocation');
+					cy.getBySel('functions-tabs-events').click();
+				});
+				it('Should show the content of the tab with events', () => {
+					cy.getBySel('events-tab-container').should('be.visible');
+					cy.getBySel('events-tab-event-container').should('be.visible');
+					cy.getBySel('events-tab-event-title').should('be.visible');
+					cy.getBySel('events-tab-btn-copy').should('be.visible');
+					cy.getBySel('events-tab-copy-tooltip').should('not.exist');
+					cy.getBySel('events-tab-event-content').should('be.visible');
+				});
+				it('Should copy the content of an event', () => {
+					cy.getBySel('events-tab-container').should('be.visible');
+					cy.getBySel('events-tab-copy-tooltip').should('not.exist');
+					cy.getBySel('events-tab-btn-copy')
+						.eq(0)
+						.should('be.visible')
+						.realClick();
+					cy.getBySel('events-tab-copy-tooltip')
+						.should('exist')
+						.and('be.visible')
+						.contains('Copied!');
+					cy.wait(1000);
+					cy.getBySel('events-tab-copy-tooltip').should('not.exist');
+				});
+				it('Should persist events when change to other path', () => {
+					cy.getBySel('events-tab-container').should('be.visible');
+					cy.getBySel('collections-variables-btn-link').click();
+					cy.getBySel('collection-variables-container').should('be.visible');
+					cy.getBySel('invocation-item').first().click();
+					cy.getBySel('functions-tabs-events').click();
+					cy.getBySel('events-tab-container').should('be.visible');
+				});
+			});
 	});
 
 	describe('Invocation without data', () => {
@@ -106,7 +165,7 @@ describe('Invocations', () => {
 			}).as('invocation');
 			cy.getBySel('collection-folder-container').click();
 		});
-		describe('Create a invocation and their keys', () => {
+		describe('Invocation with futurenet network', () => {
 			beforeEach(() => {
 				cy.intercept('POST', `${Cypress.env('apiUrl')}/invocation`, {
 					statusCode: 200,
@@ -215,6 +274,30 @@ describe('Invocations', () => {
 				cy.getBySel('contract-input-btn-load').click();
 				cy.wait('@invocationUpdated');
 				cy.wait('@getInvocationWithMethods');
+			});
+			describe('Invocation with testnet network', () => {
+				beforeEach(() => {
+					cy.intercept('POST', `${Cypress.env('apiUrl')}/invocation`, {
+						statusCode: 200,
+						fixture: 'invocations/one-invocation.json',
+					}).as('invocation');
+					cy.intercept(`${Cypress.env('apiUrl')}/invocation/*`, {
+						fixture: 'invocations/one-invocation-testnet.json',
+					}).as('getInvocation');
+				});
+				it('Should update a invocation with generate new keypair', () => {
+					cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
+						statusCode: 200,
+						fixture: 'invocations/one-invocation-with-keypair.json',
+					}).as('keypair');
+					cy.getBySel('new-invocation-btn-container').first().click();
+					cy.getBySel('new-entity-dialog-btn-submit').click();
+					cy.wait('@invocation');
+					cy.wait('@getInvocation');
+					cy.getBySel('functions-tabs-authorization').first().click();
+					cy.getBySel('auth-stellar-create-account-btn').click();
+					cy.wait('@keypair');
+				});
 			});
 		});
 	});
