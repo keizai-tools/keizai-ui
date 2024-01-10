@@ -9,6 +9,7 @@ export type Invocation = {
 		id: string;
 		name: string;
 	};
+	network: string;
 	methods?: Method[];
 	selectedMethod?: Method;
 	parameters?: { key: string; value: string }[] | null;
