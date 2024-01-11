@@ -2,7 +2,7 @@ import {
 	keypair,
 	contractId,
 	invocations,
-	network,
+	NETWORK,
 } from './exceptions/constants';
 
 describe('Invocations', () => {
@@ -61,7 +61,7 @@ describe('Invocations', () => {
 				cy.getBySel('contract-input-container').should('be.visible');
 				cy.getBySel('contract-input-selected-network').should(
 					'have.text',
-					network.futurenet,
+					NETWORK.FUTURENET,
 				);
 				cy.getBySel('contract-select-networks-container').should('not.exist');
 				cy.getBySel('contract-input-network').should('be.visible').click();
@@ -70,10 +70,10 @@ describe('Invocations', () => {
 					.and('be.visible');
 				cy.getBySel('contract-select-network-futurenet')
 					.should('be.visible')
-					.and('have.text', network.futurenet);
+					.and('have.text', NETWORK.FUTURENET);
 				cy.getBySel('contract-select-network-testnet')
 					.should('be.visible')
-					.and('have.text', network.testnet);
+					.and('have.text', NETWORK.TESTNET);
 			});
 			it('Should change to testnet network', () => {
 				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation/*/network`, {
@@ -81,12 +81,12 @@ describe('Invocations', () => {
 				});
 				cy.getBySel('contract-input-selected-network')
 					.should('be.visible')
-					.and('have.text', network.futurenet);
+					.and('have.text', NETWORK.FUTURENET);
 				cy.getBySel('contract-input-network').should('be.visible').click();
 				cy.getBySel('contract-select-network-testnet').click();
 				cy.getBySel('contract-input-selected-network')
 					.should('be.visible')
-					.and('have.text', network.testnet);
+					.and('have.text', NETWORK.TESTNET);
 			});
 			it('Should persist the network when changing routes', () => {
 				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation/*/network`, {
@@ -99,14 +99,14 @@ describe('Invocations', () => {
 				cy.getBySel('contract-select-network-testnet').click();
 				cy.getBySel('contract-input-selected-network')
 					.should('be.visible')
-					.and('have.text', network.testnet);
+					.and('have.text', NETWORK.TESTNET);
 				cy.getBySel('collections-variables-btn-link').click();
 				cy.getBySel('collection-variables-container').should('be.visible');
 				cy.getBySel('invocation-item').first().click();
 				cy.wait('@invocationWithTestnetNetwork');
 				cy.getBySel('contract-input-selected-network').should(
 					'have.text',
-					network.testnet,
+					NETWORK.TESTNET,
 				);
 			});
 		}),

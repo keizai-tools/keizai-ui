@@ -179,7 +179,7 @@ export const environments = {
 	],
 };
 
-export const network = {
-	futurenet: 'FUTURENET',
-	testnet: 'TESTNET',
-};
+export enum NETWORK {
+	FUTURENET = 'FUTURENET',
+	TESTNET = 'TESTNET',
+}
