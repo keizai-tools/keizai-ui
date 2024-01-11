@@ -1,6 +1,7 @@
 import { PlusIcon } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
+import EnvironmentEmptyState from '../Environments/EnvironmentEmptyState';
 import EnvironmentItem from '../Environments/EnvironmentItem';
 import { Button } from '../ui/button';
 
@@ -8,7 +9,6 @@ import {
 	useCreateAllEnvironmentsMutation,
 	useDeleteEnvironmentMutation,
 } from '@/common/api/enviroments';
-import { ENVIRONMENTS } from '@/common/exceptions/environments';
 import { Collection } from '@/common/types/collection';
 import { Environment } from '@/common/types/environment';
 
@@ -135,12 +135,10 @@ export const CollectionVariables = ({
 					</div>
 				</>
 			) : (
-				<p
-					className="px-4 py-8 text-base italic text-slate-400"
-					data-test="collection-variables-empty-state"
-				>
-					{ENVIRONMENTS.EMPTY_STATE}
-				</p>
+				<EnvironmentEmptyState
+					styles="py-8 text-base"
+					testName="collection-variables-empty-state"
+				/>
 			)}
 		</form>
 	);
