@@ -13,6 +13,7 @@ import {
 	SelectValue,
 } from '@/common/components/ui/select';
 import useNetwork from '@/common/hooks/useNetwork';
+import { NETWORK } from '@/common/types/soroban.enum';
 
 const ContractInput = ({
 	defaultValue = '',
@@ -57,16 +58,16 @@ const ContractInput = ({
 				</SelectTrigger>
 				<SelectContent data-test="contract-select-networks-container">
 					<SelectItem
-						value="FUTURENET"
+						value={NETWORK.SOROBAN_FUTURENET}
 						data-test="contract-select-network-futurenet"
 					>
-						FUTURENET
+						{NETWORK.SOROBAN_FUTURENET}
 					</SelectItem>
 					<SelectItem
-						value="TESTNET"
+						value={NETWORK.SOROBAN_TESTNET}
 						data-test="contract-select-network-testnet"
 					>
-						TESTNET
+						{NETWORK.SOROBAN_TESTNET}
 					</SelectItem>
 				</SelectContent>
 			</Select>
