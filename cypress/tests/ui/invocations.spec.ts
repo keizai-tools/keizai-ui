@@ -96,6 +96,9 @@ describe('Invocations', () => {
 
 	describe('Invocation without data', () => {
 		beforeEach(() => {
+			cy.intercept(`${Cypress.env('apiUrl')}/collection/*/environments`, {
+				fixture: 'environments/collection-with-environments.json',
+			});
 			cy.getBySel('collection-folder-btn').click();
 			cy.intercept(`${Cypress.env('apiUrl')}/collection/*/folders`, {
 				fixture: 'folders/one-folder-with-out-invocation.json',
@@ -122,7 +125,41 @@ describe('Invocations', () => {
 				cy.wait('@invocation');
 				cy.wait('@getInvocation');
 			});
+			it('Should run a contract with an environment contract id', () => {
+				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
+					statusCode: 200,
+					fixture: 'invocations/invocation-with-contract-id.json',
+				}).as('runInvocation');
+				cy.getBySel('new-invocation-btn-container').first().click();
+				cy.getBySel('new-entity-dialog-btn-submit').click();
+				cy.wait('@invocation');
+				cy.wait('@getInvocation');
 
+				cy.intercept(`${Cypress.env('apiUrl')}/invocation/*`, {
+					fixture: 'invocations/one-invocation-with-contract-id.json',
+				}).as('getInvocationWithContractId');
+				cy.getBySel('input-contract-name')
+					.should('have.value', '')
+					.and(
+						'have.attr',
+						'placeholder',
+						invocations.default.contract.placeholder,
+					);
+				cy.getBySel('input-contract-name').type('{');
+				cy.getBySel('dropdown-environments-container')
+					.should('exist')
+					.and('be.visible');
+				cy.getBySel('dropdown-environments-ul-container').eq(0).click();
+				cy.getBySel('dropdown-environments-container').should('not.exist');
+				cy.getBySel('input-contract-name').should(
+					'have.value',
+					invocations.default.contract.environmentValue,
+				);
+				cy.getBySel('contract-input-btn-load').click();
+				cy.wait('@runInvocation');
+				cy.wait('@getInvocationWithContractId');
+				cy.getBySel('tabs-function-title').should('have.text', 'Function');
+			});
 			it('should update a invocation with a keypair', () => {
 				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
 					statusCode: 200,

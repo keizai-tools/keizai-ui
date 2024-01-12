@@ -95,6 +95,7 @@ export const invocations = {
 			network: 'FUTURENET',
 			placeholder: 'Contract address',
 			btnLoadText: 'LOAD',
+			environmentValue: '{{contract_id}}',
 		},
 		img: {
 			alt: 'Load contract image',
