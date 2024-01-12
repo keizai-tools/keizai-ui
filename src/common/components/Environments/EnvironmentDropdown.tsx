@@ -1,7 +1,5 @@
 import React from 'react';
-import { UseFormSetValue } from 'react-hook-form';
 
-import { ParametersFormType } from '../Tabs/FunctionsTab/ParametersForm';
 import EnvironmentEmptyState from './EnvironmentEmptyState';
 import EnvironmentList from './EnvironmentList';
 
@@ -10,26 +8,12 @@ import { Environment } from '@/common/types/environment';
 export default function EnvironmentDropdown({
 	environments,
 	handleSelect,
-	index,
-	setValue,
 }: {
 	environments: Environment[];
-	handleSelect: (
-		id: string,
-		index: number,
-		setValue: UseFormSetValue<ParametersFormType>,
-	) => void;
-	index: number;
-	setValue: UseFormSetValue<ParametersFormType>;
+	handleSelect: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => void;
 }) {
 	const [hoveredEnvironment, setHoveredEnvironment] =
 		React.useState<string>('');
-
-	const handleSelectEnvironment = (
-		e: React.MouseEvent<HTMLLIElement, MouseEvent>,
-	) => {
-		handleSelect(e.currentTarget.id, index, setValue);
-	};
 
 	return (
 		<div
@@ -41,7 +25,7 @@ export default function EnvironmentDropdown({
 					environments={environments}
 					hoveredEnvironment={hoveredEnvironment}
 					setHoveredEnvironment={setHoveredEnvironment}
-					handleSelectEnvironment={handleSelectEnvironment}
+					handleSelectEnvironment={handleSelect}
 				/>
 			) : (
 				<EnvironmentEmptyState
