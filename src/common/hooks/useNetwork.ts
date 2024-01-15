@@ -11,7 +11,7 @@ function useNetwork(defaultNetwork: string) {
 	const handleUpdateNetwork = async (network: string) => {
 		await mutate({
 			network,
-			invocationId: params.invocationId as string,
+			id: params.invocationId as string,
 		});
 		setSelectNetwork(network);
 	};

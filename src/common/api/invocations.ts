@@ -163,24 +163,18 @@ export const useEditNetworkMutation = () => {
 	const axios = useAxios();
 
 	const mutation = useMutation({
-		mutationFn: async ({
-			network,
-			invocationId,
-		}: {
-			network: string;
-			invocationId: string;
-		}) =>
-			axios?.patch(`/invocation/${invocationId}/network`, {
+		mutationFn: async ({ network, id }: { network: string; id: string }) =>
+			axios?.patch(`/invocation/${id}/network`, {
 				network,
-				invocationId,
+				id,
 			}),
-		onMutate: ({ network, invocationId }) => {
+		onMutate: ({ network, id }) => {
 			const previousInvocation = queryClient.getQueryData<Invocation>([
 				'invocation',
-				invocationId,
+				id,
 			]);
 
-			queryClient.setQueryData(['invocation', invocationId], {
+			queryClient.setQueryData(['invocation', id], {
 				...previousInvocation,
 				network,
 			});
