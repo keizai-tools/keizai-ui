@@ -76,7 +76,7 @@ describe('Invocations', () => {
 					.and('have.text', NETWORK.TESTNET);
 			});
 			it('Should change to testnet network', () => {
-				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation/*/network`, {
+				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
 					body: { network: 'TESTNET' },
 				});
 				cy.getBySel('contract-input-selected-network')
@@ -89,7 +89,7 @@ describe('Invocations', () => {
 					.and('have.text', NETWORK.TESTNET);
 			});
 			it('Should persist the network when changing routes', () => {
-				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation/*/network`, {
+				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
 					body: { network: 'TESTNET' },
 				});
 				cy.intercept(`${Cypress.env('apiUrl')}/invocation/*`, {

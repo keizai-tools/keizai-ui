@@ -164,7 +164,7 @@ export const useEditNetworkMutation = () => {
 
 	const mutation = useMutation({
 		mutationFn: async ({ network, id }: { network: string; id: string }) =>
-			axios?.patch(`/invocation/${id}/network`, {
+			axios?.patch(`/invocation`, {
 				network,
 				id,
 			}),
