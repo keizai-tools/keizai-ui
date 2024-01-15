@@ -350,9 +350,6 @@ describe('Environments management', () => {
 			cy.intercept(`${Cypress.env('apiUrl')}/method/*`, {
 				fixture: './methods/increment-method.json',
 			});
-			cy.intercept(`${Cypress.env('apiUrl')}/collection/*/environments`, {
-				fixture: './environments/three-length-environments.json',
-			}).as('getEnvironments');
 			cy.getBySel('invocation-item').first().click();
 			cy.getBySel('tabs-container').should('be.visible');
 		});
