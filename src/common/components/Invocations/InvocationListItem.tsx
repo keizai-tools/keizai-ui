@@ -67,8 +67,8 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
 				open={openDialog === 'delete'}
 				onOpenChange={() => setOpenDialog(null)}
 				onConfirm={() => {
+					deleteInvocationMutation(invocation.id);
 					if (params?.invocationId === invocation.id) {
-						deleteInvocationMutation(invocation.id);
 						navigate('/collection/' + params.collectionId);
 					}
 					setOpenDialog(null);
