@@ -1,6 +1,7 @@
 import { PlusIcon } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
+import EnvironmentEmptyState from '../Environments/EnvironmentEmptyState';
 import EnvironmentItem from '../Environments/EnvironmentItem';
 import { Button } from '../ui/button';
 
@@ -103,34 +104,42 @@ export const CollectionVariables = ({
 					</Button>
 				</div>
 			</header>
-			<ul
-				className="flex flex-col gap-2 px-1 pt-12"
-				data-test="collection-variables-container"
-			>
-				{fields.length > 0 &&
-					fields.map((environment, index) => (
-						<EnvironmentItem
-							key={index}
-							environment={environment}
-							index={index}
-							collectionId={collectionId}
-							control={control}
-							watch={watch}
-							errors={errors}
-							removeItem={remove}
-							deleteMutation={handleRemoveEnvironment}
-						/>
-					))}
-			</ul>
-			<div className="flex justify-end pt-4 mr-8">
-				<Button
-					type="submit"
-					className="font-semibold"
-					data-test="collection-variables-btn-save"
-				>
-					Save
-				</Button>
-			</div>
+			{fields.length > 0 ? (
+				<>
+					<ul
+						className="flex flex-col gap-2 px-1 pt-12"
+						data-test="collection-variables-container"
+					>
+						{fields.map((environment, index) => (
+							<EnvironmentItem
+								key={index}
+								environment={environment}
+								index={index}
+								collectionId={collectionId}
+								control={control}
+								watch={watch}
+								errors={errors}
+								removeItem={remove}
+								deleteMutation={handleRemoveEnvironment}
+							/>
+						))}
+					</ul>
+					<div className="flex justify-end pt-4 mr-8">
+						<Button
+							type="submit"
+							className="font-semibold"
+							data-test="collection-variables-btn-save"
+						>
+							Save
+						</Button>
+					</div>
+				</>
+			) : (
+				<EnvironmentEmptyState
+					styles="py-8 text-base"
+					testName="collection-variables-empty-state"
+				/>
+			)}
 		</form>
 	);
 };

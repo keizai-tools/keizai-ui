@@ -81,6 +81,7 @@ const FunctionParameterInput = ({
 								ref={valueRef}
 								placeholder="Parameter value"
 								data-test="function-tab-parameter-input-value"
+								autoComplete="off"
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 									handleSearchEnvironment(e.target.value);
 									valueField.onChange(e);

@@ -160,6 +160,7 @@ export const environments = {
 			},
 		},
 	},
+	emptyStateText: "You don't have any variables created",
 	list: [
 		{
 			name: 'inc1',
