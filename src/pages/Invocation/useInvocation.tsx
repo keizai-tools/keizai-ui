@@ -2,11 +2,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-import {
-	createContractResponse,
-	createContractResponseTitle,
-	handleAxiosError,
-} from './invocation.utils';
+import { getInvocationResponse, handleAxiosError } from './invocation.utils';
 import { KeizaiService } from './preInvocation/keizai/keizai.service';
 
 import {
@@ -121,30 +117,17 @@ const useInvocation = (invocation: Invocation) => {
 				if (postInvocationResponse.isError) {
 					setContractResponses((prev) => [...prev, postInvocationResponse]);
 				}
-				console.log(postInvocationResponse);
-				if (response && response.method) {
-					setContractResponses((prev) => [
-						...prev,
-						{
-							isError: false,
-							preInvocation: createContractResponse(
-								preInvocationResponse?.serviceResponse,
-								'Pre-Invocation response',
-							),
-							postInvocation: createContractResponse(
-								postInvocationResponse?.serviceResponse,
-								'Post-Invocation response',
-							),
-							title: createContractResponseTitle(response.method),
-							message: response.response || 'No response',
-						},
-					]);
-					if (response.events) {
-						setContractEvents(response.events);
-						sessionStorage.setItem('events', JSON.stringify(response.events));
-					}
-				} else {
-					throw new Error();
+
+				const invocationResponse = getInvocationResponse(
+					response,
+					preInvocationResponse?.serviceResponse,
+					postInvocationResponse?.serviceResponse,
+				);
+				setContractResponses((prev) => [...prev, invocationResponse]);
+
+				if (response.events) {
+					setContractEvents(response.events);
+					sessionStorage.setItem('events', JSON.stringify(response.events));
 				}
 			}
 		} catch (error) {
