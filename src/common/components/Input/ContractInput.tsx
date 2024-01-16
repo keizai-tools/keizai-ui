@@ -6,8 +6,6 @@ import SaveContractDialog from './SaveContractDialog';
 
 import { Button } from '@/common/components/ui/button';
 import { Input } from '@/common/components/ui/input';
-import { Select, SelectTrigger } from '@/common/components/ui/select';
-import useEnvironments from '@/common/hooks/useEnvironments';
 import {
 	Select,
 	SelectContent,
@@ -15,6 +13,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/common/components/ui/select';
+import useEnvironments from '@/common/hooks/useEnvironments';
 import useNetwork from '@/common/hooks/useNetwork';
 import { NETWORK } from '@/common/types/soroban.enum';
 
