@@ -179,3 +179,18 @@ export const environments = {
 		},
 	],
 };
+
+export enum NETWORK {
+	FUTURENET = 'FUTURENET',
+	TESTNET = 'TESTNET',
+}
+
+export const terminal = {
+	error: [
+		{
+			title: 'Failed',
+			message:
+				'There was a problem running the contract. It may be down or not running on the corresponding network',
+		},
+	],
+};

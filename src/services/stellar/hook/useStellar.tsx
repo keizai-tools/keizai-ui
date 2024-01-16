@@ -3,6 +3,8 @@ import { Keypair } from 'stellar-sdk';
 import { IKeypair } from '../domain/keypair';
 import { STELLAR_RESPONSE } from '../validators/stellarExceptions';
 
+import { FRIENDBOT, NETWORK } from '@/common/types/soroban.enum';
+
 function useStellar() {
 	const connectAccount = async (secretKey: string): Promise<IKeypair> => {
 		try {
@@ -30,7 +32,18 @@ function useStellar() {
 		}
 	};
 
-	return { connectAccount, createNewAccount };
+	const fundingAccount = (network: string, publicKey: string) => {
+		switch (network) {
+			case NETWORK.SOROBAN_FUTURENET:
+				fetch(`${FRIENDBOT.FUTURENET}${publicKey}`);
+				break;
+			case NETWORK.SOROBAN_TESTNET:
+				fetch(`${FRIENDBOT.TESTNET}${publicKey}`);
+				break;
+		}
+	};
+
+	return { connectAccount, createNewAccount, fundingAccount };
 }
 
 export default useStellar;
