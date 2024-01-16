@@ -1,6 +1,7 @@
 import { Loader } from 'lucide-react';
 import React from 'react';
 
+import EnvironmentDropdownContainer from '../Environments/EnvironmentDropdownContainer';
 import SaveContractDialog from './SaveContractDialog';
 
 import { Button } from '@/common/components/ui/button';
@@ -12,6 +13,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/common/components/ui/select';
+import useEnvironments from '@/common/hooks/useEnvironments';
 import useNetwork from '@/common/hooks/useNetwork';
 import { NETWORK } from '@/common/types/soroban.enum';
 
@@ -31,12 +33,18 @@ const ContractInput = ({
 	const [contractId, setContractId] = React.useState(defaultValue);
 	const [showEditContractDialog, setShowEditContractDialog] =
 		React.useState(false);
+	const { showEnvironments, handleSelectEnvironment, handleSearchEnvironment } =
+		useEnvironments();
 	const { selectNetwork, handleUpdateNetwork } = useNetwork(defaultNetwork);
 
 	const handleUpdateContractId = async () => {
 		if (contractId) {
 			loadContract(contractId);
 		}
+	};
+
+	const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+		handleSelectEnvironment(e.currentTarget.id, setContractId);
 	};
 
 	return (
@@ -86,13 +94,21 @@ const ContractInput = ({
 						</Button>
 					</div>
 				) : (
-					<Input
-						value={contractId || ''}
-						onChange={(e) => setContractId(e.target.value)}
-						className="border-none focus-visible:ring-0"
-						placeholder="Contract address"
-						data-test="input-contract-name"
-					/>
+					<EnvironmentDropdownContainer
+						handleSelect={handleSelect}
+						showEnvironments={showEnvironments}
+					>
+						<Input
+							value={contractId || ''}
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+								handleSearchEnvironment(e.target.value);
+								setContractId(e.target.value);
+							}}
+							className="border-none focus-visible:ring-0"
+							placeholder="Contract address"
+							data-test="input-contract-name"
+						/>
+					</EnvironmentDropdownContainer>
 				)}
 				{!defaultValue ? (
 					<Button

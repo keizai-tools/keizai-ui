@@ -3,13 +3,12 @@ import { DeleteIcon } from 'lucide-react';
 import React from 'react';
 import { Control, Controller, UseFormSetValue } from 'react-hook-form';
 
-import EnvironmentDropdown from '../Environments/EnvironmentDropdown';
+import EnvironmentDropdownContainer from '../Environments/EnvironmentDropdownContainer';
 import { ParametersFormType } from '../Tabs/FunctionsTab/ParametersForm';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
 import useEnvironments from '@/common/hooks/useEnvironments';
-import { Environment } from '@/common/types/environment';
 import { SCSpecTypeMap, isKeyOfSCSpecTypeMap } from '@/common/types/invocation';
 
 const FunctionParameterInput = ({
@@ -29,9 +28,8 @@ const FunctionParameterInput = ({
 	}[];
 }) => {
 	const {
-		environments,
 		showEnvironments,
-		handleSelectEnvironment,
+		handleSelectEnvironmentWithForm,
 		handleSearchEnvironment,
 	} = useEnvironments();
 	const valueRef = React.useRef<HTMLInputElement>(null);
@@ -40,6 +38,10 @@ const FunctionParameterInput = ({
 		return defaultParameters.find(
 			(parameter) => parameter.name === parameterName,
 		)?.type;
+	};
+
+	const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+		handleSelectEnvironmentWithForm(e.currentTarget.id, index, setValue);
 	};
 
 	React.useEffect(() => {
@@ -72,9 +74,9 @@ const FunctionParameterInput = ({
 				name={`parameters.${index}.value`}
 				render={({ field: valueField }) => {
 					return (
-						<div
-							id="dropdown"
-							className="z-10 divide-slate-800 rounded shadow w-full"
+						<EnvironmentDropdownContainer
+							handleSelect={handleSelect}
+							showEnvironments={showEnvironments}
 						>
 							<Input
 								{...valueField}
@@ -87,15 +89,7 @@ const FunctionParameterInput = ({
 									valueField.onChange(e);
 								}}
 							/>
-							{showEnvironments && (
-								<EnvironmentDropdown
-									environments={environments as Environment[]}
-									handleSelect={handleSelectEnvironment}
-									index={index}
-									setValue={setValue}
-								/>
-							)}
-						</div>
+						</EnvironmentDropdownContainer>
 					);
 				}}
 			/>

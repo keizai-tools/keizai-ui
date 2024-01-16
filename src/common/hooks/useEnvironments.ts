@@ -25,7 +25,7 @@ export default function useEnvironments() {
 		React.useState<boolean>(false);
 	const [paramValue, setParamValue] = React.useState<string>('');
 
-	const handleSelectEnvironment = (
+	const handleSelectEnvironmentWithForm = (
 		id: string,
 		index: number,
 		setValue: UseFormSetValue<ParametersFormType>,
@@ -45,6 +45,19 @@ export default function useEnvironments() {
 		}
 	};
 
+	const handleSelectEnvironment = (
+		id: string,
+		setValue: React.Dispatch<React.SetStateAction<string>>,
+	) => {
+		const environment = environments?.find((env: Environment) => env.id === id);
+		if (environment) {
+			setSelectEnvironment(environment);
+			setValue(paramValue + `{${environment.name}}}`);
+			setParamValue((prevValue) => prevValue + `{${environment.name}}}`);
+			setShowEnvironments(false);
+		}
+	};
+
 	const handleSearchEnvironment = (newSearchEnvironment: string) => {
 		setShowEnvironments(newSearchEnvironment.endsWith('{'));
 		setParamValue(newSearchEnvironment);
@@ -57,5 +70,6 @@ export default function useEnvironments() {
 		selectEnvironment,
 		handleSearchEnvironment,
 		handleSelectEnvironment,
+		handleSelectEnvironmentWithForm,
 	};
 }
