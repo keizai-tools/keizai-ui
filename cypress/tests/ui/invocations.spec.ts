@@ -73,6 +73,41 @@ describe('Invocations', () => {
 						.should('contain.text', invocations.tabs.events.title[index]),
 				);
 		});
+		it('Should delete an invocation successfully', () => {
+			cy.intercept(`${Cypress.env('apiUrl')}/collection/*/folders`, {
+				fixture: 'folders/one-folder-with-out-invocation.json',
+			}).as('folderWithOutInvocation');
+			cy.intercept('DELETE', `${Cypress.env('apiUrl')}/invocation/*`, {
+				body: [],
+			}).as('deleteInvocation');
+
+			cy.getBySel('invocation-item').eq(0).realHover();
+			cy.getBySel('collection-options-btn').eq(1).click();
+			cy.getBySel('collection-options-delete').click();
+
+			cy.getBySel('delete-entity-dialog-container')
+				.should('exist')
+				.and('be.visible');
+			cy.getBySel('delete-entity-dialog-title')
+				.should('be.visible')
+				.and('have.text', invocations.dialog.delete.title);
+			cy.getBySel('delete-entity-dialog-description')
+				.should('be.visible')
+				.and('have.text', invocations.dialog.delete.description);
+			cy.getBySel('delete-entity-dialog-btn-cancel')
+				.should('be.visible')
+				.and('have.text', invocations.dialog.delete.btnCancelText);
+			cy.getBySel('delete-entity-dialog-btn-continue')
+				.should('be.visible')
+				.and('have.text', invocations.dialog.delete.btnContinueText)
+				.click();
+			cy.wait('@deleteInvocation');
+			cy.wait('@folderWithOutInvocation');
+
+			cy.getBySel('collection-empty-invocation-container')
+				.should('exist')
+				.and('be.visible');
+		});
 		describe('Change Network', () => {
 			it('Should show a dropdown with different networks', () => {
 				cy.getBySel('contract-input-container').should('be.visible');

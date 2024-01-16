@@ -69,7 +69,7 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
 				onConfirm={() => {
 					deleteInvocationMutation(invocation.id);
 					if (params?.invocationId === invocation.id) {
-						navigate('collection/' + params?.collectionId, { replace: true });
+						navigate('/collection/' + params.collectionId);
 					}
 					setOpenDialog(null);
 				}}
