@@ -180,6 +180,11 @@ export const environments = {
 	],
 };
 
+export enum NETWORK {
+	FUTURENET = 'FUTURENET',
+	TESTNET = 'TESTNET',
+}
+
 export const terminal = {
 	error: [
 		{

@@ -6,9 +6,11 @@ import useStellar from '@/services/stellar/hook/useStellar';
 
 function CreateNewAccount({
 	invocationId,
+	network,
 	editKeys,
 }: {
 	invocationId: string;
+	network: string;
 	editKeys: UseMutateFunction<
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		any,
@@ -21,14 +23,12 @@ function CreateNewAccount({
 		unknown
 	>;
 }) {
-	const { createNewAccount } = useStellar();
+	const { createNewAccount, fundingAccount } = useStellar();
 
 	const onCreateAccount = () => {
 		const keypair = createNewAccount();
 		if (keypair) {
-			fetch(
-				`https://friendbot-futurenet.stellar.org/?addr=${keypair.publicKey}`,
-			);
+			fundingAccount(network, keypair.publicKey as string);
 			editKeys({ id: invocationId, ...keypair });
 		}
 	};
