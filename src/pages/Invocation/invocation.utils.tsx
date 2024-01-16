@@ -1,7 +1,9 @@
 import { AxiosError, isAxiosError } from 'axios';
 import { AlertCircle, ChevronRight } from 'lucide-react';
 
+import { INVOCATION_RESPONSE, STATUS } from '@/common/exceptions/invocations';
 import { ApiError, isApiError } from '@/common/hooks/useAxios';
+import { InvocationResponse } from '@/common/types/invocation';
 import { Method } from '@/common/types/method';
 
 const createContractResponseParam = (params: Method['params']) => {
@@ -63,7 +65,7 @@ export const handleAxiosError = (error: unknown) => {
 				),
 				message:
 					(axiosError.response?.data as ApiError).message ||
-					'There was a problem running the invocation',
+					INVOCATION_RESPONSE.ERROR_RUN_INVOCATION,
 			};
 		}
 	}
@@ -71,6 +73,50 @@ export const handleAxiosError = (error: unknown) => {
 	return {
 		isError: true,
 		title: 'Error',
-		message: 'There was an unexpected error',
+		message: INVOCATION_RESPONSE.ERROR_DEFAULT,
 	};
+};
+
+export const failedRunContract = () => {
+	return {
+		isError: true,
+		title: (
+			<div className="flex items-center gap-2 text-red-500 font-semibold">
+				<AlertCircle size={16} />
+				Failed
+			</div>
+		),
+		message: INVOCATION_RESPONSE.FAILED_RUN_CONTRACT,
+	};
+};
+
+export const getInvocationResponse = (
+	response: InvocationResponse,
+	preInvocationResponse: string | undefined,
+	postInvocationResponse: string | undefined,
+) => {
+	if (response && response.method) {
+		switch (response.status) {
+			case STATUS.SUCCESS:
+				return {
+					isError: false,
+					preInvocation: createContractResponse(
+						preInvocationResponse,
+						'Pre-Invocation response',
+					),
+					postInvocation: createContractResponse(
+						postInvocationResponse,
+						'Post-Invocation response',
+					),
+					title: createContractResponseTitle(response.method),
+					message: response.response || 'No response',
+				};
+			case STATUS.FAILED:
+				return failedRunContract();
+			default:
+				throw new Error();
+		}
+	} else {
+		throw new Error();
+	}
 };
