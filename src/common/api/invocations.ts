@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
+import { useToast } from '../components/ui/use-toast';
 import useAxios from '../hooks/useAxios';
 import { Invocation, InvocationResponse } from '../types/invocation';
 
@@ -161,6 +162,7 @@ export const useDeleteInvocationMutation = () => {
 export const useEditNetworkMutation = () => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
+	const { toast } = useToast();
 
 	const mutation = useMutation({
 		mutationFn: async ({ network, id }: { network: string; id: string }) =>
@@ -182,6 +184,20 @@ export const useEditNetworkMutation = () => {
 			return {
 				previousInvocation,
 			};
+		},
+		onError: () => {
+			toast({
+				title: 'Something went wrong!',
+				description: "Couldn't change network, please try again",
+				variant: 'destructive',
+			});
+		},
+		onSuccess: (_, { id }) => {
+			queryClient.invalidateQueries({ queryKey: ['invocation', id] });
+			toast({
+				title: 'Successfully!',
+				description: 'Network has been changed',
+			});
 		},
 	});
 	return mutation;
