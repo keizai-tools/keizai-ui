@@ -4,6 +4,7 @@ import {
 	invocations,
 	NETWORK,
 	terminal,
+	changeNetwork,
 } from './exceptions/constants';
 
 describe('Invocations', () => {
@@ -127,35 +128,93 @@ describe('Invocations', () => {
 					.should('be.visible')
 					.and('have.text', NETWORK.TESTNET);
 			});
-			it('Should change to testnet network', () => {
-				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
-					body: { network: 'TESTNET' },
-				});
+			it('Should show a alert dialog', () => {
+				cy.getBySel('contract-input-selected-network')
+					.should('be.visible')
+					.and('have.text', NETWORK.FUTURENET);
+				cy.getBySel('contract-input-network').should('be.visible').click();
+				cy.getBySel('change-network-dialog-container').should('not.exist');
+				cy.getBySel('contract-select-network-testnet').click();
+				cy.getBySel('change-network-dialog-container')
+					.should('exist')
+					.and('be.visible');
+				cy.getBySel('change-network-dialog-header-title')
+					.should('be.visible')
+					.and('have.text', changeNetwork.alertDialog.header);
+				cy.getBySel('change-network-dialog-title')
+					.should('be.visible')
+					.and('have.text', changeNetwork.alertDialog.title);
+				cy.getBySel('change-network-dialog-description')
+					.should('be.visible')
+					.and('have.text', changeNetwork.alertDialog.description);
+				cy.getBySel('change-network-dialog-btn-cancel')
+					.should('be.visible')
+					.and('have.text', changeNetwork.alertDialog.btnCancel);
+				cy.getBySel('change-network-dialog-btn-continue')
+					.should('be.visible')
+					.and('have.text', changeNetwork.alertDialog.btnConfirm);
+			});
+			it('Should keep the network when you click cancel in the alert dialog', () => {
 				cy.getBySel('contract-input-selected-network')
 					.should('be.visible')
 					.and('have.text', NETWORK.FUTURENET);
 				cy.getBySel('contract-input-network').should('be.visible').click();
 				cy.getBySel('contract-select-network-testnet').click();
+				cy.getBySel('change-network-dialog-container')
+					.should('exist')
+					.and('be.visible');
+				cy.getBySel('change-network-dialog-btn-cancel').click();
+				cy.getBySel('change-network-dialog-container').should('not.exist');
+				cy.getBySel('contract-input-selected-network')
+					.should('be.visible')
+					.and('have.text', NETWORK.FUTURENET);
+				cy.getBySel('tabs-function-container')
+					.should('exist')
+					.and('be.visible');
+			});
+			it('Should change to testnet network', () => {
+				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
+					body: { network: 'TESTNET' },
+				}).as('changeNetwork');
+				cy.intercept(`${Cypress.env('apiUrl')}/invocation/*`, {
+					fixture: 'invocations/one-invocation-testnet.json',
+				}).as('getInvocationWithTestnet');
+				cy.getBySel('contract-input-selected-network')
+					.should('be.visible')
+					.and('have.text', NETWORK.FUTURENET);
+				cy.getBySel('contract-input-network').should('be.visible').click();
+				cy.getBySel('contract-select-network-testnet').click();
+				cy.getBySel('change-network-dialog-container')
+					.should('exist')
+					.and('be.visible');
+				cy.getBySel('change-network-dialog-btn-continue').click();
+				cy.wait('@changeNetwork');
+				cy.wait('@getInvocationWithTestnet');
+				cy.getBySel('change-network-dialog-container').should('not.exist');
 				cy.getBySel('contract-input-selected-network')
 					.should('be.visible')
 					.and('have.text', NETWORK.TESTNET);
+				cy.getBySel('tabs-content-container').should('exist').and('be.visible');
 			});
 			it('Should persist the network when changing routes', () => {
 				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
 					body: { network: 'TESTNET' },
-				});
+				}).as('changeNetwork');
 				cy.intercept(`${Cypress.env('apiUrl')}/invocation/*`, {
-					fixture: 'invocations/one-invocation-with-keypair.json',
-				}).as('invocationWithTestnetNetwork');
+					fixture: 'invocations/one-invocation-testnet.json',
+				}).as('getInvocationWithTestnet');
 				cy.getBySel('contract-input-network').should('be.visible').click();
 				cy.getBySel('contract-select-network-testnet').click();
+				cy.getBySel('change-network-dialog-btn-continue').click();
+				cy.wait('@changeNetwork');
+				cy.wait('@getInvocationWithTestnet');
 				cy.getBySel('contract-input-selected-network')
 					.should('be.visible')
 					.and('have.text', NETWORK.TESTNET);
 				cy.getBySel('collections-variables-btn-link').click();
 				cy.getBySel('collection-variables-container').should('be.visible');
 				cy.getBySel('invocation-item').first().click();
-				cy.wait('@invocationWithTestnetNetwork');
+				cy.wait('@getInvocationWithTestnet');
 				cy.getBySel('contract-input-selected-network').should(
 					'have.text',
 					NETWORK.TESTNET,
