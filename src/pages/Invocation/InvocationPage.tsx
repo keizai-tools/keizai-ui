@@ -24,6 +24,7 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from '@/common/components/ui/tooltip';
+import useContractEvents from '@/common/hooks/useContractEvents';
 import useEditor from '@/common/hooks/useEditor';
 import { Invocation } from '@/common/types/invocation';
 
@@ -46,10 +47,12 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 		handleLoadContract,
 		isLoadingContract,
 		contractResponses,
-		contractEvents,
 		handleRunInvocation,
 		isRunningInvocation,
 	} = useInvocation(data);
+
+	const { contractEvents } = useContractEvents();
+
 	const preInvocationValue = React.useMemo(() => {
 		return data.preInvocation ?? '';
 	}, [data]);
