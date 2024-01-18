@@ -15,7 +15,7 @@ function useContractEvents() {
 		setContractEvents(JSON.parse(events));
 	}, [params.invocationId]);
 
-	const hadleSetContractEvents = (events: EventResponse[]) => {
+	const handleSetContractEvents = (events: EventResponse[]) => {
 		setContractEvents(events);
 		sessionStorage.setItem(
 			`events-${params.invocationId}`,
@@ -23,7 +23,7 @@ function useContractEvents() {
 		);
 	};
 
-	return { contractEvents, hadleSetContractEvents };
+	return { contractEvents, handleSetContractEvents };
 }
 
 export default useContractEvents;

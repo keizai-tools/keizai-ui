@@ -24,7 +24,7 @@ const useInvocation = (invocation: Invocation) => {
 	const [contractResponses, setContractResponses] = React.useState<
 		TerminalEntry[]
 	>([]);
-	const { hadleSetContractEvents } = useContractEvents();
+	const { handleSetContractEvents } = useContractEvents();
 	const {
 		mutate: editInvocation,
 		isPending,
@@ -124,7 +124,7 @@ const useInvocation = (invocation: Invocation) => {
 				setContractResponses((prev) => [...prev, invocationResponse]);
 
 				if (response.events) {
-					hadleSetContractEvents(response.events);
+					handleSetContractEvents(response.events);
 				}
 			}
 		} catch (error) {
