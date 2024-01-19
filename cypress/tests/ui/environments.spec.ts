@@ -1,4 +1,4 @@
-import { environments } from './exceptions/constants';
+import { environments, invocations } from './exceptions/constants';
 
 describe('Environments management', () => {
 	beforeEach(() => {
@@ -371,6 +371,20 @@ describe('Environments management', () => {
 					.should('be.visible')
 					.and('have.text', environments.emptyStateText);
 			});
+			it('Should show dropdown in edit contract address', () => {
+				cy.getBySel('btn-edit-contract-address').realHover().click();
+				cy.getBySel('dialog-edit-contract-address-container')
+					.should('exist')
+					.and('be.visible');
+				cy.getBySel('dropdown-environments-container').should('not.exist');
+				cy.getBySel('dialog-edit-contract-address-input').type('{');
+				cy.getBySel('dropdown-environments-container')
+					.should('exist')
+					.and('be.visible');
+				cy.getBySel('dropdown-enviroments-empty-state')
+					.should('be.visible')
+					.and('have.text', environments.emptyStateText);
+			});
 		});
 		describe('With environments', () => {
 			beforeEach(() => {
@@ -430,6 +444,29 @@ describe('Environments management', () => {
 				cy.getBySel('function-tab-parameter-input-value').should(
 					'have.value',
 					`url/{{${environments.list[0].name}}}/collection/{{${environments.list[1].name}}}`,
+				);
+			});
+			it('Should edit contract address with an environment', () => {
+				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
+					fixture: 'invocations/one-invocation.json',
+				}).as('invocation');
+				cy.intercept(`${Cypress.env('apiUrl')}/invocation/*`, {
+					fixture: 'invocations/invocation-with-env-contract.json',
+				}).as('invocation');
+				cy.getBySel('btn-edit-contract-address').realHover().click();
+				cy.getBySel('dialog-edit-contract-address-container')
+					.should('exist')
+					.and('be.visible');
+				cy.getBySel('dropdown-environments-container').should('not.exist');
+				cy.getBySel('dialog-edit-contract-address-input').type('{');
+				cy.getBySel('dropdown-environments-container')
+					.should('exist')
+					.and('be.visible');
+				cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
+				cy.getBySel('dialog-edit-contract-address-btn-save').click();
+				cy.getBySel('contract-input-address').should(
+					'have.text',
+					invocations.default.contract.environmentValue,
 				);
 			});
 		});
