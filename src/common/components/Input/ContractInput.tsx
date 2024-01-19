@@ -33,8 +33,12 @@ const ContractInput = ({
 	const [contractId, setContractId] = React.useState(defaultValue);
 	const [showEditContractDialog, setShowEditContractDialog] =
 		React.useState(false);
-	const { showEnvironments, handleSelectEnvironment, handleSearchEnvironment } =
-		useEnvironments();
+	const {
+		paramValue,
+		showEnvironments,
+		handleSelectEnvironment,
+		handleSearchEnvironment,
+	} = useEnvironments();
 	const { selectNetwork, handleUpdateNetwork } = useNetwork(defaultNetwork);
 
 	const handleUpdateContractId = async () => {
@@ -43,8 +47,12 @@ const ContractInput = ({
 		}
 	};
 
+	React.useEffect(() => {
+		setContractId(paramValue);
+	}, [paramValue, setContractId]);
+
 	const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-		handleSelectEnvironment(e.currentTarget.id, setContractId);
+		handleSelectEnvironment(e.currentTarget.id);
 	};
 
 	return (
@@ -82,10 +90,11 @@ const ContractInput = ({
 			<div className="flex w-full group">
 				{defaultValue ? (
 					<div className="flex items-center justify-between flex-1 w-full relative">
-						<span>{defaultValue}</span>
+						<span data-test="contract-input-address">{defaultValue}</span>
 						<Button
 							variant="link"
 							className="invisible group-hover:visible absolute right-0 bg-background"
+							data-test="btn-edit-contract-address"
 							onClick={() => {
 								setShowEditContractDialog(true);
 							}}
