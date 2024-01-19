@@ -1,7 +1,9 @@
 import { AlertCircleIcon } from 'lucide-react';
+import React from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
+import EnvironmentDropdownContainer from '../Environments/EnvironmentDropdownContainer';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
@@ -9,6 +11,7 @@ import { Input } from '../ui/input';
 import { useToast } from '../ui/use-toast';
 
 import { useEditInvocationMutation } from '@/common/api/invocations';
+import useEnvironments from '@/common/hooks/useEnvironments';
 
 const SaveContractDialog = ({
 	open,
@@ -20,11 +23,26 @@ const SaveContractDialog = ({
 	const { toast } = useToast();
 	const { invocationId } = useParams();
 	const { mutate, isPending } = useEditInvocationMutation();
-	const { control, register, handleSubmit } = useForm({
+	const {
+		paramValue,
+		showEnvironments,
+		handleSelectEnvironment,
+		handleSearchEnvironment,
+	} = useEnvironments();
+	const { control, register, handleSubmit, setValue } = useForm({
 		defaultValues: {
 			contractId: '',
 		},
 	});
+
+	React.useEffect(() => {
+		setValue('contractId', paramValue);
+	}, [paramValue, setValue]);
+
+	const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+		handleSelectEnvironment(e.currentTarget.id);
+	};
+
 	const contractId = useWatch({
 		control,
 		name: 'contractId',
@@ -62,7 +80,7 @@ const SaveContractDialog = ({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent>
+			<DialogContent data-test="dialog-edit-contract-address-container">
 				<DialogHeader>
 					<DialogTitle>Update contract address</DialogTitle>
 				</DialogHeader>
@@ -73,12 +91,22 @@ const SaveContractDialog = ({
 					<span className="text-sm text-slate-500 mb-1">
 						New contract address
 					</span>
-					<Input
-						placeholder="C . . . "
-						{...register('contractId', {
-							required: 'Contract address is required',
-						})}
-					/>
+					<EnvironmentDropdownContainer
+						handleSelect={handleSelect}
+						showEnvironments={showEnvironments}
+					>
+						<Input
+							placeholder="C . . . "
+							value={contractId}
+							{...register('contractId', {
+								required: 'Contract address is required',
+							})}
+							data-test="dialog-edit-contract-address-input"
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+								handleSearchEnvironment(e.target.value);
+							}}
+						/>
+					</EnvironmentDropdownContainer>
 					<Alert variant="destructive" className="my-5">
 						<AlertCircleIcon className="h-4 w-4" />
 						<AlertTitle>Warning!</AlertTitle>
@@ -86,7 +114,10 @@ const SaveContractDialog = ({
 							This will remove your current functions and parameters.
 						</AlertDescription>
 					</Alert>
-					<Button disabled={!contractId.trim() || isPending}>
+					<Button
+						disabled={!contractId.trim() || isPending}
+						data-test="dialog-edit-contract-address-btn-save"
+					>
 						{isPending ? 'Saving...' : 'Save'}
 					</Button>
 				</form>
