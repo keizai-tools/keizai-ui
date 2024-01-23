@@ -3,19 +3,11 @@ import React from 'react';
 
 import EnvironmentDropdownContainer from '../Environments/EnvironmentDropdownContainer';
 import SaveContractDialog from './SaveContractDialog';
+import SelectNetwork from './SelectNetwork';
 
 import { Button } from '@/common/components/ui/button';
 import { Input } from '@/common/components/ui/input';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/common/components/ui/select';
 import useEnvironments from '@/common/hooks/useEnvironments';
-import useNetwork from '@/common/hooks/useNetwork';
-import { NETWORK } from '@/common/types/soroban.enum';
 
 const ContractInput = ({
 	defaultValue = '',
@@ -60,33 +52,7 @@ const ContractInput = ({
 			className="flex items-center border p-2 rounded-md"
 			data-test="contract-input-container"
 		>
-			<Select value={selectNetwork} onValueChange={handleUpdateNetwork}>
-				<SelectTrigger
-					className="max-w-[140px] border-none text-slate-500 font-semibold"
-					data-test="contract-input-network"
-				>
-					<SelectValue
-						aria-label={selectNetwork}
-						data-test="contract-input-selected-network"
-					>
-						{selectNetwork}
-					</SelectValue>
-				</SelectTrigger>
-				<SelectContent data-test="contract-select-networks-container">
-					<SelectItem
-						value={NETWORK.SOROBAN_FUTURENET}
-						data-test="contract-select-network-futurenet"
-					>
-						{NETWORK.SOROBAN_FUTURENET}
-					</SelectItem>
-					<SelectItem
-						value={NETWORK.SOROBAN_TESTNET}
-						data-test="contract-select-network-testnet"
-					>
-						{NETWORK.SOROBAN_TESTNET}
-					</SelectItem>
-				</SelectContent>
-			</Select>
+			<SelectNetwork defaultNetwork={defaultNetwork} />
 			<div className="flex w-full group">
 				{defaultValue ? (
 					<div className="flex items-center justify-between flex-1 w-full relative">

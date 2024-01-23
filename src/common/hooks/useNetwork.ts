@@ -13,10 +13,9 @@ function useNetwork(defaultNetwork: string) {
 			network,
 			id: params.invocationId as string,
 		});
-		setSelectNetwork(network);
 	};
 
-	return { selectNetwork, handleUpdateNetwork };
+	return { selectNetwork, setSelectNetwork, handleUpdateNetwork };
 }
 
 export default useNetwork;
