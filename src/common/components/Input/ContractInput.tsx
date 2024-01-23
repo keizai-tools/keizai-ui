@@ -31,7 +31,6 @@ const ContractInput = ({
 		handleSelectEnvironment,
 		handleSearchEnvironment,
 	} = useEnvironments();
-	const { selectNetwork, handleUpdateNetwork } = useNetwork(defaultNetwork);
 
 	const handleUpdateContractId = async () => {
 		if (contractId) {
