@@ -1,0 +1,28 @@
+[
+	{
+		"name": "Folder",
+		"id": "d66b84bd-3ee0-4803-a654-859a75e8832d",
+		"invocations": [
+			{
+				"name": "Invocation",
+				"secretKey": null,
+				"publicKey": null,
+				"preInvocation": null,
+				"postInvocation": null,
+				"contractId": null,
+				"network": "FUTURENET",
+				"id": "635bbf80-0787-47e2-900c-f44d5f53559d"
+			},
+			{
+				"name": "Invocation1",
+				"secretKey": null,
+				"publicKey": null,
+				"preInvocation": null,
+				"postInvocation": null,
+				"contractId": null,
+				"network": "FUTURENET",
+				"id": "111bbf11-1111-47e2-900c-f44d5f53559d"
+			}
+		]
+	}
+]

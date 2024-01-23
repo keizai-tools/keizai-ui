@@ -3,7 +3,7 @@ function EventEmptyState() {
 		<div className="flex my-20 px-12">
 			<div
 				className="flex justify-center items-center"
-				data-test="events-tab-content-container"
+				data-test="events-tab-empty-state-container"
 			>
 				<img
 					src="/searching.svg"

@@ -4,6 +4,8 @@ import {
 	invocations,
 	NETWORK,
 	terminal,
+	invocationId,
+	events,
 	changeNetwork,
 } from './exceptions/constants';
 
@@ -29,6 +31,12 @@ describe('Invocations', () => {
 			cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
 				fixture: 'invocations/one-invocation.json',
 			}).as('invocation');
+			cy.window().then((win) => {
+				win.sessionStorage.setItem(
+					`events-${invocationId}`,
+					JSON.stringify(events),
+				);
+			});
 			cy.getBySel('invocation-item').first().click();
 			cy.getBySel('tabs-container').should('be.visible');
 			cy.intercept(`${Cypress.env('apiUrl')}/method/*`, {
@@ -57,22 +65,6 @@ describe('Invocations', () => {
 			cy.getBySel('terminal-entry-message')
 				.should('be.visible')
 				.and('have.text', terminal.error[0].message);
-		});
-		it('Should show the content of the tab without events', () => {
-			cy.getBySel('functions-tabs-events').click();
-			cy.getBySel('events-tab-container').should('be.visible');
-			cy.getBySel('events-tab-content-container').should('be.visible');
-			cy.getBySel('events-tab-content-img')
-				.should('be.visible')
-				.and('have.attr', 'alt', invocations.tabs.events.imgAlt);
-			cy.getBySel('events-tab-content-text')
-				.should('be.visible')
-				.find('h2')
-				.each((title, index) =>
-					cy
-						.wrap(title)
-						.should('contain.text', invocations.tabs.events.title[index]),
-				);
 		});
 		it('Should delete an invocation successfully', () => {
 			cy.intercept(`${Cypress.env('apiUrl')}/collection/*/folders`, {
@@ -260,6 +252,30 @@ describe('Invocations', () => {
 					cy.getBySel('invocation-item').first().click();
 					cy.getBySel('functions-tabs-events').click();
 					cy.getBySel('events-tab-container').should('be.visible');
+					cy.getBySel('functions-tabs-events').click();
+				});
+				it('Should create a new invocation and contain empty events', () => {
+					cy.intercept('POST', `${Cypress.env('apiUrl')}/invocation`, {
+						fixture: 'invocations/new-invocation.json',
+					}).as('createInvocation');
+					cy.intercept(`${Cypress.env('apiUrl')}/invocation/*`, {
+						fixture: 'invocations/invocation-with-contract-id.json',
+					}).as('newInvocation');
+					cy.intercept(`${Cypress.env('apiUrl')}/collection/*/folders`, {
+						fixture: 'folders/folder-with-two-invocations.json',
+					}).as('folders');
+
+					cy.getBySel('events-tab-container').should('be.visible');
+					cy.getBySel('events-tab-event-container').should('be.visible');
+					cy.getBySel('new-invocation-btn-container').first().click();
+					cy.getBySel('new-entity-dialog-btn-submit').click();
+					cy.wait('@createInvocation');
+					cy.wait('@folders');
+					cy.wait('@newInvocation');
+					cy.getBySel('collection-folder-container').click();
+					cy.getBySel('invocation-item').eq(1).click();
+					cy.getBySel('functions-tabs-events').click();
+					cy.getBySel('events-tab-empty-state-container').should('be.visible');
 				});
 			});
 	});
@@ -294,6 +310,27 @@ describe('Invocations', () => {
 				cy.getBySel('new-entity-dialog-btn-submit').click();
 				cy.wait('@invocation');
 				cy.wait('@getInvocation');
+			});
+			it('Should show the content of the tab without events', () => {
+				cy.getBySel('new-invocation-btn-container').first().click();
+				cy.getBySel('new-entity-dialog-btn-submit').click();
+				cy.wait('@invocation');
+				cy.wait('@getInvocation');
+
+				cy.getBySel('functions-tabs-events').click();
+				cy.getBySel('events-tab-container').should('be.visible');
+				cy.getBySel('events-tab-empty-state-container').should('be.visible');
+				cy.getBySel('events-tab-content-img')
+					.should('be.visible')
+					.and('have.attr', 'alt', invocations.tabs.events.imgAlt);
+				cy.getBySel('events-tab-content-text')
+					.should('be.visible')
+					.find('h2')
+					.each((title, index) =>
+						cy
+							.wrap(title)
+							.should('contain.text', invocations.tabs.events.title[index]),
+					);
 			});
 			it('Should run a contract with an environment contract id', () => {
 				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {

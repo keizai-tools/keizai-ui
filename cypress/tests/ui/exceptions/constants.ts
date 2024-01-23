@@ -181,6 +181,42 @@ export const environments = {
 	],
 };
 
+export const events = [
+	{
+		type: 'diagnostic',
+		ledger: 344395,
+		ledgerClosedAt: '2023-12-28T19:09:37Z',
+		id: '0001479165261910016-0000000001',
+		pagingToken: '0001479165261910016-0000000001',
+		topic: ['fn_return', 'inc_by'],
+		value: 304,
+		inSuccessfulContractCall: true,
+		contractId: 'CD2FKDTRHHUX3JOGYAWU3CTWW7DOC6J2H2E6KHF3YU74OWNWNFWWW2X3',
+	},
+	{
+		type: 'diagnostic',
+		ledger: 343851,
+		ledgerClosedAt: '2023-12-28T18:21:39Z',
+		id: '0001476828799705088-0000000001',
+		pagingToken: '0001476828799705088-0000000001',
+		topic: ['fn_return', 'inc_by'],
+		value: 303,
+		inSuccessfulContractCall: true,
+		contractId: 'CD2FKDTRHHUX3JOGYAWU3CTWW7DOC6J2H2E6KHF3YU74OWNWNFWWW2X3',
+	},
+	{
+		type: 'diagnostic',
+		ledger: 343344,
+		ledgerClosedAt: '2023-12-28T17:37:15Z',
+		id: '0001474651251286016-0000000001',
+		pagingToken: '0001474651251286016-0000000001',
+		topic: ['fn_return', 'increment'],
+		value: 302,
+		inSuccessfulContractCall: true,
+		contractId: 'CD2FKDTRHHUX3JOGYAWU3CTWW7DOC6J2H2E6KHF3YU74OWNWNFWWW2X3',
+	},
+];
+
 export const changeNetwork = {
 	alertDialog: {
 		header: 'Update Network',
