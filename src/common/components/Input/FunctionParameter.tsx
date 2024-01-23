@@ -28,8 +28,9 @@ const FunctionParameterInput = ({
 	}[];
 }) => {
 	const {
+		paramValue,
 		showEnvironments,
-		handleSelectEnvironmentWithForm,
+		handleSelectEnvironment,
 		handleSearchEnvironment,
 	} = useEnvironments();
 	const valueRef = React.useRef<HTMLInputElement>(null);
@@ -40,8 +41,14 @@ const FunctionParameterInput = ({
 		)?.type;
 	};
 
+	React.useEffect(() => {
+		setValue(`parameters.${index}.value`, paramValue, {
+			shouldDirty: true,
+		});
+	}, [index, paramValue, setValue]);
+
 	const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-		handleSelectEnvironmentWithForm(e.currentTarget.id, index, setValue);
+		handleSelectEnvironment(e.currentTarget.id);
 	};
 
 	React.useEffect(() => {
