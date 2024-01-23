@@ -217,6 +217,17 @@ export const events = [
 	},
 ];
 
+export const changeNetwork = {
+	alertDialog: {
+		header: 'Update Network',
+		title: 'Warning!',
+		description:
+			'This will remove your current loaded contract, keys, functions and parameters.',
+		btnCancel: 'Cancel',
+		btnConfirm: 'Change',
+	},
+};
+
 export enum NETWORK {
 	FUTURENET = 'FUTURENET',
 	TESTNET = 'TESTNET',
