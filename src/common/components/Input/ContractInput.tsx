@@ -1,12 +1,11 @@
 import { Loader } from 'lucide-react';
 import React from 'react';
 
-import EnvironmentDropdownContainer from '../Environments/EnvironmentDropdownContainer';
+import EnvironmentInputContainer from '../Environments/EnvironmentDropdownContainer';
 import SaveContractDialog from './SaveContractDialog';
 import SelectNetwork from './SelectNetwork';
 
 import { Button } from '@/common/components/ui/button';
-import { Input } from '@/common/components/ui/input';
 import useEnvironments from '@/common/hooks/useEnvironments';
 
 const ContractInput = ({
@@ -46,6 +45,11 @@ const ContractInput = ({
 		handleSelectEnvironment(e.currentTarget.id);
 	};
 
+	const handleChange = (value: string | undefined) => {
+		handleSearchEnvironment(value ?? '');
+		setContractId(value ?? '');
+	};
+
 	return (
 		<div
 			className="flex items-center border p-2 rounded-md"
@@ -55,7 +59,12 @@ const ContractInput = ({
 			<div className="flex w-full group">
 				{defaultValue ? (
 					<div className="flex items-center justify-between flex-1 w-full relative">
-						<span data-test="contract-input-address">{defaultValue}</span>
+						<span
+							className={defaultValue.match(/{{(.*?)}}/) ? 'text-primary' : ''}
+							data-test="contract-input-address"
+						>
+							{defaultValue}
+						</span>
 						<Button
 							variant="link"
 							className="invisible group-hover:visible absolute right-0 bg-background"
@@ -68,21 +77,17 @@ const ContractInput = ({
 						</Button>
 					</div>
 				) : (
-					<EnvironmentDropdownContainer
-						handleSelect={handleSelect}
+					<EnvironmentInputContainer
+						value={contractId || ''}
+						handleChange={handleChange}
+						handleSelectEnvironment={handleSelect}
 						showEnvironments={showEnvironments}
-					>
-						<Input
-							value={contractId || ''}
-							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-								handleSearchEnvironment(e.target.value);
-								setContractId(e.target.value);
-							}}
-							className="border-none focus-visible:ring-0"
-							placeholder="Contract address"
-							data-test="input-contract-name"
-						/>
-					</EnvironmentDropdownContainer>
+						styles="h-full"
+						placeholder="Contract address"
+						background={'#020817'}
+						fontSize={16}
+						testName="input-contract-name"
+					/>
 				)}
 				{!defaultValue ? (
 					<Button

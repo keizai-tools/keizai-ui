@@ -3,11 +3,10 @@ import React from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
-import EnvironmentDropdownContainer from '../Environments/EnvironmentDropdownContainer';
+import EnvironmentInputContainer from '../Environments/EnvironmentDropdownContainer';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Input } from '../ui/input';
 import { useToast } from '../ui/use-toast';
 
 import { useEditInvocationMutation } from '@/common/api/invocations';
@@ -29,7 +28,7 @@ const SaveContractDialog = ({
 		handleSelectEnvironment,
 		handleSearchEnvironment,
 	} = useEnvironments();
-	const { control, register, handleSubmit, setValue } = useForm({
+	const { control, handleSubmit, setValue } = useForm({
 		defaultValues: {
 			contractId: '',
 		},
@@ -47,6 +46,10 @@ const SaveContractDialog = ({
 		control,
 		name: 'contractId',
 	});
+
+	const onChange = (value: string | undefined) => {
+		handleSearchEnvironment(value ?? '');
+	};
 
 	const onSubmit = async (data: { contractId: string }) => {
 		if (!invocationId) {
@@ -91,22 +94,17 @@ const SaveContractDialog = ({
 					<span className="text-sm text-slate-500 mb-1">
 						New contract address
 					</span>
-					<EnvironmentDropdownContainer
-						handleSelect={handleSelect}
+					<EnvironmentInputContainer
+						value={contractId}
+						handleChange={onChange}
+						handleSelectEnvironment={handleSelect}
 						showEnvironments={showEnvironments}
-					>
-						<Input
-							placeholder="C . . . "
-							value={contractId}
-							{...register('contractId', {
-								required: 'Contract address is required',
-							})}
-							data-test="dialog-edit-contract-address-input"
-							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-								handleSearchEnvironment(e.target.value);
-							}}
-						/>
-					</EnvironmentDropdownContainer>
+						styles="h-10 rounded-md border border-input"
+						placeholder="C . . . "
+						background={'#020617'}
+						fontSize={16}
+						testName="dialog-edit-contract-address-input"
+					/>
 					<Alert variant="destructive" className="my-5">
 						<AlertCircleIcon className="h-4 w-4" />
 						<AlertTitle>Warning!</AlertTitle>

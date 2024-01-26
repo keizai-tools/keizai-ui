@@ -3,7 +3,7 @@ import { DeleteIcon } from 'lucide-react';
 import React from 'react';
 import { Control, Controller, UseFormSetValue } from 'react-hook-form';
 
-import EnvironmentDropdownContainer from '../Environments/EnvironmentDropdownContainer';
+import EnvironmentInputContainer from '../Environments/EnvironmentDropdownContainer';
 import { ParametersFormType } from '../Tabs/FunctionsTab/ParametersForm';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -34,21 +34,26 @@ const FunctionParameterInput = ({
 		handleSearchEnvironment,
 	} = useEnvironments();
 	const valueRef = React.useRef<HTMLInputElement>(null);
-
 	const getTypeByParameterName = (parameterName: string) => {
 		return defaultParameters.find(
 			(parameter) => parameter.name === parameterName,
 		)?.type;
 	};
-
 	React.useEffect(() => {
-		setValue(`parameters.${index}.value`, paramValue, {
-			shouldDirty: true,
-		});
+		if (paramValue !== '') {
+			setValue(`parameters.${index}.value`, paramValue, {
+				shouldDirty: true,
+			});
+		}
 	}, [index, paramValue, setValue]);
 
 	const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
 		handleSelectEnvironment(e.currentTarget.id);
+	};
+
+	const handleChange = (value: string | undefined) => {
+		handleSearchEnvironment(value ?? '');
+		console.log(value);
 	};
 
 	React.useEffect(() => {
@@ -81,22 +86,17 @@ const FunctionParameterInput = ({
 				name={`parameters.${index}.value`}
 				render={({ field: valueField }) => {
 					return (
-						<EnvironmentDropdownContainer
-							handleSelect={handleSelect}
+						<EnvironmentInputContainer
+							value={valueField.value}
+							handleChange={handleChange}
+							handleSelectEnvironment={handleSelect}
 							showEnvironments={showEnvironments}
-						>
-							<Input
-								{...valueField}
-								ref={valueRef}
-								placeholder="Parameter value"
-								data-test="function-tab-parameter-input-value"
-								autoComplete="off"
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-									handleSearchEnvironment(e.target.value);
-									valueField.onChange(e);
-								}}
-							/>
-						</EnvironmentDropdownContainer>
+							styles="h-10 rounded-md border border-input"
+							placeholder="Parameter value"
+							background={'#020817'}
+							fontSize={14}
+							testName="function-tab-parameter-input-value"
+						/>
 					);
 				}}
 			/>
