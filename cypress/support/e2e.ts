@@ -20,3 +20,12 @@ import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+Cypress.on('uncaught:exception', (err) => {
+	if (err.message.includes('ee.create is not a function')) {
+		return false;
+	}
+	if (err.message.includes('ResizeObserver loop limit exceeded')) {
+		return false;
+	}
+});

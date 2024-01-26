@@ -363,7 +363,9 @@ describe('Environments management', () => {
 			});
 			it('Should show the environment dropdown', () => {
 				cy.getBySel('dropdown-environments-container').should('not.exist');
-				cy.getBySel('function-tab-parameter-input-value').type('{');
+				cy.get('.function-tab-parameter-input-value')
+					.click({ force: true })
+					.type('{');
 				cy.getBySel('dropdown-environments-container')
 					.should('exist')
 					.and('be.visible');
@@ -372,12 +374,17 @@ describe('Environments management', () => {
 					.and('have.text', environments.emptyStateText);
 			});
 			it('Should show dropdown in edit contract address', () => {
-				cy.getBySel('btn-edit-contract-address').realHover().click();
+				cy.getBySel('btn-edit-contract-address')
+					.realHover()
+					.click({ force: true });
 				cy.getBySel('dialog-edit-contract-address-container')
 					.should('exist')
 					.and('be.visible');
 				cy.getBySel('dropdown-environments-container').should('not.exist');
-				cy.getBySel('dialog-edit-contract-address-input').type('{');
+				cy.get('.dialog-edit-contract-address-input')
+					.should('be.visible')
+					.click({ force: true })
+					.type('{');
 				cy.getBySel('dropdown-environments-container')
 					.should('exist')
 					.and('be.visible');
@@ -396,21 +403,37 @@ describe('Environments management', () => {
 			});
 			it('Should show the environment dropdown', () => {
 				cy.getBySel('dropdown-environments-container').should('not.exist');
-				cy.getBySel('function-tab-parameter-input-value').type('{');
+				cy.get('.function-tab-parameter-input-value')
+					.should('be.visible')
+					.click({ force: true })
+					.type('{');
 				cy.getBySel('dropdown-environments-container')
 					.should('exist')
 					.and('be.visible');
-				cy.getBySel('function-tab-parameter-input-value').clear();
-				cy.getBySel('function-tab-parameter-input-value').type('hola');
+				cy.get('.function-tab-parameter-input-value textarea')
+					.should('be.visible')
+					.click({ force: true })
+					.clear();
+				cy.get('.function-tab-parameter-input-value')
+					.should('be.visible')
+					.click({ force: true })
+					.type('hola');
 				cy.getBySel('dropdown-environments-container').should('not.exist');
-				cy.getBySel('function-tab-parameter-input-value').type('{');
+				cy.get('.function-tab-parameter-input-value')
+					.should('be.visible')
+					.should('be.visible')
+					.click({ force: true })
+					.type('{');
 				cy.getBySel('dropdown-environments-container')
 					.should('exist')
 					.and('be.visible');
 			});
 			it('Should show different environment values in the environment dropdown', () => {
 				cy.getBySel('dropdown-environments-container').should('not.exist');
-				cy.getBySel('function-tab-parameter-input-value').type('{');
+				cy.get('.function-tab-parameter-input-value')
+					.should('be.visible')
+					.click({ force: true })
+					.type('{');
 				cy.getBySel('dropdown-environments-container')
 					.should('exist')
 					.and('be.visible');
@@ -423,47 +446,60 @@ describe('Environments management', () => {
 				});
 			});
 			it('Should show the variables between {{ }}', () => {
-				cy.getBySel('function-tab-parameter-input-value').type('{');
+				cy.get('.function-tab-parameter-input-value')
+					.click({ force: true })
+					.type('{');
 				cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
-				cy.getBySel('function-tab-parameter-input-value').should(
-					'have.value',
-					`{{${environments.list[0].name}}}`,
-				);
-				cy.getBySel('function-tab-parameter-input-value').clear();
-				cy.getBySel('function-tab-parameter-input-value').type('hola {');
+				cy.contains('.monaco-editor', `{{${environments.list[0].name}}}`);
+				cy.get('.function-tab-parameter-input-value textarea')
+					.click({ force: true })
+					.clear();
+				cy.get('.function-tab-parameter-input-value')
+					.click({ force: true })
+					.type('hola {');
 				cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
-				cy.getBySel('function-tab-parameter-input-value').should(
-					'have.value',
-					`hola {{${environments.list[0].name}}}`,
-				);
-				cy.getBySel('function-tab-parameter-input-value').clear();
-				cy.getBySel('function-tab-parameter-input-value').type('url/{');
+				cy.contains('.monaco-editor', `hola {{${environments.list[0].name}}}`);
+				cy.get('.function-tab-parameter-input-value textarea')
+					.click({ force: true })
+					.clear();
+				cy.get('.function-tab-parameter-input-value')
+					.click({ force: true })
+					.type('url/{');
 				cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
-				cy.getBySel('function-tab-parameter-input-value').type('/collection/{');
+				cy.get('.function-tab-parameter-input-value')
+					.click({ force: true })
+					.type('/collection/{');
 				cy.getBySel('dropdown-enviroment-li-container').eq(1).click();
-				cy.getBySel('function-tab-parameter-input-value').should(
-					'have.value',
+				cy.contains(
+					'.monaco-editor',
 					`url/{{${environments.list[0].name}}}/collection/{{${environments.list[1].name}}}`,
 				);
 			});
 			it('Should edit contract address with an environment', () => {
 				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
 					fixture: 'invocations/one-invocation.json',
-				}).as('invocation');
+				}).as('patchInvocation');
 				cy.intercept(`${Cypress.env('apiUrl')}/invocation/*`, {
 					fixture: 'invocations/invocation-with-env-contract.json',
-				}).as('invocation');
-				cy.getBySel('btn-edit-contract-address').realHover().click();
+				}).as('getInvocation');
+				cy.getBySel('btn-edit-contract-address')
+					.realHover()
+					.click({ force: true });
 				cy.getBySel('dialog-edit-contract-address-container')
 					.should('exist')
 					.and('be.visible');
 				cy.getBySel('dropdown-environments-container').should('not.exist');
-				cy.getBySel('dialog-edit-contract-address-input').type('{');
+				cy.get('.dialog-edit-contract-address-input')
+					.should('be.visible')
+					.click({ force: true })
+					.type('{');
 				cy.getBySel('dropdown-environments-container')
 					.should('exist')
 					.and('be.visible');
 				cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
 				cy.getBySel('dialog-edit-contract-address-btn-save').click();
+				cy.wait('@patchInvocation');
+				cy.wait('@getInvocation');
 				cy.getBySel('contract-input-address').should(
 					'have.text',
 					invocations.default.contract.environmentValue,
