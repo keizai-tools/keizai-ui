@@ -364,8 +364,9 @@ describe('Environments management', () => {
 			it('Should show the environment dropdown', () => {
 				cy.getBySel('dropdown-environments-container').should('not.exist');
 				cy.get('.function-tab-parameter-input-value')
+					.find('textarea')
 					.click({ force: true })
-					.type('{');
+					.type('{', { force: true });
 				cy.getBySel('dropdown-environments-container')
 					.should('exist')
 					.and('be.visible');
@@ -383,8 +384,9 @@ describe('Environments management', () => {
 				cy.getBySel('dropdown-environments-container').should('not.exist');
 				cy.get('.dialog-edit-contract-address-input')
 					.should('be.visible')
+					.find('textarea')
 					.click({ force: true })
-					.type('{');
+					.type('{', { force: true });
 				cy.getBySel('dropdown-environments-container')
 					.should('exist')
 					.and('be.visible');
@@ -404,9 +406,10 @@ describe('Environments management', () => {
 			it('Should show the environment dropdown', () => {
 				cy.getBySel('dropdown-environments-container').should('not.exist');
 				cy.get('.function-tab-parameter-input-value')
+					.find('textarea')
 					.should('be.visible')
 					.click({ force: true })
-					.type('{');
+					.type('{', { force: true });
 				cy.getBySel('dropdown-environments-container')
 					.should('exist')
 					.and('be.visible');
@@ -415,15 +418,16 @@ describe('Environments management', () => {
 					.click({ force: true })
 					.clear();
 				cy.get('.function-tab-parameter-input-value')
+					.find('textarea')
 					.should('be.visible')
 					.click({ force: true })
-					.type('hola');
+					.type('hola', { force: true });
 				cy.getBySel('dropdown-environments-container').should('not.exist');
 				cy.get('.function-tab-parameter-input-value')
-					.should('be.visible')
+					.find('textarea')
 					.should('be.visible')
 					.click({ force: true })
-					.type('{');
+					.type('{', { force: true });
 				cy.getBySel('dropdown-environments-container')
 					.should('exist')
 					.and('be.visible');
@@ -432,8 +436,9 @@ describe('Environments management', () => {
 				cy.getBySel('dropdown-environments-container').should('not.exist');
 				cy.get('.function-tab-parameter-input-value')
 					.should('be.visible')
+					.find('textarea')
 					.click({ force: true })
-					.type('{');
+					.type('{', { force: true });
 				cy.getBySel('dropdown-environments-container')
 					.should('exist')
 					.and('be.visible');
@@ -447,28 +452,34 @@ describe('Environments management', () => {
 			});
 			it('Should show the variables between {{ }}', () => {
 				cy.get('.function-tab-parameter-input-value')
+					.find('textarea')
 					.click({ force: true })
-					.type('{');
+					.type('{', { force: true });
 				cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
 				cy.contains('.monaco-editor', `{{${environments.list[0].name}}}`);
-				cy.get('.function-tab-parameter-input-value textarea')
+				cy.get('.function-tab-parameter-input-value')
+					.find('textarea')
 					.click({ force: true })
 					.clear();
 				cy.get('.function-tab-parameter-input-value')
+					.find('textarea')
 					.click({ force: true })
-					.type('hola {');
+					.type('hola {', { force: true });
 				cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
 				cy.contains('.monaco-editor', `hola {{${environments.list[0].name}}}`);
-				cy.get('.function-tab-parameter-input-value textarea')
+				cy.get('.function-tab-parameter-input-value')
+					.find('textarea')
 					.click({ force: true })
 					.clear();
 				cy.get('.function-tab-parameter-input-value')
+					.find('textarea')
 					.click({ force: true })
-					.type('url/{');
+					.type('url/{', { force: true });
 				cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
 				cy.get('.function-tab-parameter-input-value')
+					.find('textarea')
 					.click({ force: true })
-					.type('/collection/{');
+					.type('/collection/{', { force: true });
 				cy.getBySel('dropdown-enviroment-li-container').eq(1).click();
 				cy.contains(
 					'.monaco-editor',
@@ -491,8 +502,9 @@ describe('Environments management', () => {
 				cy.getBySel('dropdown-environments-container').should('not.exist');
 				cy.get('.dialog-edit-contract-address-input')
 					.should('be.visible')
+					.find('textarea')
 					.click({ force: true })
-					.type('{');
+					.type('{', { force: true });
 				cy.getBySel('dropdown-environments-container')
 					.should('exist')
 					.and('be.visible');

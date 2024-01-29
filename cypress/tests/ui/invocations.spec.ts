@@ -350,7 +350,10 @@ describe('Invocations', () => {
 					'have.text',
 					invocations.default.contract.placeholder,
 				);
-				cy.get('.input-contract-name').click({ force: true }).type('{');
+				cy.get('.input-contract-name')
+					.find('textarea')
+					.click({ force: true })
+					.type('{', { force: true });
 				cy.getBySel('dropdown-environments-container')
 					.should('exist')
 					.and('be.visible');
@@ -450,7 +453,10 @@ describe('Invocations', () => {
 				cy.getBySel('new-entity-dialog-btn-submit').click();
 				cy.wait('@invocation');
 				cy.wait('@getInvocation');
-				cy.get('.input-contract-name').click({ force: true }).type(contractId);
+				cy.get('.input-contract-name')
+					.find('textarea')
+					.click({ force: true })
+					.type(contractId, { force: true });
 				cy.intercept('GET', `${Cypress.env('apiUrl')}/invocation/*`, {
 					fixture: 'invocations/invocation-with-contract-id.json',
 				}).as('getInvocationWithMethods');
