@@ -25,12 +25,8 @@ const ContractInput = ({
 	const [contractId, setContractId] = React.useState(defaultValue);
 	const [showEditContractDialog, setShowEditContractDialog] =
 		React.useState(false);
-	const {
-		paramValue,
-		showEnvironments,
-		handleSelectEnvironment,
-		handleSearchEnvironment,
-	} = useEnvironments();
+	const { showEnvironments, handleSelectEnvironment, handleSearchEnvironment } =
+		useEnvironments();
 
 	const handleUpdateContractId = async () => {
 		if (contractId) {
@@ -38,12 +34,9 @@ const ContractInput = ({
 		}
 	};
 
-	React.useEffect(() => {
-		setContractId(paramValue);
-	}, [paramValue, setContractId]);
-
 	const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-		handleSelectEnvironment(e.currentTarget.id);
+		const environmentValue = handleSelectEnvironment(e.currentTarget.id);
+		setContractId(`{{${environmentValue}}}`);
 	};
 
 	return (
