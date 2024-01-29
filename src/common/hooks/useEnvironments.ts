@@ -10,8 +10,6 @@ export default function useEnvironments() {
 		React.useState<Environment | null>(null);
 	const [showEnvironments, setShowEnvironments] =
 		React.useState<boolean>(false);
-	const [paramValue, setParamValue] = React.useState<string>('');
-
 	const { collectionId } = useParams();
 	const { data, isLoading } = useEnvironmentsQuery({
 		collectionId,
@@ -27,19 +25,17 @@ export default function useEnvironments() {
 		const environment = environments?.find((env: Environment) => env.id === id);
 		if (environment) {
 			setSelectEnvironment(environment);
-			setParamValue((prevValue) => prevValue + `{${environment.name}}}`);
-			setShowEnvironments(false);
 		}
 		setShowEnvironments(false);
+
+		return environment?.name;
 	};
 
 	const handleSearchEnvironment = (newSearchEnvironment: string) => {
 		setShowEnvironments(newSearchEnvironment.endsWith('{'));
-		setParamValue(newSearchEnvironment);
 	};
 
 	return {
-		paramValue,
 		environments,
 		isLoading,
 		showEnvironments,

@@ -23,24 +23,17 @@ const SaveContractDialog = ({
 	const { toast } = useToast();
 	const { invocationId } = useParams();
 	const { mutate, isPending } = useEditInvocationMutation();
-	const {
-		paramValue,
-		showEnvironments,
-		handleSelectEnvironment,
-		handleSearchEnvironment,
-	} = useEnvironments();
+	const { showEnvironments, handleSelectEnvironment, handleSearchEnvironment } =
+		useEnvironments();
 	const { control, register, handleSubmit, setValue } = useForm({
 		defaultValues: {
 			contractId: '',
 		},
 	});
 
-	React.useEffect(() => {
-		setValue('contractId', paramValue);
-	}, [paramValue, setValue]);
-
 	const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-		handleSelectEnvironment(e.currentTarget.id);
+		const environmentValue = handleSelectEnvironment(e.currentTarget.id);
+		setValue('contractId', `{{${environmentValue}}}`);
 	};
 
 	const contractId = useWatch({
@@ -97,13 +90,13 @@ const SaveContractDialog = ({
 					>
 						<Input
 							placeholder="C . . . "
-							value={contractId}
 							{...register('contractId', {
 								required: 'Contract address is required',
 							})}
 							data-test="dialog-edit-contract-address-input"
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 								handleSearchEnvironment(e.target.value);
+								setValue('contractId', e.target.value);
 							}}
 						/>
 					</EnvironmentDropdownContainer>
