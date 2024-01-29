@@ -2,10 +2,12 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useEditNetworkMutation } from '../api/invocations';
+import useContractEvents from './useContractEvents';
 
 function useNetwork(defaultNetwork: string) {
 	const [selectNetwork, setSelectNetwork] = React.useState(defaultNetwork);
 	const { mutate } = useEditNetworkMutation();
+	const { removeEventsFromStorage } = useContractEvents();
 	const params = useParams();
 
 	const handleUpdateNetwork = async (network: string) => {
@@ -13,6 +15,7 @@ function useNetwork(defaultNetwork: string) {
 			network,
 			id: params.invocationId as string,
 		});
+		removeEventsFromStorage(params.invocationId as string);
 	};
 
 	return { selectNetwork, setSelectNetwork, handleUpdateNetwork };
