@@ -9,14 +9,16 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
 import useEnvironments from '@/common/hooks/useEnvironments';
+import { useParameters } from '@/common/hooks/useParameters';
 import { SCSpecTypeMap, isKeyOfSCSpecTypeMap } from '@/common/types/invocation';
 
 const FunctionParameterInput = ({
 	control,
 	index,
 	onDelete,
-	setValue,
 	defaultParameters,
+	setValue,
+	defaultValue,
 }: {
 	control: Control<ParametersFormType>;
 	index: number;
@@ -26,13 +28,11 @@ const FunctionParameterInput = ({
 		name: string;
 		type: string;
 	}[];
+	defaultValue: string;
 }) => {
-	const {
-		paramValue,
-		showEnvironments,
-		handleSelectEnvironment,
-		handleSearchEnvironment,
-	} = useEnvironments();
+	const { showEnvironments, handleSelectEnvironment, handleSearchEnvironment } =
+		useEnvironments();
+	const { setParamValue, paramValue } = useParameters({ defaultValue });
 	const valueRef = React.useRef<HTMLInputElement>(null);
 
 	const getTypeByParameterName = (parameterName: string) => {
@@ -48,7 +48,16 @@ const FunctionParameterInput = ({
 	}, [index, paramValue, setValue]);
 
 	const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
-		handleSelectEnvironment(e.currentTarget.id);
+		const environmentValue = handleSelectEnvironment(e.currentTarget.id);
+
+		if (environmentValue) {
+			setParamValue((prev) => prev + `{${environmentValue}}}`);
+		}
+	};
+
+	const onHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		handleSearchEnvironment(e.target.value);
+		setParamValue(e.target.value);
 	};
 
 	React.useEffect(() => {
@@ -92,7 +101,7 @@ const FunctionParameterInput = ({
 								data-test="function-tab-parameter-input-value"
 								autoComplete="off"
 								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-									handleSearchEnvironment(e.target.value);
+									onHandleChange(e);
 									valueField.onChange(e);
 								}}
 							/>

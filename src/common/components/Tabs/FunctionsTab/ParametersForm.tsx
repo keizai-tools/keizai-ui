@@ -68,6 +68,7 @@ const ParametersFormContent = ({ data }: { data: Method }) => {
 					{controlledFields.map((field, index) => (
 						<FunctionParameterInput
 							key={field.name}
+							defaultValue={field.value}
 							index={index}
 							control={control}
 							setValue={setValue}
