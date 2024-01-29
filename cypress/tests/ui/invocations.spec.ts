@@ -55,7 +55,7 @@ describe('Invocations', () => {
 			cy.intercept(`${Cypress.env('apiUrl')}/invocation/*/run`, {
 				fixture: 'invocations/failed-run-invocation.json',
 			}).as('runInvocation');
-			cy.getBySel('contract-input-btn-load').click();
+			cy.getBySel('contract-input-btn-load').should('be.visible').click();
 			cy.wait('@runInvocation');
 			cy.getBySel('terminal-entry-container').should('be.visible');
 			cy.getBySel('terminal-entry-title')
@@ -196,7 +196,9 @@ describe('Invocations', () => {
 					fixture: 'invocations/one-invocation-testnet.json',
 				}).as('getInvocationWithTestnet');
 				cy.getBySel('contract-input-network').should('be.visible').click();
-				cy.getBySel('contract-select-network-testnet').click();
+				cy.getBySel('contract-select-network-testnet')
+					.should('be.visible')
+					.click();
 				cy.getBySel('change-network-dialog-btn-continue').click();
 				cy.wait('@changeNetwork');
 				cy.wait('@getInvocationWithTestnet');
