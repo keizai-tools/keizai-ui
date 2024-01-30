@@ -96,10 +96,9 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 					{Object.keys(tabs).map((tab) => {
 						if (tab === 'authorization' && isMissingKeys) {
 							return (
-								<Tooltip delayDuration={0}>
-									<TooltipTrigger>
+								<Tooltip delayDuration={0} key={tab}>
+									<TooltipTrigger asChild>
 										<TabsTrigger
-											key={tab}
 											value={tab}
 											data-test={`functions-tabs-${tab}`}
 										>
