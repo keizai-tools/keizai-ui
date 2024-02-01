@@ -7,6 +7,7 @@ export type ApiError = {
 	status: number;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isApiError(error: any): error is ApiError {
 	return !!(error as ApiError).message;
 }

@@ -24,7 +24,6 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from '@/common/components/ui/tooltip';
-import useContractEvents from '@/common/hooks/useContractEvents';
 import useEditor from '@/common/hooks/useEditor';
 import { Invocation } from '@/common/types/invocation';
 
@@ -50,8 +49,6 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 		handleRunInvocation,
 		isRunningInvocation,
 	} = useInvocation(data);
-
-	const { contractEvents } = useContractEvents();
 
 	const preInvocationValue = React.useMemo(() => {
 		return data.preInvocation ?? '';
@@ -96,10 +93,9 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 					{Object.keys(tabs).map((tab) => {
 						if (tab === 'authorization' && isMissingKeys) {
 							return (
-								<Tooltip delayDuration={0}>
-									<TooltipTrigger>
+								<Tooltip delayDuration={0} key={tab}>
+									<TooltipTrigger asChild>
 										<TabsTrigger
-											key={tab}
 											value={tab}
 											data-test={`functions-tabs-${tab}`}
 										>
@@ -155,7 +151,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 					/>
 				</TabsContent>
 				<TabsContent value="events">
-					<EventsTab events={contractEvents} />
+					<EventsTab />
 				</TabsContent>
 			</Tabs>
 			<Terminal entries={contractResponses} />

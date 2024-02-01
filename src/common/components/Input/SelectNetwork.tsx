@@ -7,7 +7,6 @@ import {
 	AlertDialogAction,
 	AlertDialogCancel,
 	AlertDialogContent,
-	AlertDialogDescription,
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
@@ -83,7 +82,7 @@ function SelectNetwork({ defaultNetwork }: { defaultNetwork: string }) {
 							<AlertDialogTitle data-test="change-network-dialog-header-title">
 								Update Network
 							</AlertDialogTitle>
-							<AlertDialogDescription>
+							<div>
 								<Alert variant="destructive" className="my-5">
 									<AlertCircleIcon className="h-4 w-4" />
 									<AlertTitle data-test="change-network-dialog-title">
@@ -94,7 +93,7 @@ function SelectNetwork({ defaultNetwork }: { defaultNetwork: string }) {
 										functions and parameters.
 									</AlertDescription>
 								</Alert>
-							</AlertDialogDescription>
+							</div>
 						</AlertDialogHeader>
 						<AlertDialogFooter>
 							<AlertDialogCancel

@@ -187,6 +187,11 @@ describe('Invocations', () => {
 					.should('be.visible')
 					.and('have.text', NETWORK.TESTNET);
 				cy.getBySel('tabs-content-container').should('exist').and('be.visible');
+				cy.getBySel('functions-tabs-authorization').click();
+				cy.getBySel('auth-tab-secret-key').should('have.value', '');
+				cy.getBySel('auth-tab-public-key').should('have.value', '');
+				cy.getBySel('functions-tabs-events').click();
+				cy.getBySel('events-tab-empty-state-container').should('be.visible');
 			});
 			it('Should persist the network when changing routes', () => {
 				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
@@ -318,9 +323,7 @@ describe('Invocations', () => {
 				cy.getBySel('new-entity-dialog-btn-submit').click();
 				cy.wait('@invocation');
 				cy.wait('@getInvocation');
-
 				cy.getBySel('functions-tabs-events').click();
-				cy.getBySel('events-tab-container').should('be.visible');
 				cy.getBySel('events-tab-empty-state-container').should('be.visible');
 				cy.getBySel('events-tab-content-img')
 					.should('be.visible')

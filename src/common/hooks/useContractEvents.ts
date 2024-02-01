@@ -23,7 +23,12 @@ function useContractEvents() {
 		);
 	};
 
-	return { contractEvents, handleSetContractEvents };
+	const removeEventsFromStorage = (invocationId: string) => {
+		sessionStorage.removeItem(`events-${invocationId}`);
+		setContractEvents([]);
+	};
+
+	return { contractEvents, handleSetContractEvents, removeEventsFromStorage };
 }
 
 export default useContractEvents;
