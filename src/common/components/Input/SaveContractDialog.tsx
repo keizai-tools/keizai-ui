@@ -11,6 +11,7 @@ import { Input } from '../ui/input';
 import { useToast } from '../ui/use-toast';
 
 import { useEditInvocationMutation } from '@/common/api/invocations';
+import useContractEvents from '@/common/hooks/useContractEvents';
 import useEnvironments from '@/common/hooks/useEnvironments';
 
 const SaveContractDialog = ({
@@ -23,6 +24,7 @@ const SaveContractDialog = ({
 	const { toast } = useToast();
 	const { invocationId } = useParams();
 	const { mutate, isPending } = useEditInvocationMutation();
+	const { removeEventsFromStorage } = useContractEvents();
 	const { showEnvironments, handleSelectEnvironment, handleSearchEnvironment } =
 		useEnvironments();
 	const { control, register, handleSubmit, setValue } = useForm({
@@ -57,6 +59,9 @@ const SaveContractDialog = ({
 					contractId: data.contractId,
 				},
 				{
+					onSuccess: () => {
+						removeEventsFromStorage(invocationId);
+					},
 					onError: () => {
 						toast({
 							title: "Couldn't save contract",
