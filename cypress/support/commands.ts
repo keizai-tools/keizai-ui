@@ -1,3 +1,7 @@
+import { Auth } from '@aws-amplify/auth';
+
+import { CognitoSignInResponse } from '../cypress';
+
 /// <reference types="cypress" />
 // ***********************************************
 // This example commands.ts shows you how to
@@ -36,8 +40,6 @@
 //   }
 // }
 
-import { Auth } from '@aws-amplify/auth';
-
 Cypress.Commands.add('getBySel', (selector, ...args) => {
 	return cy.get(`[data-test=${selector}]`, ...args);
 });
@@ -66,38 +68,43 @@ Cypress.Commands.add('loginByCognitoApi', () => {
 
 	const signIn = Auth.signIn({ username, password });
 
-	cy.wrap(signIn, { log: false }).then((cognitoResponse: any) => {
-		const keyPrefixWithUsername = `${cognitoResponse.keyPrefix}.${cognitoResponse.username}`;
+	cy.wrap(signIn, { log: false }).then(
+		(cognitoResponse: CognitoSignInResponse) => {
+			const keyPrefixWithUsername = `${cognitoResponse.keyPrefix}.${cognitoResponse.username}`;
 
-		window.localStorage.setItem(
-			`${keyPrefixWithUsername}.idToken`,
-			cognitoResponse.signInUserSession.idToken.jwtToken,
-		);
+			window.localStorage.setItem(
+				`${keyPrefixWithUsername}.idToken`,
+				cognitoResponse.signInUserSession.idToken.jwtToken,
+			);
 
-		window.localStorage.setItem(
-			`${keyPrefixWithUsername}.accessToken`,
-			cognitoResponse.signInUserSession.accessToken.jwtToken,
-		);
+			window.localStorage.setItem(
+				`${keyPrefixWithUsername}.accessToken`,
+				cognitoResponse.signInUserSession.accessToken.jwtToken,
+			);
 
-		window.localStorage.setItem(
-			`${keyPrefixWithUsername}.refreshToken`,
-			cognitoResponse.signInUserSession.refreshToken.token,
-		);
+			window.localStorage.setItem(
+				`${keyPrefixWithUsername}.refreshToken`,
+				cognitoResponse.signInUserSession.refreshToken.token,
+			);
 
-		window.localStorage.setItem(
-			`${keyPrefixWithUsername}.clockDrift`,
-			cognitoResponse.signInUserSession.clockDrift,
-		);
+			window.localStorage.setItem(
+				`${keyPrefixWithUsername}.clockDrift`,
+				cognitoResponse.signInUserSession.clockDrift,
+			);
 
-		window.localStorage.setItem(
-			`${cognitoResponse.keyPrefix}.LastAuthUser`,
-			cognitoResponse.username,
-		);
+			window.localStorage.setItem(
+				`${cognitoResponse.keyPrefix}.LastAuthUser`,
+				cognitoResponse.username,
+			);
 
-		window.localStorage.setItem('amplify-authenticator-authState', 'signedIn');
-		log.snapshot('after');
-		log.end();
-	});
+			window.localStorage.setItem(
+				'amplify-authenticator-authState',
+				'signedIn',
+			);
+			log.snapshot('after');
+			log.end();
+		},
+	);
 
 	cy.visit('/');
 });

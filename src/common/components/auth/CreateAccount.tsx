@@ -61,7 +61,8 @@ function CreateAccount() {
 								type="text"
 								placeholder="Email"
 								data-test="register-form-email"
-								{...field}
+								value={field.value}
+								onChange={field.onChange}
 							/>
 						)}
 					/>
@@ -86,7 +87,9 @@ function CreateAccount() {
 							message: AUTH_VALIDATIONS.PASSWORD_INVALID,
 						},
 					}}
-					render={({ field }) => <PasswordInput {...field} />}
+					render={({ field }) => (
+						<PasswordInput value={field.value} onChange={field.onChange} />
+					)}
 				/>
 				{errors.password && (
 					<ErrorMessage
