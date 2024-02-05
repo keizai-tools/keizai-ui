@@ -66,6 +66,22 @@ describe('Invocations', () => {
 				.should('be.visible')
 				.and('have.text', terminal.error[0].message);
 		});
+		it('Should show the scrollbar in terminal', () => {
+			cy.wait('@method');
+			cy.intercept(`${Cypress.env('apiUrl')}/invocation/*/run`, {
+				fixture: 'invocations/failed-run-invocation.json',
+			}).as('runInvocation');
+			for (let i = 0; i <= 5; i++) {
+				cy.getBySel('contract-input-btn-load').click();
+				cy.wait('@runInvocation');
+			}
+			cy.getBySel('terminal-entry-title').should('have.length', 6);
+			cy.getBySel('terminal-scrollbar-container').then(($scrollBox) =>
+				expect($scrollBox[0].clientHeight).to.be.lessThan(
+					$scrollBox[0].scrollHeight,
+				),
+			);
+		});
 		it('Should delete an invocation successfully', () => {
 			cy.intercept(`${Cypress.env('apiUrl')}/collection/*/folders`, {
 				fixture: 'folders/one-folder-with-out-invocation.json',
@@ -289,7 +305,7 @@ describe('Invocations', () => {
 		beforeEach(() => {
 			cy.intercept(`${Cypress.env('apiUrl')}/collection/*/environments`, {
 				fixture: 'environments/collection-with-environments.json',
-			});
+			}).as('environments');
 			cy.getBySel('collection-folder-btn').click();
 			cy.intercept(`${Cypress.env('apiUrl')}/collection/*/folders`, {
 				fixture: 'folders/one-folder-with-out-invocation.json',
@@ -309,12 +325,38 @@ describe('Invocations', () => {
 				cy.intercept(`${Cypress.env('apiUrl')}/invocation/*`, {
 					fixture: 'invocations/one-invocation.json',
 				}).as('getInvocation');
+				cy.wait('@environments');
 			});
 			it('should create a invocation', () => {
 				cy.getBySel('new-invocation-btn-container').first().click();
 				cy.getBySel('new-entity-dialog-btn-submit').click();
 				cy.wait('@invocation');
 				cy.wait('@getInvocation');
+			});
+			it('Should change the height of the terminal', () => {
+				cy.getBySel('new-invocation-btn-container').first().click();
+				cy.getBySel('new-entity-dialog-btn-submit').click();
+				cy.wait('@invocation');
+				cy.wait('@getInvocation');
+				cy.wait('@environments');
+				cy.getBySel('terminal-container')
+					.should('be.visible')
+					.then(($element) => {
+						const height = $element.height();
+
+						cy.getBySel('terminal-border-resize')
+							.trigger('mousedown', {
+								pageY: height,
+								force: true,
+							})
+							.trigger('mousemove')
+							.trigger('mousemove')
+							.trigger('mouseup');
+
+						cy.getBySel('terminal-container')
+							.invoke('height')
+							.should('be.greaterThan', height);
+					});
 			});
 			it('Should show the content of the tab without events', () => {
 				cy.getBySel('new-invocation-btn-container').first().click();

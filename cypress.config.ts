@@ -17,6 +17,8 @@ export default defineConfig({
 		baseUrl: process.env.CYPRESS_BASE_URL_PREFIX,
 		specPattern: 'cypress/tests/**/*.spec.{js,jsx,ts,tsx}',
 	},
+	viewportWidth: 1280,
+	viewportHeight: 960,
 	requestTimeout: 30000,
 	responseTimeout: 30000,
 	defaultCommandTimeout: 30000,

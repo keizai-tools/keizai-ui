@@ -69,7 +69,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 
 	return (
 		<div
-			className="flex flex-col p-3 w-full gap-4 max-h-screen"
+			className="relative flex flex-col p-3 w-full gap-4 max-h-screen overflow-hidden"
 			data-test="invocation-section-container"
 		>
 			<Breadcrumb
