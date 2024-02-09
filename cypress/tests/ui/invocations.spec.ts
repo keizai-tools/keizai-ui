@@ -391,6 +391,7 @@ describe('Invocations', () => {
 					fixture: 'invocations/one-invocation-with-contract-id.json',
 				}).as('getInvocationWithContractId');
 				cy.getBySel('input-contract-name')
+					.find('textarea')
 					.should('have.value', '')
 					.and(
 						'have.attr',
@@ -403,10 +404,9 @@ describe('Invocations', () => {
 					.and('be.visible');
 				cy.getBySel('dropdown-environments-ul-container').eq(0).click();
 				cy.getBySel('dropdown-environments-container').should('not.exist');
-				cy.getBySel('input-contract-name').should(
-					'have.value',
-					invocations.default.contract.environmentValue,
-				);
+				cy.getBySel('input-contract-name')
+					.find('textarea')
+					.should('have.value', invocations.default.contract.environmentValue);
 				cy.getBySel('contract-input-btn-load').click();
 				cy.wait('@runInvocation');
 				cy.wait('@getInvocationWithContractId');
