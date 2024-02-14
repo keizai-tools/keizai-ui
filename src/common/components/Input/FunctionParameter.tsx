@@ -7,6 +7,7 @@ import EnvironmentDropdownContainer from '../Environments/EnvironmentDropdownCon
 import { ParametersFormType } from '../Tabs/FunctionsTab/ParametersForm';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import EnvironmentInput from './EnvironmentInput';
 
 import useEnvironments from '@/common/hooks/useEnvironments';
 import { useParameters } from '@/common/hooks/useParameters';
@@ -55,9 +56,9 @@ const FunctionParameterInput = ({
 		}
 	};
 
-	const onHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		handleSearchEnvironment(e.target.value);
-		setParamValue(e.target.value);
+	const onHandleChange = (value: string) => {
+		handleSearchEnvironment(value);
+		setParamValue(value);
 	};
 
 	React.useEffect(() => {
@@ -94,16 +95,15 @@ const FunctionParameterInput = ({
 							handleSelect={handleSelect}
 							showEnvironments={showEnvironments}
 						>
-							<Input
-								{...valueField}
-								ref={valueRef}
-								placeholder="Parameter value"
-								data-test="function-tab-parameter-input-value"
-								autoComplete="off"
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-									onHandleChange(e);
-									valueField.onChange(e);
+							<EnvironmentInput
+								value={valueField.value}
+								handleChange={(value: string) => {
+									onHandleChange(value);
+									valueField.onChange(value);
 								}}
+								styles="h-10 text-sm rounded-md border border-input"
+								placeholder="Parameter value"
+								testName="function-tab-parameter-input-value"
 							/>
 						</EnvironmentDropdownContainer>
 					);

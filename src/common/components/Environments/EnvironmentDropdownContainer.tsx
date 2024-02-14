@@ -19,7 +19,7 @@ function EnvironmentDropdownContainer({
 	const { environments } = useEnvironments();
 
 	return (
-		<div id="dropdown" className="z-10 divide-slate-800 rounded shadow w-full">
+		<div id="dropdown" className="z-10 divide-slate-800 rounded w-full">
 			{children}
 			{showEnvironments && (
 				<EnvironmentDropdown

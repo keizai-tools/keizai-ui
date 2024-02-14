@@ -425,26 +425,36 @@ describe('Environments management', () => {
 			it('Should show the variables between {{ }}', () => {
 				cy.getBySel('function-tab-parameter-input-value').type('{');
 				cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
-				cy.getBySel('function-tab-parameter-input-value').should(
-					'have.value',
-					`{{${environments.list[0].name}}}`,
-				);
-				cy.getBySel('function-tab-parameter-input-value').clear();
-				cy.getBySel('function-tab-parameter-input-value').type('hola {');
+				cy.getBySel('function-tab-parameter-input-value')
+					.find('textarea')
+					.should('have.value', `{{${environments.list[0].name}}}`);
+				cy.getBySel('function-tab-parameter-input-value')
+					.find('textarea')
+					.clear();
+				cy.getBySel('function-tab-parameter-input-value')
+					.find('textarea')
+					.type('hola {');
 				cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
-				cy.getBySel('function-tab-parameter-input-value').should(
-					'have.value',
-					`hola {{${environments.list[0].name}}}`,
-				);
-				cy.getBySel('function-tab-parameter-input-value').clear();
-				cy.getBySel('function-tab-parameter-input-value').type('url/{');
+				cy.getBySel('function-tab-parameter-input-value')
+					.find('textarea')
+					.should('have.value', `hola {{${environments.list[0].name}}}`);
+				cy.getBySel('function-tab-parameter-input-value')
+					.find('textarea')
+					.clear();
+				cy.getBySel('function-tab-parameter-input-value')
+					.find('textarea')
+					.type('url/{');
 				cy.getBySel('dropdown-enviroment-li-container').eq(0).click();
-				cy.getBySel('function-tab-parameter-input-value').type('/collection/{');
+				cy.getBySel('function-tab-parameter-input-value')
+					.find('textarea')
+					.type('/collection/{');
 				cy.getBySel('dropdown-enviroment-li-container').eq(1).click();
-				cy.getBySel('function-tab-parameter-input-value').should(
-					'have.value',
-					`url/{{${environments.list[0].name}}}/collection/{{${environments.list[1].name}}}`,
-				);
+				cy.getBySel('function-tab-parameter-input-value')
+					.find('textarea')
+					.should(
+						'have.value',
+						`url/{{${environments.list[0].name}}}/collection/{{${environments.list[1].name}}}`,
+					);
 			});
 			it('Should edit contract address with an environment', () => {
 				cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {

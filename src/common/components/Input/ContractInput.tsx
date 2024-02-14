@@ -2,11 +2,11 @@ import { Loader } from 'lucide-react';
 import React from 'react';
 
 import EnvironmentDropdownContainer from '../Environments/EnvironmentDropdownContainer';
+import EnvironmentInput from './EnvironmentInput';
 import SaveContractDialog from './SaveContractDialog';
 import SelectNetwork from './SelectNetwork';
 
 import { Button } from '@/common/components/ui/button';
-import { Input } from '@/common/components/ui/input';
 import useEnvironments from '@/common/hooks/useEnvironments';
 
 const ContractInput = ({
@@ -39,6 +39,11 @@ const ContractInput = ({
 		setContractId(`{{${environmentValue}}}`);
 	};
 
+	const handleChange = (value: string) => {
+		handleSearchEnvironment(value);
+		setContractId(value);
+	};
+
 	return (
 		<div
 			className="flex items-center border p-2 rounded-md"
@@ -48,7 +53,12 @@ const ContractInput = ({
 			<div className="flex w-full group">
 				{defaultValue ? (
 					<div className="flex items-center justify-between flex-1 w-full relative">
-						<span data-test="contract-input-address">{defaultValue}</span>
+						<span
+							className={defaultValue.match(/{{(.*?)}}/) ? 'text-primary' : ''}
+							data-test="contract-input-address"
+						>
+							{defaultValue}
+						</span>
 						<Button
 							variant="link"
 							className="invisible group-hover:visible absolute right-0 bg-background"
@@ -65,15 +75,12 @@ const ContractInput = ({
 						handleSelect={handleSelect}
 						showEnvironments={showEnvironments}
 					>
-						<Input
-							value={contractId || ''}
-							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-								handleSearchEnvironment(e.target.value);
-								setContractId(e.target.value);
-							}}
-							className="border-none focus-visible:ring-0"
+						<EnvironmentInput
+							value={contractId}
+							handleChange={handleChange}
+							styles="h-full"
 							placeholder="Contract address"
-							data-test="input-contract-name"
+							testName="input-contract-name"
 						/>
 					</EnvironmentDropdownContainer>
 				)}

@@ -7,8 +7,8 @@ import EnvironmentDropdownContainer from '../Environments/EnvironmentDropdownCon
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Input } from '../ui/input';
 import { useToast } from '../ui/use-toast';
+import EnvironmentInput from './EnvironmentInput';
 
 import { useEditInvocationMutation } from '@/common/api/invocations';
 import useContractEvents from '@/common/hooks/useContractEvents';
@@ -27,7 +27,7 @@ const SaveContractDialog = ({
 	const { removeEventsFromStorage } = useContractEvents();
 	const { showEnvironments, handleSelectEnvironment, handleSearchEnvironment } =
 		useEnvironments();
-	const { control, register, handleSubmit, setValue } = useForm({
+	const { control, handleSubmit, setValue } = useForm({
 		defaultValues: {
 			contractId: '',
 		},
@@ -36,6 +36,11 @@ const SaveContractDialog = ({
 	const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
 		const environmentValue = handleSelectEnvironment(e.currentTarget.id);
 		setValue('contractId', `{{${environmentValue}}}`);
+	};
+
+	const handleChange = (value: string) => {
+		handleSearchEnvironment(value);
+		setValue('contractId', value);
 	};
 
 	const contractId = useWatch({
@@ -93,16 +98,12 @@ const SaveContractDialog = ({
 						handleSelect={handleSelect}
 						showEnvironments={showEnvironments}
 					>
-						<Input
+						<EnvironmentInput
+							value={contractId}
+							handleChange={handleChange}
+							styles="h-10 rounded-md border border-input text-sm"
 							placeholder="C . . . "
-							{...register('contractId', {
-								required: 'Contract address is required',
-							})}
-							data-test="dialog-edit-contract-address-input"
-							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-								handleSearchEnvironment(e.target.value);
-								setValue('contractId', e.target.value);
-							}}
+							testName="dialog-edit-contract-address-input"
 						/>
 					</EnvironmentDropdownContainer>
 					<Alert variant="destructive" className="my-5">
