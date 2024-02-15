@@ -33,7 +33,7 @@ const Terminal = ({ entries }: { entries: TerminalEntry[] }) => {
 
 	return (
 		<div
-			className="absolute mx-3 inset-x-0 bottom-0 bg-background z-50"
+			className="absolute mx-3 inset-x-0 bottom-0 bg-background z-40"
 			data-test="terminal-container"
 			ref={containerRef}
 		>
