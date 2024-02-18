@@ -83,7 +83,10 @@ const SaveContractDialog = ({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent data-test="dialog-edit-contract-address-container">
+			<DialogContent
+				data-test="dialog-edit-contract-address-container"
+				className="max-w-[600px]"
+			>
 				<DialogHeader>
 					<DialogTitle>Update contract address</DialogTitle>
 				</DialogHeader>
@@ -101,7 +104,7 @@ const SaveContractDialog = ({
 						<EnvironmentInput
 							value={contractId}
 							handleChange={handleChange}
-							styles="h-10 rounded-md border border-input text-sm"
+							styles="h-10 rounded-md border border-input text-sm max-w-[550px]"
 							placeholder="C . . . "
 							testName="dialog-edit-contract-address-input"
 						/>

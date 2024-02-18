@@ -12,7 +12,7 @@ const FeedbackPopupButton = () => {
 		<Tooltip delayDuration={100}>
 			<TooltipTrigger asChild>
 				<Button
-					className="fixed right-4 bottom-4 rounded-full"
+					className="fixed right-4 bottom-4 rounded-full z-50"
 					variant="secondary"
 					data-tally-open="n0OjOQ"
 					data-tally-overlay="1"
