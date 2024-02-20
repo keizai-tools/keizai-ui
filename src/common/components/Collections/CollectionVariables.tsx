@@ -60,6 +60,7 @@ export const CollectionVariables = ({
 			environments: fields.filter((field) => field.id !== id),
 		});
 		deleteEnvironmentMutation(id);
+		window.umami.track('Delete collection variable');
 	};
 
 	const onSubmit = (data: { environments: Environment[] | undefined }) => {
@@ -68,6 +69,9 @@ export const CollectionVariables = ({
 		);
 		if (environmentsToCreate) {
 			createEnvironmentsMutation(environmentsToCreate);
+			window.umami.track('Save collection variables', {
+				amount: environmentsToCreate.length,
+			});
 		}
 	};
 

@@ -113,6 +113,7 @@ const Folder = ({ folder }: { folder: IFolder }) => {
 				onOpenChange={() => setOpenDialog(null)}
 				onConfirm={() => {
 					deleteFolderMutation(folder.id);
+					window.umami.track('Delete folder');
 					setOpenDialog(null);
 				}}
 			/>
@@ -125,6 +126,7 @@ const Folder = ({ folder }: { folder: IFolder }) => {
 				description="Let's name your folder"
 				onEdit={({ name }) => {
 					editFolderMutation({ id: folder.id, name: name });
+					window.umami.track('Edit folder');
 					setOpenDialog(null);
 				}}
 				isLoading={isEditingFolder}

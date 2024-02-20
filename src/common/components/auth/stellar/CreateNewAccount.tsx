@@ -30,6 +30,7 @@ function CreateNewAccount({
 		if (keypair) {
 			fundingAccount(network, keypair.publicKey as string);
 			editKeys({ id: invocationId, ...keypair });
+			window.umami.track('Create new account');
 		}
 	};
 	return (

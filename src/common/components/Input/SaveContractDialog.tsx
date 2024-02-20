@@ -76,6 +76,7 @@ const SaveContractDialog = ({
 					},
 				},
 			);
+			window.umami.track('Edit contract address');
 		} catch (error) {
 			console.error(error);
 		}

@@ -31,6 +31,7 @@ const ContractInput = ({
 	const handleUpdateContractId = async () => {
 		if (contractId) {
 			loadContract(contractId);
+			window.umami.track('Load contract');
 		}
 	};
 
@@ -65,6 +66,7 @@ const ContractInput = ({
 							data-test="btn-edit-contract-address"
 							onClick={() => {
 								setShowEditContractDialog(true);
+								window.umami.track('Open edit contract address dialog');
 							}}
 						>
 							Edit contract address

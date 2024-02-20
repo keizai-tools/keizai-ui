@@ -30,11 +30,13 @@ function SelectNetwork({ defaultNetwork }: { defaultNetwork: string }) {
 
 	const openEditNetworkDialog = (network: string) => {
 		setSelectNetwork(network);
+		window.umami.track('Open change network dialog');
 		setShowEditNetworkDialog(true);
 	};
 
 	const onConfirm = () => {
 		handleUpdateNetwork(selectNetwork);
+		window.umami.track('Change network');
 		setShowEditNetworkDialog(false);
 	};
 

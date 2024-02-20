@@ -31,6 +31,7 @@ const CollectionCard = ({
 
 	const handleEditCollection = async ({ name }: { name: string }) => {
 		await mutate({ id, name });
+		window.umami.track('Edit collection');
 		setActiveDialog(null);
 	};
 
@@ -71,7 +72,10 @@ const CollectionCard = ({
 				onOpenChange={() => setActiveDialog(null)}
 				title="Are you sure?"
 				description="This will permanently delete your collection and all of its contents."
-				onConfirm={() => deleteCollectionMutation(id)}
+				onConfirm={() => {
+					deleteCollectionMutation(id);
+					window.umami.track('Delete collection');
+				}}
 			/>
 			<EditEntityDialog
 				id={id}

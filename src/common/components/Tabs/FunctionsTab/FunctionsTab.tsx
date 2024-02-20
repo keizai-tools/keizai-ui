@@ -42,6 +42,7 @@ const FunctionsTab = ({
 								id: invocationId,
 								selectedMethodId: value,
 							});
+							window.umami.track('Select function');
 						}}
 					>
 						<SelectTrigger data-test="tabs-function-select-container">

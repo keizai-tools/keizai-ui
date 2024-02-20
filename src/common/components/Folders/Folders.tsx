@@ -21,6 +21,7 @@ const Folders = () => {
 	const onCreateFolder = async ({ name }: { name: string }) => {
 		if (params.collectionId) {
 			await mutate({ name, collectionId: params.collectionId });
+			window.umami.track('Create folder');
 		}
 	};
 

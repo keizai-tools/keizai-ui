@@ -61,6 +61,7 @@ function ImportAccount({
 		reset({
 			secretKey: '',
 		});
+		window.umami.track('Import account');
 		setIsError(false);
 	};
 

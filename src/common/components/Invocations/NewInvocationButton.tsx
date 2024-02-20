@@ -25,6 +25,7 @@ const NewInvocationButton = ({ folderId }: { folderId: string }) => {
 						},
 					},
 				);
+				window.umami.track('Create invocation');
 			}}
 		>
 			<Button
