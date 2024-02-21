@@ -1,4 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import flagsmith from 'flagsmith';
+import { FlagsmithProvider } from 'flagsmith/react';
 import React from 'react';
 
 import { TooltipProvider } from '../common/components/ui/tooltip';
@@ -11,16 +13,23 @@ const queryClient = new QueryClient();
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
 	return (
-		<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-			<AuthProvider>
-				<QueryClientProvider client={queryClient}>
-					<TooltipProvider>
-						{children}
-						<Toaster />
-					</TooltipProvider>
-				</QueryClientProvider>
-			</AuthProvider>
-		</ThemeProvider>
+		<FlagsmithProvider
+			options={{
+				environmentID: process.env.VITE_FLAGSMITH_ENVIRONMENT_ID || '',
+			}}
+			flagsmith={flagsmith}
+		>
+			<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+				<AuthProvider>
+					<QueryClientProvider client={queryClient}>
+						<TooltipProvider>
+							{children}
+							<Toaster />
+						</TooltipProvider>
+					</QueryClientProvider>
+				</AuthProvider>
+			</ThemeProvider>
+		</FlagsmithProvider>
 	);
 };
 

@@ -48,6 +48,7 @@
 		"class-variance-authority": "^0.7.0",
 		"clsx": "^2.0.0",
 		"cypress-real-events": "^1.10.3",
+		"flagsmith": "^3.22.1",
 		"localforage": "^1.10.0",
 		"lodash.debounce": "^4.0.8",
 		"lucide-react": "^0.284.0",
