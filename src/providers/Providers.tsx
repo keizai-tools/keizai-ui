@@ -15,7 +15,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 	return (
 		<FlagsmithProvider
 			options={{
-				environmentID: process.env.VITE_FLAGSMITH_ENVIRONMENT_ID || '',
+				environmentID: import.meta.env.VITE_FLAGSMITH_ENVIRONMENT_ID || '',
 			}}
 			flagsmith={flagsmith}
 		>
