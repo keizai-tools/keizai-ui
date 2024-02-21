@@ -84,7 +84,12 @@ export const useEditInvocationMutation = () => {
 					contractId,
 					selectedMethodId,
 				})
-				.then((res) => res.data),
+				.then((res) => res.data)
+				.catch(() => {
+					if (contractId) {
+						window.umami.track('Error loading contract', { contractId });
+					}
+				}),
 		onSuccess: (_, { name, id }) => {
 			if (name) {
 				queryClient.invalidateQueries({

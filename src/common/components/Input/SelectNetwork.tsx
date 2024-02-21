@@ -36,7 +36,7 @@ function SelectNetwork({ defaultNetwork }: { defaultNetwork: string }) {
 
 	const onConfirm = () => {
 		handleUpdateNetwork(selectNetwork);
-		window.umami.track('Change network');
+		window.umami.track('Change network', { network: selectNetwork });
 		setShowEditNetworkDialog(false);
 	};
 
