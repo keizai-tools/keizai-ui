@@ -4,6 +4,8 @@ import { user, cognitoUrl, changePassword } from './exceptions/constants';
 describe('Change password', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
+		cy.intercept(`${Cypress.env('apiUrl')}/team`, { body: [] }).as('team');
+		cy.wait('@team');
 		cy.getBySel('sidebar-btn-user').click();
 		cy.getBySel('user-dropdown-change-password').click();
 		cy.getBySel('change-password-form-container').click();
