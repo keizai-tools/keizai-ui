@@ -4,12 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import useAxios from '../hooks/useAxios';
 import { Collection } from '../types/collection';
 
-export const useCollectionsQuery = () => {
+export const useCollectionsQuery = (teamId: string | undefined) => {
 	const axios = useAxios();
+
+	const endpoint = teamId ? `/team/${teamId}/collection` : '/collection';
 
 	const query = useQuery<Collection[]>({
 		queryKey: ['collections'],
-		queryFn: async () => axios?.get('/collection').then((res) => res.data),
+		queryFn: async () => axios?.get(endpoint).then((res) => res.data),
 	});
 
 	return query;
@@ -37,7 +39,7 @@ export const useNewCollectionMutation = () => {
 			axios?.post('/collection', { name }).then((res) => res.data),
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: ['collections'] });
-			navigate(`/collection/${data.id}`);
+			navigate(`/user/collection/${data.id}`);
 		},
 	});
 

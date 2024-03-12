@@ -90,7 +90,7 @@ const Folders = () => {
 				<Link
 					className="text-primary"
 					data-test="collections-variables-btn-link"
-					to={`/collection/${params.collectionId}/variables`}
+					to={`/user/collection/${params.collectionId}/variables`}
 				>
 					Collection variables
 				</Link>
