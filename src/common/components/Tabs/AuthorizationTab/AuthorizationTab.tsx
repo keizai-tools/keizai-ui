@@ -6,6 +6,7 @@ import ImportAccount from '../../auth/stellar/ImportAccount';
 import { Input } from '../../ui/input';
 
 import { useEditInvocationKeysMutation } from '@/common/api/invocations';
+import { NETWORK } from '@/common/types/soroban.enum';
 import { IKeypair } from '@/services/stellar/domain/keypair';
 
 const AuthorizationTab = ({
@@ -58,11 +59,13 @@ const AuthorizationTab = ({
 				</div>
 			</div>
 			<div className="flex justify-end gap-4 px-2">
-				<CreateNewAccount
-					invocationId={invocationId}
-					editKeys={editKeys}
-					network={network}
-				/>
+				{network !== NETWORK.SOROBAN_MAINNET && (
+					<CreateNewAccount
+						invocationId={invocationId}
+						editKeys={editKeys}
+						network={network}
+					/>
+				)}
 				<ImportAccount invocationId={invocationId} editKeys={editKeys} />
 			</div>
 		</section>
