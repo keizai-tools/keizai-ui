@@ -21,6 +21,11 @@ export const keypair = {
 	},
 };
 
+export const homePage = {
+	title: 'Workspaces',
+	list: ['My Personal account', 'Team'],
+};
+
 export const collections = {
 	pageTitle: 'Collections',
 	btnCreateText: 'Create a new collection',
