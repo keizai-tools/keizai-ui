@@ -72,6 +72,12 @@ function SelectNetwork({ defaultNetwork }: { defaultNetwork: string }) {
 					>
 						{NETWORK.SOROBAN_TESTNET}
 					</SelectItem>
+					<SelectItem
+						value={NETWORK.SOROBAN_MAINNET}
+						data-test="contract-select-network-mainnet"
+					>
+						{NETWORK.SOROBAN_MAINNET}
+					</SelectItem>
 				</SelectContent>
 			</Select>
 			{showEditNetworkDialog && (
