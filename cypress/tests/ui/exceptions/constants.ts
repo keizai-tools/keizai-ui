@@ -234,11 +234,44 @@ export enum NETWORK {
 }
 
 export const terminal = {
-	error: [
-		{
-			title: 'Failed',
-			message:
-				'There was a problem running the contract. It may be down or not running on the corresponding network',
+	error: {
+		title: {
+			failed: 'Failed',
+			hostError: 'Host invocation failed',
 		},
-	],
+		message: {
+			failedRunContractDefault:
+				'There was a problem running the contract. It may be down or not running on the corresponding network',
+			sorobanContractErrors: [
+				'Caused by:\n    HostError: Error(Contract, #2)\n    \n    Event log (newest first):\n       0: [Diagnostic Event] contract:CDI7KTHGYGX6U76745F74WKBS7N7TUSIADWJ3L4WFXCJF2LQT63M4YJW, topics:[error, Error(Contract, #2)], data:"operation invalid on issuer"\n       1: [Diagnostic Event] topics:[fn_call, Bytes(d1f54ce6c1afea7fdfe74bfe594197dbf9d24800ec9daf962dc492e9709fb6ce), mint], data:[GAZLCLQEUDIAYAW7TV7FWHCN4YQY726DSAHKWTGZCQEXZCNFNUHDBEBQ, 100000]\n    \n    ',
+				'Caused by:\n    HostError: Error(Contract, #9)\n    \n    Event log (newest first):\n       0: [Diagnostic Event] contract:CDI7KTHGYGX6U76745F74WKBS7N7TUSIADWJ3L4WFXCJF2LQT63M4YJW, topics:[error, Error(Contract, #9)], data:["not enough allowance to spend", 0, 10000000]\n       1: [Diagnostic Event] topics:[fn_call, Bytes(d1f54ce6c1afea7fdfe74bfe594197dbf9d24800ec9daf962dc492e9709fb6ce), transfer_from], data:[GCSVX4SOXK4OBLXQH2PZNGSNWTFXEABJIL4JO63DLKTAVBQZQXCBCT4D, GAZLCLQEUDIAYAW7TV7FWHCN4YQY726DSAHKWTGZCQEXZCNFNUHDBEBQ, GBT45AFONOUKIX2PAXK3NEFYHKLH7WHJZJ7ZQX37BBEDSNCA3PJ4I7PW, 10000000]\n    \n    ',
+			],
+		},
+	},
 };
+
+export const transactionResultCode = {
+	txBadAuth:
+		'There was a problem, too few valid signatures or the wrong network',
+	txBadAuthExtra: 'Unused signatures attached to transaction',
+	txBadSeq: 'Sequence number does not match source account',
+	txFailed:
+		'Check the parameters or if the issuing account has sufficient balance',
+	txInsufficientBalance: 'Fee would bring account below reserve',
+	txInsufficientFee: 'There was a problem, fee is too small',
+	txMissingOperation: 'No operation was specified',
+	txTooEarly: 'The ledger closeTime was before the minTime',
+	txTooLate: 'The ledger closeTime was after the maxTime',
+};
+
+export const txErrorCode = [
+	'txBadAuth',
+	'txBadAuthExtra',
+	'txBadSeq',
+	'txFailed',
+	'txInsufficientBalance',
+	'txInsufficientFee',
+	'txMissingOperation',
+	'txTooEarly',
+	'txTooLate',
+];

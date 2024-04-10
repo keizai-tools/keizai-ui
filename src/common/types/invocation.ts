@@ -22,6 +22,7 @@ export type Invocation = {
 export type InvocationResponse = {
 	method: Method;
 	response: string;
+	title?: string;
 	status: string;
 	events: EventResponse[];
 };

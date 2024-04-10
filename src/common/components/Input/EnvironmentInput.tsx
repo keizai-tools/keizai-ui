@@ -22,6 +22,8 @@ function EnvironmentInput({
 				envRegex,
 				(match) => `<span class="text-primary">${match}</span>`,
 			);
+		} else {
+			return code;
 		}
 	};
 

@@ -7,6 +7,8 @@ import {
 	invocationId,
 	events,
 	changeNetwork,
+	transactionResultCode,
+	txErrorCode,
 } from './exceptions/constants';
 
 describe('Invocations', () => {
@@ -61,10 +63,10 @@ describe('Invocations', () => {
 			cy.getBySel('terminal-entry-title')
 				.find('div')
 				.should('be.visible')
-				.and('have.text', terminal.error[0].title);
+				.and('have.text', terminal.error.title.failed);
 			cy.getBySel('terminal-entry-message')
 				.should('be.visible')
-				.and('have.text', terminal.error[0].message);
+				.and('have.text', terminal.error.message.failedRunContractDefault);
 		});
 		it('Should show the scrollbar in terminal', () => {
 			cy.wait('@method');
@@ -233,72 +235,144 @@ describe('Invocations', () => {
 					NETWORK.TESTNET,
 				);
 			});
-		}),
-			describe('Events tracker tab', () => {
-				beforeEach(() => {
-					cy.wait('@method');
+		});
+		describe('Events tracker tab', () => {
+			beforeEach(() => {
+				cy.wait('@method');
+				cy.intercept(`${Cypress.env('apiUrl')}/invocation/*/run`, {
+					fixture: 'invocations/run-invocation.json',
+				}).as('runInvocation');
+				cy.getBySel('contract-input-btn-load').click();
+				cy.wait('@runInvocation');
+				cy.getBySel('functions-tabs-events').click();
+			});
+			it('Should show the content of the tab with events', () => {
+				cy.getBySel('events-tab-container').should('be.visible');
+				cy.getBySel('events-tab-event-container').should('be.visible');
+				cy.getBySel('events-tab-event-title').should('be.visible');
+				cy.getBySel('events-tab-btn-copy').should('be.visible');
+				cy.getBySel('events-tab-copy-tooltip').should('not.exist');
+				cy.getBySel('events-tab-event-content').should('be.visible');
+			});
+			it('Should copy the content of an event', () => {
+				cy.getBySel('events-tab-container').should('be.visible');
+				cy.getBySel('events-tab-copy-tooltip').should('not.exist');
+				cy.getBySel('events-tab-btn-copy')
+					.eq(0)
+					.should('be.visible')
+					.realClick();
+				cy.getBySel('events-tab-copy-tooltip')
+					.should('exist')
+					.and('be.visible')
+					.contains('Copied!');
+				cy.wait(1000);
+				cy.getBySel('events-tab-copy-tooltip').should('not.exist');
+			});
+			it('Should persist events when change to other path', () => {
+				cy.getBySel('events-tab-container').should('be.visible');
+				cy.getBySel('collections-variables-btn-link').click();
+				cy.getBySel('collection-variables-container').should('be.visible');
+				cy.getBySel('invocation-item').first().click();
+				cy.getBySel('functions-tabs-events').click();
+				cy.getBySel('events-tab-container').should('be.visible');
+				cy.getBySel('functions-tabs-events').click();
+			});
+			it('Should create a new invocation and contain empty events', () => {
+				cy.intercept('POST', `${Cypress.env('apiUrl')}/invocation`, {
+					fixture: 'invocations/new-invocation.json',
+				}).as('createInvocation');
+				cy.intercept(`${Cypress.env('apiUrl')}/invocation/*`, {
+					fixture: 'invocations/invocation-with-contract-id.json',
+				}).as('newInvocation');
+				cy.intercept(`${Cypress.env('apiUrl')}/collection/*/folders`, {
+					fixture: 'folders/folder-with-two-invocations.json',
+				}).as('folders');
+
+				cy.getBySel('events-tab-container').should('be.visible');
+				cy.getBySel('events-tab-event-container').should('be.visible');
+				cy.getBySel('new-invocation-btn-container').first().click();
+				cy.getBySel('new-entity-dialog-btn-submit').click();
+				cy.wait('@createInvocation');
+				cy.wait('@folders');
+				cy.wait('@newInvocation');
+				cy.getBySel('collection-folder-container').click();
+				cy.getBySel('invocation-item').eq(1).click();
+				cy.getBySel('functions-tabs-events').click();
+				cy.getBySel('events-tab-empty-state-container').should('be.visible');
+			});
+		});
+		describe('Run contract', () => {
+			it('Should return a transaction error', () => {
+				cy.wait('@method');
+				for (let i = 0; i < txErrorCode.length; i++) {
 					cy.intercept(`${Cypress.env('apiUrl')}/invocation/*/run`, {
-						fixture: 'invocations/run-invocation.json',
+						body: {
+							status: 'FAILED',
+							response: txErrorCode[i],
+							method: {
+								name: 'inc_by',
+								inputs: [
+									{
+										name: 'increment',
+										type: 'SC_SPEC_TYPE_U32',
+									},
+								],
+								outputs: [
+									{
+										type: 'SC_SPEC_TYPE_U32',
+									},
+								],
+								params: [
+									{
+										name: 'increment',
+										value: 1,
+									},
+								],
+								docs: 'Increment by a specified integer.',
+								id: '726a37e7-0abd-4469-b9ed-3a06bf1c75c7',
+							},
+						},
 					}).as('runInvocation');
 					cy.getBySel('contract-input-btn-load').click();
 					cy.wait('@runInvocation');
-					cy.getBySel('functions-tabs-events').click();
-				});
-				it('Should show the content of the tab with events', () => {
-					cy.getBySel('events-tab-container').should('be.visible');
-					cy.getBySel('events-tab-event-container').should('be.visible');
-					cy.getBySel('events-tab-event-title').should('be.visible');
-					cy.getBySel('events-tab-btn-copy').should('be.visible');
-					cy.getBySel('events-tab-copy-tooltip').should('not.exist');
-					cy.getBySel('events-tab-event-content').should('be.visible');
-				});
-				it('Should copy the content of an event', () => {
-					cy.getBySel('events-tab-container').should('be.visible');
-					cy.getBySel('events-tab-copy-tooltip').should('not.exist');
-					cy.getBySel('events-tab-btn-copy')
+					cy.getBySel('terminal-entry-title')
+						.find('div')
 						.eq(0)
-						.should('be.visible')
-						.realClick();
-					cy.getBySel('events-tab-copy-tooltip')
-						.should('exist')
-						.and('be.visible')
-						.contains('Copied!');
-					cy.wait(1000);
-					cy.getBySel('events-tab-copy-tooltip').should('not.exist');
-				});
-				it('Should persist events when change to other path', () => {
-					cy.getBySel('events-tab-container').should('be.visible');
-					cy.getBySel('collections-variables-btn-link').click();
-					cy.getBySel('collection-variables-container').should('be.visible');
-					cy.getBySel('invocation-item').first().click();
-					cy.getBySel('functions-tabs-events').click();
-					cy.getBySel('events-tab-container').should('be.visible');
-					cy.getBySel('functions-tabs-events').click();
-				});
-				it('Should create a new invocation and contain empty events', () => {
-					cy.intercept('POST', `${Cypress.env('apiUrl')}/invocation`, {
-						fixture: 'invocations/new-invocation.json',
-					}).as('createInvocation');
-					cy.intercept(`${Cypress.env('apiUrl')}/invocation/*`, {
-						fixture: 'invocations/invocation-with-contract-id.json',
-					}).as('newInvocation');
-					cy.intercept(`${Cypress.env('apiUrl')}/collection/*/folders`, {
-						fixture: 'folders/folder-with-two-invocations.json',
-					}).as('folders');
-
-					cy.getBySel('events-tab-container').should('be.visible');
-					cy.getBySel('events-tab-event-container').should('be.visible');
-					cy.getBySel('new-invocation-btn-container').first().click();
-					cy.getBySel('new-entity-dialog-btn-submit').click();
-					cy.wait('@createInvocation');
-					cy.wait('@folders');
-					cy.wait('@newInvocation');
-					cy.getBySel('collection-folder-container').click();
-					cy.getBySel('invocation-item').eq(1).click();
-					cy.getBySel('functions-tabs-events').click();
-					cy.getBySel('events-tab-empty-state-container').should('be.visible');
-				});
+						.should('have.text', terminal.error.title.failed);
+					cy.getBySel('terminal-entry-message')
+						.eq(0)
+						.should('have.text', transactionResultCode[txErrorCode[i]]);
+				}
 			});
+			it('Should return a Soroban contract error', () => {
+				cy.wait('@method');
+				for (
+					let i = 0;
+					i < terminal.error.message.sorobanContractErrors.length;
+					i++
+				) {
+					cy.intercept(`${Cypress.env('apiUrl')}/invocation/*/run`, {
+						body: {
+							status: 'ERROR',
+							title: 'host invocation failed',
+							response: terminal.error.message.sorobanContractErrors[i],
+						},
+					}).as('runInvocation');
+					cy.getBySel('contract-input-btn-load').click();
+					cy.wait('@runInvocation');
+					cy.getBySel('terminal-entry-title')
+						.find('div')
+						.eq(0)
+						.should('have.text', terminal.error.title.hostError);
+					cy.getBySel('terminal-entry-message')
+						.eq(0)
+						.should(
+							'have.text',
+							terminal.error.message.sorobanContractErrors[i],
+						);
+				}
+			});
+		});
 	});
 
 	describe('Invocation without data', () => {
