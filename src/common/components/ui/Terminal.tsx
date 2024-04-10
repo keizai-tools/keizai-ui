@@ -6,7 +6,7 @@ export type TerminalEntry = {
 	preInvocation?: React.ReactNode;
 	postInvocation?: React.ReactNode;
 	title?: React.ReactNode;
-	message: string;
+	message: React.ReactNode | string;
 	isError: boolean;
 };
 

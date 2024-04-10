@@ -1,7 +1,11 @@
 import { AxiosError, isAxiosError } from 'axios';
 import { AlertCircle, ChevronRight } from 'lucide-react';
 
-import { INVOCATION_RESPONSE, STATUS } from '@/common/exceptions/invocations';
+import {
+	INVOCATION_RESPONSE,
+	STATUS,
+	transactionResultCode,
+} from '@/common/exceptions/invocations';
 import { ApiError, isApiError } from '@/common/hooks/useAxios';
 import { InvocationResponse } from '@/common/types/invocation';
 import { Method } from '@/common/types/method';
@@ -77,7 +81,7 @@ export const handleAxiosError = (error: unknown) => {
 	};
 };
 
-export const failedRunContract = () => {
+export const failedRunContract = (response: string) => {
 	return {
 		isError: true,
 		title: (
@@ -86,7 +90,9 @@ export const failedRunContract = () => {
 				Failed
 			</div>
 		),
-		message: INVOCATION_RESPONSE.FAILED_RUN_CONTRACT,
+		message:
+			transactionResultCode[response as keyof typeof transactionResultCode] ??
+			INVOCATION_RESPONSE.FAILED_RUN_CONTRACT,
 	};
 };
 
@@ -112,11 +118,26 @@ export const getInvocationResponse = (
 					message: response.response || 'No response',
 				};
 			case STATUS.FAILED:
-				return failedRunContract();
-			default:
-				throw new Error();
+				return failedRunContract(response.response);
 		}
-	} else {
-		throw new Error();
 	}
+
+	if (response.status === 'ERROR' && response.title) {
+		return {
+			isError: true,
+			title: (
+				<div className="flex items-center gap-2 text-red-500 font-semibold">
+					<AlertCircle size={16} />
+					{response.title.charAt(0).toUpperCase() + response.title.slice(1)}
+				</div>
+			),
+			message: (
+				<pre className="text-xs pr-2 whitespace-pre-wrap">
+					{response.response}
+				</pre>
+			),
+		};
+	}
+
+	throw new Error();
 };
