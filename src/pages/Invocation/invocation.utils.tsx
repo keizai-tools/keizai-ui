@@ -76,7 +76,12 @@ export const handleAxiosError = (error: unknown) => {
 
 	return {
 		isError: true,
-		title: 'Error',
+		title: (
+			<div className="flex items-center gap-2 text-red-500 font-semibold">
+				<AlertCircle size={16} />
+				Error
+			</div>
+		),
 		message: INVOCATION_RESPONSE.ERROR_DEFAULT,
 	};
 };
@@ -115,9 +120,11 @@ export const getInvocationResponse = (
 						'Post-Invocation response',
 					),
 					title: createContractResponseTitle(response.method),
-					message: response.response || 'No response',
+					message: response.response,
 				};
 			case STATUS.FAILED:
+				return failedRunContract(response.response);
+			case STATUS.ERROR:
 				return failedRunContract(response.response);
 		}
 	}
