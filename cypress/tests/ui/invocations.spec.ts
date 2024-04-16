@@ -302,6 +302,31 @@ describe('Invocations', () => {
 			});
 		});
 		describe('Run contract', () => {
+			it('Should return an increment value in descending order', () => {
+				for (let i = 1; i < 5; i++) {
+					cy.intercept(`${Cypress.env('apiUrl')}/invocation/*/run`, {
+						body: {
+							method: {
+								name: 'increment',
+								inputs: [],
+								outputs: [
+									{
+										type: 'SC_SPEC_TYPE_U32',
+									},
+								],
+								params: [],
+								docs: null,
+								invocationId: 'invocationId',
+							},
+							response: i,
+							status: 'SUCCESS',
+						},
+					}).as('runInvocation');
+					cy.getBySel('contract-input-btn-load').click();
+					cy.wait('@runInvocation');
+					cy.getBySel('terminal-entry-message').eq(0).should('have.text', i);
+				}
+			});
 			it('Should return a transaction error', () => {
 				cy.wait('@method');
 				for (let i = 0; i < txErrorCode.length; i++) {
