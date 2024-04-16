@@ -52,24 +52,27 @@ const Terminal = ({ entries }: { entries: TerminalEntry[] }) => {
 					className="flex flex-col gap-4 py-5"
 					data-test="terminal-entry-container"
 				>
-					{entries.map((entry, index) => (
-						<div
-							key={index}
-							className={`flex flex-col gap-1 text-sm text-zinc-200 ${
-								entry.isError ? 'border-red-500' : 'border-green-700'
-							} border-l-2 pl-2`}
-							data-test="terminal-entry-title"
-						>
-							{entry.preInvocation}
-							{entry.title}
-							<span className="ml-4" data-test="terminal-entry-message">
-								{entry.isError
-									? entry.message
-									: JSON.stringify(entry.message, null, 2)}
-							</span>
-							{entry.postInvocation}
-						</div>
-					))}
+					{entries
+						.slice()
+						.reverse()
+						.map((entry, index) => (
+							<div
+								key={index}
+								className={`flex flex-col gap-1 text-sm text-zinc-200 ${
+									entry.isError ? 'border-red-500' : 'border-green-700'
+								} border-l-2 pl-2`}
+								data-test="terminal-entry-title"
+							>
+								{entry.preInvocation}
+								{entry.title}
+								<span className="ml-4" data-test="terminal-entry-message">
+									{entry.isError
+										? entry.message
+										: JSON.stringify(entry.message, null, 2)}
+								</span>
+								{entry.postInvocation}
+							</div>
+						))}
 				</div>
 			</div>
 		</div>

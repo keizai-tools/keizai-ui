@@ -262,6 +262,7 @@ export const transactionResultCode = {
 	txMissingOperation: 'No operation was specified',
 	txTooEarly: 'The ledger closeTime was before the minTime',
 	txTooLate: 'The ledger closeTime was after the maxTime',
+	txSorobanInvalid: 'Soroban-specific preconditions were not met',
 };
 
 export const txErrorCode = [
@@ -274,4 +275,5 @@ export const txErrorCode = [
 	'txMissingOperation',
 	'txTooEarly',
 	'txTooLate',
+	'txSorobanInvalid',
 ];

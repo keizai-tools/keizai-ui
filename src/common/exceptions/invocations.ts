@@ -7,6 +7,7 @@ export enum INVOCATION_RESPONSE {
 export enum STATUS {
 	FAILED = 'FAILED',
 	SUCCESS = 'SUCCESS',
+	ERROR = 'ERROR',
 }
 
 export const transactionResultCode = {
@@ -21,4 +22,5 @@ export const transactionResultCode = {
 	txMissingOperation: 'No operation was specified',
 	txTooEarly: 'The ledger closeTime was before the minTime',
 	txTooLate: 'The ledger closeTime was after the maxTime',
+	txSorobanInvalid: 'Soroban-specific preconditions were not met',
 };
