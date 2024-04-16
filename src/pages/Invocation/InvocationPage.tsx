@@ -61,7 +61,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 				postInvocationValue={postInvocationValue}
 				isMissingKeys={isMissingKeys}
 			/>
-			<Terminal entries={contractResponses.reverse()} />
+			<Terminal entries={contractResponses} />
 		</div>
 	);
 };
