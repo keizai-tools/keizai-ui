@@ -31,8 +31,12 @@ const FunctionParameterInput = ({
 	}[];
 	defaultValue: string;
 }) => {
-	const { showEnvironments, handleSelectEnvironment, handleSearchEnvironment } =
-		useEnvironments();
+	const {
+		showEnvironments,
+		handleSelectEnvironment,
+		handleSearchEnvironment,
+		setShowEnvironments,
+	} = useEnvironments();
 	const { setParamValue, paramValue } = useParameters({ defaultValue });
 	const valueRef = React.useRef<HTMLInputElement>(null);
 
@@ -94,6 +98,7 @@ const FunctionParameterInput = ({
 						<EnvironmentDropdownContainer
 							handleSelect={handleSelect}
 							showEnvironments={showEnvironments}
+							setShowEnvironments={setShowEnvironments}
 						>
 							<EnvironmentInput
 								value={valueField.value}
