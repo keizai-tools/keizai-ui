@@ -17,7 +17,7 @@ export default function EnvironmentDropdown({
 
 	return (
 		<div
-			className="dropdown-menu absolute bg-background text-white border w-96 max-h-64 rounded mt-0.5 mx-2 flex shadow"
+			className="dropdown-menu absolute bg-background text-white border w-96 max-h-64 rounded mt-0.5 mx-2 flex shadow z-50"
 			data-test="dropdown-environments-container"
 		>
 			{environments.length > 0 ? (

@@ -25,8 +25,12 @@ const SaveContractDialog = ({
 	const { invocationId } = useParams();
 	const { mutate, isPending } = useEditInvocationMutation();
 	const { removeEventsFromStorage } = useContractEvents();
-	const { showEnvironments, handleSelectEnvironment, handleSearchEnvironment } =
-		useEnvironments();
+	const {
+		showEnvironments,
+		handleSelectEnvironment,
+		handleSearchEnvironment,
+		setShowEnvironments,
+	} = useEnvironments();
 	const { control, handleSubmit, setValue } = useForm({
 		defaultValues: {
 			contractId: '',
@@ -101,6 +105,7 @@ const SaveContractDialog = ({
 					<EnvironmentDropdownContainer
 						handleSelect={handleSelect}
 						showEnvironments={showEnvironments}
+						setShowEnvironments={setShowEnvironments}
 					>
 						<EnvironmentInput
 							value={contractId}

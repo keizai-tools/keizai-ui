@@ -42,5 +42,6 @@ export default function useEnvironments() {
 		selectEnvironment,
 		handleSearchEnvironment,
 		handleSelectEnvironment,
+		setShowEnvironments,
 	};
 }

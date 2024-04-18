@@ -408,6 +408,16 @@ describe('Environments management', () => {
 					.should('exist')
 					.and('be.visible');
 			});
+
+			it('Should hide dropdown when clicking outside', () => {
+				cy.getBySel('dropdown-environments-container').should('not.exist');
+				cy.getBySel('function-tab-parameter-input-value').type('{');
+				cy.getBySel('dropdown-environments-container')
+					.should('exist')
+					.and('be.visible');
+				cy.getBySel('breadcrumb-container').click();
+				cy.getBySel('dropdown-environments-container').should('not.exist');
+			});
 			it('Should show different environment values in the environment dropdown', () => {
 				cy.getBySel('dropdown-environments-container').should('not.exist');
 				cy.getBySel('function-tab-parameter-input-value').type('{');

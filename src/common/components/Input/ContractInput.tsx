@@ -25,8 +25,12 @@ const ContractInput = ({
 	const [contractId, setContractId] = React.useState(defaultValue);
 	const [showEditContractDialog, setShowEditContractDialog] =
 		React.useState(false);
-	const { showEnvironments, handleSelectEnvironment, handleSearchEnvironment } =
-		useEnvironments();
+	const {
+		showEnvironments,
+		handleSelectEnvironment,
+		handleSearchEnvironment,
+		setShowEnvironments,
+	} = useEnvironments();
 
 	const handleUpdateContractId = async () => {
 		if (contractId) {
@@ -76,6 +80,7 @@ const ContractInput = ({
 					<EnvironmentDropdownContainer
 						handleSelect={handleSelect}
 						showEnvironments={showEnvironments}
+						setShowEnvironments={setShowEnvironments}
 					>
 						<EnvironmentInput
 							value={contractId}
