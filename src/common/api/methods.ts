@@ -22,14 +22,17 @@ export const useEditParametersMethodMutation = () => {
 	const mutation = useMutation({
 		mutationFn: async ({
 			id,
+			invocationId,
 			parameters,
 		}: {
 			id: string;
+			invocationId: string;
 			parameters: { name: string; value: string }[];
 		}) =>
 			axios
 				?.patch(`/method`, {
 					id,
+					invocationId,
 					params: parameters,
 				})
 				.then((res) => res.data),
