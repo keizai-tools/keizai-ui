@@ -5,6 +5,8 @@ describe('Change password', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
 		cy.getBySel('sidebar-btn-user').click();
+		cy.intercept(`${Cypress.env('apiUrl')}/team`, { body: [] }).as('team');
+		cy.wait('@team');
 		cy.getBySel('user-dropdown-change-password').click();
 		cy.getBySel('change-password-form-container').click();
 		cy.url().should('include', `${Cypress.env('changePasswordUrl')}`);
