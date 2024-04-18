@@ -63,7 +63,10 @@ const FunctionsTab = ({
 							))}
 						</SelectContent>
 					</Select>
-					<ParametersForm selectedMethodId={selectedMethod?.id} />
+					<ParametersForm
+						selectedMethodId={selectedMethod?.id}
+						invocationId={invocationId}
+					/>
 				</div>
 			) : (
 				<div

@@ -12,7 +12,13 @@ import {
 import { Method, Parameter } from '@/common/types/method';
 
 export type ParametersFormType = { parameters: Method['params'] };
-const ParametersFormContent = ({ data }: { data: Method }) => {
+const ParametersFormContent = ({
+	data,
+	invocationId,
+}: {
+	data: Method;
+	invocationId: string;
+}) => {
 	const { mutate: editParameters } = useEditParametersMethodMutation();
 	const { control, watch, formState, reset, setValue } =
 		useForm<ParametersFormType>({
@@ -37,6 +43,7 @@ const ParametersFormContent = ({ data }: { data: Method }) => {
 			debounce((value) => {
 				editParameters({
 					id: data.id,
+					invocationId,
 					parameters: value.map((param: Parameter) => ({
 						name: param.name,
 						value:
@@ -49,7 +56,7 @@ const ParametersFormContent = ({ data }: { data: Method }) => {
 					parameters: value,
 				});
 			}, 500),
-		[data.id, editParameters, reset],
+		[data.id, editParameters, invocationId, reset],
 	);
 
 	React.useEffect(() => {
@@ -91,8 +98,10 @@ const ParametersFormContent = ({ data }: { data: Method }) => {
 
 const ParametersForm = ({
 	selectedMethodId,
+	invocationId,
 }: {
 	selectedMethodId?: string;
+	invocationId: string;
 }) => {
 	const { data, isLoading } = useMethodQuery({
 		id: selectedMethodId,
@@ -113,7 +122,13 @@ const ParametersForm = ({
 		return null;
 	}
 
-	return <ParametersFormContent key={data.id} data={data} />;
+	return (
+		<ParametersFormContent
+			key={data.id}
+			data={data}
+			invocationId={invocationId}
+		/>
+	);
 };
 
 export default ParametersForm;
