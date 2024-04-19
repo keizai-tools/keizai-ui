@@ -1,43 +1,47 @@
-import { Copy } from 'lucide-react';
+import { Badge, Copy } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
+import SettingButton from './SettingButton';
 import UserButton from './UserButton';
 
+import { useTeamsQuery } from '@/common/api/teams';
+import { Team } from '@/common/types/team';
+
 function SidebarV2() {
-	const location = useLocation();
-	const currentRoute = location.pathname;
+	const { data } = useTeamsQuery();
+	const { pathname } = useLocation();
+
 	return (
 		<div
-			className="h-screen w-[250px] flex flex-col items-center justify-between bg-foreground dark:bg-background border-r dark:border-r-border py-4"
+			className="h-screen w-[80px] flex flex-col items-center justify-between bg-foreground dark:bg-background border-r dark:border-r-border py-4"
 			data-test="sidebar-container"
 		>
-			<div className="flex flex-col w-full">
-				<div className="flex flex-col mt-4 p-3">
+			<div className="flex flex-col items-center">
+				<img
+					src="/logo.svg"
+					width={45}
+					height={45}
+					alt="Keizai Logo"
+					data-test="sidebar-img"
+				/>
+				<Badge className="mt-2">BETA</Badge>
+				<div className="flex flex-col mt-4 items-center">
 					<Link
 						to="/"
 						data-test="sidebar-link"
-						className={`flex gap-2 items-center hover:text-primary px-4 py-2 ${
-							currentRoute === '/' &&
-							'text-primary border border-border rounded-md'
+						className={`hover:text-primary p-4 ${
+							pathname === '/' && 'text-primary'
 						}`}
 					>
-						<Copy data-test="sidebar-btn-copy" size={16} />
-						<span>Home</span>
+						<Copy data-test="sidebar-btn-copy" />
 					</Link>
+					{pathname !== '/' && (
+						<UserButton teams={data as Team[]} currentRoute={pathname} />
+					)}
 				</div>
 			</div>
-			<div className="flex justify-between w-full px-4 mb-4">
-				<div className="flex gap-2 items-center">
-					<img
-						src="/logo.svg"
-						width={34}
-						height={34}
-						alt="Keizai Logo"
-						data-test="sidebar-img"
-					/>
-					<span className="font-semibold text-lg">Keizai</span>
-				</div>
-				<UserButton />
+			<div className="flex flex-col gap-2 mb-4">
+				<SettingButton />
 			</div>
 		</div>
 	);

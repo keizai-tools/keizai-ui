@@ -1,23 +1,38 @@
-import { LogOut, UnlockKeyhole, User2 } from 'lucide-react';
+import { User2, UsersRound } from 'lucide-react';
+import React from 'react';
 import { useNavigate } from 'react-router';
 
 import { Button } from '../ui/button';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
-	DropdownMenuItem,
+	DropdownMenuCheckboxItem,
 	DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
-import { useAuth } from '@/services/auth/hook/useAuth';
+import { Team } from '@/common/types/team';
 
-function UserButton() {
-	const { signOut } = useAuth();
+function UserButton({
+	teams,
+	currentRoute,
+}: {
+	teams: Team[];
+	currentRoute: string;
+}) {
+	const [selectedItem, setSelectedItem] = React.useState<string | null>(null);
 	const navigate = useNavigate();
-
-	const navigateChangePassword = () => {
-		navigate('/change-password');
+	console.log(currentRoute);
+	const handleCheckedChange = (itemName: string) => {
+		setSelectedItem(itemName === selectedItem ? null : itemName);
 	};
+
+	React.useEffect(() => {
+		if (currentRoute === '/user') {
+			setSelectedItem('/user');
+		}
+
+		setSelectedItem(currentRoute);
+	}, [currentRoute]);
 
 	return (
 		<DropdownMenu>
@@ -28,25 +43,34 @@ function UserButton() {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
 				side="right"
-				align="end"
+				align="start"
 				data-test="user-dropdown-container"
 			>
-				<DropdownMenuItem
-					data-test="user-dropdown-change-password"
+				<DropdownMenuCheckboxItem
+					data-test="user-dropdown-user-item"
 					className="flex items-center gap-2 cursor-pointer pr-8 py-2"
-					onClick={navigateChangePassword}
+					checked={selectedItem === '/user'}
+					onCheckedChange={() => handleCheckedChange('user')}
+					onClick={() => navigate('/user')}
 				>
-					<UnlockKeyhole className="h-4 w-4" />
-					<span>Change password</span>
-				</DropdownMenuItem>
-				<DropdownMenuItem
-					data-test="user-dropdown-log-out"
-					className="flex items-center gap-2 cursor-pointer pr-8 py-2 mt-1"
-					onClick={signOut}
-				>
-					<LogOut className="h-4 w-4" />
-					<span>Log out</span>
-				</DropdownMenuItem>
+					<User2 className="h-4 w-4" />
+					<span>Personal account</span>
+				</DropdownMenuCheckboxItem>
+				{teams?.map((team) => {
+					return (
+						<DropdownMenuCheckboxItem
+							key={team?.id}
+							data-test="user-dropdown-team-item"
+							className="flex items-center gap-2 cursor-pointer pr-8 py-2 mt-1"
+							checked={selectedItem === `/team/${team?.id}`}
+							onCheckedChange={() => handleCheckedChange(`/team/${team?.id}`)}
+							onClick={() => navigate(`/team/${team?.id}`)}
+						>
+							<UsersRound className="h-4 w-4" />
+							<span>{team?.name}</span>
+						</DropdownMenuCheckboxItem>
+					);
+				})}
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
