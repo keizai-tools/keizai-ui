@@ -1,4 +1,4 @@
-import { LogOut, UnlockKeyhole, User2 } from 'lucide-react';
+import { LogOut, UnlockKeyhole, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router';
 
 import { Button } from '../ui/button';
@@ -23,7 +23,7 @@ function SettingButton() {
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<Button variant="outline" size="icon" data-test="sidebar-btn-user">
-					<User2 className="h-[1.2rem] w-[1.2rem]" />
+					<Settings className="h-[1.2rem] w-[1.2rem]" />
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
