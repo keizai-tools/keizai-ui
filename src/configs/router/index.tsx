@@ -7,6 +7,7 @@ import Login from '@/common/components/auth/Login';
 import RecoverPassword from '@/common/components/auth/RecoverPassword';
 import ResetPassword from '@/common/components/auth/ResetPassword';
 import CollectionCTAPage from '@/pages/Collection/CollectionCTAPage';
+import CollectionHome from '@/pages/Collection/CollectionHome';
 import CollectionPage from '@/pages/Collection/CollectionPage';
 import InvocationPage from '@/pages/Invocation/InvocationPage';
 import AuthPage from '@/pages/auth/AuthPage';
@@ -33,20 +34,42 @@ const router = createBrowserRouter([
 				element: <ChangePassword />,
 			},
 			{
-				path: 'collection/:collectionId',
-				element: <CollectionPage />,
+				path: 'user',
+				element: <CollectionHome />,
 				children: [
 					{
-						index: true,
-						element: <CollectionCTAPage />,
+						path: 'collection/:collectionId',
+						element: <CollectionPage />,
+						children: [
+							{
+								index: true,
+								element: <CollectionCTAPage />,
+							},
+							{
+								path: 'variables',
+								element: <CollectionVariablesContainer />,
+							},
+							{
+								path: 'invocation/:invocationId',
+								element: <InvocationPage />,
+							},
+						],
 					},
+				],
+			},
+			{
+				path: 'team/:teamId',
+				element: <CollectionHome />,
+				children: [
 					{
-						path: 'variables',
-						element: <CollectionVariablesContainer />,
-					},
-					{
-						path: 'invocation/:invocationId',
-						element: <InvocationPage />,
+						path: 'collection/:collectionId',
+						element: <CollectionPage />,
+						children: [
+							{
+								index: true,
+								element: <CollectionCTAPage />,
+							},
+						],
 					},
 				],
 			},
