@@ -37,7 +37,7 @@ export const useNewCollectionMutation = () => {
 			axios?.post('/collection', { name }).then((res) => res.data),
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: ['collections'] });
-			navigate(`/collection/${data.id}`);
+			navigate(`/user/collection/${data.id}`);
 		},
 	});
 
