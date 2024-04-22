@@ -21,7 +21,7 @@ function UserButton({
 }) {
 	const [selectedItem, setSelectedItem] = React.useState<string | null>(null);
 	const navigate = useNavigate();
-	console.log(currentRoute);
+
 	const handleCheckedChange = (itemName: string) => {
 		setSelectedItem(itemName === selectedItem ? null : itemName);
 	};
