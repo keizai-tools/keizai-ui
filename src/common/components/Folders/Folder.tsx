@@ -1,138 +1,104 @@
-import { GanttChart } from 'lucide-react';
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import { ArrowLeftIcon, PlusIcon } from 'lucide-react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
-import DeleteEntityDialog from '../Entity/DeleteEntityDialog';
-import EditEntityDialog from '../Entity/EditEntityDialog';
-import MoreOptions from '../Entity/MoreOptions';
-import InvocationListItem from '../Invocations/InvocationListItem';
-import NewInvocationButton from '../Invocations/NewInvocationButton';
+import NewEntityDialog from '../Entity/NewEntityDialog';
+import { Button } from '../ui/button';
+import Folder from './Folder';
 
 import {
-	useDeleteFolderMutation,
-	useEditFolderMutation,
+	useCreateFolderMutation,
+	useFoldersByCollectionIdQuery,
 } from '@/common/api/folders';
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from '@/common/components/ui/accordion';
-import { Folder as IFolder } from '@/common/types/folder';
+import { useEndpoint } from '@/common/hooks/useEndpoint';
 
-const Folder = ({ folder }: { folder: IFolder }) => {
-	const params = useParams();
-	const [isOpen, setIsOpen] = React.useState<string[] | undefined>();
-	const [openDialog, setOpenDialog] = React.useState<'edit' | 'delete' | null>(
-		null,
-	);
-	const { mutate: deleteFolderMutation } = useDeleteFolderMutation({
-		collectionId: params?.collectionId,
+const Folders = () => {
+	const { collectionId } = useParams();
+	const { endpoint } = useEndpoint();
+	const { data, isLoading } = useFoldersByCollectionIdQuery({
+		id: collectionId,
 	});
-	const { mutate: editFolderMutation, isPending: isEditingFolder } =
-		useEditFolderMutation({ collectionId: params?.collectionId });
+	const { mutate, isPending } = useCreateFolderMutation();
+	const navigate = useNavigate();
 
-	React.useLayoutEffect(() => {
-		if (params?.invocationId && folder) {
-			const folderHasInvocation = folder.invocations?.find(
-				(invocation) => invocation.id === params?.invocationId,
-			);
-
-			if (folderHasInvocation) {
-				setIsOpen([folder.id]);
-			}
+	const onCreateFolder = async ({ name }: { name: string }) => {
+		if (collectionId) {
+			await mutate({ name, collectionId });
+			window.umami.track('Create folder');
 		}
-	}, [folder, params?.invocationId]);
+	};
 
 	return (
-		<>
-			<Accordion
-				type="multiple"
-				className="w-full"
-				value={isOpen}
-				onValueChange={() => {
-					if (isOpen?.includes(folder.id)) {
-						setIsOpen(isOpen?.filter((id) => id !== folder.id));
-					} else {
-						setIsOpen(isOpen ? [...isOpen, folder.id] : [folder.id]);
-					}
-				}}
-			>
-				<AccordionItem value={folder.id} className="border-none">
-					<AccordionTrigger
-						className="h-10 w-full "
-						data-test="collection-folder-container"
+		<div
+			className="min-w-[250px] flex flex-col justify-between border-r dark:border-r-border h-full px-3 py-1 gap-4"
+			data-test="collections-container"
+		>
+			<div data-test="folders-container">
+				<Button
+					variant="link"
+					className="flex items-center gap-2 text-xs text-primary p-0"
+					onClick={() => navigate(endpoint)}
+				>
+					<ArrowLeftIcon size={16} /> Collections
+				</Button>
+				<div
+					className="flex items-center justify-between mb-3"
+					data-test="collections-header"
+				>
+					<h4
+						className="text-lg font-bold"
+						data-test="collections-header-title"
 					>
-						<div className="flex justify-between items-center w-full text-slate-100 text-sm">
-							<div
-								className="flex gap-1 items-center"
-								data-test="folder-accordion-title"
-							>
-								<GanttChart size={16} />
-								<span data-test="collection-folder-name">{folder.name}</span>
-							</div>
-							<div>
-								<MoreOptions
-									onClickDelete={(e) => {
-										e.stopPropagation();
-										setOpenDialog('delete');
-									}}
-									onClickEdit={(e) => {
-										e.stopPropagation();
-										setOpenDialog('edit');
-									}}
-								/>
-							</div>
-						</div>
-					</AccordionTrigger>
-					<AccordionContent>
-						<div
-							className="flex flex-col justify-start text-slate-100"
-							data-test="collection-folder-invocation-list"
+						Folders
+					</h4>
+					<NewEntityDialog
+						title="New folder"
+						description="Let's name your folder"
+						defaultName="Folder"
+						isLoading={isPending}
+						onSubmit={onCreateFolder}
+					>
+						<Button
+							variant="link"
+							className="text-xs px-0 py-1 h-auto flex gap-1 text-slate-500	hover:text-slate-100"
+							data-test="collections-header-btn-new"
 						>
-							{folder.invocations?.map((invocation) => (
-								<InvocationListItem
-									key={invocation.id}
-									invocation={invocation}
-								/>
-							))}
-							<div
-								className="ml-4"
-								data-test="collection-folder-new-invocation-btn"
-							>
-								<NewInvocationButton folderId={folder.id} />
-							</div>
-						</div>
-					</AccordionContent>
-				</AccordionItem>
-			</Accordion>
-			<DeleteEntityDialog
-				title="Are you sure?"
-				description="This will permanently delete your folder and all related invocations."
-				open={openDialog === 'delete'}
-				onOpenChange={() => setOpenDialog(null)}
-				onConfirm={() => {
-					deleteFolderMutation(folder.id);
-					window.umami.track('Delete folder');
-					setOpenDialog(null);
-				}}
-			/>
-			<EditEntityDialog
-				id={folder.id}
-				defaultName={folder.name}
-				open={openDialog === 'edit'}
-				onOpenChange={() => setOpenDialog(null)}
-				title="Edit folder"
-				description="Let's name your folder"
-				onEdit={({ name }) => {
-					editFolderMutation({ id: folder.id, name: name });
-					window.umami.track('Edit folder');
-					setOpenDialog(null);
-				}}
-				isLoading={isEditingFolder}
-			/>
-		</>
+							<PlusIcon size={12} /> Add
+						</Button>
+					</NewEntityDialog>
+				</div>
+				{isLoading ? (
+					<span
+						className="text-xs text-slate-400"
+						data-test="collection-loading"
+					>
+						Loading folders...
+					</span>
+				) : data && data.length > 0 ? (
+					<div className="flex flex-col text-slate-400">
+						{data.map((folder) => (
+							<Folder key={folder.id} folder={folder} />
+						))}
+					</div>
+				) : (
+					<span
+						className="text-xs text-slate-400"
+						data-test="collection-empty-folders"
+					>
+						Create your first folder here
+					</span>
+				)}
+			</div>
+			<div className="mb-4 w-full text-center text-base hover:underline font-semibold">
+				<Link
+					className="text-primary"
+					data-test="collections-variables-btn-link"
+					to={`${endpoint}/collection/${collectionId}/variables`}
+				>
+					Collection variables
+				</Link>
+			</div>
+		</div>
 	);
 };
 
-export default Folder;
+export default Folders;

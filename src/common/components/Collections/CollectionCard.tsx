@@ -10,15 +10,18 @@ import {
 	useDeleteCollectionMutation,
 	useUpdateCollectionMutation,
 } from '@/common/api/collections';
+import { useEndpoint } from '@/common/hooks/useEndpoint';
 
 const CollectionCard = ({
 	id,
 	name,
+	teamId,
 	foldersCount = 0,
 	invocationsCount = 0,
 }: {
 	id: string;
 	name: string;
+	teamId: string | undefined;
 	foldersCount?: number;
 	invocationsCount?: number;
 }) => {
@@ -26,8 +29,10 @@ const CollectionCard = ({
 		'edit' | 'delete' | null
 	>(null);
 	const navigate = useNavigate();
-	const { mutate: deleteCollectionMutation } = useDeleteCollectionMutation();
-	const { mutate, isPending } = useUpdateCollectionMutation();
+	const { endpoint } = useEndpoint();
+	const { mutate: deleteCollectionMutation } =
+		useDeleteCollectionMutation(teamId);
+	const { mutate, isPending } = useUpdateCollectionMutation(teamId);
 
 	const handleEditCollection = async ({ name }: { name: string }) => {
 		await mutate({ id, name });
@@ -41,7 +46,7 @@ const CollectionCard = ({
 				variant="ghost"
 				className="p-6 flex flex-col justify-between items-start gap-4 border-solid border-2 rounded-lg border-primary h-[200px] w-[300px] font-bold"
 				data-test="collection-folder-btn"
-				onClick={() => navigate(`/collection/${id}`)}
+				onClick={() => navigate(`${endpoint}/collection/${id}`)}
 			>
 				<span data-test="collection-folder-title">{name}</span>
 				<div className="flex flex-col justify-start items-start">
