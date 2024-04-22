@@ -57,19 +57,19 @@ const router = createBrowserRouter([
 					},
 				],
 			},
+		],
+	},
+	{
+		path: 'team/:teamId',
+		element: <CollectionHome />,
+		children: [
 			{
-				path: 'team/:teamId',
-				element: <CollectionHome />,
+				path: 'collection/:collectionId',
+				element: <CollectionPage />,
 				children: [
 					{
-						path: 'collection/:collectionId',
-						element: <CollectionPage />,
-						children: [
-							{
-								index: true,
-								element: <CollectionCTAPage />,
-							},
-						],
+						index: true,
+						element: <CollectionCTAPage />,
 					},
 				],
 			},
