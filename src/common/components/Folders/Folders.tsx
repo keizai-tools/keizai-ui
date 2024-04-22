@@ -9,18 +9,20 @@ import {
 	useCreateFolderMutation,
 	useFoldersByCollectionIdQuery,
 } from '@/common/api/folders';
+import { useEndpoint } from '@/common/hooks/useEndpoint';
 
 const Folders = () => {
-	const params = useParams();
+	const { collectionId } = useParams();
+	const { endpoint } = useEndpoint();
 	const { data, isLoading } = useFoldersByCollectionIdQuery({
-		id: params.collectionId,
+		id: collectionId,
 	});
 	const { mutate, isPending } = useCreateFolderMutation();
 	const navigate = useNavigate();
 
 	const onCreateFolder = async ({ name }: { name: string }) => {
-		if (params.collectionId) {
-			await mutate({ name, collectionId: params.collectionId });
+		if (collectionId) {
+			await mutate({ name, collectionId });
 			window.umami.track('Create folder');
 		}
 	};
@@ -34,7 +36,7 @@ const Folders = () => {
 				<Button
 					variant="link"
 					className="flex items-center gap-2 text-xs text-primary p-0"
-					onClick={() => navigate('/')}
+					onClick={() => navigate(endpoint)}
 				>
 					<ArrowLeftIcon size={16} /> Collections
 				</Button>
@@ -90,7 +92,7 @@ const Folders = () => {
 				<Link
 					className="text-primary"
 					data-test="collections-variables-btn-link"
-					to={`/user/collection/${params.collectionId}/variables`}
+					to={`${endpoint}/collection/${collectionId}/variables`}
 				>
 					Collection variables
 				</Link>

@@ -1,4 +1,5 @@
 import { ListPlusIcon } from 'lucide-react';
+import { useParams } from 'react-router-dom';
 
 import NewEntityDialog from '../Entity/NewEntityDialog';
 import { Button } from '../ui/button';
@@ -6,7 +7,8 @@ import { Button } from '../ui/button';
 import { useNewCollectionMutation } from '@/common/api/collections';
 
 const CollectionPlaceholder = () => {
-	const { mutate, isPending } = useNewCollectionMutation();
+	const { teamId } = useParams();
+	const { mutate, isPending } = useNewCollectionMutation(teamId);
 
 	return (
 		<NewEntityDialog
