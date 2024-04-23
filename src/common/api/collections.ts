@@ -12,7 +12,7 @@ export const useCollectionsQuery = (teamId?: string) => {
 	const { apiUrl } = getEndpoint(teamId, 'collection');
 
 	const query = useQuery<Collection[]>({
-		queryKey: ['collections'],
+		queryKey: ['collections', teamId],
 		queryFn: async () => axios?.get(apiUrl).then((res) => res.data),
 	});
 
