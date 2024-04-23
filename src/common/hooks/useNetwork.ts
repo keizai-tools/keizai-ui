@@ -6,16 +6,16 @@ import useContractEvents from './useContractEvents';
 
 function useNetwork(defaultNetwork: string) {
 	const [selectNetwork, setSelectNetwork] = React.useState(defaultNetwork);
-	const { mutate } = useEditNetworkMutation();
+	const { teamId, invocationId } = useParams();
+	const { mutate } = useEditNetworkMutation(teamId);
 	const { removeEventsFromStorage } = useContractEvents();
-	const params = useParams();
 
 	const handleUpdateNetwork = async (network: string) => {
 		await mutate({
 			network,
-			id: params.invocationId as string,
+			id: invocationId as string,
 		});
-		removeEventsFromStorage(params.invocationId as string);
+		removeEventsFromStorage(invocationId as string);
 	};
 
 	return { selectNetwork, setSelectNetwork, handleUpdateNetwork };

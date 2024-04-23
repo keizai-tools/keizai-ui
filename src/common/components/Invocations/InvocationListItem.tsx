@@ -11,15 +11,20 @@ import {
 	useDeleteInvocationMutation,
 	useEditInvocationMutation,
 } from '@/common/api/invocations';
+import { useEndpoint } from '@/common/hooks/useEndpoint';
 import { Invocation } from '@/common/types/invocation';
 
 const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
-	const params = useParams();
+	const { collectionId, teamId, invocationId } = useParams();
 	const navigate = useNavigate();
+	const { endpoint } = useEndpoint();
 	const [openDialog, setOpenDialog] = React.useState<'edit' | 'delete' | null>(
 		null,
 	);
-	const { mutate: deleteInvocationMutation } = useDeleteInvocationMutation();
+	const { mutate: deleteInvocationMutation } = useDeleteInvocationMutation(
+		collectionId,
+		teamId,
+	);
 	const { mutate: editInvocationMutation, isPending: isEditingInvocation } =
 		useEditInvocationMutation();
 
@@ -38,9 +43,7 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
 						<div
 							data-test="invocation-list-container"
 							className={`flex gap-1 items-center ${
-								params?.invocationId &&
-								params?.invocationId === invocation.id &&
-								'text-primary'
+								invocationId && invocationId === invocation.id && 'text-primary'
 							}`}
 						>
 							<FileText size={16} />
@@ -69,8 +72,8 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
 				onConfirm={() => {
 					deleteInvocationMutation(invocation.id);
 					window.umami.track('Delete invocation');
-					if (params?.invocationId === invocation.id) {
-						navigate('/user/collection/' + params.collectionId);
+					if (invocationId === invocation.id) {
+						navigate(`${endpoint}/collection/${collectionId}`);
 					}
 					setOpenDialog(null);
 				}}

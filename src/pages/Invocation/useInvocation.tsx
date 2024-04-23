@@ -18,8 +18,8 @@ import { useAuth } from '@/services/auth/hook/useAuth';
 const useInvocation = (invocation: Invocation) => {
 	const { toast } = useToast();
 	const { user } = useAuth();
-	const { collectionId } = useParams();
-	const runInvocation = useRunInvocationQuery({ id: invocation.id });
+	const { collectionId, teamId } = useParams();
+	const runInvocation = useRunInvocationQuery({ id: invocation.id, teamId });
 	const [isRunningInvocation, setIsRunningInvocation] = React.useState(false);
 	const [contractResponses, setContractResponses] = React.useState<
 		TerminalEntry[]
