@@ -1,7 +1,9 @@
+import { apiUrl } from './exceptions/constants';
+
 describe('Sidebar', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
-		cy.intercept(`${Cypress.env('apiUrl')}/team`, {
+		cy.intercept(`${apiUrl}/team`, {
 			fixture: './teams/all-teams.json',
 		}).as('team');
 		cy.wait('@team');
@@ -18,7 +20,9 @@ describe('Sidebar', () => {
 			.and('have.attr', 'href', '/');
 		cy.getBySel('sidebar-btn-copy').should('exist').and('be.visible');
 		cy.getBySel('sidebar-btn-setting').should('exist').and('be.visible');
+		cy.getBySel('sidebar-btn-user').should('exist').and('be.visible');
 		cy.getBySel('setting-dropdown-container').should('not.exist');
+		cy.getBySel('user-dropdown-container').should('not.exist');
 		cy.getBySel('theme-dropdown-container').should('not.exist');
 	});
 	// We are remvoving the theme selector for now
@@ -36,31 +40,34 @@ describe('Sidebar', () => {
 		cy.getBySel('theme-dropdown-container').should('not.exist');
 	});
 	it('Should show the user dropdown menu', () => {
-		cy.intercept(`${Cypress.env('apiUrl')}/collection`, { body: [] }).as(
-			'Collection',
+		cy.intercept(`${apiUrl}/collection`, { body: [] }).as('userCollection');
+		cy.intercept(`${apiUrl}/team/*/collection`, { body: [] }).as(
+			'teamCollection',
 		);
 
 		cy.getBySel('sidebar-container').should('exist').and('be.visible');
-		cy.getBySel('sidebar-btn-user').should('not.exist');
+		cy.getBySel('sidebar-btn-user').should('exist');
+		cy.getBySel('sidebar-btn-user').click();
+		cy.getBySel('user-dropdown-user-item')
+			.find('span.absolute > span')
+			.should('not.exist');
+		cy.getBySel('user-dropdown-team-item')
+			.find('span.absolute > span')
+			.should('not.exist');
+		cy.getBySel('home-header-title').click({ force: true });
 
 		cy.getBySel('home-workspace-list-user').should('be.visible').click();
-		cy.wait('@Collection');
+		cy.wait('@userCollection');
 		cy.url().should('includes', '/user');
-		cy.getBySel('sidebar-btn-user').should('exist');
 		cy.getBySel('sidebar-link').click();
-		cy.getBySel('sidebar-btn-user').should('not.exist');
 
 		cy.getBySel('home-workspace-list-team').eq(0).should('be.visible').click();
-		cy.wait('@Collection');
+		cy.wait('@teamCollection');
 		cy.url().should('includes', '/team');
 		cy.getBySel('sidebar-btn-user').should('exist');
-		cy.getBySel('sidebar-link').click();
-		cy.getBySel('sidebar-btn-user').should('not.exist');
 	});
 	it('Should navigate between collections using the user dropdown menu and show checked item', () => {
-		cy.intercept(`${Cypress.env('apiUrl')}/collection`, { body: [] }).as(
-			'Collection',
-		);
+		cy.intercept(`${apiUrl}/collection`, { body: [] }).as('Collection');
 
 		cy.getBySel('sidebar-container').should('exist').and('be.visible');
 		cy.getBySel('home-workspace-list-user').should('be.visible').click();
