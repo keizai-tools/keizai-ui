@@ -22,17 +22,17 @@ function SettingButton() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="outline" size="icon" data-test="sidebar-btn-user">
+				<Button variant="outline" size="icon" data-test="sidebar-btn-setting">
 					<Settings className="h-[1.2rem] w-[1.2rem]" />
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
 				side="right"
 				align="end"
-				data-test="user-dropdown-container"
+				data-test="setting-dropdown-container"
 			>
 				<DropdownMenuItem
-					data-test="user-dropdown-change-password"
+					data-test="setting-dropdown-change-password"
 					className="flex items-center gap-2 cursor-pointer pr-8 py-2"
 					onClick={navigateChangePassword}
 				>
@@ -40,7 +40,7 @@ function SettingButton() {
 					<span>Change password</span>
 				</DropdownMenuItem>
 				<DropdownMenuItem
-					data-test="user-dropdown-log-out"
+					data-test="setting-dropdown-log-out"
 					className="flex items-center gap-2 cursor-pointer pr-8 py-2 mt-1"
 					onClick={signOut}
 				>
