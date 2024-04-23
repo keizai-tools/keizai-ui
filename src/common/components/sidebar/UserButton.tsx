@@ -27,12 +27,14 @@ function UserButton({
 	};
 
 	React.useEffect(() => {
-		if (currentRoute === '/user') {
-			setSelectedItem('/user');
-		}
+		if (currentRoute !== selectedItem) {
+			if (currentRoute === '/user') {
+				setSelectedItem('/user');
+			}
 
-		setSelectedItem(currentRoute);
-	}, [currentRoute]);
+			setSelectedItem(currentRoute);
+		}
+	}, [currentRoute, selectedItem]);
 
 	return (
 		<DropdownMenu>
