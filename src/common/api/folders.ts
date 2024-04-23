@@ -1,47 +1,72 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import useAxios from '../hooks/useAxios';
+import { useEndpoint } from '../hooks/useEndpoint';
 import { Folder } from '../types/folder';
 
-export const useFoldersQuery = () => {
+export const useFoldersQuery = (teamId?: string) => {
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'folder');
 
 	const query = useQuery<Folder[]>({
 		queryKey: ['folders'],
-		queryFn: async () => axios?.get('/folder').then((res) => res.data),
+		queryFn: async () => axios?.get(apiUrl).then((res) => res.data),
 	});
 
 	return query;
 };
 
-export const useFolderQuery = ({ id }: { id?: string }) => {
+export const useFolderQuery = ({
+	id,
+	teamId,
+}: {
+	id?: string;
+	teamId?: string;
+}) => {
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'folder');
 
 	const query = useQuery<Folder>({
 		queryKey: ['folder', id],
-		queryFn: async () => axios?.get(`/folder/${id}`).then((res) => res.data),
+		queryFn: async () => axios?.get(`${apiUrl}/${id}`).then((res) => res.data),
 		enabled: !!id,
 	});
 
 	return query;
 };
 
-export const useFoldersByCollectionIdQuery = ({ id }: { id?: string }) => {
+export const useFoldersByCollectionIdQuery = ({
+	collectionId,
+	teamId,
+}: {
+	collectionId?: string;
+	teamId?: string;
+}) => {
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'collection');
 
 	const query = useQuery<Folder[]>({
-		queryKey: ['collection', id, 'folders'],
+		queryKey: ['collection', collectionId, 'folders'],
 		queryFn: async () =>
-			axios?.get(`/collection/${id}/folders`).then((res) => res.data),
-		enabled: !!id,
+			axios?.get(`${apiUrl}/${collectionId}/folders`).then((res) => res.data),
+		enabled: !!collectionId,
 	});
 
 	return query;
 };
 
-export const useCreateFolderMutation = () => {
+export const useCreateFolderMutation = (teamId?: string) => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'folder');
 
 	const mutation = useMutation({
 		mutationFn: async ({
@@ -50,8 +75,7 @@ export const useCreateFolderMutation = () => {
 		}: {
 			name: string;
 			collectionId: string;
-		}) =>
-			axios?.post('/folder', { name, collectionId }).then((res) => res.data),
+		}) => axios?.post(apiUrl, { name, collectionId }).then((res) => res.data),
 		onSuccess: (_, { collectionId }) => {
 			queryClient.invalidateQueries({
 				queryKey: ['collection', collectionId, 'folders'],
@@ -64,15 +88,20 @@ export const useCreateFolderMutation = () => {
 
 export const useDeleteFolderMutation = ({
 	collectionId,
+	teamId,
 }: {
 	collectionId?: string;
+	teamId?: string;
 }) => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'folder');
 
 	const mutation = useMutation({
 		mutationFn: async (id: string) =>
-			axios?.delete(`/folder/${id}`).then((res) => res.data),
+			axios?.delete(`${apiUrl}/${id}`).then((res) => res.data),
 		onMutate: async (id) => {
 			await queryClient.cancelQueries({
 				queryKey: ['collection', collectionId, 'folders'],
@@ -105,15 +134,20 @@ export const useDeleteFolderMutation = ({
 
 export const useEditFolderMutation = ({
 	collectionId,
+	teamId,
 }: {
 	collectionId?: string;
+	teamId?: string;
 }) => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'folder');
 
 	const mutation = useMutation({
 		mutationFn: async ({ id, name }: { id: string; name: string }) =>
-			axios?.patch('/folder', { id, name }).then((res) => res.data),
+			axios?.patch(apiUrl, { id, name }).then((res) => res.data),
 		onMutate: async ({ id, name }) => {
 			await queryClient.cancelQueries({
 				queryKey: ['collection', collectionId, 'folders'],
