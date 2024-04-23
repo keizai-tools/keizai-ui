@@ -60,6 +60,18 @@ const router = createBrowserRouter([
 			{
 				path: 'team/:teamId',
 				element: <CollectionHome />,
+				children: [
+					{
+						path: 'collection/:collectionId',
+						element: <CollectionPage />,
+						children: [
+							{
+								index: true,
+								element: <CollectionCTAPage />,
+							},
+						],
+					},
+				],
 			},
 		],
 	},
