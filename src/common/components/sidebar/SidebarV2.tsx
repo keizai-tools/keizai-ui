@@ -26,21 +26,19 @@ function SidebarV2() {
 				/>
 				<Badge className="mt-2">BETA</Badge>
 				<div className="flex flex-col mt-4 items-center">
-					<Link
-						to="/"
-						data-test="sidebar-link"
-						className={`hover:text-primary p-4 ${
-							pathname === '/' && 'text-primary'
-						}`}
-					>
-						<Copy data-test="sidebar-btn-copy" />
-					</Link>
-					{pathname !== '/' && (
-						<UserButton teams={data as Team[]} currentRoute={pathname} />
-					)}
+					<UserButton teams={data as Team[]} currentRoute={pathname} />
 				</div>
 			</div>
-			<div className="flex flex-col gap-2 mb-4">
+			<div className="flex flex-col gap-2 mb-4 items-center">
+				<Link
+					to="/"
+					data-test="sidebar-link"
+					className={`hover:text-primary p-4 ${
+						pathname === '/' && 'text-primary'
+					}`}
+				>
+					<Copy data-test="sidebar-btn-copy" />
+				</Link>
 				<SettingButton />
 			</div>
 		</div>
