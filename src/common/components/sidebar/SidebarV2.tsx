@@ -5,11 +5,13 @@ import SettingButton from './SettingButton';
 import UserButton from './UserButton';
 
 import { useTeamsQuery } from '@/common/api/teams';
+import { useEndpoint } from '@/common/hooks/useEndpoint';
 import { Team } from '@/common/types/team';
 
 function SidebarV2() {
 	const { data } = useTeamsQuery();
 	const { pathname } = useLocation();
+	const { sidebarLink } = useEndpoint();
 
 	return (
 		<div
@@ -31,7 +33,7 @@ function SidebarV2() {
 			</div>
 			<div className="flex flex-col gap-2 mb-4 items-center">
 				<Link
-					to="/"
+					to={sidebarLink}
 					data-test="sidebar-link"
 					className={`hover:text-primary p-4 ${
 						pathname === '/' && 'text-primary'
