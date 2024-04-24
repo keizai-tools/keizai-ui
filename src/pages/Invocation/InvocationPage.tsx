@@ -67,9 +67,10 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 };
 
 const InvocationPage = () => {
-	const params = useParams();
+	const { invocationId, teamId } = useParams();
 	const { data, isLoading, isRefetching, error } = useInvocationQuery({
-		id: params.invocationId,
+		id: invocationId,
+		teamId,
 	});
 
 	if (isLoading || isRefetching) {

@@ -69,6 +69,10 @@ const router = createBrowserRouter([
 								index: true,
 								element: <CollectionCTAPage />,
 							},
+							{
+								path: 'invocation/:invocationId',
+								element: <InvocationPage />,
+							},
 						],
 					},
 				],

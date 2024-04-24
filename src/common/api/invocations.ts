@@ -3,35 +3,56 @@ import { useParams } from 'react-router-dom';
 
 import { useToast } from '../components/ui/use-toast';
 import useAxios from '../hooks/useAxios';
+import { useEndpoint } from '../hooks/useEndpoint';
 import { Invocation, InvocationResponse } from '../types/invocation';
 
-export const useInvocationQuery = ({ id }: { id?: string }) => {
+export const useInvocationQuery = ({
+	id,
+	teamId,
+}: {
+	id?: string;
+	teamId?: string;
+}) => {
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'invocation');
 
 	const query = useQuery<Invocation>({
 		queryKey: ['invocation', id],
-		queryFn: async () =>
-			axios?.get(`/invocation/${id}`).then((res) => res.data),
+		queryFn: async () => axios?.get(`${apiUrl}/${id}`).then((res) => res.data),
 		enabled: !!id,
 	});
 
 	return query;
 };
 
-export const useRunInvocationQuery = ({ id }: { id?: string }) => {
+export const useRunInvocationQuery = ({
+	id,
+	teamId,
+}: {
+	id?: string;
+	teamId?: string;
+}) => {
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'invocation');
 
 	return () => {
 		return axios
-			?.get<InvocationResponse>(`/invocation/${id}/run`)
+			?.get<InvocationResponse>(`${apiUrl}/${id}/run`)
 			.then((res) => res.data);
 	};
 };
 
 export const useCreateInvocationMutation = () => {
-	const params = useParams();
+	const { collectionId, teamId } = useParams();
 	const queryClient = useQueryClient();
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'invocation');
 
 	const mutation = useMutation({
 		mutationFn: async ({
@@ -42,14 +63,14 @@ export const useCreateInvocationMutation = () => {
 			folderId: string;
 		}) =>
 			axios
-				?.post('/invocation', {
+				?.post(apiUrl, {
 					name,
 					folderId,
 				})
 				.then((res) => res.data),
 		onSettled: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['collection', params.collectionId, 'folders'],
+				queryKey: ['collection', collectionId, 'folders'],
 			});
 		},
 	});
@@ -58,9 +79,12 @@ export const useCreateInvocationMutation = () => {
 };
 
 export const useEditInvocationMutation = () => {
-	const params = useParams();
+	const { collectionId, teamId } = useParams();
 	const queryClient = useQueryClient();
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'invocation');
 
 	const mutation = useMutation({
 		mutationFn: async ({
@@ -77,7 +101,7 @@ export const useEditInvocationMutation = () => {
 			selectedMethodId?: string;
 		}) =>
 			axios
-				?.patch('/invocation', {
+				?.patch(apiUrl, {
 					id,
 					name,
 					folderId,
@@ -93,7 +117,7 @@ export const useEditInvocationMutation = () => {
 		onSuccess: (_, { name, id }) => {
 			if (name) {
 				queryClient.invalidateQueries({
-					queryKey: ['collection', params.collectionId, 'folders'],
+					queryKey: ['collection', collectionId, 'folders'],
 				});
 			} else {
 				queryClient.invalidateQueries({ queryKey: ['invocation', id] });
@@ -105,8 +129,12 @@ export const useEditInvocationMutation = () => {
 };
 
 export const useEditSelectedMethodMutation = () => {
+	const { teamId } = useParams();
 	const queryClient = useQueryClient();
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'invocation');
 
 	const mutation = useMutation({
 		mutationFn: async ({
@@ -117,7 +145,7 @@ export const useEditSelectedMethodMutation = () => {
 			selectedMethodId?: string;
 		}) =>
 			axios
-				?.patch('/invocation', {
+				?.patch(apiUrl, {
 					id,
 					selectedMethodId,
 				})
@@ -146,17 +174,22 @@ export const useEditSelectedMethodMutation = () => {
 	return mutation;
 };
 
-export const useDeleteInvocationMutation = () => {
-	const params = useParams();
+export const useDeleteInvocationMutation = (
+	collectionId?: string,
+	teamId?: string,
+) => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'invocation');
 
 	const mutation = useMutation({
 		mutationFn: async (id: string) =>
-			axios?.delete(`/invocation/${id}`).then((res) => res.data),
+			axios?.delete(`${apiUrl}/${id}`).then((res) => res.data),
 		onSettled: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['collection', params.collectionId, 'folders'],
+				queryKey: ['collection', collectionId, 'folders'],
 			});
 		},
 	});
@@ -164,14 +197,17 @@ export const useDeleteInvocationMutation = () => {
 	return mutation;
 };
 
-export const useEditNetworkMutation = () => {
+export const useEditNetworkMutation = (teamId?: string) => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
 	const { toast } = useToast();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'invocation');
 
 	const mutation = useMutation({
 		mutationFn: async ({ network, id }: { network: string; id: string }) =>
-			axios?.patch(`/invocation`, {
+			axios?.patch(apiUrl, {
 				network,
 				id,
 			}),
@@ -211,6 +247,10 @@ export const useEditNetworkMutation = () => {
 export const useEditInvocationKeysMutation = () => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
+	const { teamId } = useParams();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'invocation');
 
 	const mutation = useMutation({
 		mutationFn: async ({
@@ -223,7 +263,7 @@ export const useEditInvocationKeysMutation = () => {
 			publicKey?: string;
 		}) =>
 			axios
-				?.patch('/invocation', {
+				?.patch(apiUrl, {
 					id,
 					secretKey,
 					publicKey,
@@ -237,9 +277,13 @@ export const useEditInvocationKeysMutation = () => {
 	return mutation;
 };
 
-export const useEditPreInvocationMutation = () => {
+export const useEditPreInvocationMutation = (teamId?: string) => {
 	const axios = useAxios();
 	const queryClient = useQueryClient();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'invocation');
+
 	const mutation = useMutation({
 		mutationFn: async ({
 			id,
@@ -251,7 +295,7 @@ export const useEditPreInvocationMutation = () => {
 			postInvocation?: string;
 		}) => {
 			axios
-				?.patch('/invocation', {
+				?.patch(apiUrl, {
 					id,
 					preInvocation,
 					postInvocation,

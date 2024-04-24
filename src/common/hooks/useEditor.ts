@@ -9,8 +9,8 @@ const useEditor = (preInvocation: string, postInvocation: string) => {
 		React.useState<string>(preInvocation);
 	const [postInvocationEditorValue, setPostInvocationValue] =
 		React.useState<string>(postInvocation);
-	const { mutate: editInvocation } = useEditPreInvocationMutation();
-	const { invocationId } = useParams();
+	const { teamId, invocationId } = useParams();
+	const { mutate: editInvocation } = useEditPreInvocationMutation(teamId);
 
 	const preInvocationValue = useDebouncedCallback(() => {
 		preInvocation !== preInvocationEditorValue &&
