@@ -45,7 +45,7 @@ function UserButton({
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
 				side="right"
-				align="start"
+				align="end"
 				data-test="user-dropdown-container"
 			>
 				<DropdownMenuCheckboxItem

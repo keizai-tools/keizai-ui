@@ -3,17 +3,17 @@ import { useLocation, useParams } from 'react-router-dom';
 
 export function useEndpoint() {
 	const [endpoint, setEndpoint] = React.useState<string>('');
-	const [sidebarLink, setSidebarLink] = React.useState<string>('');
+	const [sidebarLink, setSidebarLink] = React.useState<string>('/');
 	const { teamId } = useParams();
 	const { pathname } = useLocation();
 
 	React.useEffect(() => {
 		teamId ? setEndpoint(`/team/${teamId}`) : setEndpoint('/user');
 
-		setSidebarLink(
-			pathname !== '/' && pathname !== '/change-password' ? endpoint : '/',
-		);
-	}, [endpoint, pathname, teamId]);
+		if (pathname !== '/' && pathname !== '/change-password') {
+			setSidebarLink(endpoint);
+		}
+	}, [endpoint, pathname, sidebarLink, teamId]);
 
 	const getEndpoint = (teamId: string | undefined, path: string) => {
 		return {
