@@ -20,6 +20,7 @@ export const CollectionVariablesContainer = () => {
 	const { data: collection } = useCollectionQuery(teamId, collectionId);
 	const { data, isLoading, isRefetching } = useEnvironmentsQuery({
 		collectionId,
+		teamId,
 	});
 
 	const environmentsValue = React.useMemo(() => {
@@ -38,6 +39,7 @@ export const CollectionVariablesContainer = () => {
 		<CollectionVariables
 			collection={collection}
 			collectionId={collectionId}
+			teamId={teamId}
 			environments={environmentsValue}
 		/>
 	);
