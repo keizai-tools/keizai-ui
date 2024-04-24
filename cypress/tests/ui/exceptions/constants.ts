@@ -21,6 +21,8 @@ export const keypair = {
 	},
 };
 
+export const sidebarList = ['Personal account', 'Team'];
+
 export const homePage = {
 	title: 'Workspaces',
 	list: ['My Personal account', 'Team'],

@@ -1,4 +1,4 @@
-import { apiUrl } from './exceptions/constants';
+import { apiUrl, sidebarList } from './exceptions/constants';
 
 describe('Sidebar', () => {
 	beforeEach(() => {
@@ -47,24 +47,24 @@ describe('Sidebar', () => {
 
 		cy.getBySel('sidebar-container').should('exist').and('be.visible');
 		cy.getBySel('sidebar-btn-user').should('exist');
+		cy.getBySel('user-dropdown-container').should('not.exist');
 		cy.getBySel('sidebar-btn-user').click();
+
+		cy.getBySel('user-dropdown-container').should('exist');
 		cy.getBySel('user-dropdown-user-item')
 			.find('span.absolute > span')
 			.should('not.exist');
+		cy.getBySel('user-dropdown-user-item')
+			.should('be.visible')
+			.and('have.text', sidebarList[0]);
 		cy.getBySel('user-dropdown-team-item')
 			.find('span.absolute > span')
 			.should('not.exist');
+		cy.getBySel('user-dropdown-team-item')
+			.should('be.visible')
+			.and('have.text', sidebarList[1]);
 		cy.getBySel('home-header-title').click({ force: true });
-
-		cy.getBySel('home-workspace-list-user').should('be.visible').click();
-		cy.wait('@userCollection');
-		cy.url().should('includes', '/user');
-		cy.getBySel('sidebar-link').click();
-
-		cy.getBySel('home-workspace-list-team').eq(0).should('be.visible').click();
-		cy.wait('@teamCollection');
-		cy.url().should('includes', '/team');
-		cy.getBySel('sidebar-btn-user').should('exist');
+		cy.getBySel('user-dropdown-container').should('not.exist');
 	});
 	it('Should navigate between collections using the user dropdown menu and show checked item', () => {
 		cy.intercept(`${apiUrl}/collection`, { body: [] }).as('Collection');
@@ -97,6 +97,37 @@ describe('Sidebar', () => {
 		cy.getBySel('user-dropdown-user-item')
 			.find('span.absolute > span')
 			.should('not.exist');
+	});
+	it('Should navigate to the home page or collection page with the workspace button', () => {
+		cy.intercept(`${apiUrl}/collection`, { body: [] }).as('userCollection');
+		cy.intercept(`${apiUrl}/team/*/collection`, { body: [] }).as(
+			'teamCollection',
+		);
+
+		cy.getBySel('sidebar-btn-setting').click();
+		cy.getBySel('setting-dropdown-change-password').click();
+		cy.url().should('include', '/change-password');
+		cy.getBySel('sidebar-btn-copy').click();
+		cy.url().should('not.include', '/change-password');
+
+		cy.getBySel('home-workspace-list-user').should('be.visible').click();
+		cy.wait('@userCollection');
+		cy.url().should('includes', '/user');
+		cy.getBySel('sidebar-btn-setting').click();
+		cy.getBySel('setting-dropdown-change-password').click();
+		cy.url().should('include', '/change-password');
+		cy.getBySel('sidebar-btn-copy').click();
+		cy.url().should('include', '/user');
+
+		cy.getBySel('sidebar-btn-user').click();
+		cy.getBySel('user-dropdown-team-item').click();
+		cy.wait('@teamCollection');
+		cy.url().should('includes', '/team');
+		cy.getBySel('sidebar-btn-setting').click();
+		cy.getBySel('setting-dropdown-change-password').click();
+		cy.url().should('include', '/change-password');
+		cy.getBySel('sidebar-btn-copy').click();
+		cy.url().should('include', '/team');
 	});
 	it('Should disconnect from the session', () => {
 		cy.getBySel('sidebar-container').should('exist').and('be.visible');
