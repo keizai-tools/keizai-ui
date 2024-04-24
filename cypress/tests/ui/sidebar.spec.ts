@@ -3,6 +3,7 @@ import { apiUrl, sidebarList } from './exceptions/constants';
 describe('Sidebar', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
+		cy.initializeFlagsmith();
 		cy.intercept(`${apiUrl}/team`, {
 			fixture: './teams/all-teams.json',
 		}).as('team');

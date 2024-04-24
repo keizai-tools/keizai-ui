@@ -1,4 +1,5 @@
 import { Auth } from '@aws-amplify/auth';
+import flagsmith from 'flagsmith';
 
 import { CognitoSignInResponse } from '../cypress';
 
@@ -46,6 +47,15 @@ Cypress.Commands.add('getBySel', (selector, ...args) => {
 
 Cypress.Commands.add('getBySelLike', (selector, ...args) => {
 	return cy.get(`[data-test*=${selector}]`, ...args);
+});
+
+Cypress.Commands.add('initializeFlagsmith', () => {
+	const environmentID = Cypress.env('environmentID');
+
+	flagsmith.init({
+		environmentID: environmentID,
+		api: 'https://api.flagsmith.com/api/v1/',
+	});
 });
 
 Auth.configure({
