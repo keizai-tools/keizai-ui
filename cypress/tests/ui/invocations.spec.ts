@@ -645,7 +645,7 @@ describe('Invocations', () => {
 			});
 		});
 	});
-	describe.only('By Team - [/team/:teamId]', () => {
+	describe('By Team - [/team/:teamId]', () => {
 		beforeEach(() => {
 			cy.intercept(`${apiUrl}/team`, {
 				fixture: './teams/all-teams.json',
