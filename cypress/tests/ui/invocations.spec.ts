@@ -9,6 +9,7 @@ import {
 	changeNetwork,
 	transactionResultCode,
 	txErrorCode,
+	apiUrl,
 } from './exceptions/constants';
 
 describe('Invocations', () => {
@@ -17,7 +18,11 @@ describe('Invocations', () => {
 	});
 	describe('By User - [/user]', () => {
 		beforeEach(() => {
-			cy.visit('/user');
+			cy.intercept(`${Cypress.env('apiUrl')}/team`, {
+				body: [],
+			}).as('team');
+			cy.wait('@team');
+			cy.getBySel('home-workspace-list-user').click();
 			cy.intercept(`${Cypress.env('apiUrl')}/collection`, {
 				fixture: 'collections/collection-with-one-invocation.json',
 			}).as('collection');
@@ -625,6 +630,547 @@ describe('Invocations', () => {
 					});
 					it('Should update a invocation with generate new keypair', () => {
 						cy.intercept('PATCH', `${Cypress.env('apiUrl')}/invocation`, {
+							statusCode: 200,
+							fixture: 'invocations/one-invocation-with-keypair.json',
+						}).as('keypair');
+						cy.getBySel('new-invocation-btn-container').first().click();
+						cy.getBySel('new-entity-dialog-btn-submit').click();
+						cy.wait('@invocation');
+						cy.wait('@getInvocation');
+						cy.getBySel('functions-tabs-authorization').first().click();
+						cy.getBySel('auth-stellar-create-account-btn').click();
+						cy.wait('@keypair');
+					});
+				});
+			});
+		});
+	});
+	describe.only('By Team - [/team/:teamId]', () => {
+		beforeEach(() => {
+			cy.intercept(`${apiUrl}/team`, {
+				fixture: './teams/all-teams.json',
+			}).as('team');
+			cy.wait('@team');
+			cy.getBySel('home-workspace-list-team').eq(0).click();
+			cy.intercept(`${apiUrl}/team/*/collection`, {
+				fixture: 'collections/collection-with-one-invocation.json',
+			}).as('collection');
+			cy.wait('@collection');
+		});
+		describe('Invocations with data', () => {
+			beforeEach(() => {
+				cy.getBySel('collection-folder-btn').click();
+				cy.intercept(`${apiUrl}/team/*/collection/*/folders`, {
+					fixture: 'folders/folder-with-contract-id.json',
+				}).as('folders');
+				cy.wait('@folders');
+				cy.getBySel('collection-folder-container').click();
+				cy.intercept(`${apiUrl}/team/*/invocation/*`, {
+					fixture: 'invocations/invocation-with-contract-id.json',
+				}).as('invocationWithSelectedMethod');
+				cy.intercept('PATCH', `${apiUrl}/team/*/invocation`, {
+					fixture: 'invocations/one-invocation.json',
+				}).as('invocation');
+				cy.window().then((win) => {
+					win.sessionStorage.setItem(
+						`events-${invocationId}`,
+						JSON.stringify(events),
+					);
+				});
+				cy.getBySel('invocation-item').first().click();
+				cy.getBySel('tabs-container').should('be.visible');
+				cy.intercept(`${apiUrl}/team/*/method/*`, {
+					fixture: 'methods/method.json',
+				}).as('method');
+			});
+			it('should select a method from invocation', () => {
+				cy.getBySel('invocation-item').first().click();
+				cy.getBySel('tabs-container').should('be.visible');
+				cy.getBySel('tabs-function-select-container').first().click();
+				cy.getBySel('tabs-function-select').first().click();
+				cy.wait('@method');
+			});
+			it('Should show an error message when the contract is down', () => {
+				cy.wait('@method');
+				cy.intercept(`${apiUrl}/team/*/invocation/*/run`, {
+					fixture: 'invocations/failed-run-invocation.json',
+				}).as('runInvocation');
+				cy.getBySel('contract-input-btn-load').click();
+				cy.wait('@runInvocation');
+				cy.getBySel('terminal-entry-container').should('be.visible');
+				cy.getBySel('terminal-entry-title')
+					.find('div')
+					.should('be.visible')
+					.and('have.text', terminal.error.title.failed);
+				cy.getBySel('terminal-entry-message')
+					.should('be.visible')
+					.and('have.text', terminal.error.message.failedRunContractDefault);
+			});
+			it('Should show the scrollbar in terminal', () => {
+				cy.wait('@method');
+				cy.intercept(`${apiUrl}/team/*/invocation/*/run`, {
+					fixture: 'invocations/failed-run-invocation.json',
+				}).as('runInvocation');
+				for (let i = 0; i <= 5; i++) {
+					cy.getBySel('contract-input-btn-load').click();
+					cy.wait('@runInvocation');
+				}
+				cy.getBySel('terminal-entry-title').should('have.length', 6);
+				cy.getBySel('terminal-scrollbar-container').then(($scrollBox) =>
+					expect($scrollBox[0].clientHeight).to.be.lessThan(
+						$scrollBox[0].scrollHeight,
+					),
+				);
+			});
+			it('Should delete an invocation successfully', () => {
+				cy.intercept(`${apiUrl}/team/*/collection/*/folders`, {
+					fixture: 'folders/one-folder-with-out-invocation.json',
+				}).as('folderWithOutInvocation');
+				cy.intercept('DELETE', `${apiUrl}/team/*/invocation/*`, {
+					body: [],
+				}).as('deleteInvocation');
+
+				cy.getBySel('invocation-item').eq(0).realHover();
+				cy.getBySel('collection-options-btn').eq(1).click();
+				cy.getBySel('collection-options-delete').click();
+
+				cy.getBySel('delete-entity-dialog-container')
+					.should('exist')
+					.and('be.visible');
+				cy.getBySel('delete-entity-dialog-title')
+					.should('be.visible')
+					.and('have.text', invocations.dialog.delete.title);
+				cy.getBySel('delete-entity-dialog-description')
+					.should('be.visible')
+					.and('have.text', invocations.dialog.delete.description);
+				cy.getBySel('delete-entity-dialog-btn-cancel')
+					.should('be.visible')
+					.and('have.text', invocations.dialog.delete.btnCancelText);
+				cy.getBySel('delete-entity-dialog-btn-continue')
+					.should('be.visible')
+					.and('have.text', invocations.dialog.delete.btnContinueText)
+					.click();
+				cy.wait('@deleteInvocation');
+				cy.wait('@folderWithOutInvocation');
+
+				cy.getBySel('collection-empty-invocation-container')
+					.should('exist')
+					.and('be.visible');
+			});
+			describe('Change Network', () => {
+				it('Should show a dropdown with different networks', () => {
+					cy.getBySel('contract-input-container').should('be.visible');
+					cy.getBySel('contract-input-selected-network').should(
+						'have.text',
+						NETWORK.FUTURENET,
+					);
+					cy.getBySel('contract-select-networks-container').should('not.exist');
+					cy.getBySel('contract-input-network').should('be.visible').click();
+					cy.getBySel('contract-select-networks-container')
+						.should('exist')
+						.and('be.visible');
+					cy.getBySel('contract-select-network-futurenet')
+						.should('be.visible')
+						.and('have.text', NETWORK.FUTURENET);
+					cy.getBySel('contract-select-network-testnet')
+						.should('be.visible')
+						.and('have.text', NETWORK.TESTNET);
+				});
+				it('Should show a alert dialog', () => {
+					cy.getBySel('contract-input-selected-network')
+						.should('be.visible')
+						.and('have.text', NETWORK.FUTURENET);
+					cy.getBySel('contract-input-network').should('be.visible').click();
+					cy.getBySel('change-network-dialog-container').should('not.exist');
+					cy.getBySel('contract-select-network-testnet').click();
+					cy.getBySel('change-network-dialog-container')
+						.should('exist')
+						.and('be.visible');
+					cy.getBySel('change-network-dialog-header-title')
+						.should('be.visible')
+						.and('have.text', changeNetwork.alertDialog.header);
+					cy.getBySel('change-network-dialog-title')
+						.should('be.visible')
+						.and('have.text', changeNetwork.alertDialog.title);
+					cy.getBySel('change-network-dialog-description')
+						.should('be.visible')
+						.and('have.text', changeNetwork.alertDialog.description);
+					cy.getBySel('change-network-dialog-btn-cancel')
+						.should('be.visible')
+						.and('have.text', changeNetwork.alertDialog.btnCancel);
+					cy.getBySel('change-network-dialog-btn-continue')
+						.should('be.visible')
+						.and('have.text', changeNetwork.alertDialog.btnConfirm);
+				});
+				it('Should keep the network when you click cancel in the alert dialog', () => {
+					cy.getBySel('contract-input-selected-network')
+						.should('be.visible')
+						.and('have.text', NETWORK.FUTURENET);
+					cy.getBySel('contract-input-network').should('be.visible').click();
+					cy.getBySel('contract-select-network-testnet').click();
+					cy.getBySel('change-network-dialog-container')
+						.should('exist')
+						.and('be.visible');
+					cy.getBySel('change-network-dialog-btn-cancel').click();
+					cy.getBySel('change-network-dialog-container').should('not.exist');
+					cy.getBySel('contract-input-selected-network')
+						.should('be.visible')
+						.and('have.text', NETWORK.FUTURENET);
+					cy.getBySel('tabs-function-container')
+						.should('exist')
+						.and('be.visible');
+				});
+				it('Should change to testnet network', () => {
+					cy.intercept('PATCH', `${apiUrl}/team/*/invocation`, {
+						body: { network: 'TESTNET' },
+					}).as('changeNetwork');
+					cy.intercept(`${apiUrl}/team/*/invocation/*`, {
+						fixture: 'invocations/one-invocation-testnet.json',
+					}).as('getInvocationWithTestnet');
+					cy.getBySel('contract-input-selected-network')
+						.should('be.visible')
+						.and('have.text', NETWORK.FUTURENET);
+					cy.getBySel('contract-input-network').should('be.visible').click();
+					cy.getBySel('contract-select-network-testnet').click();
+					cy.getBySel('change-network-dialog-container')
+						.should('exist')
+						.and('be.visible');
+					cy.getBySel('change-network-dialog-btn-continue').click();
+					cy.wait('@changeNetwork');
+					cy.wait('@getInvocationWithTestnet');
+					cy.getBySel('change-network-dialog-container').should('not.exist');
+					cy.getBySel('contract-input-selected-network')
+						.should('be.visible')
+						.and('have.text', NETWORK.TESTNET);
+					cy.getBySel('tabs-content-container')
+						.should('exist')
+						.and('be.visible');
+					cy.getBySel('functions-tabs-authorization').click();
+					cy.getBySel('auth-tab-secret-key').should('have.value', '');
+					cy.getBySel('auth-tab-public-key').should('have.value', '');
+					cy.getBySel('functions-tabs-events').click();
+					cy.getBySel('events-tab-empty-state-container').should('be.visible');
+				});
+			});
+			describe('Events tracker tab', () => {
+				beforeEach(() => {
+					cy.wait('@method');
+					cy.intercept(`${apiUrl}/team/*/invocation/*/run`, {
+						fixture: 'invocations/run-invocation.json',
+					}).as('runInvocation');
+					cy.getBySel('contract-input-btn-load').click();
+					cy.wait('@runInvocation');
+					cy.getBySel('functions-tabs-events').click();
+				});
+				it('Should show the content of the tab with events', () => {
+					cy.getBySel('events-tab-container').should('be.visible');
+					cy.getBySel('events-tab-event-container').should('be.visible');
+					cy.getBySel('events-tab-event-title').should('be.visible');
+					cy.getBySel('events-tab-btn-copy').should('be.visible');
+					cy.getBySel('events-tab-copy-tooltip').should('not.exist');
+					cy.getBySel('events-tab-event-content').should('be.visible');
+				});
+				it('Should copy the content of an event', () => {
+					cy.getBySel('events-tab-container').should('be.visible');
+					cy.getBySel('events-tab-copy-tooltip').should('not.exist');
+					cy.getBySel('events-tab-btn-copy')
+						.eq(0)
+						.should('be.visible')
+						.realClick();
+					cy.getBySel('events-tab-copy-tooltip')
+						.should('exist')
+						.and('be.visible')
+						.contains('Copied!');
+					cy.wait(1000);
+					cy.getBySel('events-tab-copy-tooltip').should('not.exist');
+				});
+				it('Should persist events when change to other path', () => {
+					cy.getBySel('events-tab-container').should('be.visible');
+					cy.getBySel('collections-variables-btn-link').click();
+					cy.getBySel('collection-variables-container').should('be.visible');
+					cy.getBySel('invocation-item').first().click();
+					cy.getBySel('functions-tabs-events').click();
+					cy.getBySel('events-tab-container').should('be.visible');
+					cy.getBySel('functions-tabs-events').click();
+				});
+				it('Should create a new invocation and contain empty events', () => {
+					cy.intercept('POST', `${apiUrl}/team/*/invocation`, {
+						fixture: 'invocations/new-invocation.json',
+					}).as('createInvocation');
+					cy.intercept(`${apiUrl}/team/*/invocation/*`, {
+						fixture: 'invocations/invocation-with-contract-id.json',
+					}).as('newInvocation');
+					cy.intercept(`${apiUrl}/team/*/collection/*/folders`, {
+						fixture: 'folders/folder-with-two-invocations.json',
+					}).as('folders');
+
+					cy.getBySel('events-tab-container').should('be.visible');
+					cy.getBySel('events-tab-event-container').should('be.visible');
+					cy.getBySel('new-invocation-btn-container').first().click();
+					cy.getBySel('new-entity-dialog-btn-submit').click();
+					cy.wait('@createInvocation');
+					cy.wait('@folders');
+					cy.wait('@newInvocation');
+					cy.getBySel('collection-folder-container').click();
+					cy.getBySel('invocation-item').eq(1).click();
+					cy.getBySel('functions-tabs-events').click();
+					cy.getBySel('events-tab-empty-state-container').should('be.visible');
+				});
+			});
+			describe('Run contract', () => {
+				it('Should return an increment value in descending order', () => {
+					for (let i = 1; i < 5; i++) {
+						cy.intercept(`${apiUrl}/team/*/invocation/*/run`, {
+							body: {
+								method: {
+									name: 'increment',
+									inputs: [],
+									outputs: [
+										{
+											type: 'SC_SPEC_TYPE_U32',
+										},
+									],
+									params: [],
+									docs: null,
+									invocationId: 'invocationId',
+								},
+								response: i,
+								status: 'SUCCESS',
+							},
+						}).as('runInvocation');
+						cy.getBySel('contract-input-btn-load').click();
+						cy.wait('@runInvocation');
+						cy.getBySel('terminal-entry-message').eq(0).should('have.text', i);
+					}
+				});
+				it('Should return a transaction error', () => {
+					cy.wait('@method');
+					for (let i = 0; i < txErrorCode.length; i++) {
+						cy.intercept(`${apiUrl}/team/*/invocation/*/run`, {
+							body: {
+								status: 'FAILED',
+								response: txErrorCode[i],
+								method: {
+									name: 'inc_by',
+									inputs: [
+										{
+											name: 'increment',
+											type: 'SC_SPEC_TYPE_U32',
+										},
+									],
+									outputs: [
+										{
+											type: 'SC_SPEC_TYPE_U32',
+										},
+									],
+									params: [
+										{
+											name: 'increment',
+											value: 1,
+										},
+									],
+									docs: 'Increment by a specified integer.',
+									id: '726a37e7-0abd-4469-b9ed-3a06bf1c75c7',
+								},
+							},
+						}).as('runInvocation');
+						cy.getBySel('contract-input-btn-load').click();
+						cy.wait('@runInvocation');
+						cy.getBySel('terminal-entry-title')
+							.find('div')
+							.eq(0)
+							.should('have.text', terminal.error.title.failed);
+						cy.getBySel('terminal-entry-message')
+							.eq(0)
+							.should('have.text', transactionResultCode[txErrorCode[i]]);
+					}
+				});
+				it('Should return a Soroban contract error', () => {
+					cy.wait('@method');
+					for (
+						let i = 0;
+						i < terminal.error.message.sorobanContractErrors.length;
+						i++
+					) {
+						cy.intercept(`${apiUrl}/team/*/invocation/*/run`, {
+							body: {
+								status: 'ERROR',
+								title: 'host invocation failed',
+								response: terminal.error.message.sorobanContractErrors[i],
+							},
+						}).as('runInvocation');
+						cy.getBySel('contract-input-btn-load').click();
+						cy.wait('@runInvocation');
+						cy.getBySel('terminal-entry-title')
+							.find('div')
+							.eq(0)
+							.should('have.text', terminal.error.title.hostError);
+						cy.getBySel('terminal-entry-message')
+							.eq(0)
+							.should(
+								'have.text',
+								terminal.error.message.sorobanContractErrors[i],
+							);
+					}
+				});
+			});
+		});
+
+		describe('Invocation without data', () => {
+			beforeEach(() => {
+				cy.intercept(`${apiUrl}/team/*/collection/*/environments`, {
+					fixture: 'environments/collection-with-environments.json',
+				}).as('environments');
+				cy.getBySel('collection-folder-btn').click();
+				cy.intercept(`${apiUrl}/team/*/collection/*/folders`, {
+					fixture: 'folders/one-folder-with-out-invocation.json',
+				}).as('folders');
+				cy.wait('@folders');
+				cy.intercept('PATCH', `${apiUrl}/team/*/invocation`, {
+					fixture: 'invocations/one-invocation.json',
+				}).as('invocation');
+				cy.getBySel('collection-folder-container').click();
+			});
+			describe('Invocation with futurenet network', () => {
+				beforeEach(() => {
+					cy.intercept('POST', `${apiUrl}/team/*/invocation`, {
+						statusCode: 200,
+						fixture: 'invocations/one-invocation.json',
+					}).as('invocation');
+					cy.intercept(`${apiUrl}/team/*/invocation/*`, {
+						fixture: 'invocations/one-invocation.json',
+					}).as('getInvocation');
+				});
+				it('should create a invocation', () => {
+					cy.getBySel('new-invocation-btn-container').first().click();
+					cy.getBySel('new-entity-dialog-btn-submit').click();
+					cy.wait('@invocation');
+					cy.wait('@getInvocation');
+				});
+				it('Should show the content of the tab without events', () => {
+					cy.getBySel('new-invocation-btn-container').first().click();
+					cy.getBySel('new-entity-dialog-btn-submit').click();
+					cy.wait('@invocation');
+					cy.wait('@getInvocation');
+					cy.getBySel('functions-tabs-events').click();
+					cy.getBySel('events-tab-empty-state-container').should('be.visible');
+					cy.getBySel('events-tab-content-img')
+						.should('be.visible')
+						.and('have.attr', 'alt', invocations.tabs.events.imgAlt);
+					cy.getBySel('events-tab-content-text')
+						.should('be.visible')
+						.find('h2')
+						.each((title, index) =>
+							cy
+								.wrap(title)
+								.should('contain.text', invocations.tabs.events.title[index]),
+						);
+				});
+				it('should update a invocation with a keypair', () => {
+					cy.intercept('PATCH', `${apiUrl}/team/*/invocation`, {
+						statusCode: 200,
+						fixture: 'invocations/one-invocation-with-keypair.json',
+					}).as('keypair');
+					cy.getBySel('new-invocation-btn-container').first().click();
+					cy.getBySel('new-entity-dialog-btn-submit').click();
+					cy.wait('@invocation');
+					cy.wait('@getInvocation');
+					cy.getBySel('functions-tabs-authorization').first().click();
+					cy.getBySel('auth-stellar-create-account-btn').click();
+					cy.wait('@keypair');
+				});
+				it('Should show a modal to connect with private key', () => {
+					cy.intercept('PATCH', `${apiUrl}/team/*/invocation`, {
+						fixture: './invocations/one-invocation-with-keypair.json',
+					}).as('importSecretKey');
+
+					cy.getBySel('new-invocation-btn-container').first().click();
+					cy.getBySel('new-entity-dialog-btn-submit').click();
+					cy.wait('@invocation');
+					cy.wait('@getInvocation');
+
+					const importAccount = {
+						title: 'Connect with a secret key',
+						description: 'Please enter your secret key to authenticate',
+						button: 'Connect',
+						error: {
+							required: 'Secret key is required',
+							invalidSecretKey: 'Please enter a valid Private key',
+						},
+					};
+					cy.getBySel('functions-tabs-authorization').click();
+					cy.getBySel('auth-stellar-import-account-btn').click();
+					cy.getBySel('import-account-modal-container').should('be.visible');
+					cy.getBySel('import-account-modal-title')
+						.should('be.visible')
+						.and('have.text', importAccount.title);
+					cy.getBySel('import-account-modal-description')
+						.should('be.visible')
+						.and('have.text', importAccount.description);
+					cy.getBySel('import-account-modal-form-container').should(
+						'be.visible',
+					);
+					cy.getBySel('import-account-modal-error').should('not.exist');
+					cy.getBySel('import-account-modal-btn-submit').click();
+					cy.getBySel('import-account-modal-error')
+						.should('be.visible')
+						.and('have.text', importAccount.error.required);
+					cy.getBySel('import-account-modal-input').type(keypair.publicKey.key);
+					cy.getBySel('import-account-modal-btn-submit').click();
+					cy.getBySel('import-account-modal-error')
+						.should('be.visible')
+						.and('have.text', importAccount.error.invalidSecretKey);
+					cy.getBySel('import-account-modal-input').clear();
+					cy.getBySel('import-account-modal-input')
+						.should('be.visible')
+						.type(keypair.secretKey.key);
+					cy.getBySel('import-account-modal-btn-submit')
+						.should('be.visible')
+						.and('have.text', importAccount.button)
+						.click();
+
+					cy.wait('@importSecretKey');
+					cy.getBySel('auth-tab-secret-key')
+						.should('be.visible')
+						.find('input')
+						.invoke('val')
+						.and('match', keypair.secretKey.regex);
+					cy.getBySel('auth-tab-public-key')
+						.should('be.visible')
+						.find('input')
+						.invoke('val')
+						.and('match', keypair.publicKey.regex);
+				});
+				it('should update contract id from invocation', () => {
+					cy.intercept('PATCH', `${apiUrl}/team/*/invocation`, {
+						statusCode: 200,
+						fixture: 'invocations/invocation-with-contract-id.json',
+					}).as('invocationUpdated');
+
+					cy.getBySel('new-invocation-btn-container').first().click();
+					cy.getBySel('new-entity-dialog-btn-submit').click();
+					cy.wait('@invocation');
+					cy.wait('@getInvocation');
+					cy.getBySel('input-contract-name').type(contractId);
+					cy.intercept('GET', `${apiUrl}/team/*/invocation/*`, {
+						fixture: 'invocations/invocation-with-contract-id.json',
+					}).as('getInvocationWithMethods');
+					cy.getBySel('contract-input-btn-load').click();
+					cy.wait('@invocationUpdated');
+					cy.wait('@getInvocationWithMethods');
+				});
+				describe('Invocation with testnet network', () => {
+					beforeEach(() => {
+						cy.intercept('POST', `${apiUrl}/team/*/invocation`, {
+							statusCode: 200,
+							fixture: 'invocations/one-invocation.json',
+						}).as('invocation');
+						cy.intercept(`${apiUrl}/team/*/invocation/*`, {
+							fixture: 'invocations/one-invocation-testnet.json',
+						}).as('getInvocation');
+					});
+					it('Should update a invocation with generate new keypair', () => {
+						cy.intercept('PATCH', `${apiUrl}/team/*/invocation`, {
 							statusCode: 200,
 							fixture: 'invocations/one-invocation-with-keypair.json',
 						}).as('keypair');
