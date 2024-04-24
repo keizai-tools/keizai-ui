@@ -15,18 +15,22 @@ import { Environment } from '@/common/types/environment';
 export const CollectionVariables = ({
 	collection,
 	collectionId,
+	teamId,
 	environments,
 }: {
 	collectionId: string;
+	teamId: string;
 	collection: Collection | undefined;
 	environments: Environment[];
 }) => {
 	const { mutate: deleteEnvironmentMutation } = useDeleteEnvironmentMutation({
 		collectionId,
+		teamId,
 	});
 	const { mutate: createEnvironmentsMutation } =
 		useCreateAllEnvironmentsMutation({
 			collectionId,
+			teamId,
 		});
 
 	const {
@@ -120,6 +124,7 @@ export const CollectionVariables = ({
 								environment={environment}
 								index={index}
 								collectionId={collectionId}
+								teamId={teamId}
 								control={control}
 								watch={watch}
 								errors={errors}

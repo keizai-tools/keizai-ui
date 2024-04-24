@@ -10,9 +10,10 @@ export default function useEnvironments() {
 		React.useState<Environment | null>(null);
 	const [showEnvironments, setShowEnvironments] =
 		React.useState<boolean>(false);
-	const { collectionId } = useParams();
+	const { collectionId, teamId } = useParams();
 	const { data, isLoading } = useEnvironmentsQuery({
 		collectionId,
+		teamId,
 	});
 
 	React.useEffect(() => {

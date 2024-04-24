@@ -23,6 +23,7 @@ interface IEnvironmentItem {
 	index: number;
 	environment: Environment;
 	collectionId: string;
+	teamId: string;
 	control: Control<
 		{
 			environments: Environment[];
@@ -55,6 +56,7 @@ export default function EnvironmentItem({
 	environment,
 	index,
 	collectionId,
+	teamId,
 	control,
 	watch,
 	errors,
@@ -67,6 +69,7 @@ export default function EnvironmentItem({
 	});
 	const { mutate: editEnvironmentMutation } = useEditEnvironmentMutation({
 		collectionId,
+		teamId,
 	});
 
 	const debounced = useDebouncedCallback((field: string, value: string) => {

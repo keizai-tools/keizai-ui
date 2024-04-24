@@ -2,14 +2,20 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { toast } from '../components/ui/use-toast';
 import useAxios from '../hooks/useAxios';
+import { useEndpoint } from '../hooks/useEndpoint';
 import { Environment } from '../types/environment';
 
 export const useEnvironmentsQuery = ({
 	collectionId,
+	teamId,
 }: {
-	collectionId?: string | undefined;
+	collectionId?: string;
+	teamId?: string;
 }) => {
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'collection');
 
 	const query = useQuery<Environment[]>({
 		queryKey: ['environment', collectionId],
@@ -17,20 +23,28 @@ export const useEnvironmentsQuery = ({
 		refetchOnMount: true,
 		queryFn: async () =>
 			axios
-				?.get(`/collection/${collectionId}/environments`)
+				?.get(`${apiUrl}/${collectionId}/environments`)
 				.then((res) => res.data),
 	});
 
 	return query;
 };
 
-export const useEnvironmentQuery = ({ id }: { id?: string }) => {
+export const useEnvironmentQuery = ({
+	id,
+	teamId,
+}: {
+	id?: string;
+	teamId?: string;
+}) => {
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'environment');
 
 	const query = useQuery<Environment>({
 		queryKey: ['environment', id],
-		queryFn: async () =>
-			axios?.get(`/environment/${id}`).then((res) => res.data),
+		queryFn: async () => axios?.get(`${apiUrl}/${id}`).then((res) => res.data),
 		enabled: !!id,
 	});
 
@@ -39,11 +53,16 @@ export const useEnvironmentQuery = ({ id }: { id?: string }) => {
 
 export const useCreateEnvironmentMutation = ({
 	collectionId,
+	teamId,
 }: {
 	collectionId?: string;
+	teamId?: string;
 }) => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'environment');
 
 	const mutation = useMutation({
 		mutationFn: async ({
@@ -56,7 +75,7 @@ export const useCreateEnvironmentMutation = ({
 			collectionId: string;
 		}) =>
 			axios
-				?.post('/environment', { name, value, collectionId })
+				?.post(apiUrl, { name, value, collectionId })
 				.then((res) => res.data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
@@ -81,16 +100,21 @@ export const useCreateEnvironmentMutation = ({
 
 export const useCreateAllEnvironmentsMutation = ({
 	collectionId,
+	teamId,
 }: {
 	collectionId?: string;
+	teamId?: string;
 }) => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'collection');
 
 	const mutation = useMutation({
 		mutationFn: async (environments: Environment[]) =>
 			axios
-				?.post(`/collection/${collectionId}/environments`, environments)
+				?.post(`${apiUrl}/${collectionId}/environments`, environments)
 				.then((res) => res.data),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
@@ -114,15 +138,20 @@ export const useCreateAllEnvironmentsMutation = ({
 
 export const useDeleteEnvironmentMutation = ({
 	collectionId,
+	teamId,
 }: {
 	collectionId?: string;
+	teamId?: string;
 }) => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'environment');
 
 	const mutation = useMutation({
 		mutationFn: async (id: string) =>
-			axios?.delete(`/environment/${id}`).then((res) => res.data),
+			axios?.delete(`${apiUrl}/${id}`).then((res) => res.data),
 		onMutate: (id: string) => {
 			queryClient.cancelQueries({
 				queryKey: ['environment', collectionId],
@@ -158,11 +187,16 @@ export const useDeleteEnvironmentMutation = ({
 
 export const useEditEnvironmentMutation = ({
 	collectionId,
+	teamId,
 }: {
 	collectionId?: string;
+	teamId?: string;
 }) => {
 	const queryClient = useQueryClient();
 	const axios = useAxios();
+	const { getEndpoint } = useEndpoint();
+
+	const { apiUrl } = getEndpoint(teamId, 'environment');
 
 	const mutation = useMutation({
 		mutationFn: async ({
@@ -177,7 +211,7 @@ export const useEditEnvironmentMutation = ({
 			collectionId: string;
 		}) =>
 			axios
-				?.patch('/environment', {
+				?.patch(apiUrl, {
 					id,
 					name,
 					value,
