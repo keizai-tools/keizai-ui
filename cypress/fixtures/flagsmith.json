@@ -1,0 +1,19 @@
+[
+  {
+    "id": 56756,
+    "feature": {
+      "id": 10804,
+      "name": "teams",
+      "created_date": "2021-07-15T23:38:27.661659Z",
+      "description": "The first feature",
+      "initial_value": null,
+      "default_enabled": false,
+      "type": "STANDARD"
+    },
+    "feature_state_value": null,
+    "enabled": true,
+    "environment": 9128,
+    "identity": null,
+    "feature_segment": null
+  }
+]
