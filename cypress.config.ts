@@ -37,5 +37,6 @@ export default defineConfig({
 		cognitoClientId: process.env.VITE_AWS_COGNITO_CLIENT_ID,
 		cognitoE2EUsername: process.env.VITE_AWS_COGNITO_E2E_USERNAME,
 		cognitoE2EPassword: process.env.VITE_AWS_COGNITO_E2E_PASSWORD,
+		environmentID: process.env.VITE_FLAGSMITH_ENVIRONMENT_ID,
 	},
 });

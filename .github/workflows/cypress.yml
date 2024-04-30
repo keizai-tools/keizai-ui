@@ -18,6 +18,7 @@ env:
   VITE_URL_API_BASE: ${{ secrets.VITE_URL_API_BASE }}
   CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+	VITE_FLAGSMITH_ENVIRONMENT_ID: ${{ secrets.VITE_FLAGSMITH_ENVIRONMENT_ID }}
 
 jobs:
   cypress-run:

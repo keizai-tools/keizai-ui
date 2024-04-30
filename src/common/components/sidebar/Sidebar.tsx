@@ -2,7 +2,7 @@ import { Copy } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
 import { Badge } from '../ui/badge';
-import UserButton from './UserButton';
+import SettingButton from './SettingButton';
 
 function Sidebar() {
 	const location = useLocation();
@@ -34,7 +34,7 @@ function Sidebar() {
 				</div>
 			</div>
 			<div className="flex flex-col gap-2 mb-4">
-				<UserButton />
+				<SettingButton />
 			</div>
 		</div>
 	);

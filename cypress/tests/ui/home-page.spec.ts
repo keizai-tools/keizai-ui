@@ -51,22 +51,4 @@ describe('Home Page', () => {
 			.and('have.text', homePage.title);
 		cy.url().should('not.include', '/test');
 	});
-	it('Should go to user collection home page and redirect to home page', () => {
-		cy.intercept(`${Cypress.env('apiUrl')}/team`, { body: [] }).as('team');
-		cy.intercept(`${Cypress.env('apiUrl')}/collection`, { body: [] }).as(
-			'collection',
-		);
-		cy.wait('@team');
-
-		cy.getBySel('home-workspace-list-user').click();
-		cy.wait('@collection');
-		cy.url().should('include', '/user');
-		cy.getBySel('home-page-container').should('not.exist');
-		cy.getBySel('collection-empty-state-container').should('be.visible');
-
-		cy.getBySel('sidebar-link').click();
-		cy.wait('@team');
-		cy.url().should('not.include', '/user');
-		cy.getBySel('home-page-container').should('exist').and('be.visible');
-	});
 });
