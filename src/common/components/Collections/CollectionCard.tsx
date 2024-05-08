@@ -14,13 +14,11 @@ import {
 const CollectionCard = ({
 	id,
 	name,
-	endpoint,
 	foldersCount = 0,
 	invocationsCount = 0,
 }: {
 	id: string;
 	name: string;
-	endpoint: string;
 	foldersCount?: number;
 	invocationsCount?: number;
 }) => {
@@ -43,7 +41,7 @@ const CollectionCard = ({
 				variant="ghost"
 				className="p-6 flex flex-col justify-between items-start gap-4 border-solid border-2 rounded-lg border-primary h-[200px] w-[300px] font-bold"
 				data-test="collection-folder-btn"
-				onClick={() => navigate(`${endpoint}/collection/${id}`)}
+				onClick={() => navigate(`/collection/${id}`)}
 			>
 				<span data-test="collection-folder-title">{name}</span>
 				<div className="flex flex-col justify-start items-start">

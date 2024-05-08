@@ -70,7 +70,7 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
 					deleteInvocationMutation(invocation.id);
 					window.umami.track('Delete invocation');
 					if (params?.invocationId === invocation.id) {
-						navigate('/user/collection/' + params.collectionId);
+						navigate('/collection/' + params.collectionId);
 					}
 					setOpenDialog(null);
 				}}
