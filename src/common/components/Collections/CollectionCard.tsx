@@ -10,18 +10,17 @@ import {
 	useDeleteCollectionMutation,
 	useUpdateCollectionMutation,
 } from '@/common/api/collections';
-import { useEndpoint } from '@/common/hooks/useEndpoint';
 
 const CollectionCard = ({
 	id,
 	name,
-	teamId,
+	endpoint,
 	foldersCount = 0,
 	invocationsCount = 0,
 }: {
 	id: string;
 	name: string;
-	teamId?: string;
+	endpoint: string;
 	foldersCount?: number;
 	invocationsCount?: number;
 }) => {
@@ -29,10 +28,8 @@ const CollectionCard = ({
 		'edit' | 'delete' | null
 	>(null);
 	const navigate = useNavigate();
-	const { endpoint } = useEndpoint();
-	const { mutate: deleteCollectionMutation } =
-		useDeleteCollectionMutation(teamId);
-	const { mutate, isPending } = useUpdateCollectionMutation(teamId);
+	const { mutate: deleteCollectionMutation } = useDeleteCollectionMutation();
+	const { mutate, isPending } = useUpdateCollectionMutation();
 
 	const handleEditCollection = async ({ name }: { name: string }) => {
 		await mutate({ id, name });
