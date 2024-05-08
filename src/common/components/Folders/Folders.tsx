@@ -12,13 +12,12 @@ import {
 import { useEndpoint } from '@/common/hooks/useEndpoint';
 
 const Folders = () => {
-	const { collectionId, teamId } = useParams();
+	const { collectionId } = useParams();
 	const { endpoint } = useEndpoint();
 	const { data, isLoading } = useFoldersByCollectionIdQuery({
-		collectionId,
-		teamId,
+		id: collectionId,
 	});
-	const { mutate, isPending } = useCreateFolderMutation(teamId);
+	const { mutate, isPending } = useCreateFolderMutation();
 	const navigate = useNavigate();
 
 	const onCreateFolder = async ({ name }: { name: string }) => {

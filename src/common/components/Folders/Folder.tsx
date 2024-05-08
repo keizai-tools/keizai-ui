@@ -21,29 +21,28 @@ import {
 import { Folder as IFolder } from '@/common/types/folder';
 
 const Folder = ({ folder }: { folder: IFolder }) => {
-	const { collectionId, teamId, invocationId } = useParams();
+	const params = useParams();
 	const [isOpen, setIsOpen] = React.useState<string[] | undefined>();
 	const [openDialog, setOpenDialog] = React.useState<'edit' | 'delete' | null>(
 		null,
 	);
 	const { mutate: deleteFolderMutation } = useDeleteFolderMutation({
-		collectionId,
-		teamId,
+		collectionId: params?.collectionId,
 	});
 	const { mutate: editFolderMutation, isPending: isEditingFolder } =
-		useEditFolderMutation({ collectionId, teamId });
+		useEditFolderMutation({ collectionId: params?.collectionId });
 
 	React.useLayoutEffect(() => {
-		if (invocationId && folder) {
+		if (params?.invocationId && folder) {
 			const folderHasInvocation = folder.invocations?.find(
-				(invocation) => invocation.id === invocationId,
+				(invocation) => invocation.id === params?.invocationId,
 			);
 
 			if (folderHasInvocation) {
 				setIsOpen([folder.id]);
 			}
 		}
-	}, [folder, invocationId]);
+	}, [folder, params?.invocationId]);
 
 	return (
 		<>
@@ -126,7 +125,7 @@ const Folder = ({ folder }: { folder: IFolder }) => {
 				title="Edit folder"
 				description="Let's name your folder"
 				onEdit={({ name }) => {
-					editFolderMutation({ id: folder.id, name });
+					editFolderMutation({ id: folder.id, name: name });
 					window.umami.track('Edit folder');
 					setOpenDialog(null);
 				}}
