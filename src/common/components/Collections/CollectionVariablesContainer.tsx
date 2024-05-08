@@ -9,15 +9,10 @@ import { useEnvironmentsQuery } from '@/common/api/enviroments';
 
 export const CollectionVariablesContainer = () => {
 	const params = useParams();
-
-	const teamId = React.useMemo(() => {
-		return params.teamId ?? '';
-	}, [params]);
 	const collectionId = React.useMemo(() => {
 		return params.collectionId ?? '';
 	}, [params]);
-
-	const { data: collection } = useCollectionQuery(teamId, collectionId);
+	const { data: collection } = useCollectionQuery(collectionId);
 	const { data, isLoading, isRefetching } = useEnvironmentsQuery({
 		collectionId,
 	});

@@ -1,13 +1,10 @@
-import { useParams } from 'react-router-dom';
-
 import NewEntityDialog from '../Entity/NewEntityDialog';
 import { Button } from '../ui/button';
 
 import { useNewCollectionMutation } from '@/common/api/collections';
 
 const CollectionsEmptyState = () => {
-	const { teamId } = useParams();
-	const { mutate, isPending } = useNewCollectionMutation(teamId);
+	const { mutate, isPending } = useNewCollectionMutation();
 
 	return (
 		<div

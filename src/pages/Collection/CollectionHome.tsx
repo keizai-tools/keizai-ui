@@ -4,14 +4,13 @@ import { useCollectionsQuery } from '@/common/api/collections';
 import CollectionCard from '@/common/components/Collections/CollectionCard';
 import CollectionPlaceholder from '@/common/components/Collections/CollectionPlaceholder';
 import CollectionsEmptyState from '@/common/components/Collections/CollectionsEmptyState';
-import { useEndpoint } from '@/common/hooks/useEndpoint';
 import FullscreenLoading from '@/common/views/FullscreenLoading';
 
 export default function CollectionHome() {
 	const { teamId } = useParams();
 	const { pathname } = useLocation();
-	const { endpoint } = useEndpoint();
-	const { data, isLoading } = useCollectionsQuery(teamId);
+	const { data, isLoading } = useCollectionsQuery();
+	const endpoint = teamId ? `/team/${teamId}` : '/user';
 
 	if (isLoading) {
 		return <FullscreenLoading />;
@@ -44,7 +43,7 @@ export default function CollectionHome() {
 										key={collection.id}
 										id={collection.id}
 										name={collection.name}
-										teamId={teamId}
+										endpoint={endpoint}
 										foldersCount={collection.folders.length ?? 0}
 										invocationsCount={invocationsCount ?? 0}
 									/>
