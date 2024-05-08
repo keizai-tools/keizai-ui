@@ -1,61 +1,46 @@
-import { User2, UsersRound } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-
-import { useTeamsQuery } from '@/common/api/teams';
+import { useCollectionsQuery } from '@/common/api/collections';
+import CollectionCard from '@/common/components/Collections/CollectionCard';
+import CollectionPlaceholder from '@/common/components/Collections/CollectionPlaceholder';
+import CollectionsEmptyState from '@/common/components/Collections/CollectionsEmptyState';
 import FullscreenLoading from '@/common/views/FullscreenLoading';
 
 export default function Home() {
-	const { data: teams, isLoading } = useTeamsQuery();
-	const navigate = useNavigate();
+	const { data, isLoading } = useCollectionsQuery();
 
 	if (isLoading) {
 		return <FullscreenLoading />;
 	}
 
 	return (
-		<section
-			className="flex flex-col w-full max-w-[500px] h-screen pt-[20vh] m-auto"
-			data-test="home-page-container"
-		>
-			<h1
-				className="text-4xl font-bold text-primary"
-				data-test="home-header-title"
-			>
-				Workspaces
-			</h1>
-			<div className="mt-8">
-				<ul className="flex flex-col" data-test="home-workspace-list-container">
-					<li
-						className=" cursor-pointer pr-8 py-4 hover:bg-accent border-t border-b  border-border"
-						data-test="home-workspace-list-user"
-					>
-						<div
-							className="flex items-center gap-4 px-4"
-							onClick={() => navigate('/user')}
-						>
-							<User2 className="h-6 w-6 text-slate-500" />
-							<p>My Personal account</p>
-						</div>
-					</li>
-					{teams?.map((team) => {
+		<main className="flex flex-col p-3 gap-4 w-full">
+			<h3 className="text-xl font-bold" data-test="collections-header-title">
+				Collections
+			</h3>
+			{!data || data?.length === 0 ? (
+				<div className="flex justify-center items-center h-full">
+					<CollectionsEmptyState />
+				</div>
+			) : (
+				<div className="flex gap-8 flex-wrap">
+					{data.map((collection) => {
+						const invocationsCount = collection.folders.reduce(
+							(total, folder) => total + folder.invocations.length,
+							0,
+						);
+
 						return (
-							<li
-								className="cursor-pointer pr-8 py-4 hover:bg-accent border-b border-border"
-								key={team.id}
-								data-test="home-workspace-list-team"
-							>
-								<div
-									className="flex items-center gap-4 px-4"
-									onClick={() => navigate(`/team/${team?.id}`)}
-								>
-									<UsersRound className="h-6 w-6 text-slate-500" />
-									<p>{team.name}</p>
-								</div>
-							</li>
+							<CollectionCard
+								key={collection.id}
+								id={collection.id}
+								name={collection.name}
+								foldersCount={collection.folders.length ?? 0}
+								invocationsCount={invocationsCount ?? 0}
+							/>
 						);
 					})}
-				</ul>
-			</div>
-		</section>
+					<CollectionPlaceholder />
+				</div>
+			)}
+		</main>
 	);
 }
