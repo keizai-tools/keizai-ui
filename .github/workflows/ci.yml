@@ -5,9 +5,9 @@ on:
       - main
 
 env:
-  PORT: ${{ secrets.PORT }}
-  CYPRESS_HOST_PORT: ${{ secrets.CYPRESS_HOST_PORT }}
-  CYPRESS_BASE_URL_PREFIX: ${{ secrets.CYPRESS_BASE_URL_PREFIX }}
+  PORT: 3000
+  CYPRESS_HOST_PORT: 3001
+  CYPRESS_BASE_URL_PREFIX: http://localhost:3000
   VITE_AWS_COGNITO_REGION: ${{ secrets.VITE_AWS_COGNITO_REGION }}
   VITE_AWS_COGNITO_USER_POOL_ID: ${{ secrets.VITE_AWS_COGNITO_USER_POOL_ID }}
   VITE_AWS_COGNITO_CLIENT_ID: ${{ secrets.VITE_AWS_COGNITO_CLIENT_ID }}
@@ -35,3 +35,6 @@ jobs:
 
       - name: Run build
         run: npm run build
+
+			- name: Run test
+				run: npm run test:ui
