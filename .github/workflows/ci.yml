@@ -17,7 +17,7 @@ env:
   VITE_URL_API_BASE: http://localhost:3002/api
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -37,13 +37,19 @@ jobs:
       - name: Run build
         run: npm run build
 
-  test:
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    steps:
       - name: Run tests
-        run: npm run test
+        run: npm run test:ui
+
+      - name: Report LCOV
+        uses: zgosalvez/github-actions-report-lcov@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          coverage-files: ./coverage/lcov.info
+      - name: Store coverage folder as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: coverage
 
   sonarqube-scan:
     runs-on: ubuntu-latest
