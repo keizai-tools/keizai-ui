@@ -17,7 +17,7 @@ env:
   VITE_URL_API_BASE: http://localhost:3002/api
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -37,5 +37,44 @@ jobs:
       - name: Run build
         run: npm run build
 
-      - name: Run test
+      - name: Run tests
         run: npm run test:ui
+
+      - name: Report LCOV
+        uses: zgosalvez/github-actions-report-lcov@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          coverage-files: ./coverage/lcov.info
+      - name: Store coverage folder as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: coverage
+
+  sonarqube-scan:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v3.0.0
+        with:
+          name: coverage
+          path: coverage
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: SonarQube Quality Gate check
+        id: sonarqube-quality-gate-check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
