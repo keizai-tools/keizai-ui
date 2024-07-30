@@ -18,12 +18,30 @@ export const useInvocationQuery = ({ id }: { id?: string }) => {
 	return query;
 };
 
-export const useRunInvocationQuery = ({ id }: { id?: string }) => {
+export const useRunInvocationQuery = ({
+	id,
+	signedTransactionXDR,
+}: {
+	id?: string;
+	signedTransactionXDR?: string;
+}) => {
 	const axios = useAxios();
 
 	return () => {
 		return axios
-			?.get<InvocationResponse>(`/invocation/${id}/run`)
+			?.post<InvocationResponse>(`/invocation/${id}/run`, {
+				signedTransactionXDR,
+			})
+			.then((res) => res.data);
+	};
+};
+
+export const usePrepareInvocationQuery = ({ id }: { id?: string }) => {
+	const axios = useAxios();
+
+	return () => {
+		return axios
+			?.get<string>(`/invocation/${id}/prepare`)
 			.then((res) => res.data);
 	};
 };

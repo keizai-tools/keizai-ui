@@ -2,12 +2,15 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
+// import { signTransaction } from 'simple-stellar-signer-api';
+
 import { getInvocationResponse, handleAxiosError } from './invocation.utils';
 import { KeizaiService } from './preInvocation/keizai/keizai.service';
 
 import {
 	useEditInvocationMutation,
 	useRunInvocationQuery,
+	usePrepareInvocationQuery,
 } from '@/common/api/invocations';
 import { TerminalEntry } from '@/common/components/ui/Terminal';
 import { useToast } from '@/common/components/ui/use-toast';
@@ -15,12 +18,24 @@ import useContractEvents from '@/common/hooks/useContractEvents';
 import { Invocation } from '@/common/types/invocation';
 import { useAuth } from '@/services/auth/hook/useAuth';
 
-const useInvocation = (invocation: Invocation) => {
+const useInvocation = (
+	invocation: Invocation,
+	signedTransactionXDR: string,
+) => {
 	const { toast } = useToast();
 	const { user } = useAuth();
 	const { collectionId } = useParams();
-	const runInvocation = useRunInvocationQuery({ id: invocation.id });
+	const runInvocation = useRunInvocationQuery({
+		id: invocation.id,
+		signedTransactionXDR,
+	});
+	const prepareInvocation = usePrepareInvocationQuery({
+		id: invocation.id,
+	});
 	const [isRunningInvocation, setIsRunningInvocation] = React.useState(false);
+	const [isPreparingInvocation, setIsPreparingInvocation] =
+		React.useState(false);
+	const [transactionXDR, setTransactionXDR] = React.useState<string>('');
 	const [contractResponses, setContractResponses] = React.useState<
 		TerminalEntry[]
 	>([]);
@@ -135,6 +150,20 @@ const useInvocation = (invocation: Invocation) => {
 		}
 	};
 
+	const handlePrepareInvocation = async () => {
+		setIsPreparingInvocation(true);
+		try {
+			const invocationTransactionXDR = await prepareInvocation();
+
+			setTransactionXDR(invocationTransactionXDR);
+		} catch (error) {
+			const errorResponse = handleAxiosError(error);
+			setContractResponses((prev) => [...prev, errorResponse]);
+		} finally {
+			setIsPreparingInvocation(false);
+		}
+	};
+
 	return {
 		handleLoadContract,
 		isLoadingContract: isPending,
@@ -142,6 +171,9 @@ const useInvocation = (invocation: Invocation) => {
 		contractResponses,
 		handleRunInvocation,
 		isRunningInvocation,
+		handlePrepareInvocation,
+		transactionXDR,
+		isPreparingInvocation,
 	};
 };
 
