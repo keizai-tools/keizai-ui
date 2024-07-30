@@ -1,8 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import React from 'react';
+import { Network } from 'simple-stellar-signer-api';
 
 import FullscreenLoading from '@/common/views/FullscreenLoading';
-import { AuthUser, useProvideAuth } from '@/services/auth/hook/useAuth';
+import {
+	AuthUser,
+	IWallet,
+	useProvideAuth,
+} from '@/services/auth/hook/useAuth';
 
 const defaultValues = {
 	user: null,
@@ -14,6 +19,9 @@ const defaultValues = {
 	forgotPassword: () => Promise.resolve(),
 	forgotPasswordSubmit: () => Promise.resolve(''),
 	changePassword: () => Promise.resolve(''),
+	connectWallet: () => Promise.resolve(),
+	setDisconnectWallet: () => Promise.resolve(),
+	wallet: {} as IWallet | null,
 };
 
 type AuthContextType = {
@@ -44,6 +52,9 @@ type AuthContextType = {
 		oldPassword: string;
 		newPassword: string;
 	}) => Promise<string | undefined>;
+	connectWallet: (network: Network) => Promise<void>;
+	setDisconnectWallet: () => void;
+	wallet: IWallet | null;
 };
 
 export const AuthContext = React.createContext<AuthContextType>(defaultValues);
