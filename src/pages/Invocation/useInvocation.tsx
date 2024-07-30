@@ -2,8 +2,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-// import { signTransaction } from 'simple-stellar-signer-api';
-
 import { getInvocationResponse, handleAxiosError } from './invocation.utils';
 import { KeizaiService } from './preInvocation/keizai/keizai.service';
 
