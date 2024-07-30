@@ -1,9 +1,15 @@
 import { Auth } from '@aws-amplify/auth';
 import React from 'react';
+import {
+	Network,
+	connectWallet as simpleSignerConnectWallet,
+	WalletType,
+} from 'simple-stellar-signer-api';
 
 import { User } from '../domain/user';
 import { FORGOT_PASSWORD_RESPONSE } from '../validators/auth-response.enum';
 
+import { toast } from '@/common/components/ui/use-toast';
 import useAxios from '@/common/hooks/useAxios';
 import { AuthContext } from '@/providers/AuthProvider';
 
@@ -17,6 +23,11 @@ Auth.configure(amplifyConfigurationOptions);
 
 export const useAuth = () => React.useContext(AuthContext);
 
+export interface IWallet {
+	publicKey: string;
+	type: WalletType | '';
+}
+
 export type AuthUser = {
 	email: string;
 	accessToken: string;
@@ -27,6 +38,7 @@ export function useProvideAuth() {
 	const [user, setUser] = React.useState<AuthUser | null>(null);
 	const [isLoading, setIsLoading] = React.useState(true);
 	const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+	const [wallet, setWallet] = React.useState<IWallet | null>(null);
 
 	React.useEffect(() => {
 		if (!user) {
@@ -88,6 +100,7 @@ export function useProvideAuth() {
 		Auth.signOut().then(() => {
 			setIsAuthenticated(false);
 			setUser(null);
+			setDisconnectWallet();
 		});
 
 	async function forgotPassword(username: string) {
@@ -130,6 +143,50 @@ export function useProvideAuth() {
 		return data;
 	};
 
+	const setConnectWallet = (wallet: IWallet) => {
+		localStorage.setItem('wallet', JSON.stringify(wallet));
+		setWallet(wallet);
+	};
+
+	const setDisconnectWallet = () => {
+		localStorage.removeItem('wallet');
+		setWallet(null);
+		toast({
+			title: 'Wallet disconnected',
+			description: 'Wallet disconnected successfully',
+		});
+	};
+
+	const connectWallet = async (network: Network) => {
+		try {
+			const { publicKey, wallet: type } = await simpleSignerConnectWallet(
+				network,
+			);
+
+			setConnectWallet({ publicKey, type });
+			toast({
+				title: 'Connected wallet',
+				description: 'Wallet connected successfully',
+			});
+		} catch (err: unknown) {
+			console.error(err);
+
+			if (err instanceof Error) {
+				toast({
+					title: "Couldn't connect wallet",
+					description: err.message,
+					variant: 'destructive',
+				});
+			}
+
+			toast({
+				title: 'Error connecting wallet',
+				description: 'Please try again',
+				variant: 'destructive',
+			});
+		}
+	};
+
 	return {
 		user,
 		isAuthenticated,
@@ -140,5 +197,8 @@ export function useProvideAuth() {
 		forgotPassword,
 		forgotPasswordSubmit,
 		changePassword,
+		connectWallet,
+		setDisconnectWallet,
+		wallet,
 	};
 }
