@@ -1,36 +1,38 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { toast } from '../components/ui/use-toast';
-import useAxios from '../hooks/useAxios';
 import { Environment } from '../types/environment';
+
+import { IApiResponse } from '@/configs/axios/interfaces/IApiResponse';
+import { apiService } from '@/configs/axios/services/api.service';
 
 export const useEnvironmentsQuery = ({
 	collectionId,
 }: {
 	collectionId?: string | undefined;
 }) => {
-	const axios = useAxios();
-
 	const query = useQuery<Environment[]>({
 		queryKey: ['environment', collectionId],
 		refetchOnWindowFocus: true,
 		refetchOnMount: true,
 		queryFn: async () =>
-			axios
-				?.get(`/collection/${collectionId}/environments`)
-				.then((res) => res.data),
+			apiService
+				?.get<IApiResponse<Environment[]>>(
+					`/collection/${collectionId}/environments`,
+				)
+				.then((res) => res.payload),
 	});
 
 	return query;
 };
 
 export const useEnvironmentQuery = ({ id }: { id?: string }) => {
-	const axios = useAxios();
-
 	const query = useQuery<Environment>({
 		queryKey: ['environment', id],
 		queryFn: async () =>
-			axios?.get(`/environment/${id}`).then((res) => res.data),
+			apiService
+				?.get<IApiResponse<Environment>>(`/environment/${id}`)
+				.then((res) => res.payload),
 		enabled: !!id,
 	});
 
@@ -43,7 +45,6 @@ export const useCreateEnvironmentMutation = ({
 	collectionId?: string;
 }) => {
 	const queryClient = useQueryClient();
-	const axios = useAxios();
 
 	const mutation = useMutation({
 		mutationFn: async ({
@@ -55,9 +56,13 @@ export const useCreateEnvironmentMutation = ({
 			value: string;
 			collectionId: string;
 		}) =>
-			axios
-				?.post('/environment', { name, value, collectionId })
-				.then((res) => res.data),
+			apiService
+				?.post<IApiResponse<Environment>>('/environment', {
+					name,
+					value,
+					collectionId,
+				})
+				.then((res) => res.payload),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: ['environment', collectionId],
@@ -85,13 +90,15 @@ export const useCreateAllEnvironmentsMutation = ({
 	collectionId?: string;
 }) => {
 	const queryClient = useQueryClient();
-	const axios = useAxios();
 
 	const mutation = useMutation({
 		mutationFn: async (environments: Environment[]) =>
-			axios
-				?.post(`/collection/${collectionId}/environments`, environments)
-				.then((res) => res.data),
+			apiService
+				?.post<IApiResponse<Environment>>(
+					`/collection/${collectionId}/environments`,
+					environments,
+				)
+				.then((res) => res.payload),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: ['environment', collectionId],
@@ -118,11 +125,12 @@ export const useDeleteEnvironmentMutation = ({
 	collectionId?: string;
 }) => {
 	const queryClient = useQueryClient();
-	const axios = useAxios();
 
 	const mutation = useMutation({
 		mutationFn: async (id: string) =>
-			axios?.delete(`/environment/${id}`).then((res) => res.data),
+			apiService
+				?.delete<IApiResponse<boolean>>(`/environment/${id}`)
+				.then((res) => res.payload),
 		onMutate: (id: string) => {
 			queryClient.cancelQueries({
 				queryKey: ['environment', collectionId],
@@ -162,7 +170,6 @@ export const useEditEnvironmentMutation = ({
 	collectionId?: string;
 }) => {
 	const queryClient = useQueryClient();
-	const axios = useAxios();
 
 	const mutation = useMutation({
 		mutationFn: async ({
@@ -176,14 +183,14 @@ export const useEditEnvironmentMutation = ({
 			value: string;
 			collectionId: string;
 		}) =>
-			axios
-				?.patch('/environment', {
+			apiService
+				?.patch<IApiResponse<Environment>>('/environment', {
 					id,
 					name,
 					value,
 					collectionId,
 				})
-				.then((res) => res.data),
+				.then((res) => res.payload),
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: ['environment', collectionId],

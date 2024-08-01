@@ -1,27 +1,32 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
-import useAxios from '../hooks/useAxios';
 import { Collection } from '../types/collection';
 
-export const useCollectionsQuery = () => {
-	const axios = useAxios();
+import { IApiResponse } from '@/configs/axios/interfaces/IApiResponse';
+import { apiService } from '@/configs/axios/services/api.service';
 
+export const useCollectionsQuery = () => {
 	const query = useQuery<Collection[]>({
 		queryKey: ['collections'],
-		queryFn: async () => axios?.get('/collection').then((res) => res.data),
+		queryFn: async () =>
+			apiService?.get<IApiResponse<Collection[]>>('/collection').then((res) => {
+				return res.payload;
+			}),
 	});
 
 	return query;
 };
 
 export const useCollectionQuery = (collectionId: string | undefined) => {
-	const axios = useAxios();
-
 	const query = useQuery<Collection>({
 		queryKey: ['collection', collectionId],
 		queryFn: async () =>
-			axios?.get(`/collection/${collectionId}`).then((res) => res.data),
+			apiService
+				?.get<IApiResponse<Collection>>(`/collection/${collectionId}`)
+				.then((res) => {
+					return res.payload;
+				}),
 	});
 
 	return query;
@@ -30,11 +35,12 @@ export const useCollectionQuery = (collectionId: string | undefined) => {
 export const useNewCollectionMutation = () => {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
-	const axios = useAxios();
 
 	const mutation = useMutation({
 		mutationFn: async ({ name }: { name: string }) =>
-			axios?.post('/collection', { name }).then((res) => res.data),
+			apiService
+				?.post<IApiResponse<Collection>>('/collection', { name })
+				.then((res) => res.payload),
 		onSuccess: (data) => {
 			queryClient.invalidateQueries({ queryKey: ['collections'] });
 			navigate(`/collection/${data.id}`);
@@ -46,11 +52,12 @@ export const useNewCollectionMutation = () => {
 
 export const useDeleteCollectionMutation = () => {
 	const queryClient = useQueryClient();
-	const axios = useAxios();
 
 	const mutation = useMutation({
 		mutationFn: async (id: string) =>
-			axios?.delete(`/collection/${id}`).then((res) => res.data),
+			apiService
+				?.delete<IApiResponse<boolean>>(`/collection/${id}`)
+				.then((res) => res.payload),
 		onMutate: async (id) => {
 			await queryClient.cancelQueries({ queryKey: ['collections'] });
 
@@ -76,11 +83,12 @@ export const useDeleteCollectionMutation = () => {
 
 export const useUpdateCollectionMutation = () => {
 	const queryClient = useQueryClient();
-	const axios = useAxios();
 
 	const mutation = useMutation({
 		mutationFn: async ({ id, name }: { id: string; name: string }) =>
-			axios?.patch(`/collection/`, { id, name }).then((res) => res.data),
+			apiService
+				?.patch<IApiResponse<Collection>>(`/collection/`, { id, name })
+				.then((res) => res.payload),
 		onMutate: async ({ id, name }) => {
 			await queryClient.cancelQueries({ queryKey: ['collections'] });
 
