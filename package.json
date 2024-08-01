@@ -50,6 +50,7 @@
 		"cross-env": "^7.0.3",
 		"cypress-real-events": "^1.10.3",
 		"flagsmith": "^3.22.1",
+		"jwt-decode": "^4.0.0",
 		"localforage": "^1.10.0",
 		"lodash.debounce": "^4.0.8",
 		"lucide-react": "^0.284.0",
@@ -64,6 +65,7 @@
 		"stellar-sdk": "^11.0.1",
 		"tailwind-merge": "^1.14.0",
 		"tailwindcss-animate": "^1.0.7",
+		"universal-cookie": "^7.1.4",
 		"use-debounce": "^10.0.0"
 	},
 	"devDependencies": {
@@ -77,7 +79,7 @@
 		"@typescript-eslint/parser": "^5.57.1",
 		"@vitejs/plugin-react": "^4.0.0",
 		"autoprefixer": "^10.4.14",
-		"cypress": "^13.3.0",
+		"cypress": "^13.13.2",
 		"dotenv": "^16.0.3",
 		"eslint": "^8.38.0",
 		"eslint-config-prettier": "^8.8.0",
