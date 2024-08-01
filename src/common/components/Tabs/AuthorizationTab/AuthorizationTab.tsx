@@ -7,7 +7,7 @@ import { Input } from '../../ui/input';
 
 import { useEditInvocationKeysMutation } from '@/common/api/invocations';
 import { NETWORK } from '@/common/types/soroban.enum';
-import { IKeypair } from '@/services/stellar/domain/keypair';
+import { IKeypair } from '@/modules/stellar/domain/keypair';
 
 const AuthorizationTab = ({
 	invocationId,
