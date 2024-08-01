@@ -2,15 +2,14 @@ import { Loader2, AtSign } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
-import AlertError from '../Form/AlertError';
-import ErrorMessage from '../Form/ErrorMessage';
-import PasswordInput from '../Input/PasswordInput';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
+import AlertError from '../../common/components/Form/AlertError';
+import ErrorMessage from '../../common/components/Form/ErrorMessage';
+import PasswordInput from '../../common/components/Input/PasswordInput';
+import { Button } from '../../common/components/ui/button';
+import { Input } from '../../common/components/ui/input';
 
-import { useLoginCognitoMutation } from '@/services/auth/api/cognito';
-import { User } from '@/services/auth/domain/user';
-import { AUTH_VALIDATIONS } from '@/services/auth/validators/auth-response.enum';
+import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
+import { AUTH_VALIDATIONS } from '@/modules/auth/message/auth-messages';
 
 function Login() {
 	const {
@@ -23,10 +22,10 @@ function Login() {
 			password: '',
 		},
 	});
-	const { error, isPending, onLoginSubmit } = useLoginCognitoMutation();
+	const { handleSignIn, loadingState, errorState } = useAuthProvider();
 
-	const onSubmit = async (values: User) => {
-		await onLoginSubmit(values);
+	const onSubmit = async (values: { email: string; password: string }) => {
+		await handleSignIn(values.email, values.password);
 	};
 
 	return (
@@ -36,23 +35,27 @@ function Login() {
 			onSubmit={handleSubmit(onSubmit)}
 		>
 			<h1
-				className="text-primary font-bold text-4xl mb-7"
+				className="text-4xl font-bold text-primary mb-7"
 				data-test="login-form-title"
 			>
 				Welcome Back
 			</h1>
 			<div className="flex flex-col mb-4">
-				<div className="flex items-center border-2 px-3 rounded-md bg-white">
-					<AtSign className="h-5 w-5 text-gray-400" />
+				<div className="flex items-center px-3 bg-white border-2 rounded-md">
+					<AtSign className="w-5 h-5 text-gray-400" />
 					<Controller
 						control={control}
 						name="email"
 						rules={{
 							required: AUTH_VALIDATIONS.EMAIL_REQUIRED,
+							pattern: {
+								value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+								message: AUTH_VALIDATIONS.EMAIL_INVALID,
+							},
 						}}
 						render={({ field }) => (
 							<Input
-								className="pl-2 border-none bg-white focus-visible:ring-0 text-black"
+								className="pl-2 text-black bg-white border-none focus-visible:ring-0"
 								type="text"
 								placeholder="Email"
 								data-test="login-form-email"
@@ -75,6 +78,10 @@ function Login() {
 					name="password"
 					rules={{
 						required: AUTH_VALIDATIONS.PASSWORD_REQUIRED,
+						pattern: {
+							value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)/,
+							message: AUTH_VALIDATIONS.PASSWORD_INVALID,
+						},
 					}}
 					render={({ field }) => (
 						<PasswordInput value={field.value} onChange={field.onChange} />
@@ -89,31 +96,37 @@ function Login() {
 					/>
 				)}
 			</div>
-			{!errors.password && !errors.email && error && (
-				<AlertError
-					title="Login failed"
-					message={error}
-					testName="login-form-error-message"
-				/>
-			)}
+			{!errors.email &&
+				!errors.password &&
+				(errorState.signIn || errorState.signIn?.length) && (
+					<AlertError
+						title="Login failed"
+						message={
+							Array.isArray(errorState.signIn)
+								? errorState.signIn.join(', ')
+								: errorState.signIn
+						}
+						testName="login-form-error-message"
+					/>
+				)}
 			<Button
 				type="submit"
-				className="w-full py-2 rounded-md text-black font-semibold mb-2 mt-8"
+				className="w-full py-2 mt-8 mb-2 font-semibold text-black rounded-md"
 				data-test="login-form-btn-submit"
-				disabled={isPending}
+				disabled={loadingState.signIn}
 			>
-				{isPending ? (
+				{loadingState.signIn ? (
 					<>
-						<Loader2 className="mr-2 h-4 w-4 animate-spin text-black" />
+						<Loader2 className="w-4 h-4 mr-2 text-black animate-spin" />
 						<span>Please wait...</span>
 					</>
 				) : (
 					'Login'
 				)}
 			</Button>
-			<div className="flex justify-between items-center flex-wrap">
+			<div className="flex flex-wrap items-center justify-between">
 				<span
-					className="text-center text-sm text-white"
+					className="text-sm text-center text-white"
 					data-test="login-form-footer-info"
 				>
 					Don't have an account?

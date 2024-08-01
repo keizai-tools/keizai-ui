@@ -2,15 +2,13 @@ import { AtSign, Loader2 } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
-import AlertError from '../Form/AlertError';
-import ErrorMessage from '../Form/ErrorMessage';
-import PasswordInput from '../Input/PasswordInput';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-
-import { useCreateAccountMutation } from '@/services/auth/api/cognito';
-import { User } from '@/services/auth/domain/user';
-import { AUTH_VALIDATIONS } from '@/services/auth/validators/auth-response.enum';
+import AlertError from '@/common/components/Form/AlertError';
+import ErrorMessage from '@/common/components/Form/ErrorMessage';
+import PasswordInput from '@/common/components/Input/PasswordInput';
+import { Button } from '@/common/components/ui/button';
+import { Input } from '@/common/components/ui/input';
+import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
+import { AUTH_VALIDATIONS } from '@/modules/auth/message/auth-messages';
 
 function CreateAccount() {
 	const {
@@ -23,11 +21,10 @@ function CreateAccount() {
 			password: '',
 		},
 	});
-	const { mutation, error } = useCreateAccountMutation();
-	const { mutate, isPending } = mutation;
+	const { handleSignUp, loadingState, errorState } = useAuthProvider();
 
-	const onSubmit = async (values: User) => {
-		await mutate(values);
+	const onSubmit = async (values: { email: string; password: string }) => {
+		await handleSignUp(values.email, values.password);
 	};
 
 	return (
@@ -37,14 +34,14 @@ function CreateAccount() {
 			data-test="register-form-container"
 		>
 			<h1
-				className="text-primary font-bold text-4xl mb-7"
+				className="text-4xl font-bold text-primary mb-7"
 				data-test="register-form-title"
 			>
 				Create Account
 			</h1>
 			<div className="flex flex-col mb-4">
-				<div className="flex items-center border-2 px-3 rounded-md bg-white">
-					<AtSign className="h-5 w-5 text-gray-400" />
+				<div className="flex items-center px-3 bg-white border-2 rounded-md">
+					<AtSign className="w-5 h-5 text-gray-400" />
 					<Controller
 						control={control}
 						name="email"
@@ -57,7 +54,7 @@ function CreateAccount() {
 						}}
 						render={({ field }) => (
 							<Input
-								className="pl-2 border-none bg-white focus-visible:ring-0 text-black"
+								className="pl-2 text-black bg-white border-none focus-visible:ring-0"
 								type="text"
 								placeholder="Email"
 								data-test="register-form-email"
@@ -82,8 +79,7 @@ function CreateAccount() {
 					rules={{
 						required: AUTH_VALIDATIONS.PASSWORD_REQUIRED,
 						pattern: {
-							value:
-								/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,255}$/,
+							value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)/,
 							message: AUTH_VALIDATIONS.PASSWORD_INVALID,
 						},
 					}}
@@ -100,22 +96,28 @@ function CreateAccount() {
 					/>
 				)}
 			</div>
-			{!errors.email && !errors.password && error && (
-				<AlertError
-					title="Create account failed"
-					message={error}
-					testName="register-form-create-error"
-				/>
-			)}
+			{!errors.email &&
+				!errors.password &&
+				(errorState.signUp || errorState.signUp?.length) && (
+					<AlertError
+						title="Create account failed"
+						message={
+							Array.isArray(errorState.signUp)
+								? errorState.signUp.join(', ')
+								: errorState.signUp
+						}
+						testName="register-form-create-error"
+					/>
+				)}
 			<Button
 				type="submit"
-				className="w-full mt-8 py-2 rounded-md text-black font-semibold mb-2"
+				className="w-full py-2 mt-8 mb-2 font-semibold text-black rounded-md"
 				data-test="register-form-btn-submit"
-				disabled={isPending}
+				disabled={loadingState.signUp}
 			>
-				{isPending ? (
+				{loadingState.signUp ? (
 					<>
-						<Loader2 className="mr-2 h-4 w-4 animate-spin text-black" />
+						<Loader2 className="w-4 h-4 mr-2 text-black animate-spin" />
 						Creating...
 					</>
 				) : (

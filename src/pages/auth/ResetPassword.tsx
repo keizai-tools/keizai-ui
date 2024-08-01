@@ -2,24 +2,23 @@ import { ChevronRightSquare, Loader2 } from 'lucide-react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
-import AlertError from '../Form/AlertError';
-import ErrorMessage from '../Form/ErrorMessage';
-import PasswordInput from '../Input/PasswordInput';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-
-import { useResetPasswordMutation } from '@/services/auth/api/cognito';
-import { AUTH_VALIDATIONS } from '@/services/auth/validators/auth-response.enum';
+import AlertError from '@/common/components/Form/AlertError';
+import ErrorMessage from '@/common/components/Form/ErrorMessage';
+import PasswordInput from '@/common/components/Input/PasswordInput';
+import { Button } from '@/common/components/ui/button';
+import { Input } from '@/common/components/ui/input';
+import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
+import { AUTH_VALIDATIONS } from '@/modules/auth/message/auth-messages';
 
 export interface IPasswordReset {
 	code: string;
 	newPassword: string;
 	confirmPassword: string;
+	email: string;
 }
 
 function ResetPassword() {
-	const { mutation, error, loading, setLoading } = useResetPasswordMutation();
-	const { mutate, isPending, isError } = mutation;
+	const { handleResetPassword, loadingState, errorState } = useAuthProvider();
 
 	const {
 		control,
@@ -31,13 +30,13 @@ function ResetPassword() {
 			code: '',
 			newPassword: '',
 			confirmPassword: '',
+			email: '',
 		},
 	});
 
 	const onSubmit = async (values: IPasswordReset) => {
-		setLoading(true);
-		const { code, newPassword } = values;
-		await mutate({ code, newPassword });
+		const { code, newPassword, email } = values;
+		await handleResetPassword(email, code, newPassword);
 	};
 
 	return (
@@ -47,14 +46,14 @@ function ResetPassword() {
 			data-test="forgot-password-form-container"
 		>
 			<h1
-				className="text-primary font-bold text-4xl mb-7"
+				className="text-4xl font-bold text-primary mb-7"
 				data-test="forgot-password-title"
 			>
 				Password Reset
 			</h1>
 			<div className="flex flex-col mb-4">
-				<div className="flex items-center border-2 px-3 rounded-md bg-white">
-					<ChevronRightSquare className="h-5 w-5 text-gray-400" />
+				<div className="flex items-center px-3 bg-white border-2 rounded-md">
+					<ChevronRightSquare className="w-5 h-5 text-gray-400" />
 					<Controller
 						control={control}
 						name="code"
@@ -67,7 +66,7 @@ function ResetPassword() {
 						}}
 						render={({ field }) => (
 							<Input
-								className="pl-2 border-none bg-white focus-visible:ring-0 text-black"
+								className="pl-2 text-black bg-white border-none focus-visible:ring-0"
 								type="text"
 								placeholder="Code"
 								data-test="forgot-password-code"
@@ -91,8 +90,7 @@ function ResetPassword() {
 					rules={{
 						required: AUTH_VALIDATIONS.NEW_PASSWORD_REQUIRED,
 						pattern: {
-							value:
-								/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,255}$/,
+							value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)/,
 							message: AUTH_VALIDATIONS.PASSWORD_INVALID,
 						},
 					}}
@@ -115,7 +113,7 @@ function ResetPassword() {
 			</div>
 			<div className="flex flex-col mb-4">
 				<Controller
-					control={control}
+					// control={control}
 					name="confirmPassword"
 					rules={{
 						required: AUTH_VALIDATIONS.CONFIRM_PASSWORD_REQUIRED,
@@ -141,23 +139,27 @@ function ResetPassword() {
 						styles="text-sm"
 					/>
 				)}
-				{isError && !loading && error && (
+				{errorState.resetPassword && !loadingState.resetPassword && (
 					<AlertError
 						title="Reset password failed"
-						message={error}
+						message={
+							Array.isArray(errorState.resetPassword)
+								? errorState.resetPassword.join(', ')
+								: errorState.resetPassword
+						}
 						testName="forgot-password-form-error"
 					/>
 				)}
 			</div>
 			<Button
 				type="submit"
-				className="w-full mt-8 py-2 rounded-md text-black font-semibold mb-2"
+				className="w-full py-2 mt-8 mb-2 font-semibold text-black rounded-md"
 				data-test="forgot-password-btn-submit"
-				disabled={isPending}
+				disabled={loadingState.resetPassword}
 			>
-				{isPending ? (
+				{loadingState.resetPassword ? (
 					<>
-						<Loader2 className="mr-2 h-4 w-4 animate-spin text-black" />
+						<Loader2 className="w-4 h-4 mr-2 text-black animate-spin" />
 						<span>Saving...</span>
 					</>
 				) : (

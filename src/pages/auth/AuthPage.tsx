@@ -1,54 +1,59 @@
+import { useEffect } from 'react';
 import { Link, Navigate, Outlet } from 'react-router-dom';
 
 import FullscreenLoading from '@/common/views/FullscreenLoading';
-import { useAuth } from '@/services/auth/hook/useAuth';
+import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 function AuthPage() {
-	const { isLoading, isAuthenticated } = useAuth();
+	const { handleRefreshSession, loadingState, statusState } = useAuthProvider();
 
-	if (isLoading) {
+	useEffect(() => {
+		handleRefreshSession();
+	}, [handleRefreshSession]);
+
+	if (loadingState.refreshSession) {
 		return <FullscreenLoading />;
 	}
 
-	if (isAuthenticated) {
+	if (statusState.refreshSession) {
 		return <Navigate replace to="/" />;
 	}
 
 	return (
 		<div className="h-screen md:flex" data-test="auth-page-container">
 			<div
-				className="relative overflow-hidden grid grid-rows-1 md:w-2/5 bg-primary  rounded-b-xl md:rounded-b-none md:rounded-r-2xl"
+				className="relative grid grid-rows-1 overflow-hidden md:w-2/5 bg-primary rounded-b-xl md:rounded-b-none md:rounded-r-2xl"
 				data-test="auth-page-banner-container"
 			>
-				<div className="flex flex-col items-center w-full md:gap-2 md:mt-12 mb-4">
+				<div className="flex flex-col items-center w-full mb-4 md:gap-2 md:mt-12">
 					<img
 						src="/welcome.svg"
-						alt="Welcome image"
+						alt="Welcome"
 						className="w-52 h-52 md:mb-4 md:w-[400px] md:h-[400px]"
 						data-test="auth-page-banner-img"
 					/>
 					<h1
-						className="text-4xl lg:text-5xl text-black font-extrabold"
+						className="text-4xl font-extrabold text-black lg:text-5xl"
 						data-test="auth-page-banner-title"
 					>
 						Discover Keizai
 					</h1>
-					<p className="text-black font-bold" data-test="auth-page-banner-info">
+					<p className="font-bold text-black" data-test="auth-page-banner-info">
 						Next-gen testing for Soroban.
 					</p>
 				</div>
-				<footer className="text-center mb-4 hidden md:block">
+				<footer className="hidden mb-4 text-center md:block">
 					<Link
 						to="https://www.keizai.dev/"
 						target="_blank"
-						className="underline text-black font-bold"
+						className="font-bold text-black underline"
 						data-test="auth-page-banner-link"
 					>
 						keizai.dev
 					</Link>
 				</footer>
 			</div>
-			<div className="flex md:w-3/5 justify-center py-10 items-center">
+			<div className="flex items-center justify-center py-10 md:w-3/5">
 				<Outlet />
 			</div>
 		</div>

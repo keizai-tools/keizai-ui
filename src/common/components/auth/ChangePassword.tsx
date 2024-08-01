@@ -6,8 +6,7 @@ import ErrorMessage from '../Form/ErrorMessage';
 import PasswordInput from '../Input/PasswordInput';
 import { Button } from '../ui/button';
 
-import { useChangePasswordMutation } from '@/services/auth/api/cognito';
-import { AUTH_VALIDATIONS } from '@/services/auth/validators/auth-response.enum';
+import { AUTH_VALIDATIONS } from '@/modules/auth/message/auth-messages';
 
 interface IPasswordReset {
 	oldPassword: string;
@@ -36,8 +35,8 @@ enum INPUT_PLACEHOLDER {
 }
 
 function ChangePassword() {
-	const { mutation, error } = useChangePasswordMutation();
-	const { mutate, isPending } = mutation;
+	// const { mutation, error } = useChangePasswordMutation();
+	// const { mutate, isPending } = mutation;
 	const {
 		control,
 		watch,
@@ -58,8 +57,7 @@ function ChangePassword() {
 			rules: {
 				required: AUTH_VALIDATIONS.OLD_PASSWORD_REQUIRED,
 				pattern: {
-					value:
-						/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,255}$/,
+					value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)/,
 					message: AUTH_VALIDATIONS.PASSWORD_INVALID,
 				},
 			},
@@ -71,8 +69,7 @@ function ChangePassword() {
 			rules: {
 				required: AUTH_VALIDATIONS.NEW_PASSWORD_REQUIRED,
 				pattern: {
-					value:
-						/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$&+,:;=?@#|'<>.^*()%!-])[A-Za-z\d@$&+,:;=?@#|'<>.^*()%!-]{8,255}$/,
+					value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W)/,
 					message: AUTH_VALIDATIONS.PASSWORD_INVALID,
 				},
 			},
@@ -95,11 +92,11 @@ function ChangePassword() {
 	];
 
 	const onSubmit = async (values: IPasswordReset) => {
-		const { oldPassword, newPassword } = values;
-		await mutate({
-			oldPassword,
-			newPassword,
-		});
+		// const { oldPassword, newPassword } = values;
+		// await mutate({
+		// 	oldPassword,
+		// 	newPassword,
+		// });
 	};
 
 	return (
@@ -108,7 +105,7 @@ function ChangePassword() {
 			onSubmit={handleSubmit(onSubmit)}
 			data-test="change-password-form-container"
 		>
-			<h1 className="font-bold text-xl mb-7" data-test="change-password-title">
+			<h1 className="text-xl font-bold mb-7" data-test="change-password-title">
 				Change Password
 			</h1>
 			{inputs.map((input: Input) => (
@@ -135,7 +132,7 @@ function ChangePassword() {
 					)}
 				</div>
 			))}
-			{!errors.newPassword &&
+			{/* {!errors.newPassword &&
 				!errors.oldPassword &&
 				!errors.confirmPassword &&
 				error && (
@@ -144,8 +141,8 @@ function ChangePassword() {
 						message={error}
 						testName="change-password-error-message"
 					/>
-				)}
-			<Button
+				)} */}
+			{/* <Button
 				type="submit"
 				className={`w-full font-semibold ${error ? 'mt-4' : ''}`}
 				data-test="change-password-btn-submit"
@@ -153,13 +150,13 @@ function ChangePassword() {
 			>
 				{isPending ? (
 					<>
-						<Loader2 className="mr-2 h-4 w-4 animate-spin text-black" />
+						<Loader2 className="w-4 h-4 mr-2 text-black animate-spin" />
 						Updating...
 					</>
 				) : (
 					'Update password'
 				)}
-			</Button>
+			</Button> */}
 		</form>
 	);
 }
