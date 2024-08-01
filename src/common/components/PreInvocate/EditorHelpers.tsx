@@ -17,7 +17,7 @@ function EditorHelpers({
 		setEditorValue((prev) => (prev ? `${prev}\n${value}` : value));
 	};
 	return (
-		<div className="m-2 p-4">
+		<div className="p-4 m-2">
 			<p className="text-sm text-gray-400">{title}</p>
 			<div className="my-6">
 				<p className="text-gray-500 underline">Snippets</p>
@@ -25,7 +25,7 @@ function EditorHelpers({
 					{editorHelpers.map((helper, index) => (
 						<li
 							key={index}
-							className="text-sm text-slate-500 hover:text-blue-600 my-5 cursor-pointer"
+							className="my-5 text-sm cursor-pointer text-slate-500 hover:text-blue-600"
 							data-test={`editor-helper-${helper}`}
 							onClick={() =>
 								handleChangeEditorValues(KeizaiEditorValues[helper])
