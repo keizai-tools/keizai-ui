@@ -40,7 +40,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 
 	return (
 		<div
-			className="relative flex flex-col p-3 w-full gap-4 max-h-screen overflow-hidden"
+			className="relative flex flex-col w-full max-h-screen gap-4 p-3 overflow-hidden"
 			data-test="invocation-section-container"
 		>
 			<Breadcrumb
@@ -74,7 +74,7 @@ const InvocationPage = () => {
 
 	if (isLoading || isRefetching) {
 		return (
-			<div className="flex flex-1 h-full w-full justify-center items-center">
+			<div className="flex items-center justify-center flex-1 w-full h-full">
 				<Loader className="animate-spin" size="36" />
 			</div>
 		);
