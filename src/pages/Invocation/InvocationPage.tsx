@@ -1,6 +1,7 @@
 import { Loader } from 'lucide-react';
 import React from 'react';
 import { Navigate, useParams } from 'react-router-dom';
+import { Network, signTransaction } from 'simple-stellar-signer-api';
 
 import useInvocation from './useInvocation';
 
@@ -10,6 +11,7 @@ import ContractInput from '@/common/components/Input/ContractInput';
 import TabsContainer from '@/common/components/Tabs/TabsContainer';
 import Terminal from '@/common/components/ui/Terminal';
 import { Invocation } from '@/common/types/invocation';
+import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 export type InvocationForm = {
 	contractId?: string | null;
@@ -18,13 +20,19 @@ export type InvocationForm = {
 };
 
 const InvocationPageContent = ({ data }: { data: Invocation }) => {
+	const [signedXDR, setSignedXDR] = React.useState('');
+	const { wallet } = useAuthProvider();
+
 	const {
 		handleLoadContract,
 		isLoadingContract,
 		contractResponses,
 		handleRunInvocation,
 		isRunningInvocation,
-	} = useInvocation(data);
+		handlePrepareInvocation,
+		transactionXDR,
+		isPreparingInvocation,
+	} = useInvocation(data, signedXDR);
 
 	const preInvocationValue = React.useMemo(() => {
 		return data.preInvocation ?? '';
@@ -35,8 +43,29 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 	}, [data]);
 
 	const isMissingKeys = React.useMemo(() => {
+		if (wallet?.publicKey) {
+			return false;
+		}
 		return !data.publicKey || !data.secretKey;
-	}, [data.publicKey, data.secretKey]);
+	}, [wallet, data.publicKey, data.secretKey]);
+
+	React.useEffect(() => {
+		(async () => {
+			if (transactionXDR && data.network) {
+				const signedTransaction = await signTransaction(
+					transactionXDR,
+					data.network.toLowerCase() as Network,
+				);
+				setSignedXDR(signedTransaction);
+			}
+		})();
+	}, [transactionXDR, data.network]);
+
+	React.useEffect(() => {
+		if (!wallet?.publicKey) {
+			setSignedXDR('');
+		}
+	}, [wallet?.publicKey]);
 
 	return (
 		<div
@@ -53,7 +82,12 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 				defaultNetwork={data.network}
 				loadContract={handleLoadContract}
 				runInvocation={handleRunInvocation}
-				loading={isLoadingContract || isRunningInvocation}
+				loading={
+					isLoadingContract || isRunningInvocation || isPreparingInvocation
+				}
+				prepareInvocation={handlePrepareInvocation}
+				signedXDR={signedXDR}
+				walletPublicKey={wallet?.publicKey || ''}
 			/>
 			<TabsContainer
 				data={data}
