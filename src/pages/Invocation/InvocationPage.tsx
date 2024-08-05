@@ -74,11 +74,11 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 		>
 			<Breadcrumb
 				contractName="Collection"
-				folderName={data.folder?.name || ''}
+				folderName={data.folder?.name ?? ''}
 				contractInvocationName={data.name}
 			/>
 			<ContractInput
-				defaultValue={data.contractId || ''}
+				defaultValue={data.contractId ?? ''}
 				defaultNetwork={data.network}
 				loadContract={handleLoadContract}
 				runInvocation={handleRunInvocation}
