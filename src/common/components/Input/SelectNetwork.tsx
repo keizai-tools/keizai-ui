@@ -22,7 +22,9 @@ import {
 import useNetwork from '@/common/hooks/useNetwork';
 import { NETWORK } from '@/common/types/soroban.enum';
 
-function SelectNetwork({ defaultNetwork }: { defaultNetwork: string }) {
+function SelectNetwork({
+	defaultNetwork,
+}: Readonly<{ defaultNetwork: string }>) {
 	const [showEditNetworkDialog, setShowEditNetworkDialog] =
 		React.useState(false);
 	const { selectNetwork, setSelectNetwork, handleUpdateNetwork } =
@@ -61,6 +63,12 @@ function SelectNetwork({ defaultNetwork }: { defaultNetwork: string }) {
 				</SelectTrigger>
 				<SelectContent data-test="contract-select-networks-container">
 					<SelectItem
+						value={NETWORK.SOROBAN_AUTO_DETECT}
+						data-test="contract-select-network-auto-detect"
+					>
+						{NETWORK.SOROBAN_AUTO_DETECT}
+					</SelectItem>
+					<SelectItem
 						value={NETWORK.SOROBAN_FUTURENET}
 						data-test="contract-select-network-futurenet"
 					>
@@ -92,7 +100,7 @@ function SelectNetwork({ defaultNetwork }: { defaultNetwork: string }) {
 							</AlertDialogTitle>
 							<div>
 								<Alert variant="destructive" className="my-5">
-									<AlertCircleIcon className="h-4 w-4" />
+									<AlertCircleIcon className="w-4 h-4" />
 									<AlertTitle data-test="change-network-dialog-title">
 										Warning!
 									</AlertTitle>
