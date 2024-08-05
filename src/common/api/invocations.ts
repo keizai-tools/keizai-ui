@@ -7,7 +7,7 @@ import { Invocation, InvocationResponse } from '../types/invocation';
 import { IApiResponse } from '@/configs/axios/interfaces/IApiResponse';
 import { apiService } from '@/configs/axios/services/api.service';
 
-export const useInvocationQuery = ({ id }: { id?: string }) => {
+export function useInvocationQuery({ id }: { id?: string }) {
 	const query = useQuery<Invocation>({
 		queryKey: ['invocation', id],
 		queryFn: async () =>
@@ -18,18 +18,36 @@ export const useInvocationQuery = ({ id }: { id?: string }) => {
 	});
 
 	return query;
-};
+}
 
-export const useRunInvocationQuery = ({ id }: { id?: string }) => {
+export function useRunInvocationQuery({
+	id,
+	signedTransactionXDR,
+}: {
+	id?: string;
+	signedTransactionXDR?: string;
+}) {
 	return async () => {
-		const res = await apiService?.get<IApiResponse<InvocationResponse>>(
+		const res = await apiService?.post<IApiResponse<InvocationResponse>>(
 			`/invocation/${id}/run`,
+			{
+				signedTransactionXDR,
+			},
 		);
 		return res.payload;
 	};
-};
+}
 
-export const useCreateInvocationMutation = () => {
+export function usePrepareInvocationQuery({ id }: { id?: string }) {
+	return async () => {
+		const res = await apiService?.get<IApiResponse<string>>(
+			`/invocation/${id}/prepare`,
+		);
+		return res.payload;
+	};
+}
+
+export function useCreateInvocationMutation() {
 	const params = useParams();
 	const queryClient = useQueryClient();
 
@@ -55,9 +73,9 @@ export const useCreateInvocationMutation = () => {
 	});
 
 	return mutation;
-};
+}
 
-export const useEditInvocationMutation = () => {
+export function useEditInvocationMutation() {
 	const params = useParams();
 	const queryClient = useQueryClient();
 
@@ -101,9 +119,9 @@ export const useEditInvocationMutation = () => {
 	});
 
 	return mutation;
-};
+}
 
-export const useEditSelectedMethodMutation = () => {
+export function useEditSelectedMethodMutation() {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
@@ -142,9 +160,9 @@ export const useEditSelectedMethodMutation = () => {
 	});
 
 	return mutation;
-};
+}
 
-export const useDeleteInvocationMutation = () => {
+export function useDeleteInvocationMutation() {
 	const params = useParams();
 	const queryClient = useQueryClient();
 
@@ -161,9 +179,9 @@ export const useDeleteInvocationMutation = () => {
 	});
 
 	return mutation;
-};
+}
 
-export const useEditNetworkMutation = () => {
+export function useEditNetworkMutation() {
 	const queryClient = useQueryClient();
 	const { toast } = useToast();
 
@@ -204,9 +222,9 @@ export const useEditNetworkMutation = () => {
 		},
 	});
 	return mutation;
-};
+}
 
-export const useEditInvocationKeysMutation = () => {
+export function useEditInvocationKeysMutation() {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
@@ -232,9 +250,9 @@ export const useEditInvocationKeysMutation = () => {
 	});
 
 	return mutation;
-};
+}
 
-export const useEditPreInvocationMutation = () => {
+export function useEditPreInvocationMutation() {
 	const queryClient = useQueryClient();
 	const mutation = useMutation({
 		mutationFn: async ({
@@ -267,4 +285,4 @@ export const useEditPreInvocationMutation = () => {
 		},
 	});
 	return mutation;
-};
+}
