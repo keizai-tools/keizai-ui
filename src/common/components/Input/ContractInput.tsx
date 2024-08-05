@@ -59,22 +59,24 @@ const ContractInput = ({
 
 	return (
 		<div
-			className="flex items-center border p-2 rounded-md"
+			className="flex items-center p-2 border rounded-md"
 			data-test="contract-input-container"
 		>
 			<SelectNetwork defaultNetwork={defaultNetwork} />
 			<div className="flex w-full group">
 				{defaultValue ? (
-					<div className="flex items-center justify-between flex-1 w-full relative">
+					<div className="relative flex items-center justify-between flex-1 w-full">
 						<span
-							className={defaultValue.match(/{{(.*?)}}/) ? 'text-primary' : ''}
+							className={
+								RegExp(/{{(.*?)}}/).exec(defaultValue) ? 'text-primary' : ''
+							}
 							data-test="contract-input-address"
 						>
 							{defaultValue}
 						</span>
 						<Button
 							variant="link"
-							className="invisible group-hover:visible absolute right-0 bg-background"
+							className="absolute right-0 invisible group-hover:visible bg-background"
 							data-test="btn-edit-contract-address"
 							onClick={() => {
 								setShowEditContractDialog(true);
@@ -121,7 +123,7 @@ const ContractInput = ({
 						{!loading ? (
 							'RUN'
 						) : (
-							<div className="flex gap-1 items-center">
+							<div className="flex items-center gap-1">
 								<Loader className="animate-spin" size="14" /> Running
 							</div>
 						)}
@@ -137,7 +139,7 @@ const ContractInput = ({
 						{!loading ? (
 							'PREPARE'
 						) : (
-							<div className="flex gap-1 items-center">
+							<div className="flex items-center gap-1">
 								<Loader className="animate-spin" size="14" /> Preparing
 							</div>
 						)}
