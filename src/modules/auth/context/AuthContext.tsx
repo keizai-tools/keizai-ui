@@ -134,11 +134,10 @@ export function AuthProvider() {
 				setLoadingState('signIn', true);
 				setErrorState('signIn', null);
 				try {
-					const response = await authService.signIn(email, password);
-					const { payload } = response;
-					const { accessToken, refreshToken } = payload;
+					const { payload } = await authService.signIn(email, password);
+					const { accessToken, refreshToken, idToken } = payload;
+					const decodedToken = cookieService.decodeToken(idToken);
 
-					const decodedToken = cookieService.decodeToken(refreshToken);
 					if (!decodedToken) throw new Error(UNRECOGNIZED_TOKEN_ERROR);
 
 					cookieService.setAccessTokenCookie(accessToken);
@@ -224,8 +223,6 @@ export function AuthProvider() {
 			try {
 				const email: string =
 					cookieService.getCookie(StoredCookies.EMAIL) ?? '';
-				const accessToken: string =
-					cookieService.getCookie(StoredCookies.ACCESS_TOKEN) ?? '';
 				const refreshToken: string =
 					cookieService.getCookie(StoredCookies.REFRESH_TOKEN) ?? '';
 
@@ -235,23 +232,16 @@ export function AuthProvider() {
 					return;
 				}
 
-				if (!accessToken && (email || refreshToken)) {
-					const { payload } = await authService.refreshToken(
-						email,
-						refreshToken,
-					);
-					cookieService.setAccessTokenCookie(accessToken);
-					apiService.setAuthentication(payload.accessToken);
-					setLoadingState('refreshSession', false);
-					setStatusState('refreshSession', true);
-					return;
-				}
-
+				const { payload } = await authService.refreshToken(email, refreshToken);
+				cookieService.setAccessTokenCookie(payload.accessToken);
+				apiService.setAuthentication(payload.accessToken);
 				setLoadingState('refreshSession', false);
 				setStatusState('refreshSession', true);
 			} catch (error) {
 				setLoadingState('refreshSession', false);
 				setStatusState('refreshSession', false);
+
+				cookieService.removeAll();
 
 				if (error instanceof ApiResponseError) {
 					setErrorState('refreshSession', error.details.description);
