@@ -5,6 +5,7 @@ export interface ISignInResponse {
 	payload: {
 		accessToken: string;
 		refreshToken: string;
+		idToken: string;
 		user: {
 			email: string;
 			externalId: string;
