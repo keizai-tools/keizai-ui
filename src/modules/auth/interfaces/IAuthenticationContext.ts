@@ -1,11 +1,10 @@
-import type { IErrorState } from './IErrorState';
+import { WalletType, type Network } from 'simple-stellar-signer-api';
+
+import { IErrorState } from './IErrorState';
 import { ILoadingState } from './ILoadingState';
-import type { IStatusState } from './IStatusState';
+import { IStatusState } from './IStatusState';
 
 export interface IAuthenticationContext {
-	// handleConfirmUser: (username: string, code: string) => Promise<void>;
-	// handleResendConfirmationCode: (username: string) => Promise<void>;
-
 	handleResetPassword: (
 		email: string,
 		newPassword: string,
@@ -19,4 +18,12 @@ export interface IAuthenticationContext {
 	errorState: IErrorState;
 	loadingState: ILoadingState;
 	statusState: IStatusState;
+	connectWallet(network: Network): Promise<void>;
+	setDisconnectWallet(): void;
+	wallet: IWallet | null;
+}
+
+export interface IWallet {
+	publicKey: string;
+	type: WalletType | '';
 }

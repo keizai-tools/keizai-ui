@@ -92,7 +92,7 @@ function ImportAccount({
 				</DialogHeader>
 				<form
 					id="import-account"
-					className="flex space-x-2 mt-4"
+					className="flex mt-4 space-x-2"
 					data-test="import-account-modal-form-container"
 					onSubmit={handleSubmit(submitAndReset)}
 				>
@@ -111,7 +111,7 @@ function ImportAccount({
 						/>
 						{errors.secretKey && (
 							<p
-								className="text-sm text-red-500 ml-4"
+								className="ml-4 text-sm text-red-500"
 								data-test="import-account-modal-error"
 							>
 								{errors.secretKey.type === 'required'
@@ -130,7 +130,7 @@ function ImportAccount({
 					>
 						{isPending ? (
 							<>
-								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+								<Loader2 className="w-4 h-4 mr-2 animate-spin" />
 								Connecting...
 							</>
 						) : (

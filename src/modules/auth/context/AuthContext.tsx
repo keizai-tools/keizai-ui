@@ -1,10 +1,17 @@
-import { createContext, useCallback, useMemo } from 'react';
+import { createContext, useCallback, useMemo, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
+import {
+	Network,
+	connectWallet as simpleSignerConnectWallet,
+} from 'simple-stellar-signer-api';
 
 import { useErrorState } from '../hooks/useErrorState';
 import { useLoadingState } from '../hooks/useLoadingState';
 import { useStatusState } from '../hooks/useStatusState';
-import { IAuthenticationContext } from '../interfaces/IAuthenticationContext';
+import {
+	IAuthenticationContext,
+	IWallet,
+} from '../interfaces/IAuthenticationContext';
 import {
 	CONFIRMATION_SENT_MESSAGE,
 	SIGN_IN_SUCCESS_MESSAGE,
@@ -26,8 +33,59 @@ export function AuthProvider() {
 	const { loadingState, setLoadingState } = useLoadingState();
 	const { errorState, setErrorState } = useErrorState();
 	const { statusState, setStatusState } = useStatusState();
+	const [wallet, setWallet] = useState<IWallet | null>(null);
+
 	const navigate = useNavigate();
 	const { toast } = useToast();
+	const setConnectWallet = useCallback(
+		(wallet: IWallet): void => {
+			localStorage.setItem('wallet', JSON.stringify(wallet));
+			setWallet(wallet);
+		},
+		[setWallet],
+	);
+
+	const setDisconnectWallet = useCallback((): void => {
+		localStorage.removeItem('wallet');
+		setWallet(null);
+		toast({
+			title: 'Wallet disconnected',
+			description: 'Wallet disconnected successfully',
+		});
+	}, [setWallet, toast]);
+
+	const connectWallet = useCallback(
+		async (network: Network): Promise<void> => {
+			try {
+				const { publicKey, wallet: type } = await simpleSignerConnectWallet(
+					network,
+				);
+
+				setConnectWallet({ publicKey, type });
+				toast({
+					title: 'Connected wallet',
+					description: 'Wallet connected successfully',
+				});
+			} catch (err: unknown) {
+				console.error(err);
+
+				if (err instanceof Error) {
+					toast({
+						title: "Couldn't connect wallet",
+						description: err.message,
+						variant: 'destructive',
+					});
+				}
+
+				toast({
+					title: 'Error connecting wallet',
+					description: 'Please try again',
+					variant: 'destructive',
+				});
+			}
+		},
+		[setConnectWallet, toast],
+	);
 
 	const handleSignUp = useCallback(
 		async (email: string, password: string) => {
@@ -224,6 +282,7 @@ export function AuthProvider() {
 		try {
 			cookieService.removeAll();
 			apiService.setAuthentication('');
+			setDisconnectWallet();
 			toast({
 				title: 'Sign out',
 				description: SIGN_OUT_SUCCESS_MESSAGE,
@@ -238,7 +297,7 @@ export function AuthProvider() {
 				variant: 'destructive',
 			});
 		}
-	}, [navigate, setLoadingState, setStatusState, toast]);
+	}, [navigate, setDisconnectWallet, setLoadingState, setStatusState, toast]);
 
 	const handleResetPassword = useCallback(
 		async (email: string, password: string, code: string) => {
@@ -295,23 +354,29 @@ export function AuthProvider() {
 			handleRefreshSession,
 			handleForgotPassword,
 			handleResetPassword,
+			setDisconnectWallet,
 			handleSignOut,
+			connectWallet,
 			handleSignUp,
 			handleSignIn,
 			loadingState,
 			statusState,
 			errorState,
+			wallet,
 		}),
 		[
 			handleRefreshSession,
 			handleForgotPassword,
 			handleResetPassword,
+			setDisconnectWallet,
 			handleSignOut,
+			connectWallet,
 			handleSignUp,
 			handleSignIn,
 			loadingState,
 			statusState,
 			errorState,
+			wallet,
 		],
 	);
 

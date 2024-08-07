@@ -15,12 +15,18 @@ const ContractInput = ({
 	loading,
 	loadContract,
 	runInvocation,
+	prepareInvocation,
+	signedXDR,
+	walletPublicKey,
 }: {
 	defaultValue: string;
 	defaultNetwork: string;
 	loading: boolean;
 	loadContract: (id: string) => Promise<void>;
 	runInvocation: () => void;
+	prepareInvocation: () => Promise<void>;
+	signedXDR: string;
+	walletPublicKey: string;
 }) => {
 	const [contractId, setContractId] = React.useState(defaultValue);
 	const [showEditContractDialog, setShowEditContractDialog] =
@@ -48,6 +54,8 @@ const ContractInput = ({
 		handleSearchEnvironment(value);
 		setContractId(value);
 	};
+
+	const showRunButton = !walletPublicKey || (walletPublicKey && signedXDR);
 
 	return (
 		<div
@@ -102,7 +110,7 @@ const ContractInput = ({
 					>
 						{!loading ? 'LOAD' : <Loader className="animate-spin" size="14" />}
 					</Button>
-				) : (
+				) : showRunButton ? (
 					<Button
 						data-test="contract-input-btn-load"
 						className="transition-all"
@@ -115,6 +123,22 @@ const ContractInput = ({
 						) : (
 							<div className="flex gap-1 items-center">
 								<Loader className="animate-spin" size="14" /> Running
+							</div>
+						)}
+					</Button>
+				) : (
+					<Button
+						data-test="contract-input-btn-load"
+						className="transition-all"
+						onClick={prepareInvocation}
+						type="button"
+						disabled={loading}
+					>
+						{!loading ? (
+							'PREPARE'
+						) : (
+							<div className="flex gap-1 items-center">
+								<Loader className="animate-spin" size="14" /> Preparing
 							</div>
 						)}
 					</Button>
