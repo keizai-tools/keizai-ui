@@ -9,13 +9,14 @@ type AlertErrorProps = {
 };
 
 function AlertError({ title, message, testName }: AlertErrorProps) {
+	console.log(`${testName}-container`);
 	return (
 		<Alert
 			variant="destructive"
 			className="mt-4"
 			data-test={`${testName}-container`}
 		>
-			<AlertCircle className="h-4 w-4" />
+			<AlertCircle className="w-4 h-4" />
 			<AlertTitle className="mb-2" data-test={`${testName}-title`}>
 				{title}
 			</AlertTitle>

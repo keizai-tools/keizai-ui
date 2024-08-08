@@ -11,10 +11,10 @@ import {
 function PreInvocationEditor({
 	editorValue,
 	setEditorValue,
-}: {
+}: Readonly<{
 	editorValue: string;
 	setEditorValue: Dispatch<SetStateAction<string>>;
-}) {
+}>) {
 	function handleEditorChange(value: string | undefined) {
 		setEditorValue(value ?? '');
 	}

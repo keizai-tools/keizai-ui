@@ -7,8 +7,8 @@ import { Input } from '../../ui/input';
 
 import { useEditInvocationKeysMutation } from '@/common/api/invocations';
 import { NETWORK } from '@/common/types/soroban.enum';
-import { useAuth } from '@/services/auth/hook/useAuth';
-import { IKeypair } from '@/services/stellar/domain/keypair';
+import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
+import { IKeypair } from '@/modules/stellar/domain/keypair';
 
 const AuthorizationTab = ({
 	invocationId,
@@ -19,7 +19,7 @@ const AuthorizationTab = ({
 	network: string;
 	defaultValues: IKeypair;
 }) => {
-	const { connectWallet, wallet, setDisconnectWallet } = useAuth();
+	const { connectWallet, wallet, setDisconnectWallet } = useAuthProvider();
 
 	const { mutate: editKeys, data } = useEditInvocationKeysMutation();
 	const { register } = useForm({
@@ -54,7 +54,7 @@ const AuthorizationTab = ({
 			>
 				{!wallet && (
 					<div className="flex flex-col gap-1" data-test="auth-tab-secret-key">
-						<span className="text-primary text-md font-semibold">
+						<span className="font-semibold text-primary text-md">
 							Secret key
 						</span>
 						<Input
@@ -66,7 +66,7 @@ const AuthorizationTab = ({
 					</div>
 				)}
 				<div className="flex flex-col gap-1" data-test="auth-tab-public-key">
-					<span className="text-primary text-md font-semibold">Public key</span>
+					<span className="font-semibold text-primary text-md">Public key</span>
 					<Input
 						{...register('publicKey')}
 						placeholder="G . . ."

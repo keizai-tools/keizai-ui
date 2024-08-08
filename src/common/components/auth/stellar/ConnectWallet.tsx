@@ -2,7 +2,7 @@ import { Network } from 'simple-stellar-signer-api';
 
 import { Button } from '../../ui/button';
 
-import { IWallet } from '@/services/auth/hook/useAuth';
+import { IWallet } from '@/modules/auth/interfaces/IAuthenticationContext';
 
 interface IConnectWallet {
 	connectWallet: (network: Network) => void;

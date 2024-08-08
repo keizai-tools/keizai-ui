@@ -1,14 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import useAxios from '../hooks/useAxios';
 import { Method } from '../types/method';
 
-export const useMethodQuery = ({ id }: { id?: string }) => {
-	const axios = useAxios();
+import type { IApiResponse } from '@/configs/axios/interfaces/IApiResponse';
+import { apiService } from '@/configs/axios/services/api.service';
 
+export const useMethodQuery = ({ id }: { id?: string }) => {
 	const query = useQuery<Method>({
 		queryKey: ['method', id],
-		queryFn: async () => axios?.get(`/method/${id}`).then((res) => res.data),
+		queryFn: async () =>
+			apiService
+				?.get<IApiResponse<Method>>(`/method/${id}`)
+				.then((res) => res.payload),
 		enabled: !!id,
 	});
 
@@ -17,7 +20,6 @@ export const useMethodQuery = ({ id }: { id?: string }) => {
 
 export const useEditParametersMethodMutation = () => {
 	const queryClient = useQueryClient();
-	const axios = useAxios();
 
 	const mutation = useMutation({
 		mutationFn: async ({
@@ -29,13 +31,13 @@ export const useEditParametersMethodMutation = () => {
 			invocationId: string;
 			parameters: { name: string; value: string }[];
 		}) =>
-			axios
-				?.patch(`/method`, {
+			apiService
+				?.patch<IApiResponse<Method>>(`/method`, {
 					id,
 					invocationId,
 					params: parameters,
 				})
-				.then((res) => res.data),
+				.then((res) => res.payload),
 		onSettled: (_, __, { id }) => {
 			queryClient.invalidateQueries({ queryKey: ['method', id] });
 		},

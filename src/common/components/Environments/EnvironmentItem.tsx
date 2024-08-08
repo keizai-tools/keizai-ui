@@ -15,7 +15,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import ErrorMessage from '../Form/ErrorMessage';
 import { Input } from '../ui/input';
 
-import { useEditEnvironmentMutation } from '@/common/api/enviroments';
+import { useEditEnvironmentMutation } from '@/common/api/environments';
 import { ENVIRONMENTS_FORM } from '@/common/exceptions/environments';
 import { Environment } from '@/common/types/environment';
 

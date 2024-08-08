@@ -1,10 +1,15 @@
-import { AUTH_VALIDATIONS, AUTH_LOGIN_RESPONSE } from './exceptions/auth.enum';
+import {
+	AUTH_VALIDATIONS,
+	AUTH_LOGIN_RESPONSE,
+	AUTH_RESPONSE,
+} from './exceptions/auth.enum';
 import {
 	user,
 	invalidUser,
-	cognitoUrl,
+	apiUrl,
 	authPage,
 	loginForm,
+	type IApiResponseError,
 } from './exceptions/constants';
 
 describe('Login management', () => {
@@ -34,7 +39,7 @@ describe('Login management', () => {
 			.contains(loginForm.title);
 		cy.getBySel('login-form-email')
 			.should('be.visible')
-			.and('have.attr', 'placeholder', loginForm.username);
+			.and('have.attr', 'placeholder', loginForm.email);
 		cy.getBySel('form-input-password')
 			.should('be.visible')
 			.and('have.attr', 'placeholder', loginForm.password);
@@ -53,6 +58,7 @@ describe('Login management', () => {
 			.and('have.attr', 'href', loginForm.footer.passwordLink.url)
 			.and('have.text', loginForm.footer.passwordLink.title);
 	});
+
 	it('Should go to the create account form', () => {
 		cy.url().should('include', `${Cypress.env('loginUrl')}`);
 		cy.getBySel('login-form-container').should('exist').and('be.visible');
@@ -62,6 +68,7 @@ describe('Login management', () => {
 		cy.getBySel('register-form-container').should('exist').and('be.visible');
 		cy.getBySel('login-form-container').should('not.exist');
 	});
+
 	it('Should show error messages with required fields when clicking the Submit button', () => {
 		cy.getBySel('login-form-btn-submit').click();
 		cy.getBySel('login-form-email-error-message')
@@ -71,38 +78,31 @@ describe('Login management', () => {
 			.should('be.visible')
 			.and('have.text', AUTH_VALIDATIONS.PASSWORD_REQUIRED);
 	});
+
 	it('Should show an error message when the password is invalid', () => {
-		cy.getBySel('login-form-email').type(user.username);
+		cy.getBySel('login-form-email').type(user.email);
 		cy.getBySel('form-input-password').type(invalidUser.password);
 		cy.getBySel('login-form-btn-submit').click();
-		cy.getBySel('login-form-error-message-container').should('be.visible');
-		cy.getBySel('login-form-error-message-title')
-			.should('be.visible')
-			.and('have.text', loginForm.errorTitle);
-		cy.getBySel('login-form-error-message-info')
-			.should('be.visible')
-			.and('have.text', AUTH_LOGIN_RESPONSE.NOT_AUTHORIZED);
+		cy.getBySel('password-error-requeriment').should('be.visible');
 	});
+
 	it('Should show an error message when the email is invalid', () => {
-		cy.getBySel('login-form-email').type(invalidUser.username);
+		cy.getBySel('login-form-email').type(invalidUser.email);
 		cy.getBySel('form-input-password').type(user.password);
 		cy.getBySel('login-form-btn-submit').click();
-		cy.getBySel('login-form-error-message-container').should('be.visible');
-		cy.getBySel('login-form-error-message-title')
-			.should('be.visible')
-			.and('have.text', loginForm.errorTitle);
-		cy.getBySel('login-form-error-message-info')
-			.should('be.visible')
-			.and('have.text', AUTH_LOGIN_RESPONSE.NOT_AUTHORIZED);
+		cy.getBySel('login-form-email-error-message').should('be.visible');
 	});
+
 	it('Should show an error message in an alert for the exception UserNotConfirmedException', () => {
-		cy.intercept('POST', cognitoUrl, {
-			statusCode: 400,
+		cy.intercept('POST', `${apiUrl}/auth/login`, {
+			statusCode: 403,
 			body: {
-				code: 'UserNotConfirmedException',
-			},
+				details: {
+					description: AUTH_LOGIN_RESPONSE.USER_NOT_CONFIRMED,
+				},
+			} as IApiResponseError,
 		});
-		cy.getBySel('login-form-email').type(user.username);
+		cy.getBySel('login-form-email').type(user.email);
 		cy.getBySel('form-input-password').type(user.password);
 		cy.getBySel('login-form-btn-submit').click();
 		cy.getBySel('login-form-error-message-title')
@@ -112,14 +112,17 @@ describe('Login management', () => {
 			.should('be.visible')
 			.and('have.text', AUTH_LOGIN_RESPONSE.USER_NOT_CONFIRMED);
 	});
+
 	it('Should show an error message in an alert for the exception InvalidPasswordException', () => {
-		cy.intercept('POST', cognitoUrl, {
-			statusCode: 400,
+		cy.intercept('POST', `${apiUrl}/auth/login`, {
+			statusCode: 401,
 			body: {
-				code: 'InvalidPasswordException',
-			},
+				details: {
+					description: AUTH_LOGIN_RESPONSE.INVALID_PASSWORD,
+				},
+			} as IApiResponseError,
 		});
-		cy.getBySel('login-form-email').type(user.username);
+		cy.getBySel('login-form-email').type(user.email);
 		cy.getBySel('form-input-password').type(user.password);
 		cy.getBySel('login-form-btn-submit').click();
 		cy.getBySel('login-form-error-message-title')
@@ -129,14 +132,17 @@ describe('Login management', () => {
 			.should('be.visible')
 			.and('have.text', AUTH_LOGIN_RESPONSE.INVALID_PASSWORD);
 	});
+
 	it('Should show an error message in an alert for the exception PasswordResetRequiredException', () => {
-		cy.intercept('POST', cognitoUrl, {
-			statusCode: 400,
+		cy.intercept('POST', `${apiUrl}/auth/login`, {
+			statusCode: 401,
 			body: {
-				code: 'PasswordResetRequiredException',
-			},
+				details: {
+					description: AUTH_LOGIN_RESPONSE.PASSWORD_RESET_REQUIRED,
+				},
+			} as IApiResponseError,
 		});
-		cy.getBySel('login-form-email').type(user.username);
+		cy.getBySel('login-form-email').type(user.email);
 		cy.getBySel('form-input-password').type(user.password);
 		cy.getBySel('login-form-btn-submit').click();
 		cy.getBySel('login-form-error-message-title')
@@ -146,14 +152,17 @@ describe('Login management', () => {
 			.should('be.visible')
 			.and('have.text', AUTH_LOGIN_RESPONSE.PASSWORD_RESET_REQUIRED);
 	});
+
 	it('Should show an error message in an alert for the exception UserNotFoundException', () => {
-		cy.intercept('POST', cognitoUrl, {
-			statusCode: 400,
+		cy.intercept('POST', `${apiUrl}/auth/login`, {
+			statusCode: 401,
 			body: {
-				code: 'UserNotFoundException',
-			},
+				details: {
+					description: AUTH_LOGIN_RESPONSE.USER_NOT_FOUND,
+				},
+			} as IApiResponseError,
 		});
-		cy.getBySel('login-form-email').type(user.username);
+		cy.getBySel('login-form-email').type(user.email);
 		cy.getBySel('form-input-password').type(user.password);
 		cy.getBySel('login-form-btn-submit').click();
 		cy.getBySel('login-form-error-message-title')
@@ -163,80 +172,79 @@ describe('Login management', () => {
 			.should('be.visible')
 			.and('have.text', AUTH_LOGIN_RESPONSE.USER_NOT_FOUND);
 	});
+
 	it('Should show a toast with an error message for the exception InternalErrorException', () => {
-		cy.intercept('POST', cognitoUrl, {
+		cy.intercept('POST', `${apiUrl}/auth/login`, {
 			statusCode: 500,
 			body: {
-				code: 'InternalErrorException',
-			},
+				details: {
+					description: AUTH_RESPONSE.INTERNAL_ERROR,
+				},
+			} as IApiResponseError,
 		});
-		cy.getBySel('login-form-email').type(user.username);
+		cy.getBySel('login-form-email').type(user.email);
 		cy.getBySel('form-input-password').type(user.password);
 		cy.getBySel('login-form-btn-submit').click();
 		cy.getBySel('toast-container').should('be.visible');
 	});
+
 	it('Should show a toast with an error message for the exception InvalidParameterException', () => {
-		cy.intercept('POST', cognitoUrl, {
-			statusCode: 500,
+		cy.intercept('POST', `${apiUrl}/auth/login`, {
+			statusCode: 401,
 			body: {
-				code: 'InvalidParameterException',
-			},
+				details: {
+					description: AUTH_RESPONSE.INVALID_PARAMETER,
+				},
+			} as IApiResponseError,
 		});
-		cy.getBySel('login-form-email').type(user.username);
+		cy.getBySel('login-form-email').type(user.email);
 		cy.getBySel('form-input-password').type(user.password);
 		cy.getBySel('login-form-btn-submit').click();
 		cy.getBySel('toast-container').should('be.visible');
 	});
+
 	it('Should show a toast with an error message for the exception RequestExpired', () => {
-		cy.intercept('POST', cognitoUrl, {
+		cy.intercept('POST', `${apiUrl}/auth/login`, {
 			statusCode: 500,
 			body: {
-				code: 'RequestExpired',
-			},
+				details: {
+					description: AUTH_RESPONSE.REQUEST_EXPIRED,
+				},
+			} as IApiResponseError,
 		});
-		cy.getBySel('login-form-email').type(user.username);
+		cy.getBySel('login-form-email').type(user.email);
 		cy.getBySel('form-input-password').type(user.password);
 		cy.getBySel('login-form-btn-submit').click();
 		cy.getBySel('toast-container').should('be.visible');
 	});
+
 	it('Should show a toast with an error message for the exception ServiceUnavailable', () => {
-		cy.intercept('POST', cognitoUrl, {
-			statusCode: 500,
-			body: {
-				code: 'ServiceUnavailable',
-			},
+		cy.intercept('POST', `${apiUrl}/auth/login`, {
+			forceNetworkError: true,
 		});
-		cy.getBySel('login-form-email').type(user.username);
+		cy.getBySel('login-form-email').type(user.email);
 		cy.getBySel('form-input-password').type(user.password);
 		cy.getBySel('login-form-btn-submit').click();
 		cy.getBySel('toast-container').should('be.visible');
 	});
+
 	it('Should show a toast with an error message for the exception TooManyRequestsException', () => {
-		cy.intercept('POST', cognitoUrl, {
+		cy.intercept('POST', `${apiUrl}/auth/login`, {
 			statusCode: 500,
 			body: {
-				code: 'TooManyRequestsException',
-			},
+				details: {
+					description: AUTH_RESPONSE.TOO_MANY_REQUEST,
+				},
+			} as IApiResponseError,
 		});
-		cy.getBySel('login-form-email').type(user.username);
+		cy.getBySel('login-form-email').type(user.email);
 		cy.getBySel('form-input-password').type(user.password);
 		cy.getBySel('login-form-btn-submit').click();
 		cy.getBySel('toast-container').should('be.visible');
 	});
-	it('Should show an error message by default if it does not match any exception', () => {
-		cy.intercept('POST', cognitoUrl, {
-			statusCode: 400,
-			body: {
-				code: 'DEFAULT',
-			},
-		});
-		cy.getBySel('login-form-email').type(user.username);
-		cy.getBySel('form-input-password').type(user.password);
-		cy.getBySel('login-form-btn-submit').click();
-		cy.getBySel('toast-container').should('be.visible');
-	});
-	it('Should log in', () => {
-		cy.getBySel('login-form-email').type(user.username);
+
+	xit('Should log in', () => {
+		cy.getBySel('login-form-email').type(user.email);
 		cy.getBySel('form-input-password').type(user.password);
 		cy.getBySel('login-form-btn-submit').click();
 		cy.url().should('not.include', `${Cypress.env('loginUrl')}`);

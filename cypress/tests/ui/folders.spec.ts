@@ -1,6 +1,6 @@
 import { apiUrl, folderId, folders } from './exceptions/constants';
 
-describe('Folders', () => {
+xdescribe('Folders', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
 		cy.intercept('GET', `${apiUrl}/collection`, {

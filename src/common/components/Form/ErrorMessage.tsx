@@ -21,12 +21,12 @@ function ErrorMessage({ message, styles, testName, type }: PropsErrorMessage) {
 				className={`text-red-500 flex items-center gap-1 ml-4 mt-2 ${styles}`}
 				data-test={testName}
 			>
-				<AlertCircle className="h-4 w-4" />
+				<AlertCircle className="w-4 h-4" />
 				{message}
 			</p>
 			{type === 'password' && !message.includes('required') && (
 				<ul
-					className="text-sm text-red-500 ml-12"
+					className="ml-12 text-sm text-red-500"
 					data-test="password-error-requeriment"
 				>
 					{passwordRequeriment.map((req, index) => (

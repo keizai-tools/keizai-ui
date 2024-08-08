@@ -6,9 +6,12 @@ import {
 	STATUS,
 	transactionResultCode,
 } from '@/common/exceptions/invocations';
-import { ApiError, isApiError } from '@/common/hooks/useAxios';
 import { InvocationResponse } from '@/common/types/invocation';
 import { Method } from '@/common/types/method';
+import {
+	isApiError,
+	type ApiError,
+} from '@/configs/axios/errors/ApiResponseError';
 
 const createContractResponseParam = (params: Method['params']) => {
 	return params.map((param, index) => {
@@ -29,11 +32,11 @@ export const createContractResponseTitle = (method: Method) => {
 	return (
 		<span className="flex items-center gap-1 tracking-wider">
 			<ChevronRight className="text-primary" size={16} />
-			<span className="text-primary font-semibold">{method?.name}(</span>
+			<span className="font-semibold text-primary">{method?.name}(</span>
 			<div className={method.params.length === 0 ? 'hidden' : ''}>
 				{createContractResponseParam(method.params)}
 			</div>
-			<span className="text-primary font-semibold">)</span>
+			<span className="font-semibold text-primary">)</span>
 		</span>
 	);
 };
@@ -49,7 +52,7 @@ export const createContractResponse = (
 	return (
 		<span className="flex items-center gap-1 tracking-wider">
 			<ChevronRight className="text-primary" size={16} />
-			<span className="text-primary font-semibold">{description}</span>
+			<span className="font-semibold text-primary">{description}</span>
 			<span>{JSON.stringify(serviceResponse)}</span>
 		</span>
 	);
@@ -58,11 +61,12 @@ export const createContractResponse = (
 export const handleAxiosError = (error: unknown) => {
 	if (isAxiosError(error)) {
 		const axiosError = error as AxiosError;
+
 		if (isApiError(axiosError.response?.data)) {
 			return {
 				isError: true,
 				title: (
-					<div className="flex items-center gap-2 text-red-500 font-semibold">
+					<div className="flex items-center gap-2 font-semibold text-red-500">
 						<AlertCircle size={16} />
 						Error
 					</div>
@@ -77,7 +81,7 @@ export const handleAxiosError = (error: unknown) => {
 	return {
 		isError: true,
 		title: (
-			<div className="flex items-center gap-2 text-red-500 font-semibold">
+			<div className="flex items-center gap-2 font-semibold text-red-500">
 				<AlertCircle size={16} />
 				Error
 			</div>
@@ -90,7 +94,7 @@ export const failedRunContract = (response: string) => {
 	return {
 		isError: true,
 		title: (
-			<div className="flex items-center gap-2 text-red-500 font-semibold">
+			<div className="flex items-center gap-2 font-semibold text-red-500">
 				<AlertCircle size={16} />
 				Failed
 			</div>
@@ -133,13 +137,13 @@ export const getInvocationResponse = (
 		return {
 			isError: true,
 			title: (
-				<div className="flex items-center gap-2 text-red-500 font-semibold">
+				<div className="flex items-center gap-2 font-semibold text-red-500">
 					<AlertCircle size={16} />
 					{response.title.charAt(0).toUpperCase() + response.title.slice(1)}
 				</div>
 			),
 			message: (
-				<pre className="text-xs pr-2 whitespace-pre-wrap">
+				<pre className="pr-2 text-xs whitespace-pre-wrap">
 					{response.response}
 				</pre>
 			),

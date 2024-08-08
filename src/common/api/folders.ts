@@ -1,25 +1,29 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import useAxios from '../hooks/useAxios';
 import { Folder } from '../types/folder';
 
-export const useFoldersQuery = () => {
-	const axios = useAxios();
+import type { IApiResponse } from '@/configs/axios/interfaces/IApiResponse';
+import { apiService } from '@/configs/axios/services/api.service';
 
+export const useFoldersQuery = () => {
 	const query = useQuery<Folder[]>({
 		queryKey: ['folders'],
-		queryFn: async () => axios?.get('/folder').then((res) => res.data),
+		queryFn: async () =>
+			apiService?.get<IApiResponse<Folder[]>>('/folder').then((res) => {
+				return res.payload;
+			}),
 	});
 
 	return query;
 };
 
 export const useFolderQuery = ({ id }: { id?: string }) => {
-	const axios = useAxios();
-
 	const query = useQuery<Folder>({
 		queryKey: ['folder', id],
-		queryFn: async () => axios?.get(`/folder/${id}`).then((res) => res.data),
+		queryFn: async () =>
+			apiService?.get<IApiResponse<Folder>>(`/folder/${id}`).then((res) => {
+				return res.payload;
+			}),
 		enabled: !!id,
 	});
 
@@ -27,12 +31,12 @@ export const useFolderQuery = ({ id }: { id?: string }) => {
 };
 
 export const useFoldersByCollectionIdQuery = ({ id }: { id?: string }) => {
-	const axios = useAxios();
-
 	const query = useQuery<Folder[]>({
 		queryKey: ['collection', id, 'folders'],
 		queryFn: async () =>
-			axios?.get(`/collection/${id}/folders`).then((res) => res.data),
+			apiService
+				?.get<IApiResponse<Folder[]>>(`/collection/${id}/folders`)
+				.then((res) => res.payload),
 		enabled: !!id,
 	});
 
@@ -41,7 +45,6 @@ export const useFoldersByCollectionIdQuery = ({ id }: { id?: string }) => {
 
 export const useCreateFolderMutation = () => {
 	const queryClient = useQueryClient();
-	const axios = useAxios();
 
 	const mutation = useMutation({
 		mutationFn: async ({
@@ -51,7 +54,9 @@ export const useCreateFolderMutation = () => {
 			name: string;
 			collectionId: string;
 		}) =>
-			axios?.post('/folder', { name, collectionId }).then((res) => res.data),
+			apiService
+				?.post<IApiResponse<Folder>>('/folder', { name, collectionId })
+				.then((res) => res.payload),
 		onSuccess: (_, { collectionId }) => {
 			queryClient.invalidateQueries({
 				queryKey: ['collection', collectionId, 'folders'],
@@ -68,11 +73,12 @@ export const useDeleteFolderMutation = ({
 	collectionId?: string;
 }) => {
 	const queryClient = useQueryClient();
-	const axios = useAxios();
 
 	const mutation = useMutation({
 		mutationFn: async (id: string) =>
-			axios?.delete(`/folder/${id}`).then((res) => res.data),
+			apiService?.delete<IApiResponse<boolean>>(`/folder/${id}`).then((res) => {
+				return res.payload;
+			}),
 		onMutate: async (id) => {
 			await queryClient.cancelQueries({
 				queryKey: ['collection', collectionId, 'folders'],
@@ -109,11 +115,12 @@ export const useEditFolderMutation = ({
 	collectionId?: string;
 }) => {
 	const queryClient = useQueryClient();
-	const axios = useAxios();
 
 	const mutation = useMutation({
 		mutationFn: async ({ id, name }: { id: string; name: string }) =>
-			axios?.patch('/folder', { id, name }).then((res) => res.data),
+			apiService
+				?.patch<IApiResponse<Folder>>('/folder', { id, name })
+				.then((res) => res.payload),
 		onMutate: async ({ id, name }) => {
 			await queryClient.cancelQueries({
 				queryKey: ['collection', collectionId, 'folders'],

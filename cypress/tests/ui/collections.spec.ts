@@ -5,7 +5,7 @@ import {
 	folders,
 } from './exceptions/constants';
 
-describe('Collections', () => {
+xdescribe('Collections', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
 	});

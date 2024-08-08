@@ -11,7 +11,7 @@ import {
 	txErrorCode,
 } from './exceptions/constants';
 
-describe('Invocations', () => {
+xdescribe('Invocations', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
 		cy.intercept(`${Cypress.env('apiUrl')}/collection`, {

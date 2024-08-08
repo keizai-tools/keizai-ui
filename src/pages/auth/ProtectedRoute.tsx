@@ -1,22 +1,25 @@
-import { ReactElement, ReactNode } from 'react';
+import { Fragment, ReactElement, ReactNode, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 
 import FullscreenLoading from '@/common/views/FullscreenLoading';
-import { useAuth } from '@/services/auth/hook/useAuth';
+import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 function ProtectedRoute({
 	children,
-}: {
+}: Readonly<{
 	children: ReactNode;
-}): ReactElement | null {
-	const { isAuthenticated, isLoading } = useAuth();
+}>): ReactElement | null {
+	const { handleRefreshSession, loadingState, statusState } = useAuthProvider();
+	useEffect(() => {
+		handleRefreshSession();
+	}, [handleRefreshSession]);
 
-	if (isLoading) {
+	if (loadingState.refreshSession) {
 		return <FullscreenLoading />;
 	}
 
-	if (isAuthenticated) {
-		return <>{children}</>;
+	if (statusState.refreshSession) {
+		return <Fragment>{children}</Fragment>;
 	} else {
 		return <Navigate to="auth/login" replace />;
 	}

@@ -7,7 +7,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/common/components/ui/dropdown-menu';
-import { useTheme } from '@/providers/ThemeProvider';
+import { useTheme } from '@/providers/useTheme';
 
 enum Theme {
 	LIGHT = 'light',

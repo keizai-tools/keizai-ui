@@ -6,8 +6,8 @@ import { Button } from '../ui/button';
 import Folder from './Folder';
 
 import {
-	useCreateFolderMutation,
 	useFoldersByCollectionIdQuery,
+	useCreateFolderMutation,
 } from '@/common/api/folders';
 
 const Folders = () => {
@@ -20,7 +20,7 @@ const Folders = () => {
 
 	const onCreateFolder = async ({ name }: { name: string }) => {
 		if (params.collectionId) {
-			await mutate({ name, collectionId: params.collectionId });
+			mutate({ name, collectionId: params.collectionId });
 			window.umami.track('Create folder');
 		}
 	};
@@ -33,7 +33,7 @@ const Folders = () => {
 			<div data-test="folders-container">
 				<Button
 					variant="link"
-					className="flex items-center gap-2 text-xs text-primary p-0"
+					className="flex items-center gap-2 p-0 text-xs text-primary"
 					onClick={() => navigate('/')}
 				>
 					<ArrowLeftIcon size={16} /> Collections
@@ -57,7 +57,7 @@ const Folders = () => {
 					>
 						<Button
 							variant="link"
-							className="text-xs px-0 py-1 h-auto flex gap-1 text-slate-500	hover:text-slate-100"
+							className="flex h-auto gap-1 px-0 py-1 text-xs text-slate-500 hover:text-slate-100"
 							data-test="collections-header-btn-new"
 						>
 							<PlusIcon size={12} /> Add
@@ -86,7 +86,7 @@ const Folders = () => {
 					</span>
 				)}
 			</div>
-			<div className="mb-4 w-full text-center text-base hover:underline font-semibold">
+			<div className="w-full mb-4 text-base font-semibold text-center hover:underline">
 				<Link
 					className="text-primary"
 					data-test="collections-variables-btn-link"

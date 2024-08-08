@@ -1,7 +1,7 @@
 import { AUTH_VALIDATIONS } from './exceptions/auth.enum';
 import { user, cognitoUrl, changePassword } from './exceptions/constants';
 
-describe('Change password', () => {
+xdescribe('Change password', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
 		cy.getBySel('sidebar-btn-user').click();

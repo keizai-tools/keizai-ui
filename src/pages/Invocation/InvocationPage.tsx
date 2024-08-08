@@ -11,7 +11,7 @@ import ContractInput from '@/common/components/Input/ContractInput';
 import TabsContainer from '@/common/components/Tabs/TabsContainer';
 import Terminal from '@/common/components/ui/Terminal';
 import { Invocation } from '@/common/types/invocation';
-import { useAuth } from '@/services/auth/hook/useAuth';
+import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 export type InvocationForm = {
 	contractId?: string | null;
@@ -21,7 +21,7 @@ export type InvocationForm = {
 
 const InvocationPageContent = ({ data }: { data: Invocation }) => {
 	const [signedXDR, setSignedXDR] = React.useState('');
-	const { wallet } = useAuth();
+	const { wallet } = useAuthProvider();
 
 	const {
 		handleLoadContract,
@@ -69,7 +69,7 @@ const InvocationPageContent = ({ data }: { data: Invocation }) => {
 
 	return (
 		<div
-			className="relative flex flex-col p-3 w-full gap-4 max-h-screen overflow-hidden"
+			className="relative flex flex-col w-full max-h-screen gap-4 p-3 overflow-hidden"
 			data-test="invocation-section-container"
 		>
 			<Breadcrumb
@@ -108,7 +108,7 @@ const InvocationPage = () => {
 
 	if (isLoading || isRefetching) {
 		return (
-			<div className="flex flex-1 h-full w-full justify-center items-center">
+			<div className="flex items-center justify-center flex-1 w-full h-full">
 				<Loader className="animate-spin" size="36" />
 			</div>
 		);

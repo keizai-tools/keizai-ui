@@ -9,10 +9,10 @@ import {
 	DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
-import { useAuth } from '@/services/auth/hook/useAuth';
+import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 function UserButton() {
-	const { signOut } = useAuth();
+	const { handleSignOut } = useAuthProvider();
 	const navigate = useNavigate();
 
 	const navigateChangePassword = () => {
@@ -33,18 +33,18 @@ function UserButton() {
 			>
 				<DropdownMenuItem
 					data-test="user-dropdown-change-password"
-					className="flex items-center gap-2 cursor-pointer pr-8 py-2"
+					className="flex items-center gap-2 py-2 pr-8 cursor-pointer"
 					onClick={navigateChangePassword}
 				>
-					<UnlockKeyhole className="h-4 w-4" />
+					<UnlockKeyhole className="w-4 h-4" />
 					<span>Change password</span>
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					data-test="user-dropdown-log-out"
-					className="flex items-center gap-2 cursor-pointer pr-8 py-2 mt-1"
-					onClick={signOut}
+					className="flex items-center gap-2 py-2 pr-8 mt-1 cursor-pointer"
+					onClick={handleSignOut}
 				>
-					<LogOut className="h-4 w-4" />
+					<LogOut className="w-4 h-4" />
 					<span>Log out</span>
 				</DropdownMenuItem>
 			</DropdownMenuContent>

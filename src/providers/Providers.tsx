@@ -4,14 +4,13 @@ import { FlagsmithProvider } from 'flagsmith/react';
 import React from 'react';
 
 import { TooltipProvider } from '../common/components/ui/tooltip';
-import { AuthProvider } from './AuthProvider';
 
 import { Toaster } from '@/common/components/ui/toaster';
 import { ThemeProvider } from '@/providers/ThemeProvider';
 
 const queryClient = new QueryClient();
 
-const Providers = ({ children }: { children: React.ReactNode }) => {
+function Providers({ children }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<FlagsmithProvider
 			options={{
@@ -20,17 +19,15 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 			flagsmith={flagsmith}
 		>
 			<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-				<AuthProvider>
-					<QueryClientProvider client={queryClient}>
-						<TooltipProvider>
-							{children}
-							<Toaster />
-						</TooltipProvider>
-					</QueryClientProvider>
-				</AuthProvider>
+				<QueryClientProvider client={queryClient}>
+					<TooltipProvider>
+						{children}
+						<Toaster />
+					</TooltipProvider>
+				</QueryClientProvider>
 			</ThemeProvider>
 		</FlagsmithProvider>
 	);
-};
+}
 
 export default Providers;

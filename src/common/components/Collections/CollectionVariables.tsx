@@ -6,9 +6,9 @@ import EnvironmentItem from '../Environments/EnvironmentItem';
 import { Button } from '../ui/button';
 
 import {
-	useCreateAllEnvironmentsMutation,
 	useDeleteEnvironmentMutation,
-} from '@/common/api/enviroments';
+	useCreateAllEnvironmentsMutation,
+} from '@/common/api/environments';
 import { Collection } from '@/common/types/collection';
 import { Environment } from '@/common/types/environment';
 
