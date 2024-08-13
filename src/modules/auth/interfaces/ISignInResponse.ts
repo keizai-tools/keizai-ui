@@ -8,7 +8,6 @@ export interface ISignInResponse {
 		user: {
 			email: string;
 			externalId: string;
-			isVerified: boolean;
 			roles: string[];
 			id: number;
 			createdAt: string;
