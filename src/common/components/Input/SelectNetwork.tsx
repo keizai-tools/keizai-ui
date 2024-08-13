@@ -1,5 +1,5 @@
 import { AlertCircleIcon } from 'lucide-react';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import {
@@ -47,9 +47,15 @@ function SelectNetwork({
 		setShowEditNetworkDialog(false);
 	};
 
+	if (selectNetwork === 'AUTO_DETECT') return null;
+
 	return (
-		<>
-			<Select value={selectNetwork} onValueChange={openEditNetworkDialog}>
+		<Fragment>
+			<Select
+				value={selectNetwork}
+				onValueChange={openEditNetworkDialog}
+				disabled
+			>
 				<SelectTrigger
 					className="max-w-[140px] border-none text-slate-500 font-semibold"
 					data-test="contract-input-network"
@@ -63,10 +69,10 @@ function SelectNetwork({
 				</SelectTrigger>
 				<SelectContent data-test="contract-select-networks-container">
 					<SelectItem
-						value={NETWORK.SOROBAN_AUTO_DETECT}
+						value={'AUTO_DETECT'}
 						data-test="contract-select-network-auto-detect"
 					>
-						{NETWORK.SOROBAN_AUTO_DETECT}
+						{'AUTO_DETECT'}
 					</SelectItem>
 					<SelectItem
 						value={NETWORK.SOROBAN_FUTURENET}
@@ -128,7 +134,7 @@ function SelectNetwork({
 					</AlertDialogContent>
 				</AlertDialog>
 			)}
-		</>
+		</Fragment>
 	);
 }
 
