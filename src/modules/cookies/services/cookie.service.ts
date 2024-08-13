@@ -8,6 +8,12 @@ import {
 } from '../interfaces/ITokenPayload';
 import { StoredCookies } from '../interfaces/cookies.enum';
 
+import { NETWORK } from '@/common/types/soroban.enum';
+import {
+	IWalletContent,
+	type IWallet,
+} from '@/modules/auth/interfaces/IAuthenticationContext';
+
 class CookieService<T extends ITokenPayload> implements ICookieService<T> {
 	cookies: Cookies;
 
@@ -90,6 +96,60 @@ class CookieService<T extends ITokenPayload> implements ICookieService<T> {
 			return jwtDecode<T>(token);
 		} catch (error) {
 			console.error('Error decoding token:', error);
+			return null;
+		}
+	}
+
+	setWalletCookie(wallet: IWalletContent): void {
+		try {
+			this.cookies.set(wallet.network, wallet, { path: '/' });
+		} catch (error) {
+			console.error('Error setting wallet cookie:', error);
+		}
+	}
+
+	removeWalletCookie(network: NETWORK): void {
+		try {
+			this.cookies.remove(network, { path: '/' });
+		} catch (error) {
+			console.error('Error removing wallet cookie:', error);
+		}
+	}
+
+	removeAllWalletCookies(): void {
+		for (const network of Object.values(NETWORK)) {
+			try {
+				this.removeWalletCookie(network);
+			} catch (error) {
+				console.error('Error removing all wallet cookies:', error);
+			}
+		}
+	}
+
+	getAllWalletCookies(): IWallet {
+		const wallets: IWallet = {
+			[NETWORK.SOROBAN_MAINNET]: null,
+			[NETWORK.SOROBAN_TESTNET]: null,
+			[NETWORK.SOROBAN_FUTURENET]: null,
+		};
+		for (const network of Object.values(NETWORK)) {
+			try {
+				const wallet: IWalletContent | null = this.cookies.get(network);
+				if (wallet) {
+					wallets[network] = wallet;
+				}
+			} catch (error) {
+				console.error('Error getting wallet cookies:', error);
+			}
+		}
+		return wallets;
+	}
+
+	getWalletCookie(network: NETWORK): IWalletContent | null {
+		try {
+			return this.cookies.get(network);
+		} catch (error) {
+			console.error('Error getting wallet cookie:', error);
 			return null;
 		}
 	}
