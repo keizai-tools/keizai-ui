@@ -19,7 +19,7 @@ const AuthorizationTab = ({
 	network: string;
 	defaultValues: IKeypair;
 }) => {
-	const { connectWallet, wallet, setDisconnectWallet } = useAuthProvider();
+	const { connectWallet, wallet, disconnectWallet } = useAuthProvider();
 
 	const { mutate: editKeys, data } = useEditInvocationKeysMutation();
 	const { register } = useForm({
@@ -40,11 +40,11 @@ const AuthorizationTab = ({
 		if (wallet) {
 			editKeys({
 				id: invocationId,
-				publicKey: wallet.publicKey,
+				publicKey: wallet[network as keyof typeof wallet]?.publicKey || '',
 				secretKey: '',
 			});
 		}
-	}, [wallet, invocationId, editKeys]);
+	}, [wallet, invocationId, editKeys, network]);
 
 	return (
 		<section data-test="auth-tab-container">
@@ -86,7 +86,7 @@ const AuthorizationTab = ({
 				<ConnectWallet
 					wallet={wallet}
 					connectWallet={connectWallet}
-					disconnectWallet={setDisconnectWallet}
+					disconnectWallet={disconnectWallet}
 					network={network}
 				/>
 			</div>
