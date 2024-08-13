@@ -19,7 +19,7 @@ async function messageHandler<T extends ISignMessage | IConnectMessage>({
 
 		const timeout = setTimeout(() => {
 			if (!ready) {
-				reject('Window timeout');
+				reject(new Error('Window timeout'));
 				window.removeEventListener('message', handleMessage);
 			}
 		}, 5000);
@@ -35,7 +35,7 @@ async function messageHandler<T extends ISignMessage | IConnectMessage>({
 						clearTimeout(timeout);
 					},
 					[MessageEventType.CANCEL]: () => {
-						reject('User cancelled process');
+						reject(new Error('User cancelled process'));
 						window.removeEventListener('message', handleMessage);
 					},
 					default: () => {
