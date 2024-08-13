@@ -8,31 +8,30 @@ function CreateNewAccount({
 	invocationId,
 	network,
 	editKeys,
-}: {
+}: Readonly<{
 	invocationId: string;
 	network: string;
 	editKeys: UseMutateFunction<
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		any,
+		unknown,
 		Error,
 		{
 			id: string;
-			secretKey?: string | undefined;
-			publicKey?: string | undefined;
+			secretKey?: string;
+			publicKey?: string;
 		},
 		unknown
 	>;
-}) {
+}>) {
 	const { createNewAccount, fundingAccount } = useStellar();
 
-	const onCreateAccount = () => {
+	function onCreateAccount() {
 		const keypair = createNewAccount();
 		if (keypair) {
 			fundingAccount(network, keypair.publicKey as string);
 			editKeys({ id: invocationId, ...keypair });
 			window.umami.track('Create new account');
 		}
-	};
+	}
 	return (
 		<Button
 			className="font-bold px-10 border-[3px] border-primary text-primary h-full hover:text-background hover:bg-primary"

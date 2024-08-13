@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { DeleteIcon } from 'lucide-react';
 import React from 'react';
 import { Control, Controller, UseFormSetValue } from 'react-hook-form';
@@ -13,14 +12,14 @@ import useEnvironments from '@/common/hooks/useEnvironments';
 import { useParameters } from '@/common/hooks/useParameters';
 import { SCSpecTypeMap, isKeyOfSCSpecTypeMap } from '@/common/types/invocation';
 
-const FunctionParameterInput = ({
+function FunctionParameterInput({
 	control,
 	index,
 	onDelete,
 	defaultParameters,
 	setValue,
 	defaultValue,
-}: {
+}: Readonly<{
 	control: Control<ParametersFormType>;
 	index: number;
 	onDelete?: () => void;
@@ -30,7 +29,7 @@ const FunctionParameterInput = ({
 		type: string;
 	}[];
 	defaultValue: string;
-}) => {
+}>) {
 	const {
 		showEnvironments,
 		handleSelectEnvironment,
@@ -40,11 +39,11 @@ const FunctionParameterInput = ({
 	const { setParamValue, paramValue } = useParameters({ defaultValue });
 	const valueRef = React.useRef<HTMLInputElement>(null);
 
-	const getTypeByParameterName = (parameterName: string) => {
+	function getTypeByParameterName(parameterName: string) {
 		return defaultParameters.find(
 			(parameter) => parameter.name === parameterName,
 		)?.type;
-	};
+	}
 
 	React.useEffect(() => {
 		setValue(`parameters.${index}.value`, paramValue, {
@@ -52,18 +51,18 @@ const FunctionParameterInput = ({
 		});
 	}, [index, paramValue, setValue]);
 
-	const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+	function handleSelect(e: React.MouseEvent<HTMLLIElement, MouseEvent>) {
 		const environmentValue = handleSelectEnvironment(e.currentTarget.id);
 
 		if (environmentValue) {
 			setParamValue((prev) => prev + `{${environmentValue}}}`);
 		}
-	};
+	}
 
-	const onHandleChange = (value: string) => {
+	function onHandleChange(value: string) {
 		handleSearchEnvironment(value);
 		setParamValue(value);
-	};
+	}
 
 	React.useEffect(() => {
 		if (valueRef.current) {
@@ -72,7 +71,7 @@ const FunctionParameterInput = ({
 	}, []);
 
 	return (
-		<div className="flex gap-2 items-center">
+		<div className="flex items-center gap-2">
 			<Controller
 				control={control}
 				name={`parameters.${index}.name`}
@@ -126,6 +125,6 @@ const FunctionParameterInput = ({
 			)}
 		</div>
 	);
-};
+}
 
 export default FunctionParameterInput;

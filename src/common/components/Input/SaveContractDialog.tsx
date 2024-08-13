@@ -14,13 +14,13 @@ import { useEditInvocationMutation } from '@/common/api/invocations';
 import useContractEvents from '@/common/hooks/useContractEvents';
 import useEnvironments from '@/common/hooks/useEnvironments';
 
-const SaveContractDialog = ({
+function SaveContractDialog({
 	open,
 	onOpenChange,
-}: {
+}: Readonly<{
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
-}) => {
+}>) {
 	const { toast } = useToast();
 	const { invocationId } = useParams();
 	const { mutate, isPending } = useEditInvocationMutation();
@@ -37,22 +37,22 @@ const SaveContractDialog = ({
 		},
 	});
 
-	const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+	function handleSelect(e: React.MouseEvent<HTMLLIElement, MouseEvent>) {
 		const environmentValue = handleSelectEnvironment(e.currentTarget.id);
 		setValue('contractId', `{{${environmentValue}}}`);
-	};
+	}
 
-	const handleChange = (value: string) => {
+	function handleChange(value: string) {
 		handleSearchEnvironment(value);
 		setValue('contractId', value);
-	};
+	}
 
 	const contractId = useWatch({
 		control,
 		name: 'contractId',
 	});
 
-	const onSubmit = async (data: { contractId: string }) => {
+	async function onSubmit(data: { contractId: string }) {
 		if (!invocationId) {
 			toast({
 				title: 'Oops!',
@@ -84,7 +84,7 @@ const SaveContractDialog = ({
 		} catch (error) {
 			console.error(error);
 		}
-	};
+	}
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -132,6 +132,6 @@ const SaveContractDialog = ({
 			</DialogContent>
 		</Dialog>
 	);
-};
+}
 
 export default SaveContractDialog;

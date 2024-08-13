@@ -9,19 +9,19 @@ import {
 	AlertDialogTitle,
 } from '../ui/alert-dialog';
 
-const DeleteEntityDialog = ({
+function DeleteEntityDialog({
 	open,
 	onOpenChange,
 	title,
 	description,
 	onConfirm,
-}: {
+}: Readonly<{
 	open: boolean;
 	onOpenChange: () => void;
 	title: string;
 	description: string;
 	onConfirm: () => void;
-}) => {
+}>) {
 	return (
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
 			<AlertDialogContent data-test="delete-entity-dialog-container">
@@ -50,6 +50,6 @@ const DeleteEntityDialog = ({
 			</AlertDialogContent>
 		</AlertDialog>
 	);
-};
+}
 
 export default DeleteEntityDialog;

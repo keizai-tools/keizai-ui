@@ -15,20 +15,20 @@ function PasswordInput({
 	styles,
 	onChange,
 	placeholder = 'Password',
-}: IPropsPassword) {
+}: Readonly<IPropsPassword>) {
 	const [showPassword, setShowPassword] = useState(false);
 
-	const toggleShowPassword = () => {
+	function toggleShowPassword() {
 		setShowPassword(!showPassword);
-	};
+	}
 
 	return (
 		<div
 			className={`flex items-center border-2 px-3 rounded-md bg-white ${styles}`}
 		>
-			<Lock className="h-5 w-5 text-gray-400" />
+			<Lock className="w-5 h-5 text-gray-400" />
 			<Input
-				className="pl-2 border-none focus-visible:ring-0 bg-white text-black"
+				className="pl-2 text-black bg-white border-none focus-visible:ring-0"
 				type={showPassword ? 'text' : 'password'}
 				name="password"
 				placeholder={placeholder}
@@ -38,9 +38,9 @@ function PasswordInput({
 			/>
 			<div>
 				{showPassword ? (
-					<EyeOff className="h-5 w-5 text-black" onClick={toggleShowPassword} />
+					<EyeOff className="w-5 h-5 text-black" onClick={toggleShowPassword} />
 				) : (
-					<Eye className="h-5 w-5 text-black" onClick={toggleShowPassword} />
+					<Eye className="w-5 h-5 text-black" onClick={toggleShowPassword} />
 				)}
 			</div>
 		</div>

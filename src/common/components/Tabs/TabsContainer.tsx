@@ -31,10 +31,8 @@ function TabsContainer({
 	preInvocationValue,
 	postInvocationValue,
 }: Readonly<TabsProps>) {
-	const { setPreInvocationValue, setPostInvocationValue } = useEditor(
-		preInvocationValue,
-		postInvocationValue,
-	);
+	const { setPreInvocationEditorValue, setPostInvocationEditorValue } =
+		useEditor(preInvocationValue, postInvocationValue);
 
 	return (
 		<Tabs
@@ -65,13 +63,13 @@ function TabsContainer({
 			<TabsContent value="preInvocateScript" className="h-[500px]">
 				<PreInvocationTab
 					preInvocationValue={preInvocationValue}
-					setPreInvocationValu={setPreInvocationValue}
+					setPreInvocationValu={setPreInvocationEditorValue}
 				/>
 			</TabsContent>
 			<TabsContent value="tests" className="h-[500px]">
 				<TestsTab
 					testsInvocationValue={postInvocationValue}
-					setTestsInvocationValue={setPostInvocationValue}
+					setTestsInvocationValue={setPostInvocationEditorValue}
 				/>
 			</TabsContent>
 			<TabsContent value="events">

@@ -20,7 +20,7 @@ import {
 } from '@/common/components/ui/accordion';
 import { Folder as IFolder } from '@/common/types/folder';
 
-function Folder({ folder }: { folder: IFolder }) {
+function Folder({ folder }: Readonly<{ folder: IFolder }>) {
 	const params = useParams();
 	const [isOpen, setIsOpen] = React.useState<string[] | undefined>();
 	const [openDialog, setOpenDialog] = React.useState<'edit' | 'delete' | null>(

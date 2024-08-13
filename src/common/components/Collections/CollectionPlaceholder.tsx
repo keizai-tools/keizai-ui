@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 
 import { useNewCollectionMutation } from '@/common/api/collections';
 
-const CollectionPlaceholder = () => {
+function CollectionPlaceholder() {
 	const { mutate, isPending } = useNewCollectionMutation();
 
 	return (
@@ -29,6 +29,6 @@ const CollectionPlaceholder = () => {
 			</Button>
 		</NewEntityDialog>
 	);
-};
+}
 
 export default CollectionPlaceholder;

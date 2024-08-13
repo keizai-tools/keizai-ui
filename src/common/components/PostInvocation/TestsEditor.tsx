@@ -11,10 +11,10 @@ import {
 function TestsEditor({
 	postInvocationValue,
 	setPostInvocationValue,
-}: {
+}: Readonly<{
 	postInvocationValue: string;
 	setPostInvocationValue: Dispatch<SetStateAction<string>>;
-}) {
+}>) {
 	function handleEditorChange(value: string | undefined) {
 		setPostInvocationValue(value ?? '');
 	}

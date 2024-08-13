@@ -1,6 +1,6 @@
 import { UseMutateFunction, useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
-import React, { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Button } from '../../ui/button';
@@ -24,21 +24,20 @@ enum SECRET_KEY_ERROR {
 function ImportAccount({
 	invocationId,
 	editKeys,
-}: {
+}: Readonly<{
 	invocationId: string;
 	editKeys: UseMutateFunction<
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		any,
+		unknown,
 		Error,
 		{
 			id: string;
-			secretKey?: string | undefined;
-			publicKey?: string | undefined;
+			secretKey?: string;
+			publicKey?: string;
 		},
 		unknown
 	>;
-}) {
-	const [isError, setIsError] = React.useState(false);
+}>) {
+	const [isError, setIsError] = useState(false);
 	const { connectAccount } = useStellar();
 	const {
 		control,
@@ -50,20 +49,22 @@ function ImportAccount({
 			secretKey: '',
 		},
 	});
+
 	const { mutate, isPending } = useMutation({
 		mutationFn: connectAccount,
 		onSuccess: (data) => {
 			editKeys({ id: invocationId, ...data });
 		},
 	});
-	const submitAndReset = async ({ secretKey }: { secretKey: string }) => {
-		await mutate(secretKey);
+
+	function submitAndReset({ secretKey }: { secretKey: string }) {
+		mutate(secretKey);
 		reset({
 			secretKey: '',
 		});
 		window.umami.track('Import account');
 		setIsError(false);
-	};
+	}
 
 	return (
 		<Dialog open={isError} onOpenChange={setIsError}>

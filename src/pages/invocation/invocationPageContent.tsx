@@ -9,7 +9,9 @@ import { Invocation } from '@/common/types/invocation';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 import useInvocation from '@/modules/invocation/hooks/useInvocation';
 
-export default function InvocationPageContent({ data }: { data: Invocation }) {
+export default function InvocationPageContent({
+	data,
+}: Readonly<{ data: Invocation }>) {
 	const { mutate: editKeys } = useEditInvocationKeysMutation();
 
 	const { wallet, statusState } = useAuthProvider();

@@ -15,7 +15,12 @@ const passwordRequeriment = [
 	'1 special character',
 ];
 
-function ErrorMessage({ message, styles, testName, type }: PropsErrorMessage) {
+function ErrorMessage({
+	message,
+	styles,
+	testName,
+	type,
+}: Readonly<PropsErrorMessage>) {
 	return (
 		<Fragment>
 			<p
@@ -30,8 +35,8 @@ function ErrorMessage({ message, styles, testName, type }: PropsErrorMessage) {
 					className="ml-12 text-sm text-red-500"
 					data-test="password-error-requeriment"
 				>
-					{passwordRequeriment.map((req, index) => (
-						<li className="mt-1" key={index}>
+					{passwordRequeriment.map((req) => (
+						<li className="mt-1" key={req}>
 							&#8226; {req}
 						</li>
 					))}

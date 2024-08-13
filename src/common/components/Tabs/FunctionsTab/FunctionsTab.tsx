@@ -78,7 +78,7 @@ const FunctionsTab = ({
 				>
 					<img
 						src="/moon.svg"
-						alt="Load contract image"
+						alt="Load contract"
 						width={200}
 						height={200}
 						loading="eager"

@@ -20,7 +20,7 @@ function createErrorHandler(instance: AxiosInstance) {
 		error: Error | AxiosError<IApiResponseError>,
 	): Promise<AxiosResponse> {
 		if (!axios.isAxiosError<IApiResponseError>(error) || !error.response) {
-			return Promise.reject(error);
+			return Promise.reject(new Error(error.message));
 		}
 
 		const originalRequest = error.config;

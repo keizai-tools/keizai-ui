@@ -13,7 +13,9 @@ import {
 } from '@/common/api/invocations';
 import { Invocation } from '@/common/types/invocation';
 
-const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
+function InvocationListItem({
+	invocation,
+}: Readonly<{ invocation: Invocation }>) {
 	const params = useParams();
 	const navigate = useNavigate();
 	const [openDialog, setOpenDialog] = React.useState<'edit' | 'delete' | null>(
@@ -94,6 +96,6 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
 			/>
 		</Fragment>
 	);
-};
+}
 
 export default InvocationListItem;

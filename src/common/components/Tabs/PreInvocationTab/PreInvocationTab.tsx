@@ -7,10 +7,10 @@ import { customKeizaiToPreInvocationEditor } from '../Editor/constant/customKeiz
 function PreInvocationTab({
 	preInvocationValue,
 	setPreInvocationValu,
-}: {
+}: Readonly<{
 	preInvocationValue: string;
 	setPreInvocationValu: Dispatch<SetStateAction<string>>;
-}) {
+}>) {
 	return (
 		<EditorTab customKeizaiEditor={customKeizaiToPreInvocationEditor}>
 			<PreInvocationEditor

@@ -6,10 +6,10 @@ import React from 'react';
 export function EditorTab({
 	children,
 	customKeizaiEditor,
-}: {
+}: Readonly<{
 	children: React.ReactNode;
 	customKeizaiEditor: string;
-}) {
+}>) {
 	React.useEffect(() => {
 		self.MonacoEnvironment = {
 			getWorker(_, label) {
@@ -20,19 +20,19 @@ export function EditorTab({
 			},
 		};
 
-		const initEditor = async () => {
+		async function initEditor() {
 			const monaco = await loader.init();
 
 			monaco.languages.typescript.javascriptDefaults.addExtraLib(
 				customKeizaiEditor,
 				'keizai.d.ts',
 			);
-		};
+		}
 		initEditor();
 	}, [customKeizaiEditor]);
 
 	return (
-		<div className="w-full h-full h-[500px]" id="editor">
+		<div className="w-full h-full" id="editor">
 			{children}
 		</div>
 	);

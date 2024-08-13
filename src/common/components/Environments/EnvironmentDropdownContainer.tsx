@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, Dispatch, SetStateAction } from 'react';
 
 import EnvironmentDropdown from './EnvironmentDropdown';
 
@@ -9,7 +9,7 @@ type IProps = {
 	children: React.ReactNode;
 	showEnvironments: boolean;
 	handleSelect: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => void;
-	setShowEnvironments: React.Dispatch<React.SetStateAction<boolean>>;
+	setShowEnvironments: Dispatch<SetStateAction<boolean>>;
 };
 
 function EnvironmentDropdownContainer({
@@ -17,11 +17,11 @@ function EnvironmentDropdownContainer({
 	handleSelect,
 	showEnvironments,
 	setShowEnvironments,
-}: IProps) {
+}: Readonly<IProps>) {
 	const { environments } = useEnvironments();
-	const dropdownRef = React.useRef<HTMLDivElement>(null);
+	const dropdownRef = useRef<HTMLDivElement>(null);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (
 				dropdownRef.current &&
@@ -41,7 +41,7 @@ function EnvironmentDropdownContainer({
 	return (
 		<div
 			id="dropdown"
-			className="divide-slate-800 rounded w-full"
+			className="w-full rounded divide-slate-800"
 			ref={dropdownRef}
 		>
 			{children}

@@ -6,7 +6,7 @@ import { Button } from '../ui/button';
 
 import { useCreateInvocationMutation } from '@/common/api/invocations';
 
-const NewInvocationButton = ({ folderId }: { folderId: string }) => {
+function NewInvocationButton({ folderId }: Readonly<{ folderId: string }>) {
 	const { mutate, isPending } = useCreateInvocationMutation();
 	const navigate = useNavigate();
 
@@ -30,13 +30,13 @@ const NewInvocationButton = ({ folderId }: { folderId: string }) => {
 		>
 			<Button
 				variant="link"
-				className="flex gap-2 text-xs text-slate-500 hover:text-slate-100 p-0"
+				className="flex gap-2 p-0 text-xs text-slate-500 hover:text-slate-100"
 				data-test="new-invocation-btn-container"
 			>
 				<PlusIcon size={12} /> Add invocation
 			</Button>
 		</NewEntityDialog>
 	);
-};
+}
 
 export default NewInvocationButton;

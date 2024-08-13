@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import {
@@ -29,10 +29,10 @@ function useInvocation(invocation: Invocation, wallet: IWallet) {
 	const prepareInvocation = usePrepareInvocationQuery({
 		id: invocation.id,
 	});
-	const [isRunningInvocation, setIsRunningInvocation] = React.useState(false);
-	const [contractResponses, setContractResponses] = React.useState<
-		TerminalEntry[]
-	>([]);
+	const [isRunningInvocation, setIsRunningInvocation] = useState(false);
+	const [contractResponses, setContractResponses] = useState<TerminalEntry[]>(
+		[],
+	);
 	const { handleSetContractEvents } = useContractEvents();
 	const {
 		mutate: editInvocation,
@@ -40,7 +40,7 @@ function useInvocation(invocation: Invocation, wallet: IWallet) {
 		status,
 	} = useEditInvocationMutation();
 
-	React.useEffect(() => {
+	useEffect(() => {
 		if (status === 'error') {
 			toast({
 				title: "Couldn't load contract",
@@ -50,7 +50,7 @@ function useInvocation(invocation: Invocation, wallet: IWallet) {
 		}
 	}, [status, toast]);
 
-	const Keizai = React.useMemo(() => {
+	const Keizai = useMemo(() => {
 		return new InvocationService(collectionId ?? '');
 	}, [collectionId]);
 

@@ -7,7 +7,7 @@ import { CollectionVariables } from './CollectionVariables';
 import { useCollectionQuery } from '@/common/api/collections';
 import { useEnvironmentsQuery } from '@/common/api/environments';
 
-export const CollectionVariablesContainer = () => {
+export function CollectionVariablesContainer() {
 	const params = useParams();
 	const collectionId = React.useMemo(() => {
 		return params.collectionId ?? '';
@@ -18,7 +18,7 @@ export const CollectionVariablesContainer = () => {
 	});
 
 	const environmentsValue = React.useMemo(() => {
-		return data ? data : [];
+		return data || [];
 	}, [data]);
 
 	if (isLoading || isRefetching) {
@@ -36,4 +36,4 @@ export const CollectionVariablesContainer = () => {
 			environments={environmentsValue}
 		/>
 	);
-};
+}

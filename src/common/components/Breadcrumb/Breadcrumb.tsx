@@ -1,12 +1,12 @@
-const Breadcrumb = ({
+function Breadcrumb({
 	contractName,
 	folderName,
 	contractInvocationName,
-}: {
+}: Readonly<{
 	contractName: string;
 	folderName: string;
 	contractInvocationName: string;
-}) => {
+}>) {
 	return (
 		<div className="flex gap-1 text-sm" data-test="breadcrumb-container">
 			<span
@@ -23,6 +23,6 @@ const Breadcrumb = ({
 			</span>
 		</div>
 	);
-};
+}
 
 export default Breadcrumb;

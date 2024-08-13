@@ -132,24 +132,27 @@ class CookieService<T extends ITokenPayload> implements ICookieService<T> {
 			[NETWORK.SOROBAN_TESTNET]: null,
 			[NETWORK.SOROBAN_FUTURENET]: null,
 		};
+
 		for (const network of Object.values(NETWORK)) {
-			try {
-				const wallet: IWalletContent | null = this.cookies.get(network);
-				if (wallet) {
-					wallets[network] = wallet;
-				}
-			} catch (error) {
-				console.error('Error getting wallet cookies:', error);
+			const wallet = this.parseCookie(network);
+			if (wallet) {
+				wallets[network] = wallet;
 			}
 		}
+
 		return wallets;
 	}
 
 	getWalletCookie(network: NETWORK): IWalletContent | null {
+		return this.parseCookie(network);
+	}
+
+	private parseCookie(network: NETWORK): IWalletContent | null {
 		try {
-			return this.cookies.get(network);
+			const cookie = this.cookies.get(network, { doNotParse: true });
+			return cookie ? (JSON.parse(cookie as string) as IWalletContent) : null;
 		} catch (error) {
-			console.error('Error getting wallet cookie:', error);
+			console.error('Error parsing cookie:', error);
 			return null;
 		}
 	}

@@ -1,4 +1,4 @@
-import React from 'react';
+import { ReactNode } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Button } from '../ui/button';
@@ -13,31 +13,31 @@ import {
 } from '../ui/dialog';
 import { Input } from '../ui/input';
 
-const NewEntityDialog = ({
+function NewEntityDialog({
 	children,
 	onSubmit,
 	isLoading,
 	title,
 	description,
 	defaultName,
-}: {
-	children: React.ReactNode;
+}: Readonly<{
+	children: ReactNode;
 	onSubmit: ({ name }: { name: string }) => void;
 	isLoading: boolean;
 	title: string;
 	description: string;
 	defaultName: string;
-}) => {
+}>) {
 	const { control, handleSubmit, reset } = useForm({
 		defaultValues: {
 			name: defaultName,
 		},
 	});
 
-	const submitAndReset = async ({ name }: { name: string }) => {
+	async function submitAndReset({ name }: { name: string }) {
 		onSubmit({ name });
 		reset();
-	};
+	}
 
 	return (
 		<Dialog>
@@ -80,6 +80,6 @@ const NewEntityDialog = ({
 			</DialogContent>
 		</Dialog>
 	);
-};
+}
 
 export default NewEntityDialog;

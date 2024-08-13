@@ -9,7 +9,7 @@ import { apiService } from '@/config/axios/services/api.service';
 export function useEnvironmentsQuery({
 	collectionId,
 }: {
-	collectionId?: string | undefined;
+	collectionId?: string;
 }) {
 	const query = useQuery<Environment[]>({
 		queryKey: ['environment', collectionId],

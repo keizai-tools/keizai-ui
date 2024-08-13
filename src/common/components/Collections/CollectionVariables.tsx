@@ -38,7 +38,7 @@ export const CollectionVariables = ({
 		formState: { errors },
 	} = useForm({
 		defaultValues: {
-			environments: environments as Environment[],
+			environments,
 		},
 	});
 
@@ -115,11 +115,11 @@ export const CollectionVariables = ({
 						className="flex flex-col gap-2 px-1 pt-12"
 						data-test="collection-variables-container"
 					>
-						{fields.map((environment, index) => (
+						{fields.map((environment) => (
 							<EnvironmentItem
-								key={index}
+								key={environment.id}
 								environment={environment}
-								index={index}
+								index={Number(environment.id)}
 								collectionId={collectionId}
 								control={control}
 								watch={watch}

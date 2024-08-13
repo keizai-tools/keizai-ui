@@ -11,7 +11,7 @@ function useContractEvents() {
 
 	React.useEffect(() => {
 		const events =
-			sessionStorage.getItem(`events-${params.invocationId}`) || '[]';
+			sessionStorage.getItem(`events-${params.invocationId}`) ?? '[]';
 		setContractEvents(JSON.parse(events));
 	}, [params.invocationId]);
 

@@ -73,7 +73,7 @@ export function AuthProvider({
 						wallets[network]?.email === email
 					)
 						continue;
-					if (keypair && keypair.publicKey && keypair.secretKey) {
+					if (keypair?.publicKey && keypair?.secretKey) {
 						fundingAccount(network, keypair.publicKey);
 						setConnectWallet({
 							publicKey: keypair.publicKey,

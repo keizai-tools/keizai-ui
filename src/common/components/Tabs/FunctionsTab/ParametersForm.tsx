@@ -12,13 +12,13 @@ import {
 import { Method, Parameter } from '@/common/types/method';
 
 export type ParametersFormType = { parameters: Method['params'] };
-const ParametersFormContent = ({
+function ParametersFormContent({
 	data,
 	invocationId,
-}: {
+}: Readonly<{
 	data: Method;
 	invocationId: string;
-}) => {
+}>) {
 	const { mutate: editParameters } = useEditParametersMethodMutation();
 	const { control, watch, formState, reset, setValue } =
 		useForm<ParametersFormType>({
@@ -68,7 +68,7 @@ const ParametersFormContent = ({
 	return (
 		<div className="flex flex-col mt-5">
 			<div className="flex justify-between">
-				<span className="text-primary text-md font-semibold">Parameters</span>
+				<span className="font-semibold text-primary text-md">Parameters</span>
 			</div>
 			{(controlledFields.length ?? 0) > 0 ? (
 				<div className="flex flex-col gap-2 py-3">
@@ -85,7 +85,7 @@ const ParametersFormContent = ({
 				</div>
 			) : (
 				<div className="flex mt-3">
-					<span className="text-slate-400 text-xs">
+					<span className="text-xs text-slate-400">
 						{data
 							? 'No parameters for this function. '
 							: 'Select a function to add parameters!'}
@@ -94,15 +94,15 @@ const ParametersFormContent = ({
 			)}
 		</div>
 	);
-};
+}
 
-const ParametersForm = ({
+function ParametersForm({
 	selectedMethodId,
 	invocationId,
-}: {
+}: Readonly<{
 	selectedMethodId?: string;
 	invocationId: string;
-}) => {
+}>) {
 	const { data, isLoading } = useMethodQuery({
 		id: selectedMethodId,
 	});
@@ -110,7 +110,7 @@ const ParametersForm = ({
 	if (isLoading) {
 		return (
 			<div className="flex flex-col gap-3 mt-5">
-				<span className="text-primary text-md font-semibold">
+				<span className="font-semibold text-primary text-md">
 					Function parameters
 				</span>
 				<Skeleton className="w-full h-[30px] rounded-xl" />
@@ -129,6 +129,6 @@ const ParametersForm = ({
 			invocationId={invocationId}
 		/>
 	);
-};
+}
 
 export default ParametersForm;

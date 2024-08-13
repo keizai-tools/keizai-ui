@@ -7,10 +7,10 @@ import { customKeizaiToTests } from '../Editor/constant/customKeizaiEditor';
 function TestsTab({
 	testsInvocationValue,
 	setTestsInvocationValue,
-}: {
+}: Readonly<{
 	testsInvocationValue: string;
 	setTestsInvocationValue: Dispatch<SetStateAction<string>>;
-}) {
+}>) {
 	return (
 		<EditorTab customKeizaiEditor={customKeizaiToTests}>
 			<TestsEditor

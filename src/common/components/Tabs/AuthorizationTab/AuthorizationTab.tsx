@@ -10,15 +10,15 @@ import { NETWORK } from '@/common/types/soroban.enum';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 import { IKeypair } from '@/modules/stellar/domain/keypair';
 
-const AuthorizationTab = ({
+function AuthorizationTab({
 	invocationId,
 	network,
 	defaultValues,
-}: {
+}: Readonly<{
 	invocationId: string;
 	network: string;
 	defaultValues: IKeypair;
-}) => {
+}>) {
 	const { connectWallet, wallet, disconnectWallet } = useAuthProvider();
 
 	const { mutate: editKeys, data } = useEditInvocationKeysMutation();
@@ -92,6 +92,6 @@ const AuthorizationTab = ({
 			</div>
 		</section>
 	);
-};
+}
 
 export default AuthorizationTab;

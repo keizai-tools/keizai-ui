@@ -3,7 +3,7 @@ import { Button } from '../ui/button';
 
 import { useNewCollectionMutation } from '@/common/api/collections';
 
-const CollectionsEmptyState = () => {
+function CollectionsEmptyState() {
 	const { mutate, isPending } = useNewCollectionMutation();
 
 	return (
@@ -29,8 +29,8 @@ const CollectionsEmptyState = () => {
 				description="Let's name your collection"
 				defaultName="Collection"
 				isLoading={isPending}
-				onSubmit={async ({ name }) => {
-					await mutate({ name });
+				onSubmit={({ name }) => {
+					mutate({ name });
 				}}
 			>
 				<Button data-test="collections-header-btn-new">
@@ -39,6 +39,6 @@ const CollectionsEmptyState = () => {
 			</NewEntityDialog>
 		</div>
 	);
-};
+}
 
 export default CollectionsEmptyState;

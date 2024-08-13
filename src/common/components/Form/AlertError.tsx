@@ -8,7 +8,7 @@ type AlertErrorProps = {
 	testName: string;
 };
 
-function AlertError({ title, message, testName }: AlertErrorProps) {
+function AlertError({ title, message, testName }: Readonly<AlertErrorProps>) {
 	return (
 		<Alert
 			variant="destructive"

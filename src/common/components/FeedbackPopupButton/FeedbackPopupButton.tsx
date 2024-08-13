@@ -7,12 +7,12 @@ import {
 	TooltipTrigger,
 } from '@/common/components/ui/tooltip';
 
-const FeedbackPopupButton = () => {
+function FeedbackPopupButton() {
 	return (
 		<Tooltip delayDuration={100}>
 			<TooltipTrigger asChild>
 				<Button
-					className="fixed right-4 bottom-4 rounded-full z-50"
+					className="fixed z-50 rounded-full right-4 bottom-4"
 					variant="secondary"
 					data-tally-open="n0OjOQ"
 					data-tally-overlay="1"
@@ -27,6 +27,6 @@ const FeedbackPopupButton = () => {
 			</TooltipContent>
 		</Tooltip>
 	);
-};
+}
 
 export default FeedbackPopupButton;

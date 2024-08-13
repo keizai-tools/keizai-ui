@@ -7,12 +7,12 @@ function EditorHelpers({
 	title,
 	editorHelpers,
 	editorHelpersDescriptions,
-}: {
+}: Readonly<{
 	setEditorValue: Dispatch<SetStateAction<string>>;
 	title: string;
 	editorHelpers: string[];
 	editorHelpersDescriptions: Record<string, string>;
-}) {
+}>) {
 	const handleChangeEditorValues = (value: string) => {
 		setEditorValue((prev) => (prev ? `${prev}\n${value}` : value));
 	};

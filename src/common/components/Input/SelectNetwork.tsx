@@ -30,22 +30,22 @@ function SelectNetwork({
 	const { selectNetwork, setSelectNetwork, handleUpdateNetwork } =
 		useNetwork(defaultNetwork);
 
-	const openEditNetworkDialog = (network: string) => {
+	function openEditNetworkDialog(network: string) {
 		setSelectNetwork(network);
 		window.umami.track('Open change network dialog');
 		setShowEditNetworkDialog(true);
-	};
+	}
 
-	const onConfirm = () => {
+	function onConfirm() {
 		handleUpdateNetwork(selectNetwork);
 		window.umami.track('Change network', { network: selectNetwork });
 		setShowEditNetworkDialog(false);
-	};
+	}
 
-	const onCancel = () => {
+	function onCancel() {
 		setSelectNetwork(defaultNetwork);
 		setShowEditNetworkDialog(false);
-	};
+	}
 
 	if (selectNetwork === 'AUTO_DETECT') return null;
 

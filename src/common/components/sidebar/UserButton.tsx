@@ -15,9 +15,9 @@ function UserButton() {
 	const { handleSignOut } = useAuthProvider();
 	const navigate = useNavigate();
 
-	const navigateChangePassword = () => {
+	function navigateChangePassword() {
 		navigate('/change-password');
-	};
+	}
 
 	return (
 		<DropdownMenu>

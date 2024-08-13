@@ -16,7 +16,7 @@ function EnvironmentList({
 	hoveredEnvironment,
 	setHoveredEnvironment,
 	handleSelectEnvironment,
-}: IProps) {
+}: Readonly<IProps>) {
 	return (
 		<Fragment>
 			<ul

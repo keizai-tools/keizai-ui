@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 
-import { type ThemeProviderState, ThemeProviderContext } from './ThemeProvider';
+import { ThemeProviderContext } from '../context/themeProvider';
+import { ThemeProviderState } from '../interfaces/theme.interface';
 
 export function useTheme(): ThemeProviderState {
 	const context = useContext(ThemeProviderContext);

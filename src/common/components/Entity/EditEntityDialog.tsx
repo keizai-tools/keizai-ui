@@ -10,7 +10,7 @@ import {
 } from '../ui/dialog';
 import { Input } from '../ui/input';
 
-const EditEntityDialog = ({
+function EditEntityDialog({
 	open,
 	onOpenChange,
 	defaultName,
@@ -18,7 +18,7 @@ const EditEntityDialog = ({
 	description,
 	onEdit,
 	isLoading,
-}: {
+}: Readonly<{
 	open: boolean;
 	onOpenChange: () => void;
 	id: string;
@@ -27,7 +27,7 @@ const EditEntityDialog = ({
 	description: string;
 	onEdit: ({ name }: { name: string }) => void;
 	isLoading: boolean;
-}) => {
+}>) {
 	const { control, handleSubmit } = useForm({
 		defaultValues: {
 			name: defaultName,
@@ -79,6 +79,6 @@ const EditEntityDialog = ({
 			</DialogContent>
 		</Dialog>
 	);
-};
+}
 
 export default EditEntityDialog;

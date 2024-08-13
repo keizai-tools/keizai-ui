@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import DeleteEntityDialog from '../Entity/DeleteEntityDialog';
@@ -11,29 +11,31 @@ import {
 	useUpdateCollectionMutation,
 } from '@/common/api/collections';
 
-const CollectionCard = ({
+function CollectionCard({
 	id,
 	name,
 	foldersCount = 0,
 	invocationsCount = 0,
-}: {
+}: Readonly<{
 	id: string;
 	name: string;
 	foldersCount?: number;
 	invocationsCount?: number;
-}) => {
-	const [activeDialog, setActiveDialog] = React.useState<
-		'edit' | 'delete' | null
-	>(null);
+}>) {
+	const [activeDialog, setActiveDialog] = useState<'edit' | 'delete' | null>(
+		null,
+	);
 	const navigate = useNavigate();
 	const { mutate: deleteCollectionMutation } = useDeleteCollectionMutation();
 	const { mutate, isPending } = useUpdateCollectionMutation();
 
-	const handleEditCollection = async ({ name }: { name: string }) => {
-		await mutate({ id, name });
+	function handleEditCollection({ name }: { name: string }) {
+		mutate({ id, name });
 		window.umami.track('Edit collection');
 		setActiveDialog(null);
-	};
+	}
+
+	const textFolder = foldersCount === 1 ? 'Folder' : 'Folders';
 
 	return (
 		<div className="relative" data-test="collection-folder-container">
@@ -44,24 +46,24 @@ const CollectionCard = ({
 				onClick={() => navigate(`/collection/${id}`)}
 			>
 				<span data-test="collection-folder-title">{name}</span>
-				<div className="flex flex-col justify-start items-start">
+				<div className="flex flex-col items-start justify-start">
 					<span
-						className="text-slate-400 font-medium"
+						className="font-medium text-slate-400"
 						data-test="collection-folder-quantity"
 					>
 						{foldersCount === 0
 							? 'No folders'
-							: `${foldersCount} ${foldersCount === 1 ? 'Folder' : 'Folders'}`}
+							: `${foldersCount} ${textFolder}`}
 					</span>
 					{foldersCount > 0 && (
-						<span className="text-slate-400 font-medium">
+						<span className="font-medium text-slate-400">
 							{invocationsCount === 0 ? 'No' : invocationsCount}{' '}
 							{invocationsCount === 1 ? 'Invocation' : 'Invocations'}
 						</span>
 					)}
 				</div>
 			</Button>
-			<div className="absolute right-5 top-6 text-white">
+			<div className="absolute text-white right-5 top-6">
 				<MoreOptions
 					onClickEdit={() => setActiveDialog('edit')}
 					onClickDelete={() => setActiveDialog('delete')}
@@ -89,6 +91,6 @@ const CollectionCard = ({
 			/>
 		</div>
 	);
-};
+}
 
 export default CollectionCard;

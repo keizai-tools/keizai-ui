@@ -3,7 +3,7 @@ interface NetworkStatusProps {
 	isOperational: boolean;
 }
 
-function NetworkStatus({ name, isOperational }: NetworkStatusProps) {
+function NetworkStatus({ name, isOperational }: Readonly<NetworkStatusProps>) {
 	return (
 		<div className="flex flex-col items-start justify-between w-full h-full gap-4 p-6 font-bold border-2 border-solid rounded-lg border-offset-background bg-slate-900">
 			<div className="flex items-baseline justify-between w-full h-full">

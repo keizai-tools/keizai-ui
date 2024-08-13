@@ -8,13 +8,13 @@ import {
 	DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
-const MoreOptions = ({
+function MoreOptions({
 	onClickEdit,
 	onClickDelete,
-}: {
+}: Readonly<{
 	onClickEdit: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 	onClickDelete: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-}) => {
+}>) {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger
@@ -40,6 +40,6 @@ const MoreOptions = ({
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
-};
+}
 
 export default MoreOptions;

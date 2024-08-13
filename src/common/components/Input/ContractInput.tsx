@@ -16,14 +16,14 @@ function ContractInput({
 	loadContract,
 	runInvocation,
 	method,
-}: {
+}: Readonly<{
 	defaultValue: string;
 	defaultNetwork: string;
 	loading: boolean;
 	loadContract: (contractId: string) => void;
 	runInvocation: () => void;
-	method?: Method | undefined;
-}) {
+	method?: Method;
+}>) {
 	const [contractId, setContractId] = React.useState(defaultValue);
 
 	const [showEditContractDialog, setShowEditContractDialog] =
@@ -35,22 +35,22 @@ function ContractInput({
 		setShowEnvironments,
 	} = useEnvironments();
 
-	const handleUpdateContractId = async () => {
+	async function handleUpdateContractId() {
 		if (contractId) {
 			loadContract(contractId);
 			window.umami.track('Load contract');
 		}
-	};
+	}
 
-	const handleSelect = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
+	function handleSelect(e: React.MouseEvent<HTMLLIElement, MouseEvent>) {
 		const environmentValue = handleSelectEnvironment(e.currentTarget.id);
 		setContractId(`{{${environmentValue}}}`);
-	};
+	}
 
-	const handleChange = (value: string) => {
+	function handleChange(value: string) {
 		handleSearchEnvironment(value);
 		setContractId(value);
-	};
+	}
 
 	return (
 		<div

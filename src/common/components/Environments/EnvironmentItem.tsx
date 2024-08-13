@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { UseMutateFunction } from '@tanstack/react-query';
 import { Trash2 } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	Control,
 	Controller,
@@ -27,7 +25,7 @@ interface IEnvironmentItem {
 		{
 			environments: Environment[];
 		},
-		any
+		unknown
 	>;
 	errors: FieldErrors<{
 		environments: Environment[];
@@ -37,7 +35,7 @@ interface IEnvironmentItem {
 	}>;
 	removeItem: UseFieldArrayRemove;
 	deleteMutation: UseMutateFunction<
-		any,
+		unknown,
 		Error,
 		string,
 		{
@@ -60,8 +58,8 @@ export default function EnvironmentItem({
 	errors,
 	removeItem,
 	deleteMutation,
-}: IEnvironmentItem) {
-	const [inputValue, setInputValue] = React.useState<ISetValue>({
+}: Readonly<IEnvironmentItem>) {
+	const [inputValue, setInputValue] = useState<ISetValue>({
 		value: '',
 		field: '',
 	});
@@ -85,7 +83,7 @@ export default function EnvironmentItem({
 		}
 	}, 700);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		const { value, field } = inputValue;
 		debounced(field, value);
 	}, [inputValue, debounced]);

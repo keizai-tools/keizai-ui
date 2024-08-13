@@ -14,8 +14,8 @@ function EnvironmentInput({
 	testName,
 	styles,
 	handleChange,
-}: EnvironmentInputProps) {
-	const environmentHighlight = (code: string) => {
+}: Readonly<EnvironmentInputProps>) {
+	function environmentHighlight(code: string) {
 		const envRegex = /{{[^{}]+}}/g;
 		if (typeof code === 'string' && code !== '') {
 			return code.replace(
@@ -25,7 +25,7 @@ function EnvironmentInput({
 		} else {
 			return code;
 		}
-	};
+	}
 
 	return (
 		<Editor

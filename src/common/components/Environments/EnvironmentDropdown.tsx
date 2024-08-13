@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import EnvironmentEmptyState from './EnvironmentEmptyState';
 import EnvironmentList from './EnvironmentList';
@@ -8,12 +8,11 @@ import { Environment } from '@/common/types/environment';
 export default function EnvironmentDropdown({
 	environments,
 	handleSelect,
-}: {
+}: Readonly<{
 	environments: Environment[];
 	handleSelect: (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => void;
-}) {
-	const [hoveredEnvironment, setHoveredEnvironment] =
-		React.useState<string>('');
+}>) {
+	const [hoveredEnvironment, setHoveredEnvironment] = useState<string>('');
 
 	return (
 		<div
