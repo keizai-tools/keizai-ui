@@ -1,5 +1,5 @@
 import { GanttChart } from 'lucide-react';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useParams } from 'react-router-dom';
 
 import DeleteEntityDialog from '../Entity/DeleteEntityDialog';
@@ -20,15 +20,17 @@ import {
 } from '@/common/components/ui/accordion';
 import { Folder as IFolder } from '@/common/types/folder';
 
-const Folder = ({ folder }: { folder: IFolder }) => {
+function Folder({ folder }: { folder: IFolder }) {
 	const params = useParams();
 	const [isOpen, setIsOpen] = React.useState<string[] | undefined>();
 	const [openDialog, setOpenDialog] = React.useState<'edit' | 'delete' | null>(
 		null,
 	);
+
 	const { mutate: deleteFolderMutation } = useDeleteFolderMutation({
 		collectionId: params?.collectionId,
 	});
+
 	const { mutate: editFolderMutation, isPending: isEditingFolder } =
 		useEditFolderMutation({ collectionId: params?.collectionId });
 
@@ -45,7 +47,7 @@ const Folder = ({ folder }: { folder: IFolder }) => {
 	}, [folder, params?.invocationId]);
 
 	return (
-		<>
+		<Fragment>
 			<Accordion
 				type="multiple"
 				className="w-full"
@@ -60,12 +62,12 @@ const Folder = ({ folder }: { folder: IFolder }) => {
 			>
 				<AccordionItem value={folder.id} className="border-none">
 					<AccordionTrigger
-						className="h-10 w-full "
+						className="w-full h-10 "
 						data-test="collection-folder-container"
 					>
-						<div className="flex justify-between items-center w-full text-slate-100 text-sm">
+						<div className="flex items-center justify-between w-full text-sm text-slate-100">
 							<div
-								className="flex gap-1 items-center"
+								className="flex items-center gap-1"
 								data-test="folder-accordion-title"
 							>
 								<GanttChart size={16} />
@@ -131,8 +133,8 @@ const Folder = ({ folder }: { folder: IFolder }) => {
 				}}
 				isLoading={isEditingFolder}
 			/>
-		</>
+		</Fragment>
 	);
-};
+}
 
 export default Folder;

@@ -12,7 +12,7 @@ export enum AUTH_VALIDATIONS {
 }
 
 export enum AUTH_RESPONSE {
-	INVALID_PARAMETER = 'One of the parameters is invalid. Please verify your credentials and try again',
+	INVALID_PARAMETER = 'Incorrect email or code',
 	INTERNAL_ERROR = 'Authentication Service internal error, please try again',
 	REQUEST_EXPIRED = 'The request has expired, please try again',
 	SERVICE_UNAVAILABLE = 'Temporary failure of the server, please try again',
@@ -23,17 +23,17 @@ export enum AUTH_RESPONSE {
 }
 
 export enum AUTH_LOGIN_RESPONSE {
-	INVALID_PASSWORD = "Sorry, that password isn't right. Follow the detailed requirements below",
+	INVALID_PASSWORD = 'Incorrect email or password',
 	NOT_AUTHORIZED = 'The email and password you entered did not match our records. Please double-check and try again',
-	PASSWORD_RESET_REQUIRED = 'Password reset is required. Please click in Forgot your password? to continue',
-	USER_NOT_CONFIRMED = 'The user is not confirmed, please verify your email',
-	USER_NOT_FOUND = 'The user is not found. Can we help you register your email?',
+	PASSWORD_RESET_REQUIRED = 'New password required',
+	USER_NOT_CONFIRMED = 'User is not confirmed',
+	USER_NOT_FOUND = 'User not found',
 }
 
 export enum CREATE_ACCOUNT_RESPONSE {
 	INVALID_PASSWORD = "Sorry, that password isn't right. Follow the detailed requirements below",
 	NOT_AUTHORIZED = 'There was an error creating your account, please try again',
-	USERNAME_EXIST = 'Another user with this email already exists. Can we help you recover your email or reset the password?',
+	EMAIL_EXIST = 'Another user with this email already exists. Can we help you recover your email or reset the password?',
 }
 
 export enum FORGOT_PASSWORD_RESPONSE {

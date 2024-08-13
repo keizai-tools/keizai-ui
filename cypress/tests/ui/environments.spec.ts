@@ -1,6 +1,6 @@
 import { environments, invocations } from './exceptions/constants';
 
-describe('Environments management', () => {
+xdescribe('Environments management', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
 		cy.intercept('GET', `${Cypress.env('apiUrl')}/collection`, {

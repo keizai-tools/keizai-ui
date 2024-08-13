@@ -1,21 +1,20 @@
 export const user = {
 	code: '369401',
-	username: Cypress.env('cognitoE2EUsername'),
+	email: Cypress.env('cognitoE2Eemail'),
 	password: Cypress.env('cognitoE2EPassword'),
 };
 
 export const invalidUser = {
-	username: 'test',
+	email: 'test',
 	password: 'test',
 };
 
 export const apiUrl = Cypress.env('apiUrl');
-export const cognitoUrl = Cypress.env('cognitoEndpoint');
 
 export const authPage = {
 	img: {
 		src: '/welcome.svg',
-		alt: 'Welcome image',
+		alt: 'Welcome',
 	},
 	title: 'Discover Keizai',
 	description: 'Next-gen testing for Soroban.',
@@ -24,7 +23,7 @@ export const authPage = {
 
 export const loginForm = {
 	title: 'Welcome Back',
-	username: 'Email',
+	email: 'Email',
 	password: 'Password',
 	btnSubmit: 'Login',
 	footer: {
@@ -36,6 +35,10 @@ export const loginForm = {
 		passwordLink: {
 			title: 'Forgot your password?',
 			url: Cypress.env('forgotPasswordUrl'),
+		},
+		registerLink: {
+			title: 'Join Now',
+			url: Cypress.env('registerUrl'),
 		},
 	},
 	errorTitle: 'Login failed',
@@ -58,9 +61,9 @@ export const registerForm = {
 export const forgotPassword = {
 	recovery: {
 		title: 'Password Recovery',
-		username: 'Email',
+		email: 'Email',
 		btnSubmit: 'Send code',
-		invalidUsername: 'test.com',
+		invalidemail: 'test.com',
 	},
 	forgot: {
 		title: 'Password Reset',
@@ -91,3 +94,25 @@ export const changePassword = {
 	btnSubmit: 'Update password',
 	alertTitle: 'Change password failed',
 };
+
+export interface IApiResponseError {
+	success: boolean;
+	statusCode: number;
+	error: string;
+	message: string;
+	details: {
+		description: string | string[];
+		possibleCauses: string[];
+		suggestedFixes: string[];
+	};
+	timestamp: string;
+	path: string;
+}
+
+export interface ISuccessfulAuthenticationResponse {
+	success: boolean;
+	statusCode: number;
+	message: string;
+	timestamp: string;
+	path: string;
+}

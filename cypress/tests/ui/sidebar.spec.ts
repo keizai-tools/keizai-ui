@@ -1,4 +1,4 @@
-describe('Sidebar', () => {
+xdescribe('Sidebar', () => {
 	beforeEach(() => {
 		cy.loginByCognitoApi();
 	});

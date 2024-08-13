@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useEnvironmentsQuery } from '../api/enviroments';
+import { useEnvironmentsQuery } from '../api/environments';
 import { Environment } from '../types/environment';
 
 export default function useEnvironments() {

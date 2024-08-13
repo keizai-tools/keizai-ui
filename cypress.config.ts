@@ -35,7 +35,7 @@ export default defineConfig({
 		cognitoRegion: process.env.VITE_AWS_COGNITO_REGION,
 		cognitoPoolId: process.env.VITE_AWS_COGNITO_USER_POOL_ID,
 		cognitoClientId: process.env.VITE_AWS_COGNITO_CLIENT_ID,
-		cognitoE2EUsername: process.env.VITE_AWS_COGNITO_E2E_USERNAME,
+		cognitoE2Eemail: process.env.VITE_AWS_COGNITO_E2E_EMAIL,
 		cognitoE2EPassword: process.env.VITE_AWS_COGNITO_E2E_PASSWORD,
 	},
 });
