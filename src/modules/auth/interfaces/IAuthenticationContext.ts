@@ -1,7 +1,5 @@
 import { WalletType, type Network } from 'simple-stellar-signer-api';
 
-import { IErrorState } from './IErrorState';
-import { ILoadingState } from './ILoadingState';
 import { IStatusState } from './IStatusState';
 
 export interface IAuthenticationContext {
@@ -15,11 +13,13 @@ export interface IAuthenticationContext {
 	handleForgotPassword: (email: string) => Promise<void>;
 	handleRefreshSession: () => Promise<void>;
 	handleSignOut: () => void;
-	errorState: IErrorState;
-	loadingState: ILoadingState;
 	statusState: IStatusState;
 	connectWallet(network: Network): Promise<void>;
 	setDisconnectWallet(): void;
+	handleChangePassword: (
+		oldPassword: string,
+		newPassword: string,
+	) => Promise<void>;
 	wallet: IWallet | null;
 }
 
