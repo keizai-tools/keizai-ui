@@ -88,6 +88,19 @@ class AuthService implements IAuthService {
 			config,
 		);
 	}
+
+	async changePassword(
+		email: string,
+		oldPassword: string,
+		newPassword: string,
+		config?: AxiosRequestConfig,
+	) {
+		return await this.api.patch<ISuccessfulAuthenticationResponse>(
+			'/auth/change-password',
+			{ email, oldPassword, newPassword },
+			config,
+		);
+	}
 }
 
 export const authService = new AuthService(apiService);
