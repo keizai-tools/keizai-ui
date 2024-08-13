@@ -18,7 +18,7 @@
 			"@/*": ["./src/*"],
 			"@assets/*": ["./src/assets/*"],
 			"@components/*": ["./src/components/*"],
-			"@configs/*": ["./src/configs/*"],
+			"@config/*": ["./src/config/*"],
 			"@pages/*": ["./src/pages/*"],
 			"@lib/*": ["./src/lib/*"],
 			"@/contexts": ["./src/contexts/*"],
