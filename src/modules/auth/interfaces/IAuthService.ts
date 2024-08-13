@@ -40,4 +40,10 @@ export interface IAuthService {
 		refreshToken: string,
 		config?: AxiosRequestConfig,
 	) => Promise<IRefreshSessionResponse>;
+	changePassword(
+		email: string,
+		oldPassword: string,
+		newPassword: string,
+		config?: AxiosRequestConfig,
+	): Promise<ISuccessfulAuthenticationResponse>;
 }
