@@ -6,12 +6,12 @@ import { AuthProvider } from '@/modules/auth/context/AuthContext';
 import CollectionCTAPage from '@/pages/Collection/CollectionCTAPage';
 import CollectionPage from '@/pages/Collection/CollectionPage';
 import InvocationPage from '@/pages/Invocation/InvocationPage';
-import AuthPage from '@/pages/auth/AuthPage';
-import CreateAccount from '@/pages/auth/CreateAccount';
-import Login from '@/pages/auth/Login';
-import ProtectedRoute from '@/pages/auth/ProtectedRoute';
-import RecoverPassword from '@/pages/auth/RecoverPassword';
-import ResetPassword from '@/pages/auth/ResetPassword';
+import AuthPage from '@/pages/auth/authPage';
+import CreateAccount from '@/pages/auth/createAccount';
+import Login from '@/pages/auth/login';
+import ProtectedRoute from '@/pages/auth/protectedRoute';
+import RecoverPassword from '@/pages/auth/recoverPassword';
+import ResetPassword from '@/pages/auth/resetPassword';
 
 import Root from '@pages/Root';
 import Home from '@pages/home/Home';
