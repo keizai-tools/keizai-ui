@@ -1,10 +1,9 @@
-// Inspired by react-hot-toast library
 import * as React from 'react';
 
 import { ToastActionElement, ToastProps } from '@/common/components/ui/toast';
 
-const TOAST_LIMIT = 1;
-const TOAST_REMOVE_DELAY = 1000000;
+const TOAST_LIMIT = 3;
+const TOAST_REMOVE_DELAY = 5000;
 
 type ToasterToast = ToastProps & {
 	id: string;
@@ -53,7 +52,7 @@ interface State {
 
 const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>();
 
-const addToRemoveQueue = (toastId: string) => {
+function addToRemoveQueue(toastId: string) {
 	if (toastTimeouts.has(toastId)) {
 		return;
 	}
@@ -67,9 +66,9 @@ const addToRemoveQueue = (toastId: string) => {
 	}, TOAST_REMOVE_DELAY);
 
 	toastTimeouts.set(toastId, timeout);
-};
+}
 
-export const reducer = (state: State, action: Action): State => {
+export function reducer(state: State, action: Action): State {
 	switch (action.type) {
 		case 'ADD_TOAST':
 			return {
@@ -88,8 +87,6 @@ export const reducer = (state: State, action: Action): State => {
 		case 'DISMISS_TOAST': {
 			const { toastId } = action;
 
-			// ! Side effects ! - This could be extracted into a dismissToast() action,
-			// but I'll keep it here for simplicity
 			if (toastId) {
 				addToRemoveQueue(toastId);
 			} else {
@@ -122,7 +119,7 @@ export const reducer = (state: State, action: Action): State => {
 				toasts: state.toasts.filter((t) => t.id !== action.toastId),
 			};
 	}
-};
+}
 
 const listeners: Array<(state: State) => void> = [];
 
@@ -140,12 +137,15 @@ type Toast = Omit<ToasterToast, 'id'>;
 function toast({ ...props }: Toast) {
 	const id = genId();
 
-	const update = (props: ToasterToast) =>
-		dispatch({
+	function update(props: ToasterToast) {
+		return dispatch({
 			type: 'UPDATE_TOAST',
 			toast: { ...props, id },
 		});
-	const dismiss = () => dispatch({ type: 'DISMISS_TOAST', toastId: id });
+	}
+	function dismiss() {
+		return dispatch({ type: 'DISMISS_TOAST', toastId: id });
+	}
 
 	dispatch({
 		type: 'ADD_TOAST',
