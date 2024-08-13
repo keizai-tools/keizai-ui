@@ -1,4 +1,5 @@
 import { PlusIcon } from 'lucide-react';
+import { Fragment } from 'react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 import EnvironmentEmptyState from '../Environments/EnvironmentEmptyState';
@@ -109,7 +110,7 @@ export const CollectionVariables = ({
 				</div>
 			</header>
 			{fields.length > 0 ? (
-				<>
+				<Fragment>
 					<ul
 						className="flex flex-col gap-2 px-1 pt-12"
 						data-test="collection-variables-container"
@@ -137,7 +138,7 @@ export const CollectionVariables = ({
 							Save
 						</Button>
 					</div>
-				</>
+				</Fragment>
 			) : (
 				<EnvironmentEmptyState
 					styles="py-8 text-base"

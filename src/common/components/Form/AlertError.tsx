@@ -9,7 +9,6 @@ type AlertErrorProps = {
 };
 
 function AlertError({ title, message, testName }: AlertErrorProps) {
-	console.log(`${testName}-container`);
 	return (
 		<Alert
 			variant="destructive"

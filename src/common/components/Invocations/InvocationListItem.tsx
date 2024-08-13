@@ -1,5 +1,5 @@
 import { FileText } from 'lucide-react';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router-dom';
 
 import DeleteEntityDialog from '../Entity/DeleteEntityDialog';
@@ -24,14 +24,14 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
 		useEditInvocationMutation();
 
 	return (
-		<>
+		<Fragment>
 			<div
-				className="flex justify-between items-center w-full text-slate-100 text-sm group"
+				className="flex items-center justify-between w-full text-sm text-slate-100 group"
 				data-test="invocation-item"
 			>
 				<Button
 					variant="link"
-					className="text-slate-100 w-full flex justify-start"
+					className="flex justify-start w-full text-slate-100"
 					asChild
 				>
 					<NavLink to={`invocation/${invocation?.id}`}>
@@ -92,7 +92,7 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
 				}}
 				isLoading={isEditingInvocation}
 			/>
-		</>
+		</Fragment>
 	);
 };
 

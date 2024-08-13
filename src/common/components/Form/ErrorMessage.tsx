@@ -1,4 +1,5 @@
 import { AlertCircle } from 'lucide-react';
+import { Fragment } from 'react';
 
 type PropsErrorMessage = {
 	message: string;
@@ -16,7 +17,7 @@ const passwordRequeriment = [
 
 function ErrorMessage({ message, styles, testName, type }: PropsErrorMessage) {
 	return (
-		<>
+		<Fragment>
 			<p
 				className={`text-red-500 flex items-center gap-1 ml-4 mt-2 ${styles}`}
 				data-test={testName}
@@ -36,7 +37,7 @@ function ErrorMessage({ message, styles, testName, type }: PropsErrorMessage) {
 					))}
 				</ul>
 			)}
-		</>
+		</Fragment>
 	);
 }
 

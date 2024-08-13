@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import { Environment } from '@/common/types/environment';
 
@@ -18,9 +18,9 @@ function EnvironmentList({
 	handleSelectEnvironment,
 }: IProps) {
 	return (
-		<>
+		<Fragment>
 			<ul
-				className="overflow-hidden overflow-y-scroll w-2/5 scrollbar scrollbar-w-2 scrollbar-h-1 scrollbar-track-background scrollbar-thumb-slate-700 scrollbar-thumb-rounded"
+				className="w-2/5 overflow-hidden overflow-y-scroll scrollbar scrollbar-w-2 scrollbar-h-1 scrollbar-track-background scrollbar-thumb-slate-700 scrollbar-thumb-rounded"
 				data-test="dropdown-environments-ul-container"
 			>
 				{environments?.map((env: Environment) => (
@@ -49,7 +49,7 @@ function EnvironmentList({
 					{hoveredEnvironment}
 				</span>
 			</div>
-		</>
+		</Fragment>
 	);
 }
 

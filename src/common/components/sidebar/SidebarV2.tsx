@@ -12,7 +12,7 @@ function SidebarV2() {
 			data-test="sidebar-container"
 		>
 			<div className="flex flex-col w-full">
-				<div className="flex flex-col mt-4 p-3">
+				<div className="flex flex-col p-3 mt-4">
 					<Link
 						to="/"
 						data-test="sidebar-link"
@@ -27,7 +27,7 @@ function SidebarV2() {
 				</div>
 			</div>
 			<div className="flex justify-between w-full px-4 mb-4">
-				<div className="flex gap-2 items-center">
+				<div className="flex items-center gap-2">
 					<img
 						src="/logo.svg"
 						width={34}
@@ -35,7 +35,7 @@ function SidebarV2() {
 						alt="Keizai Logo"
 						data-test="sidebar-img"
 					/>
-					<span className="font-semibold text-lg">Keizai</span>
+					<span className="text-lg font-semibold">Keizai</span>
 				</div>
 				<UserButton />
 			</div>

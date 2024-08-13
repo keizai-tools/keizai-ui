@@ -1,6 +1,6 @@
 import { UseMutateFunction, useMutation } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Button } from '../../ui/button';
@@ -129,10 +129,10 @@ function ImportAccount({
 						disabled={isPending}
 					>
 						{isPending ? (
-							<>
+							<Fragment>
 								<Loader2 className="w-4 h-4 mr-2 animate-spin" />
 								Connecting...
-							</>
+							</Fragment>
 						) : (
 							'Connect'
 						)}
