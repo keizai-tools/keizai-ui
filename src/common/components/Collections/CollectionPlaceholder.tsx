@@ -14,8 +14,8 @@ const CollectionPlaceholder = () => {
 			description="Let's name your collection"
 			defaultName="Collection"
 			isLoading={isPending}
-			onSubmit={async ({ name }) => {
-				await mutate({ name });
+			onSubmit={({ name }) => {
+				mutate({ name });
 				window.umami.track('Create collection');
 			}}
 		>
