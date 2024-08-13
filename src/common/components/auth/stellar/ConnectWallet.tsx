@@ -1,12 +1,15 @@
-import { Network } from 'simple-stellar-signer-api';
-
 import { Button } from '../../ui/button';
 
-import { IWallet } from '@/modules/auth/interfaces/IAuthenticationContext';
+import { NETWORK } from '@/common/types/soroban.enum';
+import { IWalletContent } from '@/modules/auth/interfaces/IAuthenticationContext';
 
 interface IConnectWallet {
-	connectWallet: (network: Network) => void;
-	wallet?: IWallet | null;
+	connectWallet: (network: NETWORK) => void;
+	wallet: {
+		MAINNET: IWalletContent | null;
+		TESTNET: IWalletContent | null;
+		FUTURENET: IWalletContent | null;
+	};
 	disconnectWallet: () => void;
 	network: string;
 }
@@ -17,7 +20,7 @@ function ConnectWallet({
 	disconnectWallet,
 	network,
 }: IConnectWallet) {
-	return wallet ? (
+	return wallet[network as keyof typeof wallet] ? (
 		<Button
 			className="font-bold px-10 border-[3px] border-primary text-primary h-full hover:text-background hover:bg-primary"
 			variant="outline"
@@ -31,7 +34,7 @@ function ConnectWallet({
 			className="font-bold px-10 border-[3px] border-primary text-primary h-full hover:text-background hover:bg-primary"
 			variant="outline"
 			data-test="auth-stellar-connect-account-btn"
-			onClick={() => connectWallet(network.toLowerCase() as Network)}
+			onClick={() => connectWallet(network as NETWORK)}
 		>
 			Connect Account
 		</Button>
