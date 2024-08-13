@@ -4,8 +4,8 @@ import { useParams } from 'react-router-dom';
 import { useToast } from '../components/ui/use-toast';
 import { Invocation, InvocationResponse } from '../types/invocation';
 
-import { IApiResponse } from '@/configs/axios/interfaces/IApiResponse';
-import { apiService } from '@/configs/axios/services/api.service';
+import { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
+import { apiService } from '@/config/axios/services/api.service';
 
 export function useInvocationQuery({ id }: { id?: string }) {
 	const query = useQuery<Invocation>({
@@ -19,15 +19,18 @@ export function useInvocationQuery({ id }: { id?: string }) {
 
 	return query;
 }
+export function useRunInvocationQuery({ id }: { id?: string }) {
+	return async (signedTransactionXDR: string | null) => {
+		if (signedTransactionXDR === null) {
+			const res = await apiService?.post<IApiResponse<InvocationResponse>>(
+				`/invocation/${id}/run`,
+				{
+					signedTransactionXDR: '',
+				},
+			);
+			return res.payload;
+		}
 
-export function useRunInvocationQuery({
-	id,
-	signedTransactionXDR,
-}: {
-	id?: string;
-	signedTransactionXDR?: string;
-}) {
-	return async () => {
 		const res = await apiService?.post<IApiResponse<InvocationResponse>>(
 			`/invocation/${id}/run`,
 			{
@@ -101,7 +104,9 @@ export function useEditInvocationMutation() {
 					contractId,
 					selectedMethodId,
 				})
-				.then((res) => res.payload)
+				.then((res) => {
+					return res.payload;
+				})
 				.catch(() => {
 					if (contractId) {
 						window.umami.track('Error loading contract', { contractId });
