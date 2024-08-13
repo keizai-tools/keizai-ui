@@ -155,7 +155,6 @@ export function AuthProvider() {
 					cookieService.setRefreshTokenCookie(refreshToken, decodedToken.exp);
 					cookieService.setEmailCookie(email, decodedToken.exp);
 					apiService.setAuthentication(accessToken);
-					// onCreateAccount(false, true);
 					toast({
 						title: SIGN_IN_SUCCESS_MESSAGE,
 						description: `Welcome back, ${email}`,
@@ -319,7 +318,6 @@ export function AuthProvider() {
 		try {
 			cookieService.removeAll();
 			apiService.setAuthentication('');
-			// disconnectWallet(null, false);
 			toast({
 				title: 'Sign out',
 				description: SIGN_OUT_SUCCESS_MESSAGE,
