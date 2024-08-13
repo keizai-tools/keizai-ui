@@ -5,17 +5,17 @@ import FullscreenLoading from '@/common/views/FullscreenLoading';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 function AuthPage() {
-	const { handleRefreshSession, loadingState, statusState } = useAuthProvider();
+	const { handleRefreshSession, statusState } = useAuthProvider();
 
 	useEffect(() => {
 		handleRefreshSession();
 	}, [handleRefreshSession]);
 
-	if (loadingState.refreshSession) {
+	if (statusState.refreshSession.loading) {
 		return <FullscreenLoading />;
 	}
 
-	if (statusState.refreshSession) {
+	if (statusState.refreshSession.status) {
 		return <Navigate replace to="/" />;
 	}
 

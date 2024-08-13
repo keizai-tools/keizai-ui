@@ -1,4 +1,5 @@
 import { AtSign, Loader2 } from 'lucide-react';
+import { Fragment } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
@@ -21,7 +22,7 @@ function CreateAccount() {
 			password: '',
 		},
 	});
-	const { handleSignUp, loadingState, errorState } = useAuthProvider();
+	const { handleSignUp, statusState } = useAuthProvider();
 
 	const onSubmit = async (values: { email: string; password: string }) => {
 		await handleSignUp(values.email, values.password);
@@ -98,13 +99,13 @@ function CreateAccount() {
 			</div>
 			{!errors.email &&
 				!errors.password &&
-				(errorState.signUp || errorState.signUp?.length) && (
+				(statusState.signUp.error || statusState.signUp.error?.length) && (
 					<AlertError
 						title="Create account failed"
 						message={
-							Array.isArray(errorState.signUp)
-								? errorState.signUp.join(', ')
-								: errorState.signUp
+							Array.isArray(statusState.signUp.error)
+								? statusState.signUp.error.join(', ')
+								: statusState.signUp.error
 						}
 						testName="register-form-create-error"
 					/>
@@ -113,13 +114,13 @@ function CreateAccount() {
 				type="submit"
 				className="w-full py-2 mt-8 mb-2 font-semibold text-black rounded-md"
 				data-test="register-form-btn-submit"
-				disabled={loadingState.signUp}
+				disabled={statusState.signUp.loading}
 			>
-				{loadingState.signUp ? (
-					<>
+				{statusState.signUp.loading ? (
+					<Fragment>
 						<Loader2 className="w-4 h-4 mr-2 text-black animate-spin" />
 						Creating...
-					</>
+					</Fragment>
 				) : (
 					'Create'
 				)}
