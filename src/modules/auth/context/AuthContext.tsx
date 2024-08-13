@@ -5,8 +5,6 @@ import {
 	connectWallet as simpleSignerConnectWallet,
 } from 'simple-stellar-signer-api';
 
-import { useErrorState } from '../hooks/useErrorState';
-import { useLoadingState } from '../hooks/useLoadingState';
 import { useStatusState } from '../hooks/useStatusState';
 import {
 	IAuthenticationContext,
@@ -30,8 +28,6 @@ import { cookieService } from '@/modules/cookies/services/cookie.service';
 export const AuthContext = createContext<IAuthenticationContext | null>(null);
 
 export function AuthProvider() {
-	const { loadingState, setLoadingState } = useLoadingState();
-	const { errorState, setErrorState } = useErrorState();
 	const { statusState, setStatusState } = useStatusState();
 	const [wallet, setWallet] = useState<IWallet | null>(null);
 
@@ -90,7 +86,9 @@ export function AuthProvider() {
 	const handleSignUp = useCallback(
 		async (email: string, password: string) => {
 			async function signUp(email: string, password: string) {
-				setLoadingState('signUp', true);
+				setStatusState('signUp', {
+					loading: true,
+				});
 				try {
 					const response = await authService.signUp(email, password);
 					if (response.success && response.statusCode === 201) {
@@ -98,15 +96,23 @@ export function AuthProvider() {
 							title: SIGN_UP_SUCCESS_MESSAGE,
 							description: CONFIRMATION_SENT_MESSAGE,
 						});
-						setStatusState('signUp', true);
+						setStatusState('signUp', {
+							status: true,
+							error: null,
+							loading: false,
+						});
 						navigate('/auth/login');
 					} else {
 						throw new Error('Failed to sign up');
 					}
 				} catch (error) {
-					setStatusState('signUp', false);
+					setStatusState('signUp', {
+						status: false,
+						error: null,
+						loading: false,
+					});
 					if (error instanceof ApiResponseError) {
-						setErrorState('signUp', error.details.description);
+						setStatusState('signUp', { error: error.details.description });
 						toast({
 							title: `${error.error} - ${error.message}`,
 							description: error.details.description,
@@ -120,40 +126,46 @@ export function AuthProvider() {
 						});
 					}
 				} finally {
-					setLoadingState('signUp', false);
+					setStatusState('signUp', {
+						loading: false,
+					});
 				}
 			}
 			return signUp(email, password);
 		},
-		[navigate, setErrorState, setLoadingState, setStatusState, toast],
+		[navigate, setStatusState, toast],
 	);
 
 	const handleSignIn = useCallback(
 		async (email: string, password: string) => {
 			async function signIn(email: string, password: string) {
-				setLoadingState('signIn', true);
-				setErrorState('signIn', null);
+				setStatusState('signIn', {
+					loading: true,
+					error: null,
+				});
 				try {
-					const { payload } = await authService.signIn(email, password);
-					const { accessToken, refreshToken, idToken } = payload;
-					const decodedToken = cookieService.decodeToken(idToken);
+					const response = await authService.signIn(email, password);
+					const { payload } = response;
+					const { accessToken, refreshToken } = payload;
 
+					const decodedToken = cookieService.decodeToken(refreshToken);
 					if (!decodedToken) throw new Error(UNRECOGNIZED_TOKEN_ERROR);
 
 					cookieService.setAccessTokenCookie(accessToken);
 					cookieService.setRefreshTokenCookie(refreshToken, decodedToken.exp);
 					cookieService.setEmailCookie(email, decodedToken.exp);
 					apiService.setAuthentication(accessToken);
+					// onCreateAccount(false, true);
 					toast({
 						title: SIGN_IN_SUCCESS_MESSAGE,
 						description: `Welcome back, ${email}`,
 					});
-					setStatusState('signIn', true);
+					setStatusState('signIn', { status: true });
 					navigate('/');
 				} catch (error) {
-					setStatusState('signIn', false);
+					setStatusState('signIn', { status: false });
 					if (error instanceof ApiResponseError) {
-						setErrorState('signIn', error.details.description);
+						setStatusState('signIn', { error: error.details.description });
 						toast({
 							title: `${error.error} - ${error.message}`,
 							description: error.details.description,
@@ -167,19 +179,23 @@ export function AuthProvider() {
 						});
 					}
 				} finally {
-					setLoadingState('signIn', false);
+					setStatusState('signIn', {
+						loading: false,
+					});
 				}
 			}
 			return signIn(email, password);
 		},
-		[setLoadingState, toast, navigate, setStatusState, setErrorState],
+		[setStatusState, toast, navigate],
 	);
 
 	const handleForgotPassword = useCallback(
 		(email: string) => {
 			async function forgotPassword(email: string) {
-				setLoadingState('forgotPassword', true);
-				setErrorState('forgotPassword', null);
+				setStatusState('forgotPassword', {
+					loading: true,
+					error: null,
+				});
 				try {
 					const response = await authService.forgotPassword(email);
 					if (response.success && response.statusCode === 200) {
@@ -187,15 +203,23 @@ export function AuthProvider() {
 							title: 'Password recovery',
 							description: 'Password recovery email sent',
 						});
-						setStatusState('forgotPassword', true);
+						setStatusState('forgotPassword', {
+							status: true,
+							loading: false,
+						});
 						navigate('/auth/login');
 					} else {
 						throw new Error('Failed to request password change');
 					}
 				} catch (error) {
-					setStatusState('forgotPassword', false);
+					setStatusState('forgotPassword', {
+						status: false,
+						loading: false,
+					});
 					if (error instanceof ApiResponseError) {
-						setErrorState('forgotPassword', error.details.description);
+						setStatusState('forgotPassword', {
+							error: error.details.description,
+						});
 						toast({
 							title: `${error.error} - ${error.message}`,
 							description: error.details.description,
@@ -209,42 +233,63 @@ export function AuthProvider() {
 						});
 					}
 				} finally {
-					setLoadingState('forgotPassword', false);
+					setStatusState('forgotPassword', {
+						loading: false,
+					});
 				}
 			}
 			return forgotPassword(email);
 		},
-		[navigate, setErrorState, setLoadingState, setStatusState, toast],
+		[navigate, setStatusState, toast],
 	);
 
 	const handleRefreshSession = useCallback(() => {
 		async function refreshSession() {
-			setLoadingState('refreshSession', true);
+			setStatusState('refreshSession', { loading: true });
 			try {
 				const email: string =
 					cookieService.getCookie(StoredCookies.EMAIL) ?? '';
+				const accessToken: string =
+					cookieService.getCookie(StoredCookies.ACCESS_TOKEN) ?? '';
 				const refreshToken: string =
 					cookieService.getCookie(StoredCookies.REFRESH_TOKEN) ?? '';
 
 				if (!email || !refreshToken) {
-					setLoadingState('refreshSession', false);
-					setStatusState('refreshSession', false);
+					setStatusState('refreshSession', {
+						status: false,
+						loading: false,
+					});
 					return;
 				}
 
-				const { payload } = await authService.refreshToken(email, refreshToken);
-				cookieService.setAccessTokenCookie(payload.accessToken);
-				apiService.setAuthentication(payload.accessToken);
-				setLoadingState('refreshSession', false);
-				setStatusState('refreshSession', true);
-			} catch (error) {
-				setLoadingState('refreshSession', false);
-				setStatusState('refreshSession', false);
+				if (!accessToken && (email || refreshToken)) {
+					const { payload } = await authService.refreshToken(
+						email,
+						refreshToken,
+					);
+					cookieService.setAccessTokenCookie(accessToken);
+					apiService.setAuthentication(payload.accessToken);
+					setStatusState('refreshSession', {
+						status: true,
+						loading: false,
+					});
+					return;
+				}
 
-				cookieService.removeAll();
+				setStatusState('refreshSession', {
+					status: true,
+					loading: false,
+				});
+			} catch (error) {
+				setStatusState('refreshSession', {
+					status: false,
+					loading: false,
+				});
 
 				if (error instanceof ApiResponseError) {
-					setErrorState('refreshSession', error.details.description);
+					setStatusState('refreshSession', {
+						error: error.details.description,
+					});
 
 					if (error.details.description !== 'Invalid refresh token') {
 						toast({
@@ -265,29 +310,37 @@ export function AuthProvider() {
 			}
 		}
 		return refreshSession();
-	}, [setLoadingState, setStatusState, navigate, setErrorState, toast]);
+	}, [setStatusState, navigate, toast]);
 
 	const handleSignOut = useCallback(() => {
-		setLoadingState('signOut', true);
+		setStatusState('signOut', {
+			loading: true,
+		});
 		try {
 			cookieService.removeAll();
 			apiService.setAuthentication('');
-			setDisconnectWallet();
+			// disconnectWallet(null, false);
 			toast({
 				title: 'Sign out',
 				description: SIGN_OUT_SUCCESS_MESSAGE,
 			});
-			setStatusState('signOut', true);
+			setStatusState('signOut', {
+				status: true,
+				loading: false,
+			});
 			navigate('/auth/login');
 		} catch (error) {
-			setStatusState('signOut', false);
+			setStatusState('signOut', {
+				status: false,
+				loading: false,
+			});
 			toast({
 				title: 'Error',
 				description: `Unknown error when signing out: ${error}`,
 				variant: 'destructive',
 			});
 		}
-	}, [navigate, setDisconnectWallet, setLoadingState, setStatusState, toast]);
+	}, [navigate, setStatusState, toast]);
 
 	const handleResetPassword = useCallback(
 		async (email: string, password: string, code: string) => {
@@ -296,8 +349,10 @@ export function AuthProvider() {
 				password: string,
 				code: string,
 			) {
-				setLoadingState('resetPassword', true);
-				setErrorState('resetPassword', null);
+				setStatusState('resetPassword', {
+					loading: true,
+					error: null,
+				});
 				try {
 					const response = await authService.resetPassword(
 						email,
@@ -309,15 +364,23 @@ export function AuthProvider() {
 							title: 'Password reset',
 							description: 'Password reset successful',
 						});
-						setStatusState('resetPassword', true);
+						setStatusState('resetPassword', {
+							status: true,
+							loading: false,
+						});
 						navigate('/auth/login');
 					} else {
 						throw new Error('Failed to reset password');
 					}
 				} catch (error) {
-					setStatusState('resetPassword', false);
+					setStatusState('resetPassword', {
+						status: false,
+						loading: false,
+					});
 					if (error instanceof ApiResponseError) {
-						setErrorState('resetPassword', error.details.description);
+						setStatusState('resetPassword', {
+							error: error.details.description,
+						});
 						toast({
 							title: `${error.error} - ${error.message}`,
 							description: error.details.description,
@@ -331,17 +394,77 @@ export function AuthProvider() {
 						});
 					}
 				} finally {
-					setLoadingState('resetPassword', false);
+					setStatusState('resetPassword', {
+						loading: false,
+					});
 				}
 			}
 			return resetPassword(email, password, code);
 		},
-		[navigate, setErrorState, setLoadingState, setStatusState, toast],
+		[navigate, setStatusState, toast],
+	);
+
+	const handleChangePassword = useCallback(
+		async (oldPassword: string, newPassword: string) => {
+			setStatusState('changePassword', {
+				loading: true,
+				error: null,
+			});
+			try {
+				const email = cookieService.getCookie(StoredCookies.EMAIL);
+				if (!email) throw new Error('No email found');
+				const response = await authService.changePassword(
+					email,
+					oldPassword,
+					newPassword,
+				);
+				if (response.success && response.statusCode === 200) {
+					toast({
+						title: 'Password changed',
+						description: 'Password changed successfully',
+					});
+					setStatusState('changePassword', {
+						status: true,
+						loading: false,
+					});
+					navigate('/auth/login');
+				} else {
+					throw new Error('Failed to change password');
+				}
+			} catch (error) {
+				setStatusState('changePassword', {
+					status: false,
+					loading: false,
+				});
+				if (error instanceof ApiResponseError) {
+					setStatusState('changePassword', {
+						error: error.details.description,
+					});
+					toast({
+						title: `${error.error} - ${error.message}`,
+						description: error.details.description,
+						variant: 'destructive',
+					});
+				} else {
+					toast({
+						title: 'Error',
+						description: `Unknown error when changing password: ${error}`,
+						variant: 'destructive',
+					});
+				}
+			} finally {
+				setStatusState('changePassword', {
+					loading: false,
+				});
+			}
+		},
+		[navigate, setStatusState, toast],
 	);
 
 	const contextValue = useMemo(
 		() => ({
 			handleRefreshSession,
+			handleChangePassword,
 			handleForgotPassword,
 			handleResetPassword,
 			setDisconnectWallet,
@@ -349,13 +472,12 @@ export function AuthProvider() {
 			connectWallet,
 			handleSignUp,
 			handleSignIn,
-			loadingState,
 			statusState,
-			errorState,
 			wallet,
 		}),
 		[
 			handleRefreshSession,
+			handleChangePassword,
 			handleForgotPassword,
 			handleResetPassword,
 			setDisconnectWallet,
@@ -363,9 +485,7 @@ export function AuthProvider() {
 			connectWallet,
 			handleSignUp,
 			handleSignIn,
-			loadingState,
 			statusState,
-			errorState,
 			wallet,
 		],
 	);
