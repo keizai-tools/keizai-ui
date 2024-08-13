@@ -10,7 +10,7 @@
 		"^@/(.*)$",
 		"^@assets/(.*)$",
 		"^@components/(.*)$",
-		"^@configs/(.*)$",
+		"^@config/(.*)$",
 		"^@pages/(.*)$"
 	],
 	"importOrderSeparation": true
