@@ -8,9 +8,9 @@ export const AppLoader = ({
 }: {
 	children: React.ReactNode;
 }): JSX.Element => {
-	const { loadingState } = useAuthProvider();
+	const { statusState } = useAuthProvider();
 
-	if (loadingState.refreshSession) {
+	if (statusState.refreshSession.loading) {
 		return (
 			<div className="flex items-center justify-center w-full">
 				<Loader className="animate-spin" size={36} />
