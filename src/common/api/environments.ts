@@ -3,8 +3,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from '../components/ui/use-toast';
 import { Environment } from '../types/environment';
 
-import { IApiResponse } from '@/configs/axios/interfaces/IApiResponse';
-import { apiService } from '@/configs/axios/services/api.service';
+import { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
+import { apiService } from '@/config/axios/services/api.service';
 
 export const useEnvironmentsQuery = ({
 	collectionId,

@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { Folder } from '../types/folder';
 
-import type { IApiResponse } from '@/configs/axios/interfaces/IApiResponse';
-import { apiService } from '@/configs/axios/services/api.service';
+import type { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
+import { apiService } from '@/config/axios/services/api.service';
 
 export const useFoldersQuery = () => {
 	const query = useQuery<Folder[]>({

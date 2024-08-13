@@ -20,8 +20,8 @@ import {
 import { authService } from '../services/auth.service';
 
 import { useToast } from '@/common/components/ui/use-toast';
-import { ApiResponseError } from '@/configs/axios/errors/ApiResponseError';
-import { apiService } from '@/configs/axios/services/api.service';
+import { ApiResponseError } from '@/config/axios/errors/ApiResponseError';
+import { apiService } from '@/config/axios/services/api.service';
 import { StoredCookies } from '@/modules/cookies/interfaces/cookies.enum';
 import { cookieService } from '@/modules/cookies/services/cookie.service';
 

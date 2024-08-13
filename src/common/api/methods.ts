@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { Method } from '../types/method';
 
-import type { IApiResponse } from '@/configs/axios/interfaces/IApiResponse';
-import { apiService } from '@/configs/axios/services/api.service';
+import type { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
+import { apiService } from '@/config/axios/services/api.service';
 
 export const useMethodQuery = ({ id }: { id?: string }) => {
 	const query = useQuery<Method>({
