@@ -4,31 +4,28 @@ import React from 'react';
 import EnvironmentDropdownContainer from '../Environments/EnvironmentDropdownContainer';
 import EnvironmentInput from './EnvironmentInput';
 import SaveContractDialog from './SaveContractDialog';
-import SelectNetwork from './SelectNetwork';
 
 import { Button } from '@/common/components/ui/button';
 import useEnvironments from '@/common/hooks/useEnvironments';
+import type { Method } from '@/common/types/method';
 
-const ContractInput = ({
+function ContractInput({
 	defaultValue = '',
 	defaultNetwork,
 	loading,
 	loadContract,
 	runInvocation,
-	prepareInvocation,
-	signedXDR,
-	walletPublicKey,
+	method,
 }: {
 	defaultValue: string;
 	defaultNetwork: string;
 	loading: boolean;
-	loadContract: (id: string) => Promise<void>;
+	loadContract: (contractId: string) => void;
 	runInvocation: () => void;
-	prepareInvocation: () => Promise<void>;
-	signedXDR: string;
-	walletPublicKey: string;
-}) => {
+	method?: Method | undefined;
+}) {
 	const [contractId, setContractId] = React.useState(defaultValue);
+
 	const [showEditContractDialog, setShowEditContractDialog] =
 		React.useState(false);
 	const {
@@ -55,14 +52,25 @@ const ContractInput = ({
 		setContractId(value);
 	};
 
-	const showRunButton = !walletPublicKey || (walletPublicKey && signedXDR);
-
 	return (
 		<div
-			className="flex items-center p-2 border rounded-md"
+			className="flex items-center gap-4 p-2 border rounded-md"
 			data-test="contract-input-container"
 		>
-			<SelectNetwork defaultNetwork={defaultNetwork} />
+			{defaultNetwork !== 'AUTO_DETECT' && (
+				<div
+					className="flex flex-col items-start gap-1 mr-2"
+					data-test="contract-input-network-container"
+				>
+					<p className="text-sm text-gray-400 select-none">Network:</p>
+					<p
+						className="text-sm font-bold text-gray-400 select-none text-primary"
+						data-test="contract-input-network"
+					>
+						{defaultNetwork}
+					</p>
+				</div>
+			)}
 			<div className="flex w-full group">
 				{defaultValue ? (
 					<div className="relative flex items-center justify-between flex-1 w-full">
@@ -104,43 +112,32 @@ const ContractInput = ({
 				{!defaultValue ? (
 					<Button
 						data-test="contract-input-btn-load"
-						className="transition-all"
-						disabled={loading}
+						className="w-auto px-8 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+						disabled={loading || !contractId}
 						onClick={() => {
 							handleUpdateContractId();
 						}}
 					>
-						{!loading ? 'LOAD' : <Loader className="animate-spin" size="14" />}
-					</Button>
-				) : showRunButton ? (
-					<Button
-						data-test="contract-input-btn-load"
-						className="transition-all"
-						onClick={runInvocation}
-						type="button"
-						disabled={loading}
-					>
 						{!loading ? (
-							'RUN'
+							'LOAD'
 						) : (
-							<div className="flex items-center gap-1">
-								<Loader className="animate-spin" size="14" /> Running
-							</div>
+							<Loader className="w-auto font-bold animate-spin" size="20" />
 						)}
 					</Button>
 				) : (
 					<Button
 						data-test="contract-input-btn-load"
-						className="transition-all"
-						onClick={prepareInvocation}
+						className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+						onClick={runInvocation}
 						type="button"
-						disabled={loading}
+						disabled={loading || !method}
 					>
 						{!loading ? (
-							'PREPARE'
+							'RUN'
 						) : (
-							<div className="flex items-center gap-1">
-								<Loader className="animate-spin" size="14" /> Preparing
+							<div className="flex items-center gap-2">
+								<Loader className="w-auto font-bold animate-spin" size="20" />
+								<p>Running</p>
 							</div>
 						)}
 					</Button>
@@ -154,6 +151,6 @@ const ContractInput = ({
 			)}
 		</div>
 	);
-};
+}
 
 export default ContractInput;
