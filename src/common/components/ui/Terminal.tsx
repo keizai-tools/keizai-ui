@@ -30,10 +30,9 @@ const Terminal = ({ entries }: { entries: TerminalEntry[] }) => {
 			onResizeCrossAxis(resizeableEle, resizerTop);
 		}
 	}, [onResizeCrossAxis]);
-
 	return (
 		<div
-			className="absolute mx-3 inset-x-0 bottom-0 bg-background z-40"
+			className="absolute inset-x-0 bottom-0 z-40 mx-3 bg-background"
 			data-test="terminal-container"
 			ref={containerRef}
 		>
@@ -43,7 +42,7 @@ const Terminal = ({ entries }: { entries: TerminalEntry[] }) => {
 				ref={resizeTopRef}
 			></div>
 			<div
-				className="mx-2 pb-4 text-zinc-600 h-full overflow-y-auto scrollbar scrollbar-thumb-slate-700 scrollbar-w-2 scrollbar-thumb-rounded"
+				className="h-full pb-4 mx-2 overflow-y-auto text-zinc-600 scrollbar scrollbar-thumb-slate-700 scrollbar-w-2 scrollbar-thumb-rounded"
 				data-test="terminal-scrollbar-container"
 			>
 				<span className="font-bold">Welcome to keizai 1.0.0 - OUTPUT</span>
@@ -55,24 +54,26 @@ const Terminal = ({ entries }: { entries: TerminalEntry[] }) => {
 					{entries
 						.slice()
 						.reverse()
-						.map((entry, index) => (
-							<div
-								key={index}
-								className={`flex flex-col gap-1 text-sm text-zinc-200 ${
-									entry.isError ? 'border-red-500' : 'border-green-700'
-								} border-l-2 pl-2`}
-								data-test="terminal-entry-title"
-							>
-								{entry.preInvocation}
-								{entry.title}
-								<span className="ml-4" data-test="terminal-entry-message">
-									{entry.isError
-										? entry.message
-										: JSON.stringify(entry.message, null, 2)}
-								</span>
-								{entry.postInvocation}
-							</div>
-						))}
+						.map((entry, index) => {
+							return (
+								<div
+									key={index}
+									className={`flex flex-col gap-1 text-sm text-zinc-200 ${
+										entry.isError ? 'border-red-500' : 'border-green-700'
+									} border-l-2 pl-2`}
+									data-test="terminal-entry-title"
+								>
+									{entry.preInvocation}
+									{entry.title}
+									<span className="ml-4" data-test="terminal-entry-message">
+										{entry.isError
+											? entry.message
+											: JSON.stringify(entry.message, null, 2)}
+									</span>
+									{entry.postInvocation}
+								</div>
+							);
+						})}
 				</div>
 			</div>
 		</div>
