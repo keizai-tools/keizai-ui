@@ -1,4 +1,5 @@
 import { Loader2, AtSign } from 'lucide-react';
+import { Fragment } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
@@ -22,7 +23,7 @@ function Login() {
 			password: '',
 		},
 	});
-	const { handleSignIn, loadingState, errorState } = useAuthProvider();
+	const { handleSignIn, statusState } = useAuthProvider();
 
 	const onSubmit = async (values: { email: string; password: string }) => {
 		await handleSignIn(values.email, values.password);
@@ -98,13 +99,13 @@ function Login() {
 			</div>
 			{!errors.email &&
 				!errors.password &&
-				(errorState.signIn || errorState.signIn?.length) && (
+				(statusState.signIn.error || statusState.signIn.error?.length) && (
 					<AlertError
 						title="Login failed"
 						message={
-							Array.isArray(errorState.signIn)
-								? errorState.signIn.join(', ')
-								: errorState.signIn
+							Array.isArray(statusState.signIn.error)
+								? statusState.signIn.error.join(', ')
+								: statusState.signIn.error
 						}
 						testName="login-form-error-message"
 					/>
@@ -113,13 +114,13 @@ function Login() {
 				type="submit"
 				className="w-full py-2 mt-8 mb-2 font-semibold text-black rounded-md"
 				data-test="login-form-btn-submit"
-				disabled={loadingState.signIn}
+				disabled={statusState.signIn.loading}
 			>
-				{loadingState.signIn ? (
-					<>
+				{statusState.signIn.loading ? (
+					<Fragment>
 						<Loader2 className="w-4 h-4 mr-2 text-black animate-spin" />
 						<span>Please wait...</span>
-					</>
+					</Fragment>
 				) : (
 					'Login'
 				)}

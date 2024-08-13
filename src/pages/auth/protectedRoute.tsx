@@ -9,16 +9,16 @@ function ProtectedRoute({
 }: Readonly<{
 	children: ReactNode;
 }>): ReactElement | null {
-	const { handleRefreshSession, loadingState, statusState } = useAuthProvider();
+	const { handleRefreshSession, statusState } = useAuthProvider();
 	useEffect(() => {
 		handleRefreshSession();
 	}, [handleRefreshSession]);
 
-	if (loadingState.refreshSession) {
+	if (statusState.refreshSession.loading) {
 		return <FullscreenLoading />;
 	}
 
-	if (statusState.refreshSession) {
+	if (statusState.refreshSession.status) {
 		return <Fragment>{children}</Fragment>;
 	} else {
 		return <Navigate to="auth/login" replace />;

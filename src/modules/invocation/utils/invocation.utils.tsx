@@ -1,4 +1,4 @@
-import { AxiosError, isAxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import { AlertCircle, ChevronRight } from 'lucide-react';
 
 import {
@@ -8,10 +8,7 @@ import {
 } from '@/common/exceptions/invocations';
 import { InvocationResponse } from '@/common/types/invocation';
 import { Method } from '@/common/types/method';
-import {
-	isApiError,
-	type ApiError,
-} from '@/configs/axios/errors/ApiResponseError';
+import { IApiResponseError } from '@/config/axios/interfaces/IApiResponseError';
 
 const createContractResponseParam = (params: Method['params']) => {
 	return params.map((param, index) => {
@@ -59,23 +56,20 @@ export const createContractResponse = (
 };
 
 export const handleAxiosError = (error: unknown) => {
-	if (isAxiosError(error)) {
-		const axiosError = error as AxiosError;
-
-		if (isApiError(axiosError.response?.data)) {
-			return {
-				isError: true,
-				title: (
-					<div className="flex items-center gap-2 font-semibold text-red-500">
-						<AlertCircle size={16} />
-						Error
-					</div>
-				),
-				message:
-					(axiosError.response?.data as ApiError).message ||
-					INVOCATION_RESPONSE.ERROR_RUN_INVOCATION,
-			};
-		}
+	if (!isAxiosError<IApiResponseError>(error)) {
+		return {
+			isError: true,
+			title: (
+				<div className="flex items-center gap-2 font-semibold text-red-500">
+					<AlertCircle size={16} />
+					Error
+				</div>
+			),
+			message:
+				(error as IApiResponseError).details.description ||
+				(error as IApiResponseError).message ||
+				INVOCATION_RESPONSE.ERROR_RUN_INVOCATION,
+		};
 	}
 
 	return {

@@ -1,4 +1,5 @@
 import { ChevronRightSquare, Loader2 } from 'lucide-react';
+import { Fragment } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
@@ -18,7 +19,7 @@ export interface IPasswordReset {
 }
 
 function ResetPassword() {
-	const { handleResetPassword, loadingState, errorState } = useAuthProvider();
+	const { handleResetPassword, statusState } = useAuthProvider();
 
 	const {
 		control,
@@ -113,7 +114,6 @@ function ResetPassword() {
 			</div>
 			<div className="flex flex-col mb-4">
 				<Controller
-					// control={control}
 					name="confirmPassword"
 					rules={{
 						required: AUTH_VALIDATIONS.CONFIRM_PASSWORD_REQUIRED,
@@ -139,29 +139,30 @@ function ResetPassword() {
 						styles="text-sm"
 					/>
 				)}
-				{errorState.resetPassword && !loadingState.resetPassword && (
-					<AlertError
-						title="Reset password failed"
-						message={
-							Array.isArray(errorState.resetPassword)
-								? errorState.resetPassword.join(', ')
-								: errorState.resetPassword
-						}
-						testName="forgot-password-form-error"
-					/>
-				)}
+				{statusState.resetPassword.error &&
+					!statusState.resetPassword.loading && (
+						<AlertError
+							title="Reset password failed"
+							message={
+								Array.isArray(statusState.resetPassword.error)
+									? statusState.resetPassword.error.join(', ')
+									: statusState.resetPassword.error
+							}
+							testName="forgot-password-form-error"
+						/>
+					)}
 			</div>
 			<Button
 				type="submit"
 				className="w-full py-2 mt-8 mb-2 font-semibold text-black rounded-md"
 				data-test="forgot-password-btn-submit"
-				disabled={loadingState.resetPassword}
+				disabled={statusState.resetPassword.loading}
 			>
-				{loadingState.resetPassword ? (
-					<>
+				{statusState.resetPassword.loading ? (
+					<Fragment>
 						<Loader2 className="w-4 h-4 mr-2 text-black animate-spin" />
 						<span>Saving...</span>
-					</>
+					</Fragment>
 				) : (
 					'Save'
 				)}

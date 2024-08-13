@@ -1,4 +1,5 @@
 import { AtSign, Loader2 } from 'lucide-react';
+import { Fragment } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
@@ -10,7 +11,7 @@ import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 import { AUTH_VALIDATIONS } from '@/modules/auth/message/auth-messages';
 
 function RecoverPassword() {
-	const { handleForgotPassword, loadingState } = useAuthProvider();
+	const { handleForgotPassword, statusState } = useAuthProvider();
 	const {
 		control,
 		handleSubmit,
@@ -73,13 +74,13 @@ function RecoverPassword() {
 				type="submit"
 				className="py-2 mt-8 mb-2 font-semibold text-black rounded-md"
 				data-test="recovery-password-btn-submit"
-				disabled={loadingState.forgotPassword}
+				disabled={statusState.forgotPassword.loading}
 			>
-				{loadingState.forgotPassword ? (
-					<>
+				{statusState.forgotPassword.loading ? (
+					<Fragment>
 						<Loader2 className="w-4 h-4 mr-2 text-black animate-spin" />
 						<span>Sending...</span>
-					</>
+					</Fragment>
 				) : (
 					'Send code'
 				)}

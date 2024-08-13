@@ -12,16 +12,16 @@ export default function Home() {
 	}
 
 	return (
-		<main className="flex flex-col p-3 gap-4 w-full">
+		<main className="flex flex-col w-full h-auto gap-4 m-5">
 			<h3 className="text-xl font-bold" data-test="collections-header-title">
 				Collections
 			</h3>
-			{!data || data?.length === 0 ? (
-				<div className="flex justify-center items-center h-full">
+			{!data || data.length === 0 ? (
+				<div className="flex items-center justify-center h-full">
 					<CollectionsEmptyState />
 				</div>
 			) : (
-				<div className="flex gap-8 flex-wrap">
+				<div className="flex flex-wrap gap-8">
 					{data.map((collection) => {
 						const invocationsCount = collection.folders.reduce(
 							(total, folder) => total + folder.invocations.length,
