@@ -14,11 +14,11 @@ export default function InvocationPageContent({
 }: Readonly<{ data: Invocation }>) {
 	const { mutate: editKeys } = useEditInvocationKeysMutation();
 
-	const { wallet, statusState } = useAuthProvider();
+	const { wallet, statusState, connectWallet } = useAuthProvider();
 	const publickey = wallet[data.network as keyof typeof wallet]?.publicKey;
 
 	useEffect(() => {
-		if (wallet) {
+		if (wallet[data.network as keyof typeof wallet]) {
 			editKeys({
 				id: data.id,
 				publicKey: wallet[data.network as keyof typeof wallet]?.publicKey ?? '',
@@ -34,7 +34,7 @@ export default function InvocationPageContent({
 		contractResponses,
 		handleRunInvocation,
 		isRunningInvocation,
-	} = useInvocation(data, wallet);
+	} = useInvocation(data, wallet, connectWallet);
 
 	const preInvocationValue = React.useMemo(() => {
 		return data.preInvocation ?? '';
