@@ -28,18 +28,16 @@ const initialState: IStatusState = {
 };
 
 function reducer(state: IStatusState, action: Action): IStatusState {
-	switch (action.type) {
-		case SET_STATUS:
-			return {
-				...state,
-				[action.payload]: {
-					...state[action.payload],
-					...action.value,
-				},
-			};
-		default:
-			return state;
-	}
+	const statusType = action.payload;
+	const updatedStatus = {
+		...state[statusType],
+		...action.value,
+	};
+
+	return {
+		...state,
+		[statusType]: updatedStatus,
+	};
 }
 
 export function useStatusState() {
