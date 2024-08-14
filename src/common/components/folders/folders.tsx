@@ -15,6 +15,7 @@ function Folders() {
 	const { data, isLoading } = useFoldersByCollectionIdQuery({
 		id: params.collectionId,
 	});
+
 	const { mutate, isPending } = useCreateFolderMutation();
 	const navigate = useNavigate();
 
