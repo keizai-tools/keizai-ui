@@ -80,7 +80,7 @@ function SaveContractDialog({
 					},
 				},
 			);
-			window.umami.track('Edit contract address');
+			if (window.umami) window?.umami?.track('Edit contract address');
 		} catch (error) {
 			console.error(error);
 		}

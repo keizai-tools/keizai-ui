@@ -25,7 +25,7 @@ function NewInvocationButton({ folderId }: Readonly<{ folderId: string }>) {
 						},
 					},
 				);
-				window.umami.track('Create invocation');
+				if (window.umami) window?.umami?.track('Create invocation');
 			}}
 		>
 			<Button

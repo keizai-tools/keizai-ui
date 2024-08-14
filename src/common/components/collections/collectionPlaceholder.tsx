@@ -16,7 +16,7 @@ function CollectionPlaceholder() {
 			isLoading={isPending}
 			onSubmit={({ name }) => {
 				mutate({ name });
-				window.umami.track('Create collection');
+				if (window.umami) window?.umami?.track('Create collection');
 			}}
 		>
 			<Button

@@ -32,13 +32,14 @@ function SelectNetwork({
 
 	function openEditNetworkDialog(network: string) {
 		setSelectNetwork(network);
-		window.umami.track('Open change network dialog');
+		if (window.umami) window?.umami?.track('Open change network dialog');
 		setShowEditNetworkDialog(true);
 	}
 
 	function onConfirm() {
 		handleUpdateNetwork(selectNetwork);
-		window.umami.track('Change network', { network: selectNetwork });
+		if (window.umami)
+			window?.umami?.track('Change network', { network: selectNetwork });
 		setShowEditNetworkDialog(false);
 	}
 

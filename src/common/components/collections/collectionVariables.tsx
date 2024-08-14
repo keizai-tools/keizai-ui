@@ -61,7 +61,7 @@ export function CollectionVariables({
 			environments: fields.filter((field) => field.id !== id),
 		});
 		deleteEnvironmentMutation(id);
-		window.umami.track('Delete collection variable');
+		if (window.umami) window?.umami?.track('Delete collection variable');
 	}
 
 	function onSubmit(data: { environments: Environment[] | undefined }) {
@@ -70,9 +70,10 @@ export function CollectionVariables({
 		);
 		if (environmentsToCreate) {
 			createEnvironmentsMutation(environmentsToCreate);
-			window.umami.track('Save collection variables', {
-				amount: environmentsToCreate.length,
-			});
+			if (window.umami)
+				window?.umami?.track('Save collection variables', {
+					amount: environmentsToCreate.length,
+				});
 		}
 	}
 

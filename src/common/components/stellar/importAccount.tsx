@@ -62,7 +62,7 @@ function ImportAccount({
 		reset({
 			secretKey: '',
 		});
-		window.umami.track('Import account');
+		if (window.umami) window?.umami?.track('Import account');
 		setIsError(false);
 	}
 

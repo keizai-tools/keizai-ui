@@ -70,7 +70,7 @@ function InvocationListItem({
 				onOpenChange={() => setOpenDialog(null)}
 				onConfirm={() => {
 					deleteInvocationMutation(invocation.id);
-					window.umami.track('Delete invocation');
+					if (window.umami) window?.umami?.track('Delete invocation');
 					if (params?.invocationId === invocation.id) {
 						navigate('/collection/' + params.collectionId);
 					}
@@ -89,7 +89,7 @@ function InvocationListItem({
 						id: invocation.id,
 						name: name,
 					});
-					window.umami.track('Edit invocation');
+					if (window.umami) window?.umami?.track('Edit invocation');
 					setOpenDialog(null);
 				}}
 				isLoading={isEditingInvocation}

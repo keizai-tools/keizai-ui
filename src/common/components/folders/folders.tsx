@@ -21,7 +21,7 @@ function Folders() {
 	async function onCreateFolder({ name }: { name: string }) {
 		if (params.collectionId) {
 			mutate({ name, collectionId: params.collectionId });
-			window.umami.track('Create folder');
+			if (window.umami) window?.umami?.track('Create folder');
 		}
 	}
 

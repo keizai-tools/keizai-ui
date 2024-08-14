@@ -31,7 +31,7 @@ function CollectionCard({
 
 	function handleEditCollection({ name }: { name: string }) {
 		mutate({ id, name });
-		window.umami.track('Edit collection');
+		if (window.umami) window?.umami?.track('Edit collection');
 		setActiveDialog(null);
 	}
 
@@ -76,7 +76,7 @@ function CollectionCard({
 				description="This will permanently delete your collection and all of its contents."
 				onConfirm={() => {
 					deleteCollectionMutation(id);
-					window.umami.track('Delete collection');
+					if (window.umami) window?.umami?.track('Delete collection');
 				}}
 			/>
 			<EditEntityDialog
