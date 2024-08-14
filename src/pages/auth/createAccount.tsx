@@ -3,9 +3,9 @@ import { Fragment } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
-import AlertError from '@/common/components/Form/AlertError';
-import ErrorMessage from '@/common/components/Form/ErrorMessage';
-import PasswordInput from '@/common/components/Input/PasswordInput';
+import AlertError from '@/common/components/form/alertError';
+import ErrorMessage from '@/common/components/form/errorMessage';
+import PasswordInput from '@/common/components/input/passwordInput';
 import { Button } from '@/common/components/ui/button';
 import { Input } from '@/common/components/ui/input';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
