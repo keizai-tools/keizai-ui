@@ -11,9 +11,9 @@ export const EnvironmentContext = React.createContext<EnvironmentContextType>(
 
 export function EnvironmentProvider({
 	children,
-}: {
+}: Readonly<{
 	children: React.ReactNode;
-}) {
+}>) {
 	const { environments } = useEnvironments();
 
 	return (
