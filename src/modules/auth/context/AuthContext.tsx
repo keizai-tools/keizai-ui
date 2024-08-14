@@ -1,6 +1,5 @@
 import { createContext, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { WalletType } from 'simple-stellar-signer-api';
 
 import { useStatusState } from '../hooks/useStatusState';
 import {
@@ -23,6 +22,7 @@ import { ApiResponseError } from '@/config/axios/errors/ApiResponseError';
 import { apiService } from '@/config/axios/services/api.service';
 import { StoredCookies } from '@/modules/cookies/interfaces/cookies.enum';
 import { cookieService } from '@/modules/cookies/services/cookie.service';
+import { WalletType } from '@/modules/signerApi/constants/enums';
 import simpleSignerConnectWallet from '@/modules/signerApi/functions/connectWallet';
 import useStellar from '@/modules/stellar/hook/useStellar';
 
@@ -116,6 +116,7 @@ export function AuthProvider({
 							}`,
 							description: 'Wallet disconnected successfully',
 						});
+					onCreateAccount(false, true);
 				} else {
 					cookieService.removeAllWalletCookies();
 					showToast &&
@@ -132,7 +133,7 @@ export function AuthProvider({
 				});
 			}
 		},
-		[toast],
+		[onCreateAccount, toast],
 	);
 
 	const connectWallet = useCallback(
