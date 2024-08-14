@@ -1,8 +1,8 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
-import ConnectWallet from '../../auth/stellar/ConnectWallet';
-import CreateNewAccount from '../../auth/stellar/CreateNewAccount';
+import ConnectWallet from '../../stellar/connectWallet';
+import CreateNewAccount from '../../stellar/createNewAccount';
 import { Input } from '../../ui/input';
 
 import { useEditInvocationKeysMutation } from '@/common/api/invocations';

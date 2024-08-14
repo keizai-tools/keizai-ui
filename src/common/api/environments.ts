@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { toast } from '../components/ui/use-toast';
+import { toast } from '../components/ui/useToast';
 import { Environment } from '../types/environment';
 
 import { IApiResponse } from '@/config/axios/interfaces/IApiResponse';

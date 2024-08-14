@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
-import { useToast } from '../components/ui/use-toast';
+import { useToast } from '../components/ui/useToast';
 import { Invocation, InvocationResponse } from '../types/invocation';
 
 import { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
