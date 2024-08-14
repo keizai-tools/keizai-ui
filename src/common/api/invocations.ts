@@ -19,19 +19,12 @@ export function useInvocationQuery({ id }: { id?: string }) {
 
 	return query;
 }
-
-export function useRunInvocationQuery({
-	id,
-	signedTransactionXDR,
-}: {
-	id?: string;
-	signedTransactionXDR?: string;
-}) {
-	return async () => {
+export function useRunInvocationQuery({ id }: { id?: string }) {
+	return async (signedTransactionXDR: string | null) => {
 		const res = await apiService?.post<IApiResponse<InvocationResponse>>(
 			`/invocation/${id}/run`,
 			{
-				signedTransactionXDR,
+				signedTransactionXDR: signedTransactionXDR ?? '',
 			},
 		);
 		return res.payload;
@@ -101,7 +94,9 @@ export function useEditInvocationMutation() {
 					contractId,
 					selectedMethodId,
 				})
-				.then((res) => res.payload)
+				.then((res) => {
+					return res.payload;
+				})
 				.catch(() => {
 					if (contractId) {
 						window.umami.track('Error loading contract', { contractId });
