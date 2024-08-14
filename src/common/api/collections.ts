@@ -6,7 +6,7 @@ import { Collection } from '../types/collection';
 import { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
 import { apiService } from '@/config/axios/services/api.service';
 
-export const useCollectionsQuery = () => {
+export function useCollectionsQuery() {
 	const query = useQuery<Collection[]>({
 		queryKey: ['collections'],
 		queryFn: async () =>
@@ -16,9 +16,9 @@ export const useCollectionsQuery = () => {
 	});
 
 	return query;
-};
+}
 
-export const useCollectionQuery = (collectionId: string | undefined) => {
+export function useCollectionQuery(collectionId: string | undefined) {
 	const query = useQuery<Collection>({
 		queryKey: ['collection', collectionId],
 		queryFn: async () =>
@@ -30,9 +30,9 @@ export const useCollectionQuery = (collectionId: string | undefined) => {
 	});
 
 	return query;
-};
+}
 
-export const useNewCollectionMutation = () => {
+export function useNewCollectionMutation() {
 	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 
@@ -48,9 +48,9 @@ export const useNewCollectionMutation = () => {
 	});
 
 	return mutation;
-};
+}
 
-export const useDeleteCollectionMutation = () => {
+export function useDeleteCollectionMutation() {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
@@ -79,9 +79,9 @@ export const useDeleteCollectionMutation = () => {
 	});
 
 	return mutation;
-};
+}
 
-export const useUpdateCollectionMutation = () => {
+export function useUpdateCollectionMutation() {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
@@ -112,4 +112,4 @@ export const useUpdateCollectionMutation = () => {
 	});
 
 	return mutation;
-};
+}
