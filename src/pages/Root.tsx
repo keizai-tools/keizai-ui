@@ -1,9 +1,9 @@
 import { useFlags } from 'flagsmith/react';
-import { Sidebar } from 'lucide-react';
 import { Outlet } from 'react-router-dom';
 
 import FeedbackPopupButton from '@/common/components/feedbackPopupButton/feedbackPopupButton';
 import { AppLoader } from '@/common/components/loader/appLoader';
+import Sidebar from '@/common/components/sidebar/sidebar';
 import SidebarV2 from '@/common/components/sidebar/sidebarV2';
 
 export default function Root() {
