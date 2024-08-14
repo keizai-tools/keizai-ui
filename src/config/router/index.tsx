@@ -12,9 +12,8 @@ import CollectionCTAPage from '@/pages/collection/collectionCTAPage';
 import CollectionPage from '@/pages/collection/collectionPage';
 import Home from '@/pages/home/home';
 import InvocationPage from '@/pages/invocation/invocationPage';
+import Root from '@/pages/root';
 import Providers from '@/providers/providers';
-
-import Root from '@pages/Root';
 
 const router = createBrowserRouter([
 	{

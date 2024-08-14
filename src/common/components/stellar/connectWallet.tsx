@@ -1,4 +1,4 @@
-import { Button } from '../../ui/button';
+import { Button } from '../ui/button';
 
 import { NETWORK } from '@/common/types/soroban.enum';
 import { IWalletContent } from '@/modules/auth/interfaces/IAuthenticationContext';

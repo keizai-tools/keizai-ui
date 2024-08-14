@@ -1,7 +1,7 @@
 import { IStatusState } from './IStatusState';
 
 import { NETWORK } from '@/common/types/soroban.enum';
-import { WalletType } from '@/modules/signer-api/constants/enums';
+import { WalletType } from '@/modules/signerApi/constants/enums';
 
 export interface IAuthenticationContext {
 	handleResetPassword: (
