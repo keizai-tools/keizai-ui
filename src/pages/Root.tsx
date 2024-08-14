@@ -1,10 +1,10 @@
 import { useFlags } from 'flagsmith/react';
+import { Sidebar } from 'lucide-react';
 import { Outlet } from 'react-router-dom';
 
-import FeedbackPopupButton from '@/common/components/FeedbackPopupButton/FeedbackPopupButton';
-import { AppLoader } from '@/common/components/Loader/AppLoader';
-import Sidebar from '@/common/components/sidebar/Sidebar';
-import SidebarV2 from '@/common/components/sidebar/SidebarV2';
+import FeedbackPopupButton from '@/common/components/feedbackPopupButton/feedbackPopupButton';
+import { AppLoader } from '@/common/components/loader/appLoader';
+import SidebarV2 from '@/common/components/sidebar/sidebarV2';
 
 export default function Root() {
 	const flags = useFlags(['teams']);
