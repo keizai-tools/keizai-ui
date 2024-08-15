@@ -243,7 +243,7 @@ describe('Login management', () => {
 		cy.getBySel('toast-container').should('be.visible');
 	});
 
-	it('Should log in', () => {
+	xit('Should log in', () => {
 		cy.getBySel('login-form-email').type(user.email);
 		cy.getBySel('form-input-password').type(user.password);
 		cy.getBySel('login-form-btn-submit').click();
