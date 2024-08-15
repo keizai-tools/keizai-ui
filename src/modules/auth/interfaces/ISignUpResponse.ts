@@ -7,7 +7,6 @@ export interface ISignUpResponse {
 		email: string;
 		externalId: string;
 		id: string;
-		isVerified: boolean;
 		roles: string[];
 	};
 	statusCode: number;
