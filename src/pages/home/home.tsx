@@ -12,7 +12,7 @@ export default function Home() {
 	}
 
 	return (
-		<main className="flex flex-col w-full gap-4 p-3">
+		<main className="flex flex-col w-full h-auto gap-4 m-5">
 			<h3 className="text-xl font-bold" data-test="collections-header-title">
 				Collections
 			</h3>
@@ -22,7 +22,7 @@ export default function Home() {
 				</div>
 			) : (
 				<div className="flex flex-wrap gap-8">
-					{data.map((collection) => {
+					{data?.map((collection) => {
 						const invocationsCount = collection.folders.reduce(
 							(total, folder) => total + folder.invocations.length,
 							0,

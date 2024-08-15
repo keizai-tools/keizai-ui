@@ -37,7 +37,7 @@ function ResetPassword() {
 
 	const onSubmit = async (values: IPasswordReset) => {
 		const { code, newPassword, email } = values;
-		await handleResetPassword(email, code, newPassword);
+		await handleResetPassword(email, newPassword, code);
 	};
 
 	return (
