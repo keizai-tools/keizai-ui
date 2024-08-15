@@ -146,9 +146,9 @@ export function AuthProvider() {
 				try {
 					const response = await authService.signIn(email, password);
 					const { payload } = response;
-					const { accessToken, refreshToken } = payload;
+					const { accessToken, refreshToken, idToken } = payload;
 
-					const decodedToken = cookieService.decodeToken(refreshToken);
+					const decodedToken = cookieService.decodeToken(idToken);
 					if (!decodedToken) throw new Error(UNRECOGNIZED_TOKEN_ERROR);
 
 					cookieService.setAccessTokenCookie(accessToken);
@@ -164,10 +164,10 @@ export function AuthProvider() {
 				} catch (error) {
 					setStatusState('signIn', { status: false });
 					if (error instanceof ApiResponseError) {
-						setStatusState('signIn', { error: error.details.description });
+						setStatusState('signIn', { error: error?.details?.description });
 						toast({
 							title: `${error.error} - ${error.message}`,
-							description: error.details.description,
+							description: error?.details?.description,
 							variant: 'destructive',
 						});
 					} else {
