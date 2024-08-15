@@ -62,7 +62,7 @@ const SaveContractDialog = ({
 		}
 
 		try {
-			await mutate(
+			mutate(
 				{
 					id: invocationId,
 					contractId: data.contractId,
@@ -99,7 +99,7 @@ const SaveContractDialog = ({
 					className="flex flex-col w-full"
 					onSubmit={handleSubmit(onSubmit)}
 				>
-					<span className="text-sm text-slate-500 mb-1">
+					<span className="mb-1 text-sm text-slate-500">
 						New contract address
 					</span>
 					<EnvironmentDropdownContainer
@@ -116,7 +116,7 @@ const SaveContractDialog = ({
 						/>
 					</EnvironmentDropdownContainer>
 					<Alert variant="destructive" className="my-5">
-						<AlertCircleIcon className="h-4 w-4" />
+						<AlertCircleIcon className="w-4 h-4" />
 						<AlertTitle>Warning!</AlertTitle>
 						<AlertDescription>
 							This will remove your current functions and parameters.

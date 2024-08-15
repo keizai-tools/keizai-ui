@@ -18,7 +18,7 @@ export function useStatusNetworkQuery() {
 						testNetwork: boolean;
 						mainNetwork: boolean;
 					}>
-				>('/system_status/soroban_network')
+				>('/blockchain_network_status/soroban_network')
 				.then((res) => {
 					return res.payload;
 				}),
