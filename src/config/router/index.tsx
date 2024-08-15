@@ -1,7 +1,6 @@
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 
 import { CollectionVariablesContainer } from '@/common/components/Collections/CollectionVariablesContainer';
-import { AuthProvider } from '@/modules/auth/context/AuthContext';
 import CollectionCTAPage from '@/pages/Collection/CollectionCTAPage';
 import CollectionPage from '@/pages/Collection/CollectionPage';
 import InvocationPage from '@/pages/Invocation/InvocationPage';
@@ -12,6 +11,7 @@ import Login from '@/pages/auth/login';
 import ProtectedRoute from '@/pages/auth/protectedRoute';
 import RecoverPassword from '@/pages/auth/recoverPassword';
 import ResetPassword from '@/pages/auth/resetPassword';
+import Providers from '@/providers/providers';
 
 import Root from '@pages/Root';
 import Home from '@pages/home/Home';
@@ -19,7 +19,7 @@ import Home from '@pages/home/Home';
 const router = createBrowserRouter([
 	{
 		path: '/',
-		element: <AuthProvider />,
+		element: <Providers />,
 		children: [
 			{
 				path: '/',

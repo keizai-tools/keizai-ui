@@ -1,5 +1,5 @@
 import { createContext, useCallback, useMemo, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
 	Network,
 	connectWallet as simpleSignerConnectWallet,
@@ -27,7 +27,9 @@ import { cookieService } from '@/modules/cookies/services/cookie.service';
 
 export const AuthContext = createContext<IAuthenticationContext | null>(null);
 
-export function AuthProvider() {
+export function AuthProvider({
+	children,
+}: Readonly<{ children: React.ReactNode }>) {
 	const { statusState, setStatusState } = useStatusState();
 	const [wallet, setWallet] = useState<IWallet | null>(null);
 
@@ -489,8 +491,6 @@ export function AuthProvider() {
 	);
 
 	return (
-		<AuthContext.Provider value={contextValue}>
-			<Outlet />
-		</AuthContext.Provider>
+		<AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
 	);
 }
