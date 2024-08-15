@@ -4,10 +4,10 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { useEditPreInvocationMutation } from '@/common/api/invocations';
 
-const useEditor = (preInvocation: string, postInvocation: string) => {
-	const [preInvocationEditorValue, setPreInvocationValue] =
+function useEditor(preInvocation: string, postInvocation: string) {
+	const [preInvocationEditorValue, setPreInvocationEditorValue] =
 		React.useState<string>(preInvocation);
-	const [postInvocationEditorValue, setPostInvocationValue] =
+	const [postInvocationEditorValue, setPostInvocationEditorValue] =
 		React.useState<string>(postInvocation);
 	const { mutate: editInvocation } = useEditPreInvocationMutation();
 	const { invocationId } = useParams();
@@ -42,10 +42,10 @@ const useEditor = (preInvocation: string, postInvocation: string) => {
 
 	return {
 		preInvocationEditorValue,
-		setPreInvocationValue,
+		setPreInvocationEditorValue,
 		postInvocationEditorValue,
-		setPostInvocationValue,
+		setPostInvocationEditorValue,
 	};
-};
+}
 
 export default useEditor;

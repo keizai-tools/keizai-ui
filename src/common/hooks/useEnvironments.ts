@@ -21,7 +21,7 @@ export default function useEnvironments() {
 		}
 	}, [collectionId, data]);
 
-	const handleSelectEnvironment = (id: string) => {
+	function handleSelectEnvironment(id: string) {
 		const environment = environments?.find((env: Environment) => env.id === id);
 		if (environment) {
 			setSelectEnvironment(environment);
@@ -29,11 +29,11 @@ export default function useEnvironments() {
 		setShowEnvironments(false);
 
 		return environment?.name;
-	};
+	}
 
-	const handleSearchEnvironment = (newSearchEnvironment: string) => {
+	function handleSearchEnvironment(newSearchEnvironment: string) {
 		setShowEnvironments(newSearchEnvironment.endsWith('{'));
-	};
+	}
 
 	return {
 		environments,

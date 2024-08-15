@@ -2,10 +2,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { Method } from '../types/method';
 
-import type { IApiResponse } from '@/configs/axios/interfaces/IApiResponse';
-import { apiService } from '@/configs/axios/services/api.service';
+import type { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
+import { apiService } from '@/config/axios/services/api.service';
 
-export const useMethodQuery = ({ id }: { id?: string }) => {
+export function useMethodQuery({ id }: { id?: string }) {
 	const query = useQuery<Method>({
 		queryKey: ['method', id],
 		queryFn: async () =>
@@ -16,9 +16,9 @@ export const useMethodQuery = ({ id }: { id?: string }) => {
 	});
 
 	return query;
-};
+}
 
-export const useEditParametersMethodMutation = () => {
+export function useEditParametersMethodMutation() {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
@@ -44,4 +44,4 @@ export const useEditParametersMethodMutation = () => {
 	});
 
 	return mutation;
-};
+}

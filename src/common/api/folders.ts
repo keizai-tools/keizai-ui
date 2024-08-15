@@ -2,10 +2,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { Folder } from '../types/folder';
 
-import type { IApiResponse } from '@/configs/axios/interfaces/IApiResponse';
-import { apiService } from '@/configs/axios/services/api.service';
+import type { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
+import { apiService } from '@/config/axios/services/api.service';
 
-export const useFoldersQuery = () => {
+export function useFoldersQuery() {
 	const query = useQuery<Folder[]>({
 		queryKey: ['folders'],
 		queryFn: async () =>
@@ -15,9 +15,9 @@ export const useFoldersQuery = () => {
 	});
 
 	return query;
-};
+}
 
-export const useFolderQuery = ({ id }: { id?: string }) => {
+export function useFolderQuery({ id }: { id?: string }) {
 	const query = useQuery<Folder>({
 		queryKey: ['folder', id],
 		queryFn: async () =>
@@ -28,9 +28,9 @@ export const useFolderQuery = ({ id }: { id?: string }) => {
 	});
 
 	return query;
-};
+}
 
-export const useFoldersByCollectionIdQuery = ({ id }: { id?: string }) => {
+export function useFoldersByCollectionIdQuery({ id }: { id?: string }) {
 	const query = useQuery<Folder[]>({
 		queryKey: ['collection', id, 'folders'],
 		queryFn: async () =>
@@ -41,9 +41,9 @@ export const useFoldersByCollectionIdQuery = ({ id }: { id?: string }) => {
 	});
 
 	return query;
-};
+}
 
-export const useCreateFolderMutation = () => {
+export function useCreateFolderMutation() {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
@@ -65,13 +65,13 @@ export const useCreateFolderMutation = () => {
 	});
 
 	return mutation;
-};
+}
 
-export const useDeleteFolderMutation = ({
+export function useDeleteFolderMutation({
 	collectionId,
 }: {
 	collectionId?: string;
-}) => {
+}) {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
@@ -107,13 +107,13 @@ export const useDeleteFolderMutation = ({
 	});
 
 	return mutation;
-};
+}
 
-export const useEditFolderMutation = ({
+export function useEditFolderMutation({
 	collectionId,
 }: {
 	collectionId?: string;
-}) => {
+}) {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
@@ -151,4 +151,4 @@ export const useEditFolderMutation = ({
 	});
 
 	return mutation;
-};
+}

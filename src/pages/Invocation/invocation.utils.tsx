@@ -11,7 +11,7 @@ import { Method } from '@/common/types/method';
 import {
 	isApiError,
 	type ApiError,
-} from '@/configs/axios/errors/ApiResponseError';
+} from '@/config/axios/errors/ApiResponseError';
 
 const createContractResponseParam = (params: Method['params']) => {
 	return params.map((param, index) => {
