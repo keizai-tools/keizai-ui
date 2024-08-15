@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - main
+      - staging
 
 env:
   PORT: 3000
