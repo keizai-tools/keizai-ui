@@ -3,15 +3,15 @@ import {
 	ConfigType,
 	IConnectMessage,
 	ISignMessage,
-	SimpleSignerResponse,
+	SignerResponse,
 } from '../types';
-import openPopup from './open-popup';
+import openPopup from './openPopup';
 
 async function messageHandler<T extends ISignMessage | IConnectMessage>({
 	url,
 	origin,
 	...postConfig
-}: ConfigType<T>): Promise<SimpleSignerResponse<T>> {
+}: ConfigType<T>): Promise<SignerResponse<T>> {
 	const popupWindow = openPopup(url, '_blank');
 
 	return new Promise((resolve, reject) => {
@@ -24,7 +24,7 @@ async function messageHandler<T extends ISignMessage | IConnectMessage>({
 			}
 		}, 5000);
 
-		function handleMessage(e: MessageEvent<SimpleSignerResponse<T>>) {
+		function handleMessage(e: MessageEvent<SignerResponse<T>>) {
 			if (e.origin === origin) {
 				const messageResponse = e.data;
 

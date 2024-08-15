@@ -1,12 +1,12 @@
 import { WalletType } from '../constants/enums';
-import SimpleSignerError from '../errors/simple-signer-error';
-import getUrl from '../helpers/get-url';
-import messageHandler from '../helpers/message-handler';
+import SignerError from '../errors/signerError';
+import getUrl from '../helpers/getUrl';
+import messageHandler from '../helpers/messageHandler';
 import { IConnectMessage } from '../types';
 
 import { NETWORK } from '@/common/types/soroban.enum';
 
-export default async function simpleSignerConnectWallet(
+export default async function signerConnectWallet(
 	network: NETWORK,
 	wallets?: WalletType[],
 ): Promise<IConnectMessage | null> {
@@ -29,7 +29,7 @@ export default async function simpleSignerConnectWallet(
 		};
 	} catch (err: unknown) {
 		if (typeof err === 'string') {
-			throw new SimpleSignerError(err);
+			throw new SignerError(err);
 		}
 
 		throw err;

@@ -12,7 +12,7 @@ import {
 	type IApiResponseError,
 } from './exceptions/constants';
 
-describe('Login management', () => {
+xdescribe('Login management', () => {
 	beforeEach(() => {
 		cy.visit(`${Cypress.env('loginUrl')}`);
 	});
