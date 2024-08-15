@@ -1,7 +1,7 @@
-const CollectionCTAPage = () => {
+export default function CollectionCTAPage() {
 	return (
 		<div
-			className="flex items-center flex-wrap justify-center w-full h-fit gap-12 mt-48"
+			className="flex flex-wrap items-center justify-center w-full gap-12 mt-48 h-fit"
 			data-test="collection-empty-invocation-container"
 		>
 			<img
@@ -19,6 +19,4 @@ const CollectionCTAPage = () => {
 			</div>
 		</div>
 	);
-};
-
-export default CollectionCTAPage;
+}
