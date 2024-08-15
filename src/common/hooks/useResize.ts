@@ -30,18 +30,18 @@ export function useResize() {
 		};
 	}, [screenSize]);
 
-	const onResizeCrossAxis = (
+	function onResizeCrossAxis(
 		containerRef: HTMLDivElement,
 		resizerElementRef: HTMLDivElement,
-	) => {
+	) {
 		const defaultHeight =
-			localStorage.getItem(`terminalHeight-${invocationId}`) || '300px';
+			localStorage.getItem(`terminalHeight-${invocationId}`) ?? '300px';
 		containerRef.style.height = defaultHeight;
 		const styles = window.getComputedStyle(containerRef);
 		let height = parseInt(styles.height, 10);
 		let y = 0;
 
-		const onMouseMoveCrossAxis = (event: MouseEvent) => {
+		function onMouseMoveCrossAxis(event: MouseEvent) {
 			const maxTerminalSize = screenSize.height - 2;
 			const minTerminalSize = 100;
 			const yDiff = y - event.clientY;
@@ -50,18 +50,18 @@ export function useResize() {
 			if (height > minTerminalSize && height < maxTerminalSize) {
 				containerRef.style.height = `${height}px`;
 			}
-		};
+		}
 
-		const onMouseUpCrossAxis = () => {
+		function onMouseUpCrossAxis() {
 			document.removeEventListener('mousemove', onMouseMoveCrossAxis);
 			localStorage.setItem(`terminalHeight-${invocationId}`, `${height}px`);
-		};
+		}
 
-		const onMouseDownCrossAxis = (event: MouseEvent) => {
+		function onMouseDownCrossAxis(event: MouseEvent) {
 			y = event.clientY;
 			document.addEventListener('mousemove', onMouseMoveCrossAxis);
 			document.addEventListener('mouseup', onMouseUpCrossAxis);
-		};
+		}
 
 		resizerElementRef.addEventListener('mousedown', onMouseDownCrossAxis);
 
@@ -72,7 +72,7 @@ export function useResize() {
 					onMouseDownCrossAxis,
 				);
 		};
-	};
+	}
 
 	return { onResizeCrossAxis };
 }
