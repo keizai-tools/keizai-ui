@@ -1,4 +1,4 @@
-import { AxiosError, isAxiosError } from 'axios';
+import { isAxiosError } from 'axios';
 import { AlertCircle, ChevronRight } from 'lucide-react';
 
 import {
@@ -8,43 +8,38 @@ import {
 } from '@/common/exceptions/invocations';
 import { InvocationResponse } from '@/common/types/invocation';
 import { Method } from '@/common/types/method';
-import {
-	isApiError,
-	type ApiError,
-} from '@/config/axios/errors/ApiResponseError';
+import { IApiResponseError } from '@/config/axios/interfaces/IApiResponseError';
 
-const createContractResponseParam = (params: Method['params']) => {
-	return params.map((param, index) => {
-		const isLastParam = params.length - 1 === index;
-		return (
-			<span
-				key={param.name}
-				className={`text-slate-400 ${!isLastParam && 'mr-1'}`}
-			>
-				{param.name}: {param.value}
-				{!isLastParam && ','}
-			</span>
-		);
-	});
-};
-
-export const createContractResponseTitle = (method: Method) => {
+export function createContractResponseTitle(method: Method) {
 	return (
 		<span className="flex items-center gap-1 tracking-wider">
 			<ChevronRight className="text-primary" size={16} />
 			<span className="font-semibold text-primary">{method?.name}(</span>
 			<div className={method.params.length === 0 ? 'hidden' : ''}>
-				{createContractResponseParam(method.params)}
+				{((params: Method['params']) => {
+					return params.map((param, index) => {
+						const isLastParam = params.length - 1 === index;
+						return (
+							<span
+								key={param.name}
+								className={`text-slate-400 ${!isLastParam && 'mr-1'}`}
+							>
+								{param.name}: {param.value}
+								{!isLastParam && ','}
+							</span>
+						);
+					});
+				})(method.params)}
 			</div>
 			<span className="font-semibold text-primary">)</span>
 		</span>
 	);
-};
+}
 
-export const createContractResponse = (
+export function createContractResponse(
 	serviceResponse: string | undefined,
 	description: string,
-) => {
+) {
 	if (!serviceResponse) {
 		return;
 	}
@@ -56,26 +51,23 @@ export const createContractResponse = (
 			<span>{JSON.stringify(serviceResponse)}</span>
 		</span>
 	);
-};
+}
 
-export const handleAxiosError = (error: unknown) => {
-	if (isAxiosError(error)) {
-		const axiosError = error as AxiosError;
-
-		if (isApiError(axiosError.response?.data)) {
-			return {
-				isError: true,
-				title: (
-					<div className="flex items-center gap-2 font-semibold text-red-500">
-						<AlertCircle size={16} />
-						Error
-					</div>
-				),
-				message:
-					(axiosError.response?.data as ApiError).message ||
-					INVOCATION_RESPONSE.ERROR_RUN_INVOCATION,
-			};
-		}
+export function handleAxiosError(error: unknown) {
+	if (!isAxiosError<IApiResponseError>(error)) {
+		return {
+			isError: true,
+			title: (
+				<div className="flex items-center gap-2 font-semibold text-red-500">
+					<AlertCircle size={16} />
+					Error
+				</div>
+			),
+			message:
+				(error as IApiResponseError).details.description ||
+				(error as IApiResponseError).message ||
+				INVOCATION_RESPONSE.ERROR_RUN_INVOCATION,
+		};
 	}
 
 	return {
@@ -88,9 +80,9 @@ export const handleAxiosError = (error: unknown) => {
 		),
 		message: INVOCATION_RESPONSE.ERROR_DEFAULT,
 	};
-};
+}
 
-export const failedRunContract = (response: string) => {
+export function failedRunContract(response: string) {
 	return {
 		isError: true,
 		title: (
@@ -103,34 +95,47 @@ export const failedRunContract = (response: string) => {
 			transactionResultCode[response as keyof typeof transactionResultCode] ??
 			INVOCATION_RESPONSE.FAILED_RUN_CONTRACT,
 	};
-};
+}
 
-export const getInvocationResponse = (
+export function getInvocationResponse(
 	response: InvocationResponse,
 	preInvocationResponse: string | undefined,
 	postInvocationResponse: string | undefined,
-) => {
-	if (response && response.method) {
-		switch (response.status) {
-			case STATUS.SUCCESS:
-				return {
-					isError: false,
-					preInvocation: createContractResponse(
-						preInvocationResponse,
-						'Pre-Invocation response',
-					),
-					postInvocation: createContractResponse(
-						postInvocationResponse,
-						'Post-Invocation response',
-					),
-					title: createContractResponseTitle(response.method),
-					message: response.response,
-				};
-			case STATUS.FAILED:
-				return failedRunContract(response.response);
-			case STATUS.ERROR:
-				return failedRunContract(response.response);
+) {
+	if (response?.method) {
+		const responseStatus = response.status;
+
+		const responseObj: {
+			[key: string]: {
+				isError: boolean;
+				preInvocation?: JSX.Element;
+				postInvocation?: JSX.Element;
+				title: JSX.Element;
+				message: string;
+			};
+		} = {
+			[STATUS.SUCCESS]: {
+				isError: false,
+				preInvocation: createContractResponse(
+					preInvocationResponse,
+					'Pre-Invocation response',
+				),
+				postInvocation: createContractResponse(
+					postInvocationResponse,
+					'Post-Invocation response',
+				),
+				title: createContractResponseTitle(response.method),
+				message: response.response,
+			},
+			[STATUS.FAILED]: failedRunContract(response.response),
+			[STATUS.ERROR]: failedRunContract(response.response),
+		};
+
+		if (Object.hasOwn(responseObj, responseStatus)) {
+			return responseObj[responseStatus];
 		}
+
+		throw new Error();
 	}
 
 	if (response.status === 'ERROR' && response.title) {
@@ -151,4 +156,4 @@ export const getInvocationResponse = (
 	}
 
 	throw new Error();
-};
+}

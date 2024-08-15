@@ -7,7 +7,7 @@ import { TooltipProvider } from '../common/components/ui/tooltip';
 
 import { Toaster } from '@/common/components/ui/toaster';
 import { ThemeProvider } from '@/config/theme/context/themeProvider';
-import { AuthProvider } from '@/modules/auth/context/AuthContext';
+import { AuthProvider } from '@/modules/auth/context/authContext';
 
 const queryClient = new QueryClient();
 

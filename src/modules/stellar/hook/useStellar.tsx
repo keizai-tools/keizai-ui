@@ -6,7 +6,7 @@ import { STELLAR_RESPONSE } from '../validators/stellarExceptions';
 import { FRIENDBOT, NETWORK } from '@/common/types/soroban.enum';
 
 function useStellar() {
-	const connectAccount = async (secretKey: string): Promise<IKeypair> => {
+	async function connectAccount(secretKey: string): Promise<IKeypair> {
 		try {
 			const keyPair = Keypair.fromSecret(secretKey);
 			return {
@@ -16,9 +16,9 @@ function useStellar() {
 		} catch (error) {
 			throw new Error(STELLAR_RESPONSE.INVALID_PRIVATE_KEY);
 		}
-	};
+	}
 
-	const createNewAccount = (): IKeypair => {
+	function createNewAccount(): IKeypair {
 		try {
 			const randomPair = Keypair.random();
 			const secretKey: string = randomPair.secret();
@@ -30,9 +30,9 @@ function useStellar() {
 		} catch (error) {
 			throw new Error(STELLAR_RESPONSE.FAILED_CRETATE_ACCOUNT);
 		}
-	};
+	}
 
-	const fundingAccount = (network: string, publicKey: string) => {
+	function fundingAccount(network: string, publicKey: string) {
 		switch (network) {
 			case NETWORK.SOROBAN_FUTURENET:
 				fetch(`${FRIENDBOT.FUTURENET}${publicKey}`);
@@ -41,7 +41,7 @@ function useStellar() {
 				fetch(`${FRIENDBOT.TESTNET}${publicKey}`);
 				break;
 		}
-	};
+	}
 
 	return { connectAccount, createNewAccount, fundingAccount };
 }

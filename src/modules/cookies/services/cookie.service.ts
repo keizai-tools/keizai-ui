@@ -8,6 +8,12 @@ import {
 } from '../interfaces/ITokenPayload';
 import { StoredCookies } from '../interfaces/cookies.enum';
 
+import { NETWORK } from '@/common/types/soroban.enum';
+import {
+	IWalletContent,
+	type IWallet,
+} from '@/modules/auth/interfaces/IAuthenticationContext';
+
 class CookieService<T extends ITokenPayload> implements ICookieService<T> {
 	cookies: Cookies;
 
@@ -90,6 +96,63 @@ class CookieService<T extends ITokenPayload> implements ICookieService<T> {
 			return jwtDecode<T>(token);
 		} catch (error) {
 			console.error('Error decoding token:', error);
+			return null;
+		}
+	}
+
+	setWalletCookie(wallet: IWalletContent): void {
+		try {
+			this.cookies.set(wallet.network, wallet, { path: '/' });
+		} catch (error) {
+			console.error('Error setting wallet cookie:', error);
+		}
+	}
+
+	removeWalletCookie(network: NETWORK): void {
+		try {
+			this.cookies.remove(network, { path: '/' });
+		} catch (error) {
+			console.error('Error removing wallet cookie:', error);
+		}
+	}
+
+	removeAllWalletCookies(): void {
+		for (const network of Object.values(NETWORK)) {
+			try {
+				this.removeWalletCookie(network);
+			} catch (error) {
+				console.error('Error removing all wallet cookies:', error);
+			}
+		}
+	}
+
+	getAllWalletCookies(): IWallet {
+		const wallets: IWallet = {
+			[NETWORK.SOROBAN_MAINNET]: null,
+			[NETWORK.SOROBAN_TESTNET]: null,
+			[NETWORK.SOROBAN_FUTURENET]: null,
+		};
+
+		for (const network of Object.values(NETWORK)) {
+			const wallet = this.parseCookie(network);
+			if (wallet) {
+				wallets[network] = wallet;
+			}
+		}
+
+		return wallets;
+	}
+
+	getWalletCookie(network: NETWORK): IWalletContent | null {
+		return this.parseCookie(network);
+	}
+
+	private parseCookie(network: NETWORK): IWalletContent | null {
+		try {
+			const cookie = this.cookies.get(network, { doNotParse: true });
+			return cookie ? (JSON.parse(cookie as string) as IWalletContent) : null;
+		} catch (error) {
+			console.error('Error parsing cookie:', error);
 			return null;
 		}
 	}
