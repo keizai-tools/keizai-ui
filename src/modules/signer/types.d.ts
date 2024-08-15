@@ -9,7 +9,7 @@ export interface IConnectMessage {
 	wallet: WalletType;
 }
 
-export interface SimpleSignerResponse<
+export interface SignerResponse<
 	T extends ISignMessage | IConnectMessage,
 > {
 	type: MessageEventType;
