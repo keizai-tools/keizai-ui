@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+
 import {
 	Select,
 	SelectContent,
@@ -9,6 +11,7 @@ import ParametersForm from './ParametersForm';
 
 import { useEditSelectedMethodMutation } from '@/common/api/invocations';
 import { Invocation } from '@/common/types/invocation';
+import { cleanAndCapitalize } from '@/lib/utils';
 
 const FunctionsTab = ({
 	invocationId,
@@ -22,14 +25,14 @@ const FunctionsTab = ({
 	const { mutate: selectMethod } = useEditSelectedMethodMutation();
 
 	return (
-		<>
+		<Fragment>
 			{(methods?.length || 0) > 0 ? (
 				<div
 					className="flex flex-col gap-2 px-1 py-5"
 					data-test="tabs-function-container"
 				>
 					<span
-						className="text-primary text-md font-semibold"
+						className="font-semibold text-primary text-md"
 						data-test="tabs-function-title"
 					>
 						Function
@@ -42,7 +45,7 @@ const FunctionsTab = ({
 								id: invocationId,
 								selectedMethodId: value,
 							});
-							window.umami.track('Select function');
+							if (window.umami) window?.umami?.track('Select function');
 						}}
 					>
 						<SelectTrigger data-test="tabs-function-select-container">
@@ -58,7 +61,7 @@ const FunctionsTab = ({
 									value={method.id}
 									data-test="tabs-function-select"
 								>
-									{method.name}
+									{cleanAndCapitalize(method.name)}
 								</SelectItem>
 							))}
 						</SelectContent>
@@ -70,12 +73,12 @@ const FunctionsTab = ({
 				</div>
 			) : (
 				<div
-					className="flex justify-center items-center my-24 flex-1 gap-8"
+					className="flex items-center justify-center flex-1 gap-8 my-24"
 					data-test="tabs-content-container"
 				>
 					<img
 						src="/moon.svg"
-						alt="Load contract image"
+						alt="Load contract"
 						width={200}
 						height={200}
 						loading="eager"
@@ -83,7 +86,7 @@ const FunctionsTab = ({
 					/>
 					<div className="flex flex-col gap-3">
 						<div
-							className="flex flex-col justify-center text-primary font-black text-6xl"
+							className="flex flex-col justify-center text-6xl font-black text-primary"
 							data-test="tabs-content-contract-text"
 						>
 							<h2>Let&apos;s Load</h2>
@@ -98,7 +101,7 @@ const FunctionsTab = ({
 					</div>
 				</div>
 			)}
-		</>
+		</Fragment>
 	);
 };
 
