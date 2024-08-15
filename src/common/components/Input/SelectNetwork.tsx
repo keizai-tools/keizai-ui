@@ -1,5 +1,5 @@
 import { AlertCircleIcon } from 'lucide-react';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import {
@@ -22,32 +22,41 @@ import {
 import useNetwork from '@/common/hooks/useNetwork';
 import { NETWORK } from '@/common/types/soroban.enum';
 
-function SelectNetwork({ defaultNetwork }: { defaultNetwork: string }) {
+function SelectNetwork({
+	defaultNetwork,
+}: Readonly<{ defaultNetwork: string }>) {
 	const [showEditNetworkDialog, setShowEditNetworkDialog] =
 		React.useState(false);
 	const { selectNetwork, setSelectNetwork, handleUpdateNetwork } =
 		useNetwork(defaultNetwork);
 
-	const openEditNetworkDialog = (network: string) => {
+	function openEditNetworkDialog(network: string) {
 		setSelectNetwork(network);
-		window.umami.track('Open change network dialog');
+		if (window.umami) window?.umami?.track('Open change network dialog');
 		setShowEditNetworkDialog(true);
-	};
+	}
 
-	const onConfirm = () => {
+	function onConfirm() {
 		handleUpdateNetwork(selectNetwork);
-		window.umami.track('Change network', { network: selectNetwork });
+		if (window.umami)
+			window?.umami?.track('Change network', { network: selectNetwork });
 		setShowEditNetworkDialog(false);
-	};
+	}
 
-	const onCancel = () => {
+	function onCancel() {
 		setSelectNetwork(defaultNetwork);
 		setShowEditNetworkDialog(false);
-	};
+	}
+
+	if (selectNetwork === 'AUTO_DETECT') return null;
 
 	return (
-		<>
-			<Select value={selectNetwork} onValueChange={openEditNetworkDialog}>
+		<Fragment>
+			<Select
+				value={selectNetwork}
+				onValueChange={openEditNetworkDialog}
+				disabled
+			>
 				<SelectTrigger
 					className="max-w-[140px] border-none text-slate-500 font-semibold"
 					data-test="contract-input-network"
@@ -60,6 +69,12 @@ function SelectNetwork({ defaultNetwork }: { defaultNetwork: string }) {
 					</SelectValue>
 				</SelectTrigger>
 				<SelectContent data-test="contract-select-networks-container">
+					<SelectItem
+						value={'AUTO_DETECT'}
+						data-test="contract-select-network-auto-detect"
+					>
+						{'AUTO_DETECT'}
+					</SelectItem>
 					<SelectItem
 						value={NETWORK.SOROBAN_FUTURENET}
 						data-test="contract-select-network-futurenet"
@@ -92,7 +107,7 @@ function SelectNetwork({ defaultNetwork }: { defaultNetwork: string }) {
 							</AlertDialogTitle>
 							<div>
 								<Alert variant="destructive" className="my-5">
-									<AlertCircleIcon className="h-4 w-4" />
+									<AlertCircleIcon className="w-4 h-4" />
 									<AlertTitle data-test="change-network-dialog-title">
 										Warning!
 									</AlertTitle>
@@ -120,7 +135,7 @@ function SelectNetwork({ defaultNetwork }: { defaultNetwork: string }) {
 					</AlertDialogContent>
 				</AlertDialog>
 			)}
-		</>
+		</Fragment>
 	);
 }
 
