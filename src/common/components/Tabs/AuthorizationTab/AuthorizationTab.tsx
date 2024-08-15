@@ -10,16 +10,16 @@ import { NETWORK } from '@/common/types/soroban.enum';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 import { IKeypair } from '@/modules/stellar/domain/keypair';
 
-const AuthorizationTab = ({
+function AuthorizationTab({
 	invocationId,
 	network,
 	defaultValues,
-}: {
+}: Readonly<{
 	invocationId: string;
 	network: string;
 	defaultValues: IKeypair;
-}) => {
-	const { connectWallet, wallet, setDisconnectWallet } = useAuthProvider();
+}>) {
+	const { connectWallet, wallet, disconnectWallet } = useAuthProvider();
 
 	const { mutate: editKeys, data } = useEditInvocationKeysMutation();
 	const { register } = useForm({
@@ -31,8 +31,8 @@ const AuthorizationTab = ({
 
 	const defaultKeys = React.useMemo(() => {
 		return {
-			secretKey: data?.secretKey || defaultValues.secretKey,
-			publicKey: data?.publicKey || defaultValues.publicKey,
+			secretKey: data?.secretKey ?? defaultValues.secretKey,
+			publicKey: data?.publicKey ?? defaultValues.publicKey,
 		};
 	}, [data, defaultValues]);
 
@@ -40,11 +40,11 @@ const AuthorizationTab = ({
 		if (wallet) {
 			editKeys({
 				id: invocationId,
-				publicKey: wallet.publicKey,
+				publicKey: wallet[network as keyof typeof wallet]?.publicKey ?? '',
 				secretKey: '',
 			});
 		}
-	}, [wallet, invocationId, editKeys]);
+	}, [wallet, invocationId, editKeys, network]);
 
 	return (
 		<section data-test="auth-tab-container">
@@ -60,7 +60,7 @@ const AuthorizationTab = ({
 						<Input
 							{...register('secretKey')}
 							placeholder="S . . ."
-							value={defaultKeys.secretKey || ''}
+							value={defaultKeys.secretKey ?? ''}
 							className="pointer-events-none"
 						/>
 					</div>
@@ -70,7 +70,7 @@ const AuthorizationTab = ({
 					<Input
 						{...register('publicKey')}
 						placeholder="G . . ."
-						value={defaultKeys.publicKey || ''}
+						value={defaultKeys.publicKey ?? ''}
 						className="pointer-events-none"
 					/>
 				</div>
@@ -86,12 +86,12 @@ const AuthorizationTab = ({
 				<ConnectWallet
 					wallet={wallet}
 					connectWallet={connectWallet}
-					disconnectWallet={setDisconnectWallet}
+					disconnectWallet={disconnectWallet}
 					network={network}
 				/>
 			</div>
 		</section>
 	);
-};
+}
 
 export default AuthorizationTab;
