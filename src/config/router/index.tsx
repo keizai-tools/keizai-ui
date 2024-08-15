@@ -1,3 +1,5 @@
+import { Root } from '@radix-ui/react-toast';
+import { Home } from 'lucide-react';
 import { Navigate, createBrowserRouter } from 'react-router-dom';
 
 import { CollectionVariablesContainer } from '@/common/components/Collections/CollectionVariablesContainer';
@@ -10,9 +12,7 @@ import RecoverPassword from '@/pages/auth/recoverPassword';
 import ResetPassword from '@/pages/auth/resetPassword';
 import CollectionCTAPage from '@/pages/collection/collectionCTAPage';
 import CollectionPage from '@/pages/collection/collectionPage';
-import Home from '@/pages/home/home';
 import InvocationPage from '@/pages/invocation/invocationPage';
-import Root from '@/pages/root';
 import Providers from '@/providers/providers';
 
 const router = createBrowserRouter([
