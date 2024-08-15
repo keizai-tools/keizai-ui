@@ -6,8 +6,8 @@ import { ISignInResponse } from '../interfaces/ISignInResponse';
 import { ISignUpResponse } from '../interfaces/ISignUpResponse';
 import { ISuccessfulAuthenticationResponse } from '../interfaces/ISuccessfulAuthenticationResponse';
 
-import { IApiService } from '@/configs/axios/interfaces/IApiService';
-import { apiService } from '@/configs/axios/services/api.service';
+import { IApiService } from '@/config/axios/interfaces/IApiService';
+import { apiService } from '@/config/axios/services/api.service';
 
 class AuthService implements IAuthService {
 	api: IApiService<AxiosRequestConfig>;

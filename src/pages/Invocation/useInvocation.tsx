@@ -14,7 +14,7 @@ import { TerminalEntry } from '@/common/components/ui/Terminal';
 import { useToast } from '@/common/components/ui/use-toast';
 import useContractEvents from '@/common/hooks/useContractEvents';
 import { Invocation } from '@/common/types/invocation';
-import { apiService } from '@/configs/axios/services/api.service';
+import { apiService } from '@/config/axios/services/api.service';
 
 const useInvocation = (
 	invocation: Invocation,
