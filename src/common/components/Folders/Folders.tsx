@@ -10,20 +10,50 @@ import {
 	useCreateFolderMutation,
 } from '@/common/api/folders';
 
-const Folders = () => {
+function Folders() {
 	const params = useParams();
 	const { data, isLoading } = useFoldersByCollectionIdQuery({
 		id: params.collectionId,
 	});
+
 	const { mutate, isPending } = useCreateFolderMutation();
 	const navigate = useNavigate();
 
-	const onCreateFolder = async ({ name }: { name: string }) => {
+	async function onCreateFolder({ name }: { name: string }) {
 		if (params.collectionId) {
 			mutate({ name, collectionId: params.collectionId });
-			window.umami.track('Create folder');
+			if (window.umami) window?.umami?.track('Create folder');
 		}
-	};
+	}
+
+	function renderFoldersContent() {
+		if (isLoading) {
+			return (
+				<span className="text-xs text-slate-400" data-test="collection-loading">
+					Loading folders...
+				</span>
+			);
+		}
+
+		if (data && data.length > 0) {
+			return (
+				<div className="flex flex-col text-slate-400">
+					{data.map((folder) => (
+						<Folder key={folder.id} folder={folder} />
+					))}
+				</div>
+			);
+		}
+
+		return (
+			<span
+				className="text-xs text-slate-400"
+				data-test="collection-empty-folders"
+			>
+				Create your first folder here
+			</span>
+		);
+	}
 
 	return (
 		<div
@@ -64,27 +94,7 @@ const Folders = () => {
 						</Button>
 					</NewEntityDialog>
 				</div>
-				{isLoading ? (
-					<span
-						className="text-xs text-slate-400"
-						data-test="collection-loading"
-					>
-						Loading folders...
-					</span>
-				) : data && data.length > 0 ? (
-					<div className="flex flex-col text-slate-400">
-						{data.map((folder) => (
-							<Folder key={folder.id} folder={folder} />
-						))}
-					</div>
-				) : (
-					<span
-						className="text-xs text-slate-400"
-						data-test="collection-empty-folders"
-					>
-						Create your first folder here
-					</span>
-				)}
+				{renderFoldersContent()}
 			</div>
 			<div className="w-full mb-4 text-base font-semibold text-center hover:underline">
 				<Link
@@ -97,6 +107,6 @@ const Folders = () => {
 			</div>
 		</div>
 	);
-};
+}
 
 export default Folders;
