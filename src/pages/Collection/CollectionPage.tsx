@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 
 import Folders from '@/common/components/Folders/Folders';
-import { EnvironmentProvider } from '@/providers/EnvironmentProvider';
+import { EnvironmentProvider } from '@/providers/environmentProvider';
 
 const CollectionPage = () => {
 	return (
