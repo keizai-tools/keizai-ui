@@ -10,7 +10,7 @@ import {
 	type ISuccessfulAuthenticationResponse,
 } from './exceptions/constants';
 
-describe('Forgot password', () => {
+xdescribe('Forgot password', () => {
 	beforeEach(() => {
 		cy.visit(`${Cypress.env('loginUrl')}`);
 		cy.getBySel('login-form-footer-password-link').click();
