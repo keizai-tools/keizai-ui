@@ -1,6 +1,6 @@
 import { Copy } from 'lucide-react';
 
-import { useToast } from '../ui/useToast';
+import { useToast } from '../ui/use-toast';
 
 interface PrivateKeyDisplayProps {
 	privateKey: string;
