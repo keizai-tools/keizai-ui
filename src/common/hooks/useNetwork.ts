@@ -10,13 +10,13 @@ function useNetwork(defaultNetwork: string) {
 	const { removeEventsFromStorage } = useContractEvents();
 	const params = useParams();
 
-	const handleUpdateNetwork = async (network: string) => {
-		await mutate({
+	function handleUpdateNetwork(network: string) {
+		mutate({
 			network,
 			id: params.invocationId as string,
 		});
 		removeEventsFromStorage(params.invocationId as string);
-	};
+	}
 
 	return { selectNetwork, setSelectNetwork, handleUpdateNetwork };
 }

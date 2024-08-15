@@ -3,14 +3,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from '../components/ui/use-toast';
 import { Environment } from '../types/environment';
 
-import { IApiResponse } from '@/configs/axios/interfaces/IApiResponse';
-import { apiService } from '@/configs/axios/services/api.service';
+import { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
+import { apiService } from '@/config/axios/services/api.service';
 
-export const useEnvironmentsQuery = ({
+export function useEnvironmentsQuery({
 	collectionId,
 }: {
-	collectionId?: string | undefined;
-}) => {
+	collectionId?: string;
+}) {
 	const query = useQuery<Environment[]>({
 		queryKey: ['environment', collectionId],
 		refetchOnWindowFocus: true,
@@ -24,9 +24,9 @@ export const useEnvironmentsQuery = ({
 	});
 
 	return query;
-};
+}
 
-export const useEnvironmentQuery = ({ id }: { id?: string }) => {
+export function useEnvironmentQuery({ id }: { id?: string }) {
 	const query = useQuery<Environment>({
 		queryKey: ['environment', id],
 		queryFn: async () =>
@@ -37,13 +37,13 @@ export const useEnvironmentQuery = ({ id }: { id?: string }) => {
 	});
 
 	return query;
-};
+}
 
-export const useCreateEnvironmentMutation = ({
+export function useCreateEnvironmentMutation({
 	collectionId,
 }: {
 	collectionId?: string;
-}) => {
+}) {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
@@ -82,13 +82,13 @@ export const useCreateEnvironmentMutation = ({
 	});
 
 	return mutation;
-};
+}
 
-export const useCreateAllEnvironmentsMutation = ({
+export function useCreateAllEnvironmentsMutation({
 	collectionId,
 }: {
 	collectionId?: string;
-}) => {
+}) {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
@@ -117,13 +117,13 @@ export const useCreateAllEnvironmentsMutation = ({
 		},
 	});
 	return mutation;
-};
+}
 
-export const useDeleteEnvironmentMutation = ({
+export function useDeleteEnvironmentMutation({
 	collectionId,
 }: {
 	collectionId?: string;
-}) => {
+}) {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
@@ -162,13 +162,13 @@ export const useDeleteEnvironmentMutation = ({
 	});
 
 	return mutation;
-};
+}
 
-export const useEditEnvironmentMutation = ({
+export function useEditEnvironmentMutation({
 	collectionId,
 }: {
 	collectionId?: string;
-}) => {
+}) {
 	const queryClient = useQueryClient();
 
 	const mutation = useMutation({
@@ -206,4 +206,4 @@ export const useEditEnvironmentMutation = ({
 	});
 
 	return mutation;
-};
+}

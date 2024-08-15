@@ -15,7 +15,7 @@
 		"cy:serve:ci": "start-server-and-test start:dev http-get://127.0.0.1:3000 cy:run",
 		"cy:serve:app": "start-server-and-test start:dev http-get://127.0.0.1:3000 cy:open",
 		"nyc:report": "npx nyc report --reporter text",
-		"test:ui": "run-s cy:serve:ci nyc:report",
+		"test:ui": "run-s cy:serve:ci",
 		"test:ui:dev": "run-s cy:serve:app nyc:report",
 		"prepare": "husky install"
 	},

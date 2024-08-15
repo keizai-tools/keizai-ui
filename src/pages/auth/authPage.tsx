@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link, Navigate, Outlet } from 'react-router-dom';
 
-import FullscreenLoading from '@/common/views/FullscreenLoading';
+import FullscreenLoading from '@/common/views/fullscreenLoading';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 function AuthPage() {
