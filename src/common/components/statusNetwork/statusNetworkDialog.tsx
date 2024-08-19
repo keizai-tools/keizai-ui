@@ -11,7 +11,7 @@ export default function StatusNetworkDialog({
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 }>) {
-	const { data } = useStatusNetworkQuery();
+	const { data, isLoading } = useStatusNetworkQuery();
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
@@ -36,14 +36,17 @@ export default function StatusNetworkDialog({
 					<NetworkStatus
 						name={NETWORK.SOROBAN_MAINNET}
 						isOperational={!!data?.mainNetwork}
+						isLoading={isLoading}
 					/>
 					<NetworkStatus
 						name={NETWORK.SOROBAN_TESTNET}
 						isOperational={!!data?.testNetwork}
+						isLoading={isLoading}
 					/>
 					<NetworkStatus
 						name={NETWORK.SOROBAN_FUTURENET}
 						isOperational={!!data?.futureNetwork}
+						isLoading={isLoading}
 					/>
 				</div>
 			</DialogContent>
