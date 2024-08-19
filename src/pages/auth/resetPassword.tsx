@@ -1,4 +1,4 @@
-import { ChevronRightSquare, Loader2 } from 'lucide-react';
+import { AtSign, ChevronRightSquare, Loader2 } from 'lucide-react';
 import { Fragment } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
@@ -54,36 +54,37 @@ function ResetPassword() {
 			</h1>
 			<div className="flex flex-col mb-4">
 				<div className="flex items-center px-3 bg-white border-2 rounded-md">
-					<ChevronRightSquare className="w-5 h-5 text-gray-400" />
+					<AtSign className="w-5 h-5 text-gray-400" />
 					<Controller
 						control={control}
-						name="code"
+						name="email"
 						rules={{
-							required: AUTH_VALIDATIONS.CODE_REQUIRED,
+							required: AUTH_VALIDATIONS.EMAIL_REQUIRED,
 							pattern: {
-								value: /^\d{6}$/,
-								message: AUTH_VALIDATIONS.CODE_INVALID,
+								value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+								message: AUTH_VALIDATIONS.EMAIL_INVALID,
 							},
 						}}
 						render={({ field }) => (
 							<Input
 								className="pl-2 text-black bg-white border-none focus-visible:ring-0"
 								type="text"
-								placeholder="Code"
-								data-test="forgot-password-code"
+								placeholder="Email"
+								data-test="recovery-password-email-send-code"
 								{...field}
 							/>
 						)}
 					/>
 				</div>
-				{errors.code && (
+				{errors.email && (
 					<ErrorMessage
-						message={errors.code.message as string}
-						testName="forgot-password-code-error"
+						message={errors.email.message as string}
+						testName="recovery-password-error"
 						styles="text-sm"
 					/>
 				)}
 			</div>
+
 			<div className="flex flex-col mb-4">
 				<Controller
 					control={control}
@@ -114,6 +115,7 @@ function ResetPassword() {
 			</div>
 			<div className="flex flex-col mb-4">
 				<Controller
+					control={control}
 					name="confirmPassword"
 					rules={{
 						required: AUTH_VALIDATIONS.CONFIRM_PASSWORD_REQUIRED,
@@ -151,6 +153,38 @@ function ResetPassword() {
 							testName="forgot-password-form-error"
 						/>
 					)}
+			</div>
+			<div className="flex flex-col mb-4">
+				<div className="flex items-center px-3 bg-white border-2 rounded-md">
+					<ChevronRightSquare className="w-5 h-5 text-gray-400" />
+					<Controller
+						control={control}
+						name="code"
+						rules={{
+							required: AUTH_VALIDATIONS.CODE_REQUIRED,
+							pattern: {
+								value: /^\d{6}$/,
+								message: AUTH_VALIDATIONS.CODE_INVALID,
+							},
+						}}
+						render={({ field }) => (
+							<Input
+								className="pl-2 text-black bg-white border-none focus-visible:ring-0"
+								type="text"
+								placeholder="Code"
+								data-test="forgot-password-code"
+								{...field}
+							/>
+						)}
+					/>
+				</div>
+				{errors.code && (
+					<ErrorMessage
+						message={errors.code.message as string}
+						testName="forgot-password-code-error"
+						styles="text-sm"
+					/>
+				)}
 			</div>
 			<Button
 				type="submit"
