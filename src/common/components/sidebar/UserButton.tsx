@@ -22,8 +22,13 @@ function UserButton() {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button variant="outline" size="icon" data-test="sidebar-btn-user">
-					<User2 className="h-[1.2rem] w-[1.2rem]" />
+				<Button
+					variant="outline"
+					size="icon"
+					asChild
+					data-test="sidebar-btn-user"
+				>
+					<User2 className="p-2 transition-colors duration-300 cursor-pointer hover:text-primary" />
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
