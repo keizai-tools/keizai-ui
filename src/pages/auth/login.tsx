@@ -1,7 +1,7 @@
 import { Loader2, AtSign } from 'lucide-react';
 import { Fragment } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import AlertError from '@/common/components/Form/AlertError';
 import ErrorMessage from '@/common/components/Form/ErrorMessage';
@@ -22,11 +22,26 @@ function Login() {
 			password: '',
 		},
 	});
-	const { handleSignIn, statusState } = useAuthProvider();
+	const { handleSignIn, statusState, setStatusState } = useAuthProvider();
 
-	const onSubmit = async (values: { email: string; password: string }) => {
+	async function onSubmit(values: { email: string; password: string }) {
 		await handleSignIn(values.email, values.password);
-	};
+	}
+	const navigate = useNavigate();
+
+	function handleSignUpClick() {
+		setStatusState('signUp', {
+			error: null,
+		});
+		navigate('/auth/register');
+	}
+
+	function handleForgotPasswordClick() {
+		setStatusState('forgotPassword', {
+			error: null,
+		});
+		navigate('/auth/forgot-password');
+	}
 
 	return (
 		<form
@@ -130,24 +145,12 @@ function Login() {
 					data-test="login-form-footer-info"
 				>
 					Don't have an account?
-					<Button variant="link" asChild>
-						<Link
-							to="/auth/register"
-							className="text-primary"
-							data-test="login-form-footer-register-link"
-						>
-							Join now
-						</Link>
+					<Button variant="link" onClick={handleSignUpClick}>
+						Join now
 					</Button>
 				</span>
-				<Button variant="link" asChild>
-					<Link
-						to="/auth/forgot-password"
-						className="text-primary "
-						data-test="login-form-footer-password-link"
-					>
-						Forgot your password?
-					</Link>
+				<Button variant="link" onClick={handleForgotPasswordClick}>
+					Forgot your password?
 				</Button>
 			</div>
 		</form>
