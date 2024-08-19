@@ -1,7 +1,7 @@
 import { AtSign, ChevronRightSquare, Loader2 } from 'lucide-react';
 import { Fragment } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import AlertError from '@/common/components/Form/AlertError';
 import ErrorMessage from '@/common/components/Form/ErrorMessage';
@@ -19,7 +19,8 @@ export interface IPasswordReset {
 }
 
 function ResetPassword() {
-	const { handleResetPassword, statusState } = useAuthProvider();
+	const { handleResetPassword, statusState, setStatusState } =
+		useAuthProvider();
 
 	const {
 		control,
@@ -34,12 +35,28 @@ function ResetPassword() {
 			email: '',
 		},
 	});
-
-	const onSubmit = async (values: IPasswordReset) => {
+	const navigate = useNavigate();
+	async function onSubmit(values: IPasswordReset) {
 		const { code, newPassword, email } = values;
-		await handleResetPassword(email, newPassword, code);
-	};
+		console.log({
+			code,
+			newPassword,
+			email,
+			altMail: statusState.resetPassword.data,
+		});
+		await handleResetPassword(
+			newPassword,
+			code,
+			statusState.resetPassword.data ?? email,
+		);
+	}
 
+	function handleLoginClick() {
+		setStatusState('signIn', {
+			error: null,
+		});
+		navigate('/auth/login');
+	}
 	return (
 		<form
 			className="w-full max-w-[500px]"
@@ -52,7 +69,7 @@ function ResetPassword() {
 			>
 				Password Reset
 			</h1>
-			{statusState.resetPassword.data && (
+			{!statusState.resetPassword.data && (
 				<div className="flex flex-col mb-4">
 					<div className="flex items-center px-3 bg-white border-2 rounded-md">
 						<AtSign className="w-5 h-5 text-gray-400" />
@@ -207,14 +224,8 @@ function ResetPassword() {
 				data-test="forgot-password-footer-info"
 			>
 				<span className="text-sm ">Already have an account?</span>
-				<Button variant="link" asChild>
-					<Link
-						to="/auth/login"
-						className="text-primary"
-						data-test="forgot-password-footer-link"
-					>
-						Login
-					</Link>
+				<Button variant="link" onClick={handleLoginClick}>
+					Login
 				</Button>
 			</div>
 		</form>
