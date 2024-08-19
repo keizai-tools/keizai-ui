@@ -11,6 +11,7 @@ const initial = {
 	status: false,
 	error: null,
 	loading: false,
+	data: null,
 };
 
 const initialState: IStatusState = {
