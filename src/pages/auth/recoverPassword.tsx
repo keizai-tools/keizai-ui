@@ -71,7 +71,7 @@ function RecoverPassword() {
 			</div>
 			<Button
 				type="submit"
-				className="py-2 mt-8 mb-2 font-semibold text-black rounded-md"
+				className="py-2 mt-4 mb-2 font-semibold text-black rounded-md"
 				data-test="recovery-password-btn-submit"
 				disabled={statusState.forgotPassword.loading}
 			>
