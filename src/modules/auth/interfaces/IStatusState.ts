@@ -4,6 +4,7 @@ export interface IStatus {
 	status: boolean;
 	error: ErrorValue;
 	loading: boolean;
+	data: string | null;
 }
 
 export interface IStatusState {
