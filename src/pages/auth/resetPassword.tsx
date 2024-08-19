@@ -52,39 +52,40 @@ function ResetPassword() {
 			>
 				Password Reset
 			</h1>
-			<div className="flex flex-col mb-4">
-				<div className="flex items-center px-3 bg-white border-2 rounded-md">
-					<AtSign className="w-5 h-5 text-gray-400" />
-					<Controller
-						control={control}
-						name="email"
-						rules={{
-							required: AUTH_VALIDATIONS.EMAIL_REQUIRED,
-							pattern: {
-								value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-								message: AUTH_VALIDATIONS.EMAIL_INVALID,
-							},
-						}}
-						render={({ field }) => (
-							<Input
-								className="pl-2 text-black bg-white border-none focus-visible:ring-0"
-								type="text"
-								placeholder="Email"
-								data-test="recovery-password-email-send-code"
-								{...field}
-							/>
-						)}
-					/>
+			{statusState.resetPassword.data && (
+				<div className="flex flex-col mb-4">
+					<div className="flex items-center px-3 bg-white border-2 rounded-md">
+						<AtSign className="w-5 h-5 text-gray-400" />
+						<Controller
+							control={control}
+							name="email"
+							rules={{
+								required: AUTH_VALIDATIONS.EMAIL_REQUIRED,
+								pattern: {
+									value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+									message: AUTH_VALIDATIONS.EMAIL_INVALID,
+								},
+							}}
+							render={({ field }) => (
+								<Input
+									className="pl-2 text-black bg-white border-none focus-visible:ring-0"
+									type="text"
+									placeholder="Email"
+									data-test="recovery-password-email-send-code"
+									{...field}
+								/>
+							)}
+						/>
+					</div>
+					{errors.email && (
+						<ErrorMessage
+							message={errors.email.message as string}
+							testName="recovery-password-error"
+							styles="text-sm"
+						/>
+					)}
 				</div>
-				{errors.email && (
-					<ErrorMessage
-						message={errors.email.message as string}
-						testName="recovery-password-error"
-						styles="text-sm"
-					/>
-				)}
-			</div>
-
+			)}
 			<div className="flex flex-col mb-4">
 				<Controller
 					control={control}
@@ -188,7 +189,7 @@ function ResetPassword() {
 			</div>
 			<Button
 				type="submit"
-				className="w-full py-2 mt-8 mb-2 font-semibold text-black rounded-md"
+				className="w-full py-2 mt-4 mb-2 font-semibold text-black rounded-md"
 				data-test="forgot-password-btn-submit"
 				disabled={statusState.resetPassword.loading}
 			>
