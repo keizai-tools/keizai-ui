@@ -300,7 +300,7 @@ export function AuthProvider({
 							status: true,
 							loading: false,
 						});
-						navigate('/auth/login');
+						navigate('/auth/reset-password');
 					} else {
 						throw new Error('Failed to request password change');
 					}
@@ -383,13 +383,15 @@ export function AuthProvider({
 					setStatusState('refreshSession', {
 						error: error.details.description,
 					});
-
-					if (error.details.description !== 'Invalid refresh token') {
+					if (error.details.description !== 'Invalid Refresh Token') {
 						toast({
 							title: `${error.error} - ${error.message}`,
 							description: error.details.description,
 							variant: 'destructive',
 						});
+					} else {
+						cookieService.removeAll();
+						cookieService.removeAllWalletCookies();
 					}
 				} else {
 					toast({
@@ -437,6 +439,11 @@ export function AuthProvider({
 
 	const handleResetPassword = useCallback(
 		async (email: string, password: string, code: string) => {
+			console.log({
+				email,
+				password,
+				code,
+			});
 			async function resetPassword(
 				email: string,
 				password: string,
@@ -466,30 +473,33 @@ export function AuthProvider({
 						throw new Error('Failed to reset password');
 					}
 				} catch (error) {
-					setStatusState('resetPassword', {
+					setStatusState('refreshSession', {
 						status: false,
 						loading: false,
 					});
 					if (error instanceof ApiResponseError) {
-						setStatusState('resetPassword', {
+						setStatusState('refreshSession', {
 							error: error.details.description,
 						});
-						toast({
-							title: `${error.error} - ${error.message}`,
-							description: error.details.description,
-							variant: 'destructive',
-						});
+						if (error.details.description === 'User not authorized') {
+							return;
+						}
+						if (error.details.description !== 'Invalid refresh token') {
+							toast({
+								title: `${error.error} - ${error.message}`,
+								description: error.details.description,
+								variant: 'destructive',
+							});
+						}
 					} else {
 						toast({
 							title: 'Error',
-							description: `Unknown error when resetting password: ${error}`,
+							description: `Unknown error when refreshing session: ${error}`,
 							variant: 'destructive',
 						});
 					}
-				} finally {
-					setStatusState('resetPassword', {
-						loading: false,
-					});
+
+					navigate('auth/login');
 				}
 			}
 			return resetPassword(email, password, code);
