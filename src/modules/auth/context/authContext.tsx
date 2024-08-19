@@ -300,6 +300,9 @@ export function AuthProvider({
 							status: true,
 							loading: false,
 						});
+						setStatusState('confirmPassword', {
+							data: email,
+						});
 						navigate('/auth/reset-password');
 					} else {
 						throw new Error('Failed to request password change');
@@ -438,17 +441,21 @@ export function AuthProvider({
 	}, [navigate, disconnectWallet, setStatusState, toast]);
 
 	const handleResetPassword = useCallback(
-		async (email: string, password: string, code: string) => {
-			console.log({
+		async (password: string, code: string, email?: string) => {
+			const localEmail =
+				cookieService.getCookie(StoredCookies.EMAIL) ??
+				statusState.resetPassword.data ??
+				email ??
+				'';
+			async function resetPassword({
 				email,
 				password,
 				code,
-			});
-			async function resetPassword(
-				email: string,
-				password: string,
-				code: string,
-			) {
+			}: {
+				email: string;
+				password: string;
+				code: string;
+			}) {
 				setStatusState('resetPassword', {
 					loading: true,
 					error: null,
@@ -502,7 +509,11 @@ export function AuthProvider({
 					navigate('auth/login');
 				}
 			}
-			return resetPassword(email, password, code);
+			return resetPassword({
+				email: localEmail,
+				password,
+				code,
+			});
 		},
 		[navigate, setStatusState, toast],
 	);
