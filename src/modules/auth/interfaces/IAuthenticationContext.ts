@@ -1,4 +1,4 @@
-import { IStatusState } from './IStatusState';
+import { IStatusState, type IStatus } from './IStatusState';
 
 import { NETWORK } from '@/common/types/soroban.enum';
 import { WalletType } from '@/modules/signer/constants/enums';
@@ -17,12 +17,21 @@ export interface IAuthenticationContext {
 	statusState: IStatusState;
 	connectWallet(network: Partial<NETWORK>): Promise<void>;
 	disconnectWallet(network?: Partial<NETWORK>): void;
-	onCreateAccount(showToast?: boolean): void;
+	onCreateAccount(
+		showToast?: boolean,
+		refreshSession?: boolean,
+		wallets?: IWallet,
+		email?: string,
+	): void;
 	handleChangePassword: (
 		oldPassword: string,
 		newPassword: string,
 	) => Promise<void>;
 	wallet: IWallet;
+	setStatusState: (
+		statusType: keyof IStatusState,
+		value: Partial<IStatus>,
+	) => void;
 }
 
 export interface IWallet {

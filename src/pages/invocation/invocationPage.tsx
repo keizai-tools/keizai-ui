@@ -1,5 +1,5 @@
 import { Loader } from 'lucide-react';
-import React, { useEffect, Fragment } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 
 import {
@@ -43,9 +43,9 @@ export default InvocationPage;
 
 function InvocationPageContent({ data }: Readonly<{ data: Invocation }>) {
 	const { mutate: editKeys } = useEditInvocationKeysMutation();
+	const [isTerminalVisible, setIsTerminalVisible] = useState(true);
 
 	const { wallet, statusState, connectWallet } = useAuthProvider();
-	const publickey = wallet[data.network as keyof typeof wallet]?.publicKey;
 
 	useEffect(() => {
 		if (wallet[data.network as keyof typeof wallet]) {
@@ -74,12 +74,20 @@ function InvocationPageContent({ data }: Readonly<{ data: Invocation }>) {
 		return data.postInvocation ?? '';
 	}, [data]);
 
-	const isMissingKeys = React.useMemo(() => {
-		if (publickey) {
-			return false;
+	function toggleTerminalVisibility(event: KeyboardEvent) {
+		if (event.ctrlKey && event.key === 'j') {
+			event.preventDefault();
+			setIsTerminalVisible((prev) => !prev);
 		}
-		return !data.publicKey || !data.secretKey;
-	}, [publickey, data.publicKey, data.secretKey]);
+	}
+
+	useEffect(() => {
+		window.addEventListener('keydown', toggleTerminalVisibility);
+
+		return () => {
+			window.removeEventListener('keydown', toggleTerminalVisibility);
+		};
+	}, []);
 
 	return (
 		<div
@@ -102,15 +110,18 @@ function InvocationPageContent({ data }: Readonly<{ data: Invocation }>) {
 				}
 			/>
 			{data.contractId && (
-				<Fragment>
+				<div
+					className="flex flex-col w-full h-full gap-2 overflow-hidden"
+					data-test="tabs-terminal-container "
+				>
 					<TabsContainer
 						data={data}
 						preInvocationValue={preInvocationValue}
 						postInvocationValue={postInvocationValue}
-						isMissingKeys={isMissingKeys}
+						setIsTerminalVisible={setIsTerminalVisible}
 					/>
-					<Terminal entries={contractResponses} />
-				</Fragment>
+					{isTerminalVisible && <Terminal entries={contractResponses} />}
+				</div>
 			)}
 		</div>
 	);

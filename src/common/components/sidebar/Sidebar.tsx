@@ -7,11 +7,38 @@ import StatusNetworkDialog from '../statusNetwork/statusNetworkDialog';
 import { Badge } from '../ui/badge';
 import UserButton from './UserButton';
 
+import { useStatusNetworkQuery } from '@/common/api/statusNetwork';
+import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
+
 export default function Sidebar() {
+	const { wallet } = useAuthProvider();
+	const { data, isLoading } = useStatusNetworkQuery();
+
 	const [openConnectWallet, setOpenConnectWallet] = useState(false);
 	const [openNetworkStatus, setOpenNetworkStatus] = useState(false);
 	const location = useLocation();
 	const currentRoute = location.pathname;
+
+	const wallets = [wallet.FUTURENET, wallet.MAINNET, wallet.TESTNET];
+	const nullWalletsCount = wallets.filter((w) => w === null).length;
+
+	let buttonColor = 'text-green-300';
+	if (nullWalletsCount >= 2) {
+		buttonColor = 'text-red-300';
+	} else if (nullWalletsCount > 0) {
+		buttonColor = 'text-orange-300';
+	}
+
+	let globeColor = 'text-green-300';
+	if (isLoading) {
+		globeColor = 'text-yellow-300';
+	} else if (data) {
+		const { futureNetwork, testNetwork, mainNetwork } = data;
+		if (!futureNetwork || !testNetwork || !mainNetwork) {
+			globeColor = 'text-red-300';
+		}
+	}
+
 	return (
 		<div
 			className="h-screen w-[80px] flex flex-col items-center justify-between bg-foreground dark:bg-background border-r dark:border-r-border py-4"
@@ -36,19 +63,20 @@ export default function Sidebar() {
 					>
 						<LibraryBig data-test="sidebar-btn-copy" />
 					</Link>
-					<Globe
-						className="cursor-pointer hover:text-primary"
-						onClick={() => setOpenNetworkStatus(true)}
-						data-test="sidebar-btn-network-status"
-					/>
-					<Wallet
-						className="cursor-pointer hover:text-primary"
-						onClick={() => setOpenConnectWallet(true)}
-						data-test="sidebar-btn-wallet"
-					/>
 				</div>
 			</div>
-			<div className="flex flex-col gap-2 mb-4">
+			<div className="flex flex-col items-center justify-center gap-4 mb-4">
+				<Globe
+					className={`text-gray-500 ${globeColor} transition-colors duration-300 cursor-pointer hover:text-primary active:text-primary`}
+					onClick={() => setOpenNetworkStatus(true)}
+					data-test="sidebar-btn-network-status"
+				/>
+
+				<Wallet
+					className={`text-gray-500 ${buttonColor}  transition-colors duration-300 cursor-pointer hover:text-primary active:text-primary`}
+					onClick={() => setOpenConnectWallet(true)}
+					data-test="sidebar-btn-wallet"
+				/>
 				<UserButton />
 			</div>
 			{openConnectWallet && (

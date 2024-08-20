@@ -1,7 +1,7 @@
 import { AtSign, Loader2 } from 'lucide-react';
 import { Fragment } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import AlertError from '@/common/components/Form/AlertError';
 import ErrorMessage from '@/common/components/Form/ErrorMessage';
@@ -22,11 +22,19 @@ function CreateAccount() {
 			password: '',
 		},
 	});
-	const { handleSignUp, statusState } = useAuthProvider();
+	const { handleSignUp, statusState, setStatusState } = useAuthProvider();
+	const navigate = useNavigate();
 
-	const onSubmit = async (values: { email: string; password: string }) => {
+	async function onSubmit(values: { email: string; password: string }) {
 		await handleSignUp(values.email, values.password);
-	};
+	}
+
+	function handleLoginClick() {
+		setStatusState('signIn', {
+			error: null,
+		});
+		navigate('/auth/login');
+	}
 
 	return (
 		<form
@@ -130,10 +138,8 @@ function CreateAccount() {
 				data-test="register-form-footer-info"
 			>
 				Already have an account?
-				<Button variant="link" asChild>
-					<Link to="/auth/login" data-test="register-form-footer-link">
-						Login
-					</Link>
+				<Button variant="link" onClick={handleLoginClick}>
+					Login
 				</Button>
 			</span>
 		</form>
