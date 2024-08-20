@@ -531,12 +531,9 @@ export function AuthProvider({
 				error: null,
 			});
 			try {
-				const email = cookieService.getCookie(StoredCookies.EMAIL);
-				if (!email) throw new Error('No email found');
 				const response = await authService.changePassword(
-					email,
-					oldPassword,
 					newPassword,
+					oldPassword,
 				);
 				if (response.success && response.statusCode === 200) {
 					toast({
