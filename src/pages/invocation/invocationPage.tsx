@@ -11,7 +11,9 @@ import ContractInput from '@/common/components/Input/ContractInput';
 import UploadWasmDialog from '@/common/components/Tabs/FunctionsTab/UploadWasmDialog';
 import TabsContainer from '@/common/components/Tabs/TabsContainer';
 import Terminal from '@/common/components/ui/Terminal';
+import useNetwork from '@/common/hooks/useNetwork';
 import { Invocation } from '@/common/types/invocation';
+import { NETWORK } from '@/common/types/soroban.enum';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 import useInvocation from '@/modules/invocation/hooks/useInvocation';
 
@@ -45,7 +47,7 @@ export default InvocationPage;
 function InvocationPageContent({ data }: Readonly<{ data: Invocation }>) {
 	const { mutate: editKeys } = useEditInvocationKeysMutation();
 
-	const [contractId, setContractId] = useState(data.contractId || '');
+	const [contractId, setContractId] = useState(data.contractId ?? '');
 
 	const { wallet, statusState, connectWallet } = useAuthProvider();
 	const publickey = wallet[data.network as keyof typeof wallet]?.publicKey;
@@ -69,6 +71,8 @@ function InvocationPageContent({ data }: Readonly<{ data: Invocation }>) {
 		isRunningInvocation,
 	} = useInvocation(data, wallet, connectWallet);
 
+	const { handleUpdateNetwork } = useNetwork(NETWORK.SOROBAN_FUTURENET);
+
 	const preInvocationValue = React.useMemo(() => {
 		return data.preInvocation ?? '';
 	}, [data]);
@@ -86,9 +90,11 @@ function InvocationPageContent({ data }: Readonly<{ data: Invocation }>) {
 
 	const [isModalOpen, setIsModalOpen] = React.useState(false);
 
-	const handleOpenUploadWasmModal = () => {
+	function handleOpenUploadWasmModal() {
+		if (data.network === 'AUTO_DETECT')
+			handleUpdateNetwork(NETWORK.SOROBAN_FUTURENET);
 		setIsModalOpen(true);
-	};
+	}
 
 	const handleCloseModal = () => {
 		setIsModalOpen(false);

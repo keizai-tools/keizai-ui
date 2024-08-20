@@ -16,6 +16,7 @@ function useNetwork(defaultNetwork: string) {
 			id: params.invocationId as string,
 		});
 		removeEventsFromStorage(params.invocationId as string);
+		setSelectNetwork(network);
 	}
 
 	return { selectNetwork, setSelectNetwork, handleUpdateNetwork };
