@@ -1,3 +1,4 @@
+import { Button } from '../ui/button';
 import EventsTab from './EventsTab/EventsTab';
 import FunctionsTab from './FunctionsTab/FunctionsTab';
 import PreInvocationTab from './PreInvocationTab/PreInvocationTab';
@@ -23,13 +24,14 @@ type TabsProps = {
 	data: Invocation;
 	preInvocationValue: string;
 	postInvocationValue: string;
-	isMissingKeys: boolean;
+	setIsTerminalVisible: (value: React.SetStateAction<boolean>) => void;
 };
 
 function TabsContainer({
 	data,
 	preInvocationValue,
 	postInvocationValue,
+	setIsTerminalVisible,
 }: Readonly<TabsProps>) {
 	const { setPreInvocationEditorValue, setPostInvocationEditorValue } =
 		useEditor(preInvocationValue, postInvocationValue);
@@ -37,10 +39,10 @@ function TabsContainer({
 	return (
 		<Tabs
 			defaultValue="functions"
-			className="flex-1"
+			className="w-full h-full overflow-hidden "
 			data-test="tabs-container"
 		>
-			<TabsList className="" data-test="tabs-list-container">
+			<TabsList data-test="tabs-list-container" className="m-2">
 				{Object.keys(tabs).map((tab) => {
 					return (
 						<TabsTrigger
@@ -53,26 +55,34 @@ function TabsContainer({
 					);
 				})}
 			</TabsList>
-			<TabsContent value="functions">
+			<Button
+				className="w-auto px-8 py-3 mx-2 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+				variant="outline"
+				onClick={() => setIsTerminalVisible((prev) => !prev)}
+				data-test="functions-tabs-console"
+			>
+				Console
+			</Button>
+			<TabsContent value="functions" className="w-full h-full">
 				<FunctionsTab
 					invocationId={data.id}
 					methods={data.methods}
 					selectedMethod={data.selectedMethod}
 				/>
 			</TabsContent>
-			<TabsContent value="preInvocateScript" className="h-[500px]">
+			<TabsContent value="preInvocateScript" className="w-full h-full">
 				<PreInvocationTab
 					preInvocationValue={preInvocationValue}
 					setPreInvocationValu={setPreInvocationEditorValue}
 				/>
 			</TabsContent>
-			<TabsContent value="tests" className="h-[500px]">
+			<TabsContent value="tests" className="w-full h-full">
 				<TestsTab
 					testsInvocationValue={postInvocationValue}
 					setTestsInvocationValue={setPostInvocationEditorValue}
 				/>
 			</TabsContent>
-			<TabsContent value="events">
+			<TabsContent value="events" className="w-full h-full">
 				<EventsTab />
 			</TabsContent>
 		</Tabs>

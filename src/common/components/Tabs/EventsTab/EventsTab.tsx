@@ -1,3 +1,5 @@
+import { Fragment } from 'react';
+
 import EventCard from './EventCard';
 import EventEmptyState from './EventEmptyState';
 
@@ -7,10 +9,10 @@ function EventsTab() {
 	const { contractEvents } = useContractEvents();
 
 	return (
-		<>
+		<Fragment>
 			{contractEvents.length > 0 ? (
 				<section
-					className="w-full h-[500px] overflow-hidden overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-1 scrollbar-track-background scrollbar-thumb-slate-700 scrollbar-thumb-rounded"
+					className="w-full h-full overflow-hidden overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-1 scrollbar-track-background scrollbar-thumb-slate-700 scrollbar-thumb-rounded"
 					data-test="events-tab-container"
 				>
 					{contractEvents.map((event) => (
@@ -20,7 +22,7 @@ function EventsTab() {
 			) : (
 				<EventEmptyState />
 			)}
-		</>
+		</Fragment>
 	);
 }
 

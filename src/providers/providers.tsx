@@ -9,7 +9,15 @@ import { Toaster } from '@/common/components/ui/toaster';
 import { ThemeProvider } from '@/config/theme/context/themeProvider';
 import { AuthProvider } from '@/modules/auth/context/authContext';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			refetchOnWindowFocus: false,
+			refetchOnReconnect: true,
+			refetchOnMount: true,
+		},
+	},
+});
 
 export default function Providers() {
 	return (

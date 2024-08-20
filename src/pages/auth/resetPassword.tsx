@@ -1,7 +1,7 @@
-import { ChevronRightSquare, Loader2 } from 'lucide-react';
+import { AtSign, ChevronRightSquare, Loader2 } from 'lucide-react';
 import { Fragment } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import AlertError from '@/common/components/Form/AlertError';
 import ErrorMessage from '@/common/components/Form/ErrorMessage';
@@ -19,7 +19,8 @@ export interface IPasswordReset {
 }
 
 function ResetPassword() {
-	const { handleResetPassword, statusState } = useAuthProvider();
+	const { handleResetPassword, statusState, setStatusState } =
+		useAuthProvider();
 
 	const {
 		control,
@@ -34,12 +35,28 @@ function ResetPassword() {
 			email: '',
 		},
 	});
-
-	const onSubmit = async (values: IPasswordReset) => {
+	const navigate = useNavigate();
+	async function onSubmit(values: IPasswordReset) {
 		const { code, newPassword, email } = values;
-		await handleResetPassword(email, newPassword, code);
-	};
+		console.log({
+			code,
+			newPassword,
+			email,
+			altMail: statusState.resetPassword.data,
+		});
+		await handleResetPassword(
+			newPassword,
+			code,
+			statusState.resetPassword.data ?? email,
+		);
+	}
 
+	function handleLoginClick() {
+		setStatusState('signIn', {
+			error: null,
+		});
+		navigate('/auth/login');
+	}
 	return (
 		<form
 			className="w-full max-w-[500px]"
@@ -52,38 +69,40 @@ function ResetPassword() {
 			>
 				Password Reset
 			</h1>
-			<div className="flex flex-col mb-4">
-				<div className="flex items-center px-3 bg-white border-2 rounded-md">
-					<ChevronRightSquare className="w-5 h-5 text-gray-400" />
-					<Controller
-						control={control}
-						name="code"
-						rules={{
-							required: AUTH_VALIDATIONS.CODE_REQUIRED,
-							pattern: {
-								value: /^\d{6}$/,
-								message: AUTH_VALIDATIONS.CODE_INVALID,
-							},
-						}}
-						render={({ field }) => (
-							<Input
-								className="pl-2 text-black bg-white border-none focus-visible:ring-0"
-								type="text"
-								placeholder="Code"
-								data-test="forgot-password-code"
-								{...field}
-							/>
-						)}
-					/>
+			{!statusState.resetPassword.data && (
+				<div className="flex flex-col mb-4">
+					<div className="flex items-center px-3 bg-white border-2 rounded-md">
+						<AtSign className="w-5 h-5 text-gray-400" />
+						<Controller
+							control={control}
+							name="email"
+							rules={{
+								required: AUTH_VALIDATIONS.EMAIL_REQUIRED,
+								pattern: {
+									value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
+									message: AUTH_VALIDATIONS.EMAIL_INVALID,
+								},
+							}}
+							render={({ field }) => (
+								<Input
+									className="pl-2 text-black bg-white border-none focus-visible:ring-0"
+									type="text"
+									placeholder="Email"
+									data-test="recovery-password-email-send-code"
+									{...field}
+								/>
+							)}
+						/>
+					</div>
+					{errors.email && (
+						<ErrorMessage
+							message={errors.email.message as string}
+							testName="recovery-password-error"
+							styles="text-sm"
+						/>
+					)}
 				</div>
-				{errors.code && (
-					<ErrorMessage
-						message={errors.code.message as string}
-						testName="forgot-password-code-error"
-						styles="text-sm"
-					/>
-				)}
-			</div>
+			)}
 			<div className="flex flex-col mb-4">
 				<Controller
 					control={control}
@@ -114,6 +133,7 @@ function ResetPassword() {
 			</div>
 			<div className="flex flex-col mb-4">
 				<Controller
+					control={control}
 					name="confirmPassword"
 					rules={{
 						required: AUTH_VALIDATIONS.CONFIRM_PASSWORD_REQUIRED,
@@ -152,9 +172,41 @@ function ResetPassword() {
 						/>
 					)}
 			</div>
+			<div className="flex flex-col mb-4">
+				<div className="flex items-center px-3 bg-white border-2 rounded-md">
+					<ChevronRightSquare className="w-5 h-5 text-gray-400" />
+					<Controller
+						control={control}
+						name="code"
+						rules={{
+							required: AUTH_VALIDATIONS.CODE_REQUIRED,
+							pattern: {
+								value: /^\d{6}$/,
+								message: AUTH_VALIDATIONS.CODE_INVALID,
+							},
+						}}
+						render={({ field }) => (
+							<Input
+								className="pl-2 text-black bg-white border-none focus-visible:ring-0"
+								type="text"
+								placeholder="Code"
+								data-test="forgot-password-code"
+								{...field}
+							/>
+						)}
+					/>
+				</div>
+				{errors.code && (
+					<ErrorMessage
+						message={errors.code.message as string}
+						testName="forgot-password-code-error"
+						styles="text-sm"
+					/>
+				)}
+			</div>
 			<Button
 				type="submit"
-				className="w-full py-2 mt-8 mb-2 font-semibold text-black rounded-md"
+				className="w-full py-2 mt-4 mb-2 font-semibold text-black rounded-md"
 				data-test="forgot-password-btn-submit"
 				disabled={statusState.resetPassword.loading}
 			>
@@ -172,14 +224,8 @@ function ResetPassword() {
 				data-test="forgot-password-footer-info"
 			>
 				<span className="text-sm ">Already have an account?</span>
-				<Button variant="link" asChild>
-					<Link
-						to="/auth/login"
-						className="text-primary"
-						data-test="forgot-password-footer-link"
-					>
-						Login
-					</Link>
+				<Button variant="link" onClick={handleLoginClick}>
+					Login
 				</Button>
 			</div>
 		</form>

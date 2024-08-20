@@ -83,7 +83,7 @@ class AuthService implements IAuthService {
 		config?: AxiosRequestConfig,
 	) {
 		return await this.api.post<ISuccessfulAuthenticationResponse>(
-			'/auth/reset-password',
+			'/auth/confirm-password',
 			{ email, newPassword, code },
 			config,
 		);

@@ -1,7 +1,7 @@
 import { AtSign, Loader2 } from 'lucide-react';
 import { Fragment } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import ErrorMessage from '@/common/components/Form/ErrorMessage';
 import { Button } from '@/common/components/ui/button';
@@ -10,7 +10,8 @@ import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 import { AUTH_VALIDATIONS } from '@/modules/auth/message/auth-messages';
 
 function RecoverPassword() {
-	const { handleForgotPassword, statusState } = useAuthProvider();
+	const { handleForgotPassword, statusState, setStatusState } =
+		useAuthProvider();
 	const {
 		control,
 		handleSubmit,
@@ -21,9 +22,18 @@ function RecoverPassword() {
 		},
 	});
 
-	const onSubmit = async (values: { email: string }) => {
+	async function onSubmit(values: { email: string }) {
 		await handleForgotPassword(values.email);
-	};
+	}
+
+	const navigate = useNavigate();
+
+	function handleLoginClick() {
+		setStatusState('signIn', {
+			error: null,
+		});
+		navigate('/auth/login');
+	}
 
 	return (
 		<form
@@ -71,7 +81,7 @@ function RecoverPassword() {
 			</div>
 			<Button
 				type="submit"
-				className="py-2 mt-8 mb-2 font-semibold text-black rounded-md"
+				className="py-2 mt-4 mb-2 font-semibold text-black rounded-md"
 				data-test="recovery-password-btn-submit"
 				disabled={statusState.forgotPassword.loading}
 			>
@@ -89,10 +99,8 @@ function RecoverPassword() {
 				data-test="register-form-footer-info"
 			>
 				Already have an account?
-				<Button variant="link" asChild>
-					<Link to="/auth/login" data-test="register-form-footer-link">
-						Login
-					</Link>
+				<Button variant="link" onClick={handleLoginClick}>
+					Login
 				</Button>
 			</span>
 		</form>
