@@ -24,12 +24,14 @@ type TabsProps = {
 	preInvocationValue: string;
 	postInvocationValue: string;
 	isMissingKeys: boolean;
+	handleOpenUploadWasmModal: () => void;
 };
 
 function TabsContainer({
 	data,
 	preInvocationValue,
 	postInvocationValue,
+	handleOpenUploadWasmModal,
 }: Readonly<TabsProps>) {
 	const { setPreInvocationEditorValue, setPostInvocationEditorValue } =
 		useEditor(preInvocationValue, postInvocationValue);
@@ -58,6 +60,7 @@ function TabsContainer({
 					invocationId={data.id}
 					methods={data.methods}
 					selectedMethod={data.selectedMethod}
+					handleOpenUploadWasmModal={handleOpenUploadWasmModal}
 				/>
 			</TabsContent>
 			<TabsContent value="preInvocateScript" className="h-[500px]">

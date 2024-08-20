@@ -209,7 +209,7 @@ export function useEditNetworkMutation() {
 			});
 		},
 		onSuccess: (_, { id }) => {
-			queryClient.invalidateQueries({ queryKey: ['invocation', id] });
+			// queryClient.invalidateQueries({ queryKey: ['invocation', id] });
 			toast({
 				title: 'Successfully!',
 				description: 'Network has been changed',
@@ -281,3 +281,55 @@ export function useEditPreInvocationMutation() {
 	});
 	return mutation;
 }
+
+export const useUploadWasmMutation = () => {
+	const queryClient = useQueryClient();
+	const mutation = useMutation({
+		mutationFn: async ({
+			formData,
+			id,
+		}: {
+			formData: FormData;
+			id: string;
+		}) => {
+			const response = await apiService?.post<IApiResponse<Invocation>>(
+				`invocation/${id}/upload/wasm`,
+				formData,
+			);
+			return response.contractId || '';
+		},
+		onSuccess: (_, { id }) => {
+			console.log(_, id);
+			const newContractId = id;
+			queryClient.invalidateQueries({ queryKey: ['invocation'] });
+			return newContractId;
+		},
+	});
+	return mutation;
+};
+
+export const useEditContractIdMutation = () => {
+	const queryClient = useQueryClient();
+
+	const mutation = useMutation({
+		mutationFn: async ({
+			id,
+			contractId,
+		}: {
+			id: string;
+			contractId: string;
+		}) =>
+			apiService
+				?.patch<IApiResponse<Invocation>>('/invocation', {
+					id,
+					contractId,
+				})
+				.then((res) => res.payload),
+		onSuccess: (_, { id, contractId }) => {
+			queryClient.invalidateQueries({ queryKey: ['invocation', id] });
+			queryClient.invalidateQueries({ queryKey: ['invocation', contractId] });
+		},
+	});
+
+	return mutation;
+};

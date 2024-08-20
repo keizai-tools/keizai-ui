@@ -16,6 +16,7 @@ function ContractInput({
 	loadContract,
 	runInvocation,
 	method,
+	handleOpenUploadWasmModal,
 }: Readonly<{
 	defaultValue: string;
 	defaultNetwork: string;
@@ -23,6 +24,7 @@ function ContractInput({
 	loadContract: (contractId: string) => void;
 	runInvocation: () => void;
 	method?: Method;
+	handleOpenUploadWasmModal: () => void;
 }>) {
 	const [contractId, setContractId] = React.useState(defaultValue);
 
@@ -109,6 +111,21 @@ function ContractInput({
 							testName="input-contract-name"
 						/>
 					</EnvironmentDropdownContainer>
+				)}
+				{!contractId && (
+					<Button
+						data-test="contract-input-btn-load"
+						className="transition-all mr-2"
+						onClick={handleOpenUploadWasmModal}
+					>
+						{!loading ? (
+							'UPLOAD'
+						) : (
+							<div className="flex gap-1 items-center">
+								<Loader className="animate-spin" size="14" /> Uploading
+							</div>
+						)}
+					</Button>
 				)}
 				{!defaultValue ? (
 					<Button

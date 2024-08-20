@@ -13,15 +13,19 @@ import { useEditSelectedMethodMutation } from '@/common/api/invocations';
 import { Invocation } from '@/common/types/invocation';
 import { cleanAndCapitalize } from '@/lib/utils';
 
+interface FunctionsTabProps {
+	invocationId: string;
+	methods: Invocation['methods'];
+	selectedMethod: Invocation['selectedMethod'];
+	handleOpenUploadWasmModal: () => void;
+}
+
 const FunctionsTab = ({
 	invocationId,
 	methods,
 	selectedMethod,
-}: {
-	invocationId: string;
-	methods: Invocation['methods'];
-	selectedMethod: Invocation['selectedMethod'];
-}) => {
+	handleOpenUploadWasmModal,
+}: FunctionsTabProps) => {
 	const { mutate: selectMethod } = useEditSelectedMethodMutation();
 
 	return (
@@ -96,7 +100,14 @@ const FunctionsTab = ({
 							className="text-xl text-slate-400"
 							data-test="tabs-content-contract-description"
 						>
-							Input your contract address above to begin.
+							Input your contract address above to begin or{' '}
+							<span
+								className="text-blue-500 cursor-pointer"
+								onClick={handleOpenUploadWasmModal}
+							>
+								upload your wasm file
+							</span>
+							.
 						</span>
 					</div>
 				</div>
