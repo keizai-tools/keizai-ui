@@ -38,18 +38,6 @@ class AuthService implements IAuthService {
 			config,
 		);
 	}
-	async confirmPassword(
-		email: string,
-		newPassword: string,
-		code: string,
-		config?: AxiosRequestConfig,
-	) {
-		return await this.api.post<ISuccessfulAuthenticationResponse>(
-			'/auth/confirm-password',
-			{ email, newPassword, code },
-			config,
-		);
-	}
 	async resendConfirmationCode(email: string, config?: AxiosRequestConfig) {
 		return await this.api.post<ISuccessfulAuthenticationResponse>(
 			'/auth/resend-confirmation-code',
@@ -88,16 +76,14 @@ class AuthService implements IAuthService {
 			config,
 		);
 	}
-
 	async changePassword(
-		email: string,
-		oldPassword: string,
-		newPassword: string,
+		proposedPassword: string,
+		previousPassword: string,
 		config?: AxiosRequestConfig,
 	) {
 		return await this.api.patch<ISuccessfulAuthenticationResponse>(
 			'/auth/change-password',
-			{ email, oldPassword, newPassword },
+			{ proposedPassword, previousPassword },
 			config,
 		);
 	}

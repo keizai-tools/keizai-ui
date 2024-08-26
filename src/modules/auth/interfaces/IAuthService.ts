@@ -21,7 +21,7 @@ export interface IAuthService {
 		code: string,
 		config?: AxiosRequestConfig,
 	) => Promise<ISuccessfulAuthenticationResponse>;
-	confirmPassword: (
+	resetPassword: (
 		username: string,
 		newPassword: string,
 		code: string,
@@ -41,9 +41,8 @@ export interface IAuthService {
 		config?: AxiosRequestConfig,
 	) => Promise<IRefreshSessionResponse>;
 	changePassword(
-		email: string,
-		oldPassword: string,
-		newPassword: string,
+		proposedPassword: string,
+		previousPassword: string,
 		config?: AxiosRequestConfig,
 	): Promise<ISuccessfulAuthenticationResponse>;
 }
