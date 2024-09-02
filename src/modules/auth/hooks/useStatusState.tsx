@@ -4,7 +4,7 @@ import {
 	SET_STATUS,
 	Action,
 	IStatusState,
-	type IStatus,
+	IStatus,
 } from '../interfaces/IStatusState';
 
 const initial = {

@@ -38,12 +38,7 @@ function ResetPassword() {
 	const navigate = useNavigate();
 	async function onSubmit(values: IPasswordReset) {
 		const { code, newPassword, email } = values;
-		console.log({
-			code,
-			newPassword,
-			email,
-			altMail: statusState.resetPassword.data,
-		});
+
 		await handleResetPassword(
 			newPassword,
 			code,
