@@ -12,7 +12,7 @@ function EventsTab() {
 		<Fragment>
 			{contractEvents.length > 0 ? (
 				<section
-					className="w-full h-full overflow-hidden overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-1 scrollbar-track-background scrollbar-thumb-slate-700 scrollbar-thumb-rounded"
+					className="h-[90%] overflow-hidden overflow-y-auto scrollbar scrollbar-w-2 scrollbar-h-1 scrollbar-track-background scrollbar-thumb-slate-700 scrollbar-thumb-rounded"
 					data-test="events-tab-container"
 				>
 					{contractEvents.map((event) => (

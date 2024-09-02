@@ -68,7 +68,12 @@ function Terminal({ entries }: Readonly<{ entries: TerminalEntry[] }>) {
 								{entry.title}
 								<span className="ml-4" data-test="terminal-entry-message">
 									{entry.isError
-										? entry.message
+										? entry.message instanceof String ||
+										  typeof entry.message === 'string'
+											? entry.message
+													?.split('\n')
+													.map((line, index) => <div key={index}>{line}</div>)
+											: entry.message
 										: JSON.stringify(entry.message, null, 2)}
 								</span>
 								{entry.postInvocation}
