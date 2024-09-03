@@ -51,6 +51,16 @@ export class InvocationService {
 			});
 	}
 
+	async getInvocationByCollectionId() {
+		return await apiService
+			?.get<IApiResponse<unknown>>(
+				`/collection/${this.collectionId}/invocations`,
+			)
+			.then((res) => {
+				return res.payload;
+			});
+	}
+
 	getInvocationResponse() {
 		return this.invocationResponse;
 	}
