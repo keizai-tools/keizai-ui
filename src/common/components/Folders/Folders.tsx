@@ -16,6 +16,8 @@ function Folders() {
 		id: params.collectionId,
 	});
 
+	const currentRoute = location.pathname;
+
 	const { mutate, isPending } = useCreateFolderMutation();
 	const navigate = useNavigate();
 
@@ -95,6 +97,21 @@ function Folders() {
 					</NewEntityDialog>
 				</div>
 				{renderFoldersContent()}
+				<Link
+					data-test="invocations-by-collection-btn-link"
+					to={`/collection/${params.collectionId}/invocations`}
+				>
+					<h4
+						data-test="invocations-header-title"
+						className={`text-lg font-bold ${
+							currentRoute ===
+								`/collection/${params.collectionId}/invocations` &&
+							'text-primary'
+						}`}
+					>
+						Invocations
+					</h4>
+				</Link>
 			</div>
 			<div className="w-full mb-4 text-base font-semibold text-center hover:underline">
 				<Link
