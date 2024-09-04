@@ -1,4 +1,4 @@
-import type { AxiosHeaderValue } from 'axios';
+import { AxiosHeaderValue } from 'axios';
 
 export interface IHTTPRequestService<C = unknown> {
 	get: <T>(url: string, config?: C) => Promise<T>;

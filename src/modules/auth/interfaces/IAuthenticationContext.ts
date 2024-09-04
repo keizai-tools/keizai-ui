@@ -1,6 +1,6 @@
-import { IStatusState, type IStatus } from './IStatusState';
+import { IStatusState, IStatus } from './IStatusState';
 
-import { NETWORK } from '@/common/types/soroban.enum';
+import { NETWORK, BACKEND_NETWORK } from '@/common/types/soroban.enum';
 import { WalletType } from '@/modules/signer/constants/enums';
 
 export interface IAuthenticationContext {
@@ -35,9 +35,10 @@ export interface IAuthenticationContext {
 }
 
 export interface IWallet {
-	[NETWORK.SOROBAN_MAINNET]: IWalletContent | null;
-	[NETWORK.SOROBAN_TESTNET]: IWalletContent | null;
-	[NETWORK.SOROBAN_FUTURENET]: IWalletContent | null;
+	[BACKEND_NETWORK.SOROBAN_MAINNET]: IWalletContent | null;
+	[BACKEND_NETWORK.SOROBAN_TESTNET]: IWalletContent | null;
+	[BACKEND_NETWORK.SOROBAN_FUTURENET]: IWalletContent | null;
+	[BACKEND_NETWORK.AUTO_DETECT]: null;
 }
 
 export interface IWalletContent {

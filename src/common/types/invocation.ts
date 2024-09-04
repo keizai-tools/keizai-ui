@@ -1,5 +1,6 @@
 import { EventResponse } from './contract-events';
 import { Method } from './method';
+import { BACKEND_NETWORK } from './soroban.enum';
 
 export type Invocation = {
 	id: string;
@@ -9,7 +10,7 @@ export type Invocation = {
 		id: string;
 		name: string;
 	};
-	network: string;
+	network: BACKEND_NETWORK;
 	methods?: Method[];
 	selectedMethod?: Method;
 	parameters?: { key: string; value: string }[] | null;

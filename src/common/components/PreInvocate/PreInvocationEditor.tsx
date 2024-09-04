@@ -23,8 +23,6 @@ function PreInvocationEditor({
 		<div className="flex h-full">
 			<MonacoEditor
 				data-test="editor"
-				height={'100%'}
-				width={'80%'}
 				defaultLanguage="javascript"
 				onChange={handleEditorChange}
 				theme="vs-dark"

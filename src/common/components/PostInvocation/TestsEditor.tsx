@@ -11,10 +11,10 @@ import {
 function TestsEditor({
 	postInvocationValue,
 	setPostInvocationValue,
-}: {
+}: Readonly<{
 	postInvocationValue: string;
 	setPostInvocationValue: Dispatch<SetStateAction<string>>;
-}) {
+}>) {
 	function handleEditorChange(value: string | undefined) {
 		setPostInvocationValue(value ?? '');
 	}
@@ -24,7 +24,7 @@ function TestsEditor({
 			<MonacoEditor
 				data-test="editor"
 				height={'100%'}
-				width={'80%'}
+				width={'100%'}
 				defaultLanguage="javascript"
 				onChange={handleEditorChange}
 				theme="vs-dark"
