@@ -27,21 +27,21 @@ function useInvocations(
 	const [isRunningInvocation, setIsRunningInvocation] = useState(false);
 	const { collectionId } = useParams();
 
-	const Keizai = useMemo(
+	const invocationService = useMemo(
 		() => new InvocationService(collectionId ?? ''),
 		[collectionId],
 	);
 
 	const runKeizaiService = useCallback(
 		async (serviceToRun: string, invocation?: string) => {
-			if (invocation) Keizai.invocationResponse = invocation;
+			if (invocation) invocationService.invocationResponse = invocation;
 			const contextFunction = new Function(
 				'Keizai',
 				`return (async () => { ${serviceToRun} })();`,
-			).bind(null, Keizai);
+			).bind(null, invocationService);
 			return contextFunction();
 		},
-		[Keizai],
+		[invocationService],
 	);
 
 	const handleRunService = useCallback(
