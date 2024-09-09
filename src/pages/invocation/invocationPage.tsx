@@ -1,6 +1,8 @@
 import { Loader } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
+
+import InvocationCTAPage from './invocationCTAPage';
 
 import {
 	useEditInvocationKeysMutation,
@@ -8,10 +10,15 @@ import {
 } from '@/common/api/invocations';
 import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
 import ContractInput from '@/common/components/Input/ContractInput';
+import UploadWasmDialog from '@/common/components/Tabs/FunctionsTab/UploadWasmDialog';
 import TabsContainer from '@/common/components/Tabs/TabsContainer';
 import Terminal from '@/common/components/ui/Terminal';
+import useNetwork from '@/common/hooks/useNetwork';
 import { Invocation } from '@/common/types/invocation';
+import { BACKEND_NETWORK, NETWORK } from '@/common/types/soroban.enum';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
+import { IWallet } from '@/modules/auth/interfaces/IAuthenticationContext';
+import { IStatusState } from '@/modules/auth/interfaces/IStatusState';
 import useInvocation from '@/modules/invocation/hooks/useInvocation';
 
 function InvocationPage() {
@@ -19,6 +26,36 @@ function InvocationPage() {
 	const { data, isLoading, isRefetching, error } = useInvocationQuery({
 		id: params.invocationId,
 	});
+
+	const [loading, setLoading] = useState(false);
+	const { mutate: editKeys } = useEditInvocationKeysMutation();
+	const { wallet, statusState, connectWallet } = useAuthProvider();
+
+	useEffect(() => {
+		if (data?.contractId && data?.methods?.length) {
+			setLoading(false);
+		}
+	}, [data, data?.contractId, setLoading]);
+
+	useEffect(() => {
+		if (data && wallet[data.network as keyof typeof wallet]) {
+			editKeys({
+				id: data.id,
+				publicKey: wallet[data.network as keyof typeof wallet]?.publicKey ?? '',
+				secretKey:
+					wallet[data.network as keyof typeof wallet]?.privateKey ?? '',
+				network: data.network,
+			});
+		}
+	}, [
+		data,
+		data?.contractId,
+		data?.id,
+		data?.network,
+		editKeys,
+		setLoading,
+		wallet,
+	]);
 
 	if (isLoading || isRefetching) {
 		return (
@@ -36,27 +73,38 @@ function InvocationPage() {
 		return null;
 	}
 
-	return <InvocationPageContent data={data} />;
+	return (
+		<InvocationPageContent
+			data={data}
+			setLoading={setLoading}
+			wallet={wallet}
+			connectWallet={connectWallet}
+			statusState={statusState}
+			loading={loading}
+		/>
+	);
 }
 
 export default InvocationPage;
 
-function InvocationPageContent({ data }: Readonly<{ data: Invocation }>) {
-	const { mutate: editKeys } = useEditInvocationKeysMutation();
+function InvocationPageContent({
+	data,
+	setLoading,
+	wallet,
+	loading,
+	connectWallet,
+	statusState,
+}: Readonly<{
+	loading: boolean;
+	data: Invocation;
+	wallet: IWallet;
+	statusState: IStatusState;
+	connectWallet: (network: Partial<NETWORK>) => Promise<void>;
+	setLoading: (loading: boolean) => void;
+}>) {
+	const { handleUpdateNetwork } = useNetwork(false);
 	const [isTerminalVisible, setIsTerminalVisible] = useState(true);
-
-	const { wallet, statusState, connectWallet } = useAuthProvider();
-
-	useEffect(() => {
-		if (wallet[data.network as keyof typeof wallet]) {
-			editKeys({
-				id: data.id,
-				publicKey: wallet[data.network as keyof typeof wallet]?.publicKey ?? '',
-				secretKey:
-					wallet[data.network as keyof typeof wallet]?.privateKey ?? '',
-			});
-		}
-	}, [data.id, data.network, editKeys, wallet]);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const {
 		handleLoadContract,
@@ -74,6 +122,17 @@ function InvocationPageContent({ data }: Readonly<{ data: Invocation }>) {
 		return data.postInvocation ?? '';
 	}, [data]);
 
+	function handleOpenUploadWasmModal() {
+		if (data.network === BACKEND_NETWORK.AUTO_DETECT)
+			handleUpdateNetwork(NETWORK.SOROBAN_FUTURENET);
+		setIsModalOpen(true);
+	}
+
+	function handleCloseModal() {
+		handleUpdateNetwork(BACKEND_NETWORK.AUTO_DETECT);
+		setIsModalOpen(false);
+	}
+
 	function toggleTerminalVisibility(event: KeyboardEvent) {
 		if (event.ctrlKey && event.key === 'j') {
 			event.preventDefault();
@@ -90,39 +149,55 @@ function InvocationPageContent({ data }: Readonly<{ data: Invocation }>) {
 	}, []);
 
 	return (
-		<div
-			className="relative flex flex-col w-full max-h-screen gap-4 p-3 overflow-hidden"
-			data-test="invocation-section-container"
-		>
-			<Breadcrumb
-				contractName="Collection"
-				folderName={data.folder?.name ?? ''}
-				contractInvocationName={data.name}
+		<Fragment>
+			<div
+				className="relative flex flex-col w-full max-h-screen gap-4 p-3 overflow-hidden"
+				data-test="invocation-section-container"
+			>
+				<Breadcrumb
+					contractName="Collection"
+					folderName={data.folder?.name ?? ''}
+					contractInvocationName={data.name}
+				/>
+				<ContractInput
+					defaultValue={data.contractId ?? ''}
+					defaultNetwork={data.network}
+					loadContract={handleLoadContract}
+					runInvocation={handleRunInvocation}
+					method={data.selectedMethod}
+					loading={
+						isLoadingContract ||
+						isRunningInvocation ||
+						statusState.wallet.loading
+					}
+					handleOpenUploadWasmModal={handleOpenUploadWasmModal}
+				/>
+				{data.contractId ? (
+					<div
+						className="flex flex-col w-full h-full gap-2 overflow-hidden"
+						data-test="tabs-terminal-container "
+					>
+						<TabsContainer
+							data={data}
+							preInvocationValue={preInvocationValue}
+							postInvocationValue={postInvocationValue}
+							setIsTerminalVisible={setIsTerminalVisible}
+						/>
+						{isTerminalVisible && <Terminal entries={contractResponses} />}
+					</div>
+				) : (
+					<InvocationCTAPage />
+				)}
+			</div>
+			<UploadWasmDialog
+				open={isModalOpen}
+				onOpenChange={handleCloseModal}
+				data={data}
+				handleLoadContract={handleLoadContract}
+				wallet={wallet[data.network as keyof typeof wallet]}
+				setLoading={setLoading}
+				loading={loading}
 			/>
-			<ContractInput
-				defaultValue={data.contractId ?? ''}
-				defaultNetwork={data.network}
-				loadContract={handleLoadContract}
-				runInvocation={handleRunInvocation}
-				method={data.selectedMethod}
-				loading={
-					isLoadingContract || isRunningInvocation || statusState.wallet.loading
-				}
-			/>
-			{data.contractId && (
-				<div
-					className="flex flex-col w-full h-full gap-2 overflow-hidden"
-					data-test="tabs-terminal-container "
-				>
-					<TabsContainer
-						data={data}
-						preInvocationValue={preInvocationValue}
-						postInvocationValue={postInvocationValue}
-						setIsTerminalVisible={setIsTerminalVisible}
-					/>
-					{isTerminalVisible && <Terminal entries={contractResponses} />}
-				</div>
-			)}
-		</div>
+		</Fragment>
 	);
 }

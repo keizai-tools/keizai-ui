@@ -14,7 +14,6 @@ export default async function signerConnectWallet(
 		const origin = getUrl(network);
 		if (!origin) return null;
 		const url = `${origin}/connect`;
-
 		const {
 			message: { publicKey, wallet },
 		} = await messageHandler<IConnectMessage>({
@@ -27,11 +26,11 @@ export default async function signerConnectWallet(
 			publicKey,
 			wallet,
 		};
-	} catch (err: unknown) {
-		if (typeof err === 'string') {
-			throw new SignerError(err);
+	} catch (error: unknown) {
+		if (typeof error === 'string') {
+			throw new SignerError(error);
 		}
 
-		throw err;
+		throw error;
 	}
 }
