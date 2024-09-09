@@ -16,6 +16,7 @@ function ContractInput({
 	loadContract,
 	runInvocation,
 	method,
+	hideRunButton = false,
 }: Readonly<{
 	defaultValue: string;
 	defaultNetwork: string;
@@ -23,6 +24,7 @@ function ContractInput({
 	loadContract: (contractId: string) => void;
 	runInvocation: () => void;
 	method?: Method;
+	hideRunButton?: boolean;
 }>) {
 	const [contractId, setContractId] = React.useState(defaultValue);
 
@@ -110,6 +112,7 @@ function ContractInput({
 						/>
 					</EnvironmentDropdownContainer>
 				)}
+
 				{!defaultValue ? (
 					<Button
 						data-test="contract-input-btn-load"
@@ -126,22 +129,24 @@ function ContractInput({
 						)}
 					</Button>
 				) : (
-					<Button
-						data-test="contract-input-btn-load"
-						className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-						onClick={runInvocation}
-						type="button"
-						disabled={loading || !method}
-					>
-						{!loading ? (
-							'RUN'
-						) : (
-							<div className="flex items-center gap-2">
-								<Loader className="w-auto font-bold animate-spin" size="20" />
-								<p>Running</p>
-							</div>
-						)}
-					</Button>
+					!hideRunButton && (
+						<Button
+							data-test="contract-input-btn-load"
+							className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+							onClick={runInvocation}
+							type="button"
+							disabled={loading || !method}
+						>
+							{!loading ? (
+								'RUN'
+							) : (
+								<div className="flex items-center gap-2">
+									<Loader className="w-auto font-bold animate-spin" size="20" />
+									<p>Running</p>
+								</div>
+							)}
+						</Button>
+					)
 				)}
 			</div>
 			{showEditContractDialog && (
