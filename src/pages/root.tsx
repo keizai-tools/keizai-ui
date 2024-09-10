@@ -7,15 +7,15 @@ import Sidebar from '@/common/components/sidebar/Sidebar';
 import SidebarV2 from '@/common/components/sidebar/SidebarV2';
 
 export default function Root() {
-	const flags = useFlags(['teams']);
+  const flags = useFlags(['teams']);
 
-	return (
-		<main className="flex min-h-screen bg-background">
-			{flags.teams.enabled ? <SidebarV2 /> : <Sidebar />}
-			<AppLoader>
-				<Outlet />
-				<FeedbackPopupButton />
-			</AppLoader>
-		</main>
-	);
+  return (
+    <main className="flex min-h-screen bg-background">
+      {flags.teams.enabled ? <SidebarV2 /> : <Sidebar />}
+      <AppLoader>
+        <Outlet />
+        <FeedbackPopupButton />
+      </AppLoader>
+    </main>
+  );
 }

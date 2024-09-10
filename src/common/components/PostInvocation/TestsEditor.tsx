@@ -4,42 +4,42 @@ import { Dispatch, SetStateAction } from 'react';
 import EditorHelpers from '../PreInvocate/EditorHelpers';
 
 import {
-	editorTestsHelpers,
-	editorTestsHelpersDescriptions,
+  editorTestsHelpers,
+  editorTestsHelpersDescriptions,
 } from '@/common/constants/editor-helpers';
 
 function TestsEditor({
-	postInvocationValue,
-	setPostInvocationValue,
+  postInvocationValue,
+  setPostInvocationValue,
 }: Readonly<{
-	postInvocationValue: string;
-	setPostInvocationValue: Dispatch<SetStateAction<string>>;
+  postInvocationValue: string;
+  setPostInvocationValue: Dispatch<SetStateAction<string>>;
 }>) {
-	function handleEditorChange(value: string | undefined) {
-		setPostInvocationValue(value ?? '');
-	}
+  function handleEditorChange(value: string | undefined) {
+    setPostInvocationValue(value ?? '');
+  }
 
-	return (
-		<div className="flex h-full">
-			<MonacoEditor
-				data-test="editor"
-				height={'100%'}
-				width={'100%'}
-				defaultLanguage="javascript"
-				onChange={handleEditorChange}
-				theme="vs-dark"
-				defaultValue={postInvocationValue}
-				value={postInvocationValue}
-			/>
-			<EditorHelpers
-				setEditorValue={setPostInvocationValue}
-				title="	Post invocations are written in Javascript, and are run after the
+  return (
+    <div className="flex h-full">
+      <MonacoEditor
+        data-test="editor"
+        height={'100%'}
+        width={'100%'}
+        defaultLanguage="javascript"
+        onChange={handleEditorChange}
+        theme="vs-dark"
+        defaultValue={postInvocationValue}
+        value={postInvocationValue}
+      />
+      <EditorHelpers
+        setEditorValue={setPostInvocationValue}
+        title="	Post invocations are written in Javascript, and are run after the
 				invocation."
-				editorHelpers={editorTestsHelpers}
-				editorHelpersDescriptions={editorTestsHelpersDescriptions}
-			/>
-		</div>
-	);
+        editorHelpers={editorTestsHelpers}
+        editorHelpersDescriptions={editorTestsHelpersDescriptions}
+      />
+    </div>
+  );
 }
 
 export default TestsEditor;

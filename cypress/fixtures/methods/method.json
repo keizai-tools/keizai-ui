@@ -1,22 +1,22 @@
 {
-	"name": "inc_by",
-	"inputs": [
-		{
-			"name": "increment",
-			"type": "SC_SPEC_TYPE_U32"
-		}
-	],
-	"outputs": [
-		{
-			"type": "SC_SPEC_TYPE_U32"
-		}
-	],
-	"params": [
-		{
-			"name": "increment",
-			"value": 1
-		}
-	],
-	"docs": "Increment by a specified integer.",
-	"id": "726a37e7-0abd-4469-b9ed-3a06bf1c75c7"
+  "name": "inc_by",
+  "inputs": [
+    {
+      "name": "increment",
+      "type": "SC_SPEC_TYPE_U32"
+    }
+  ],
+  "outputs": [
+    {
+      "type": "SC_SPEC_TYPE_U32"
+    }
+  ],
+  "params": [
+    {
+      "name": "increment",
+      "value": 1
+    }
+  ],
+  "docs": "Increment by a specified integer.",
+  "id": "726a37e7-0abd-4469-b9ed-3a06bf1c75c7"
 }

@@ -5,20 +5,20 @@ import { EditorTab } from '../Editor/EditorTab';
 import { customKeizaiToTests } from '../Editor/constant/customKeizaiEditor';
 
 function TestsTab({
-	testsInvocationValue,
-	setTestsInvocationValue,
+  testsInvocationValue,
+  setTestsInvocationValue,
 }: {
-	testsInvocationValue: string;
-	setTestsInvocationValue: Dispatch<SetStateAction<string>>;
+  testsInvocationValue: string;
+  setTestsInvocationValue: Dispatch<SetStateAction<string>>;
 }) {
-	return (
-		<EditorTab customKeizaiEditor={customKeizaiToTests}>
-			<TestsEditor
-				setPostInvocationValue={setTestsInvocationValue}
-				postInvocationValue={testsInvocationValue}
-			/>
-		</EditorTab>
-	);
+  return (
+    <EditorTab customKeizaiEditor={customKeizaiToTests}>
+      <TestsEditor
+        setPostInvocationValue={setTestsInvocationValue}
+        postInvocationValue={testsInvocationValue}
+      />
+    </EditorTab>
+  );
 }
 
 export default TestsTab;

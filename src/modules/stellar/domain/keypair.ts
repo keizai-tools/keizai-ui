@@ -1,4 +1,4 @@
 export interface IKeypair {
-	publicKey?: string;
-	secretKey?: string;
+  publicKey?: string;
+  secretKey?: string;
 }
