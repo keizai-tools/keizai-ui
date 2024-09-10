@@ -20,9 +20,16 @@ export default function InvocationByCollection() {
   const { wallet, connectWallet } = useAuthProvider();
 
   const [isTerminalVisible, setIsTerminalVisible] = useState(true);
+  const [executionMode, setExecutionMode] = useState<'parallel' | 'sequential'>(
+    'parallel',
+  );
 
-  const { contractResponses, handleRunInvocation, isRunningInvocation } =
-    useInvocations(invocations, wallet, connectWallet);
+  const {
+    contractResponses,
+    handleRunInvocationSequential,
+    isRunningInvocation,
+    handleRunInvocationParallel,
+  } = useInvocations(invocations, wallet, connectWallet);
 
   function toggleTerminalVisibility(event: KeyboardEvent) {
     if (event.ctrlKey && event.key === 'j') {
@@ -58,54 +65,67 @@ export default function InvocationByCollection() {
     fetchInvocations();
   }, [collectionId]);
 
-  let content;
-
-  if (loading) {
-    content = <p>Loading...</p>;
-  } else if (error) {
-    content = <p>{error}</p>;
-  } else {
-    content = (
-      <div className="flex flex-col w-full">
-        <div className="flex items-center justify-between w-full gap-4">
-          <h2
-            className="text-xl font-bold text-slate-100"
-            data-test="invocation-section-title"
-          >
-            Invocations
-          </h2>
-          <Button
-            className="self-end px-4 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md w-fit hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            onClick={handleRunInvocation}
-            disabled={isRunningInvocation}
-          >
-            {!isRunningInvocation ? (
-              'Run All'
-            ) : (
-              <div className="flex items-center gap-2">
-                <Loader className="w-auto font-bold animate-spin" size="16" />
-                <p>Running</p>
-              </div>
-            )}
-          </Button>
-        </div>
-
-        <div className="flex flex-col">
-          {invocations?.map((invocation) => (
-            <InvocationByCollectionPage
-              key={invocation.id}
-              invocation={invocation}
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
+  const handleExecution = () => {
+    if (executionMode === 'parallel') {
+      handleRunInvocationParallel();
+    } else {
+      handleRunInvocationSequential();
+    }
+  };
 
   return (
     <EnvironmentProvider>
-      <main className="flex flex-col w-full max-h-screen p-4 space-y-6 overflow-y-auto">
-        {content}
+      <main className="flex flex-col space-y-6 max-h-screen overflow-y-auto p-4 w-full">
+        {loading ? (
+          <p>Loading...</p>
+        ) : error ? (
+          <p>{error}</p>
+        ) : (
+          <div className="flex flex-col space-y-6 w-full">
+            <h2>Invocations</h2>
+            <div className="flex items-center justify-end space-x-4">
+              <select
+                className="border rounded-md p-2  bg-blue-500"
+                value={executionMode}
+                onChange={(e) =>
+                  setExecutionMode(e.target.value as 'sequential' | 'parallel')
+                }
+              >
+                <option value="parallel">Parallel</option>
+                <option value="sequential">Sequential</option>
+              </select>
+              <Button
+                className="w-auto px-3 py-2 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background bg-blue-500 text-white rounded-md self-end"
+                onClick={handleExecution}
+                disabled={isRunningInvocation}
+              >
+                {!isRunningInvocation ? (
+                  executionMode === 'sequential' ? (
+                    'Run All Sequential'
+                  ) : (
+                    'Run All Parallel'
+                  )
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Loader
+                      className="w-auto font-bold animate-spin"
+                      size="16"
+                    />
+                    <p>Running</p>
+                  </div>
+                )}
+              </Button>
+            </div>
+            <div className="flex flex-col ">
+              {invocations?.map((invocation) => (
+                <InvocationByCollectionPage
+                  key={invocation.id}
+                  invocation={invocation}
+                />
+              ))}
+            </div>
+          </div>
+        )}
         <div className="relative flex flex-col w-full h-full gap-2 overflow-hidden">
           {isTerminalVisible && (
             <div className="flex-grow p-10">
