@@ -18,6 +18,7 @@ export type Invocation = {
 	publicKey?: string;
 	preInvocation?: string;
 	postInvocation?: string;
+	folderId?: string;
 };
 
 export type InvocationResponse = {
