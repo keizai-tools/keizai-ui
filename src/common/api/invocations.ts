@@ -1,8 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useToast } from '../components/ui/use-toast';
 import { Invocation, InvocationResponse } from '../types/invocation';
+import { BACKEND_NETWORK } from '../types/soroban.enum';
 
 import { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
 import { apiService } from '@/config/axios/services/api.service';
@@ -13,30 +15,39 @@ export function useInvocationQuery({ id }: { id?: string }) {
 		queryFn: async () =>
 			apiService
 				?.get<IApiResponse<Invocation>>(`/invocation/${id}`)
-				.then((res) => res.payload),
+				.then((response) => response.payload),
 		enabled: !!id,
 	});
 
 	return query;
 }
+
 export function useRunInvocationQuery({ id }: { id?: string }) {
 	return async (signedTransactionXDR: string | null) => {
-		const res = await apiService?.post<IApiResponse<InvocationResponse>>(
+		const response = await apiService?.post<IApiResponse<InvocationResponse>>(
 			`/invocation/${id}/run`,
 			{
 				signedTransactionXDR: signedTransactionXDR ?? '',
 			},
 		);
-		return res.payload;
+		return response.payload;
 	};
 }
 
 export function usePrepareInvocationQuery({ id }: { id?: string }) {
 	return async () => {
-		const res = await apiService?.get<IApiResponse<string>>(
-			`/invocation/${id}/prepare`,
-		);
-		return res.payload;
+		const response = await apiService?.get<
+			IApiResponse<
+				| string
+				| {
+						status: number;
+						message: string;
+						name: string;
+						response: string;
+				  }
+			>
+		>(`/invocation/${id}/prepare`);
+		return response.payload;
 	};
 }
 
@@ -57,7 +68,7 @@ export function useCreateInvocationMutation() {
 					name,
 					folderId,
 				})
-				.then((res) => res.payload),
+				.then((response) => response.payload),
 		onSettled: () => {
 			queryClient.invalidateQueries({
 				queryKey: ['collection', params.collectionId, 'folders'],
@@ -94,8 +105,8 @@ export function useEditInvocationMutation() {
 					contractId,
 					selectedMethodId,
 				})
-				.then((res) => {
-					return res.payload;
+				.then((response) => {
+					return response.payload;
 				})
 				.catch(() => {
 					if (contractId) {
@@ -132,7 +143,7 @@ export function useEditSelectedMethodMutation() {
 					id,
 					selectedMethodId,
 				})
-				.then((res) => res.payload),
+				.then((response) => response.payload),
 		onMutate: async ({ id, selectedMethodId }) => {
 			await queryClient.cancelQueries({ queryKey: ['invocation', id] });
 
@@ -165,7 +176,7 @@ export function useDeleteInvocationMutation() {
 		mutationFn: async (id: string) =>
 			apiService
 				?.delete<IApiResponse<boolean>>(`/invocation/${id}`)
-				.then((res) => res.payload),
+				.then((response) => response.payload),
 		onSettled: () => {
 			queryClient.invalidateQueries({
 				queryKey: ['collection', params.collectionId, 'folders'],
@@ -176,16 +187,19 @@ export function useDeleteInvocationMutation() {
 	return mutation;
 }
 
-export function useEditNetworkMutation() {
+export function useEditNetworkMutation(showToast: boolean) {
 	const queryClient = useQueryClient();
 	const { toast } = useToast();
 
 	const mutation = useMutation({
 		mutationFn: async ({ network, id }: { network: string; id: string }) =>
-			apiService?.patch(`/invocation`, {
-				network,
-				id,
-			}),
+			apiService
+				?.patch<IApiResponse<Invocation>>(`/invocation`, {
+					network,
+					id,
+				})
+				.then((response) => response.payload),
+
 		onMutate: ({ network, id }) => {
 			const previousInvocation = queryClient.getQueryData<Invocation>([
 				'invocation',
@@ -208,12 +222,14 @@ export function useEditNetworkMutation() {
 				variant: 'destructive',
 			});
 		},
-		onSuccess: (_, { id }) => {
-			queryClient.invalidateQueries({ queryKey: ['invocation', id] });
-			toast({
-				title: 'Successfully!',
-				description: 'Network has been changed',
-			});
+		onSuccess: (data) => {
+			if (data) queryClient.setQueryData(['invocation', data.id], data);
+			if (showToast) {
+				toast({
+					title: 'Successfully!',
+					description: 'Network has been changed',
+				});
+			}
 		},
 	});
 	return mutation;
@@ -221,26 +237,53 @@ export function useEditNetworkMutation() {
 
 export function useEditInvocationKeysMutation() {
 	const queryClient = useQueryClient();
+	const lastParamsRef = useRef<{
+		id: string;
+		contractId?: string;
+		secretKey?: string;
+		publicKey?: string;
+		network?: BACKEND_NETWORK;
+	} | null>(null);
 
 	const mutation = useMutation({
 		mutationFn: async ({
 			id,
+			contractId,
 			secretKey,
 			publicKey,
+			network,
 		}: {
 			id: string;
+			contractId?: string;
 			secretKey?: string;
 			publicKey?: string;
-		}) =>
-			apiService
+			network?: BACKEND_NETWORK;
+		}) => {
+			if (
+				lastParamsRef.current &&
+				lastParamsRef.current.id === id &&
+				lastParamsRef.current.contractId === contractId &&
+				lastParamsRef.current.secretKey === secretKey &&
+				lastParamsRef.current.publicKey === publicKey &&
+				lastParamsRef.current.network === network
+			) {
+				return;
+			}
+
+			lastParamsRef.current = { id, contractId, secretKey, publicKey, network };
+
+			return apiService
 				?.patch<IApiResponse<Invocation>>('/invocation', {
 					id,
 					secretKey,
 					publicKey,
+					network,
+					contractId,
 				})
-				.then((res) => res.payload),
+				.then((response) => response.payload);
+		},
 		onSuccess: (data) => {
-			queryClient.setQueryData(['invocation', data.id], data);
+			if (data) queryClient.setQueryData(['invocation', data.id], data);
 		},
 	});
 
@@ -265,7 +308,7 @@ export function useEditPreInvocationMutation() {
 					preInvocation,
 					postInvocation,
 				})
-				.then((res) => res.payload);
+				.then((response) => response.payload);
 		},
 		onSuccess(_, variables) {
 			const oldData = queryClient.getQueryData<Invocation>([
@@ -279,5 +322,102 @@ export function useEditPreInvocationMutation() {
 			});
 		},
 	});
+	return mutation;
+}
+
+export function useUploadWasmMutation() {
+	const queryClient = useQueryClient();
+	const mutation = useMutation({
+		mutationFn: async ({
+			formData,
+			id,
+		}: {
+			formData: FormData;
+			id: string;
+		}) => {
+			return await apiService
+				?.post<IApiResponse<string>>(`invocation/${id}/upload/wasm`, formData)
+				.then((response) => response.payload);
+		},
+		onSuccess: (data, { id }) => {
+			if (typeof data !== 'string') {
+				throw new Error(data);
+			}
+			const newContractId = id;
+			queryClient.invalidateQueries({ queryKey: ['invocation'] });
+			return newContractId;
+		},
+	});
+	return mutation;
+}
+
+export function usePrepareUploadWasmMutation() {
+	const mutation = useMutation({
+		mutationFn: async ({
+			formData,
+			id,
+		}: {
+			formData?: FormData;
+			id?: string;
+		}) => {
+			return await apiService?.post<IApiResponse<string>>(
+				`invocation/${id}/upload/prepare`,
+				formData,
+			);
+		},
+	});
+
+	return mutation;
+}
+
+export function useRunUploadWasmMutation() {
+	const mutation = useMutation({
+		mutationFn: async ({
+			id,
+			signedTransactionXDR,
+			deploy = false,
+		}: {
+			id: string;
+			signedTransactionXDR: string;
+			deploy: boolean;
+		}) => {
+			const response = await apiService?.post<
+				IApiResponse<
+					string | { status: string; title: string; response: string }
+				>
+			>(`invocation/${id}/upload/run`, {
+				signedTransactionXDR,
+				deploy,
+			});
+
+			return response.payload;
+		},
+	});
+	return mutation;
+}
+
+export function useEditContractIdMutation() {
+	const queryClient = useQueryClient();
+
+	const mutation = useMutation({
+		mutationFn: async ({
+			id,
+			contractId,
+		}: {
+			id: string;
+			contractId: string;
+		}) =>
+			apiService
+				?.patch<IApiResponse<Invocation>>('/invocation', {
+					id,
+					contractId,
+				})
+				.then((response) => response.payload),
+		onSuccess: (_, { id, contractId }) => {
+			queryClient.invalidateQueries({ queryKey: ['invocation', id] });
+			queryClient.invalidateQueries({ queryKey: ['invocation', contractId] });
+		},
+	});
+
 	return mutation;
 }
