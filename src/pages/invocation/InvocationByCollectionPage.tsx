@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
+import { useFoldersByCollectionIdQuery } from '@/common/api/folders';
 import { useEditInvocationKeysMutation } from '@/common/api/invocations';
 import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
 import ContractInput from '@/common/components/Input/ContractInput';
@@ -9,9 +11,9 @@ import useInvocation from '@/modules/invocation/hooks/useInvocation';
 
 function InvocationByCollectionPage({
 	invocation,
-}: {
+}: Readonly<{
 	invocation: Invocation;
-}) {
+}>) {
 	return <InvocationPageContent invocation={invocation} />;
 }
 
@@ -22,7 +24,10 @@ function InvocationPageContent({
 }: Readonly<{ invocation: Invocation }>) {
 	const { mutate: editKeys } = useEditInvocationKeysMutation();
 	const { wallet, statusState, connectWallet } = useAuthProvider();
-
+	const params = useParams();
+	const { data } = useFoldersByCollectionIdQuery({
+		id: params.collectionId,
+	});
 	const {
 		handleLoadContract,
 		isLoadingContract,
@@ -41,15 +46,17 @@ function InvocationPageContent({
 			});
 		}
 	}, [invocation.id, invocation.network, editKeys, wallet]);
-
+	const folderName = data?.find(
+		(folder) => folder.id === invocation.folderId,
+	)?.name;
 	return (
 		<div
-			className=" flex flex-col w-full max-h-screen gap-4 p-3 overflow-hidden "
+			className="flex flex-col w-full max-h-screen gap-4 p-3 overflow-hidden "
 			data-test="invocation-section-container"
 		>
 			<Breadcrumb
 				contractName="Collection"
-				folderName={invocation.folder?.name ?? ''}
+				folderName={folderName ?? ''}
 				contractInvocationName={invocation.name}
 			/>
 			<ContractInput
@@ -61,7 +68,8 @@ function InvocationPageContent({
 				loading={
 					isLoadingContract || isRunningInvocation || statusState.wallet.loading
 				}
-				hideRunButton={true}
+				viewMode={true}
+				invocationID={invocation.id}
 			/>
 		</div>
 	);
