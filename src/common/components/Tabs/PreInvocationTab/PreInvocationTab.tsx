@@ -5,20 +5,20 @@ import { EditorTab } from '../Editor/EditorTab';
 import { customKeizaiToPreInvocationEditor } from '../Editor/constant/customKeizaiEditor';
 
 function PreInvocationTab({
-	preInvocationValue,
-	setPreInvocationValu,
+  preInvocationValue,
+  setPreInvocationValu,
 }: {
-	preInvocationValue: string;
-	setPreInvocationValu: Dispatch<SetStateAction<string>>;
+  preInvocationValue: string;
+  setPreInvocationValu: Dispatch<SetStateAction<string>>;
 }) {
-	return (
-		<EditorTab customKeizaiEditor={customKeizaiToPreInvocationEditor}>
-			<PreInvocationEditor
-				setEditorValue={setPreInvocationValu}
-				editorValue={preInvocationValue}
-			/>
-		</EditorTab>
-	);
+  return (
+    <EditorTab customKeizaiEditor={customKeizaiToPreInvocationEditor}>
+      <PreInvocationEditor
+        setEditorValue={setPreInvocationValu}
+        editorValue={preInvocationValue}
+      />
+    </EditorTab>
+  );
 }
 
 export default PreInvocationTab;

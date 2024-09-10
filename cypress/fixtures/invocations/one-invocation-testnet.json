@@ -1,14 +1,14 @@
 {
-	"name": "Invocation",
-	"secretKey": null,
-	"publicKey": null,
-	"contractId": null,
-	"id": "635bbf80-0787-47e2-900c-f44d5f53559d",
-	"network": "TESTNET",
-	"folder": {
-		"name": "Folder",
-		"id": "5ffed16a-6c59-4543-afb5-7c0f85e0723e"
-	},
-	"methods": [],
-	"selectedMethod": null
+  "name": "Invocation",
+  "secretKey": null,
+  "publicKey": null,
+  "contractId": null,
+  "id": "635bbf80-0787-47e2-900c-f44d5f53559d",
+  "network": "TESTNET",
+  "folder": {
+    "name": "Folder",
+    "id": "5ffed16a-6c59-4543-afb5-7c0f85e0723e"
+  },
+  "methods": [],
+  "selectedMethod": null
 }

@@ -15,29 +15,29 @@ const rawAlias = tsconfig.compilerOptions.paths;
 const alias = { './runtimeConfig': './runtimeConfig.browser' };
 
 for (const x in rawAlias) {
-	alias[x.replace('/*', '')] = rawAlias[x].map((p) =>
-		path.resolve(__dirname, p.replace('/*', '')),
-	);
+  alias[x.replace('/*', '')] = rawAlias[x].map((p) =>
+    path.resolve(__dirname, p.replace('/*', '')),
+  );
 }
 
 // https://vitejs.dev/config/
 // https://vitest.dev/config/
 export default defineConfig({
-	define: {
-		global: 'globalThis',
-	},
-	resolve: {
-		alias,
-	},
-	plugins: [
-		react(),
-		istanbul({
-			cypress: true,
-			requireEnv: false,
-		}),
-	],
-	server: {
-		host: true,
-		port: process.env.PORT ? +process.env.PORT : 3000,
-	},
+  define: {
+    global: 'globalThis',
+  },
+  resolve: {
+    alias,
+  },
+  plugins: [
+    react(),
+    istanbul({
+      cypress: true,
+      requireEnv: false,
+    }),
+  ],
+  server: {
+    host: true,
+    port: process.env.PORT ? +process.env.PORT : 3000,
+  },
 });

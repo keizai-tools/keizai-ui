@@ -10,83 +10,83 @@ import { IApiService } from '@/config/axios/interfaces/IApiService';
 import { apiService } from '@/config/axios/services/api.service';
 
 class AuthService implements IAuthService {
-	api: IApiService<AxiosRequestConfig>;
-	constructor(api: IApiService<AxiosRequestConfig>) {
-		this.api = api;
-	}
+  api: IApiService<AxiosRequestConfig>;
+  constructor(api: IApiService<AxiosRequestConfig>) {
+    this.api = api;
+  }
 
-	async signUp(email: string, password: string, config?: AxiosRequestConfig) {
-		return await this.api.post<ISignUpResponse>(
-			'/auth/register',
-			{ email, password },
-			config,
-		);
-	}
+  async signUp(email: string, password: string, config?: AxiosRequestConfig) {
+    return await this.api.post<ISignUpResponse>(
+      '/auth/register',
+      { email, password },
+      config,
+    );
+  }
 
-	async signIn(email: string, password: string, config?: AxiosRequestConfig) {
-		return await this.api.post<ISignInResponse>(
-			'/auth/login',
-			{ email, password },
-			config,
-		);
-	}
+  async signIn(email: string, password: string, config?: AxiosRequestConfig) {
+    return await this.api.post<ISignInResponse>(
+      '/auth/login',
+      { email, password },
+      config,
+    );
+  }
 
-	async confirmUser(email: string, code: string, config?: AxiosRequestConfig) {
-		return await this.api.post<ISuccessfulAuthenticationResponse>(
-			'/auth/confirm-user',
-			{ email, code },
-			config,
-		);
-	}
-	async resendConfirmationCode(email: string, config?: AxiosRequestConfig) {
-		return await this.api.post<ISuccessfulAuthenticationResponse>(
-			'/auth/resend-confirmation-code',
-			{ email },
-			config,
-		);
-	}
-	async forgotPassword(email: string, config?: AxiosRequestConfig) {
-		return await this.api.post<ISuccessfulAuthenticationResponse>(
-			'/auth/forgot-password',
-			{ email },
-			config,
-		);
-	}
-	async refreshToken(
-		email: string,
-		refreshToken: string,
-		config?: AxiosRequestConfig,
-	) {
-		return await this.api.post<IRefreshSessionResponse>(
-			'/auth/refresh',
-			{ email, refreshToken },
-			config,
-		);
-	}
+  async confirmUser(email: string, code: string, config?: AxiosRequestConfig) {
+    return await this.api.post<ISuccessfulAuthenticationResponse>(
+      '/auth/confirm-user',
+      { email, code },
+      config,
+    );
+  }
+  async resendConfirmationCode(email: string, config?: AxiosRequestConfig) {
+    return await this.api.post<ISuccessfulAuthenticationResponse>(
+      '/auth/resend-confirmation-code',
+      { email },
+      config,
+    );
+  }
+  async forgotPassword(email: string, config?: AxiosRequestConfig) {
+    return await this.api.post<ISuccessfulAuthenticationResponse>(
+      '/auth/forgot-password',
+      { email },
+      config,
+    );
+  }
+  async refreshToken(
+    email: string,
+    refreshToken: string,
+    config?: AxiosRequestConfig,
+  ) {
+    return await this.api.post<IRefreshSessionResponse>(
+      '/auth/refresh',
+      { email, refreshToken },
+      config,
+    );
+  }
 
-	async resetPassword(
-		email: string,
-		newPassword: string,
-		code: string,
-		config?: AxiosRequestConfig,
-	) {
-		return await this.api.post<ISuccessfulAuthenticationResponse>(
-			'/auth/confirm-password',
-			{ email, newPassword, code },
-			config,
-		);
-	}
-	async changePassword(
-		proposedPassword: string,
-		previousPassword: string,
-		config?: AxiosRequestConfig,
-	) {
-		return await this.api.patch<ISuccessfulAuthenticationResponse>(
-			'/auth/change-password',
-			{ proposedPassword, previousPassword },
-			config,
-		);
-	}
+  async resetPassword(
+    email: string,
+    newPassword: string,
+    code: string,
+    config?: AxiosRequestConfig,
+  ) {
+    return await this.api.post<ISuccessfulAuthenticationResponse>(
+      '/auth/confirm-password',
+      { email, newPassword, code },
+      config,
+    );
+  }
+  async changePassword(
+    proposedPassword: string,
+    previousPassword: string,
+    config?: AxiosRequestConfig,
+  ) {
+    return await this.api.patch<ISuccessfulAuthenticationResponse>(
+      '/auth/change-password',
+      { proposedPassword, previousPassword },
+      config,
+    );
+  }
 }
 
 export const authService = new AuthService(apiService);
