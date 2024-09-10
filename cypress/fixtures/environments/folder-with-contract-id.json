@@ -1,15 +1,15 @@
 [
-	{
-		"name": "Folder",
-		"id": "758947e5-67b0-4780-896c-0a9b021f3dd3",
-		"invocations": [
-			{
-				"name": "Invocation",
-				"secretKey": "SAZ5DSGOPND2QGQDNQXDTFDHGHQWLOYKRX5353ONTCDM3TKC2SXUCKCG",
-				"publicKey": "GDPKVZXFCVDJOJ4OVZBDFE4TGKFRE553GF6LOKP5H53XT74UB7NNAVKO",
-				"contractId": "CAMNDFGZCEVIQGKG5USNUFUVT3O4PJWGN4FVATNIRND6TJCG3CC2UW75",
-				"id": "e5012332-1ad0-47fd-b826-b20d1721340d"
-			}
-		]
-	}
+  {
+    "name": "Folder",
+    "id": "758947e5-67b0-4780-896c-0a9b021f3dd3",
+    "invocations": [
+      {
+        "name": "Invocation",
+        "secretKey": "SAZ5DSGOPND2QGQDNQXDTFDHGHQWLOYKRX5353ONTCDM3TKC2SXUCKCG",
+        "publicKey": "GDPKVZXFCVDJOJ4OVZBDFE4TGKFRE553GF6LOKP5H53XT74UB7NNAVKO",
+        "contractId": "CAMNDFGZCEVIQGKG5USNUFUVT3O4PJWGN4FVATNIRND6TJCG3CC2UW75",
+        "id": "e5012332-1ad0-47fd-b826-b20d1721340d"
+      }
+    ]
+  }
 ]
