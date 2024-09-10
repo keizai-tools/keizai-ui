@@ -10,6 +10,7 @@ import RecoverPassword from '@/pages/auth/recoverPassword';
 import ResetPassword from '@/pages/auth/resetPassword';
 import CollectionCTAPage from '@/pages/collection/collectionCTAPage';
 import CollectionPage from '@/pages/collection/collectionPage';
+import InvocationByCollection from '@/pages/collection/invocationbycollection';
 import Home from '@/pages/home/home';
 import InvocationPage from '@/pages/invocation/invocationPage';
 import Root from '@/pages/root';
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
 							{
 								path: 'invocation/:invocationId',
 								element: <InvocationPage />,
+							},
+							{
+								path: 'invocations',
+								element: <InvocationByCollection />,
 							},
 						],
 					},
