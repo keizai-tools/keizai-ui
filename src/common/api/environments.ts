@@ -7,203 +7,203 @@ import { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
 import { apiService } from '@/config/axios/services/api.service';
 
 export function useEnvironmentsQuery({
-	collectionId,
+  collectionId,
 }: {
-	collectionId?: string;
+  collectionId?: string;
 }) {
-	const query = useQuery<Environment[]>({
-		queryKey: ['environment', collectionId],
-		refetchOnWindowFocus: true,
-		refetchOnMount: true,
-		queryFn: async () =>
-			apiService
-				?.get<IApiResponse<Environment[]>>(
-					`/collection/${collectionId}/environments`,
-				)
-				.then((res) => res.payload),
-	});
+  const query = useQuery<Environment[]>({
+    queryKey: ['environment', collectionId],
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    queryFn: async () =>
+      apiService
+        ?.get<IApiResponse<Environment[]>>(
+          `/collection/${collectionId}/environments`,
+        )
+        .then((res) => res.payload),
+  });
 
-	return query;
+  return query;
 }
 
 export function useEnvironmentQuery({ id }: { id?: string }) {
-	const query = useQuery<Environment>({
-		queryKey: ['environment', id],
-		queryFn: async () =>
-			apiService
-				?.get<IApiResponse<Environment>>(`/environment/${id}`)
-				.then((res) => res.payload),
-		enabled: !!id,
-	});
+  const query = useQuery<Environment>({
+    queryKey: ['environment', id],
+    queryFn: async () =>
+      apiService
+        ?.get<IApiResponse<Environment>>(`/environment/${id}`)
+        .then((res) => res.payload),
+    enabled: !!id,
+  });
 
-	return query;
+  return query;
 }
 
 export function useCreateEnvironmentMutation({
-	collectionId,
+  collectionId,
 }: {
-	collectionId?: string;
+  collectionId?: string;
 }) {
-	const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-	const mutation = useMutation({
-		mutationFn: async ({
-			name,
-			value,
-			collectionId,
-		}: {
-			name: string;
-			value: string;
-			collectionId: string;
-		}) =>
-			apiService
-				?.post<IApiResponse<Environment>>('/environment', {
-					name,
-					value,
-					collectionId,
-				})
-				.then((res) => res.payload),
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['environment', collectionId],
-			});
-			toast({
-				title: 'Successfully!',
-				description: 'The variables have been created correctly',
-			});
-		},
-		onError: () => {
-			toast({
-				title: "Couldn't create variables",
-				description: 'Please try again',
-				variant: 'destructive',
-			});
-		},
-	});
+  const mutation = useMutation({
+    mutationFn: async ({
+      name,
+      value,
+      collectionId,
+    }: {
+      name: string;
+      value: string;
+      collectionId: string;
+    }) =>
+      apiService
+        ?.post<IApiResponse<Environment>>('/environment', {
+          name,
+          value,
+          collectionId,
+        })
+        .then((res) => res.payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['environment', collectionId],
+      });
+      toast({
+        title: 'Successfully!',
+        description: 'The variables have been created correctly',
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Couldn't create variables",
+        description: 'Please try again',
+        variant: 'destructive',
+      });
+    },
+  });
 
-	return mutation;
+  return mutation;
 }
 
 export function useCreateAllEnvironmentsMutation({
-	collectionId,
+  collectionId,
 }: {
-	collectionId?: string;
+  collectionId?: string;
 }) {
-	const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-	const mutation = useMutation({
-		mutationFn: async (environments: Environment[]) =>
-			apiService
-				?.post<IApiResponse<Environment>>(
-					`/collection/${collectionId}/environments`,
-					environments,
-				)
-				.then((res) => res.payload),
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['environment', collectionId],
-			});
-			toast({
-				title: 'Successfully!',
-				description: 'The variables have been created correctly',
-			});
-		},
-		onError: () => {
-			toast({
-				title: "Couldn't create variables",
-				description: 'Please try again',
-				variant: 'destructive',
-			});
-		},
-	});
-	return mutation;
+  const mutation = useMutation({
+    mutationFn: async (environments: Environment[]) =>
+      apiService
+        ?.post<IApiResponse<Environment>>(
+          `/collection/${collectionId}/environments`,
+          environments,
+        )
+        .then((res) => res.payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['environment', collectionId],
+      });
+      toast({
+        title: 'Successfully!',
+        description: 'The variables have been created correctly',
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Couldn't create variables",
+        description: 'Please try again',
+        variant: 'destructive',
+      });
+    },
+  });
+  return mutation;
 }
 
 export function useDeleteEnvironmentMutation({
-	collectionId,
+  collectionId,
 }: {
-	collectionId?: string;
+  collectionId?: string;
 }) {
-	const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-	const mutation = useMutation({
-		mutationFn: async (id: string) =>
-			apiService
-				?.delete<IApiResponse<boolean>>(`/environment/${id}`)
-				.then((res) => res.payload),
-		onMutate: (id: string) => {
-			queryClient.cancelQueries({
-				queryKey: ['environment', collectionId],
-			});
-			const oldEnvs = queryClient.getQueryData<Environment[]>([
-				'environment',
-				collectionId,
-			]);
-			queryClient.setQueryData<Environment[]>(
-				['environment', collectionId],
-				(oldData) => {
-					return oldData?.filter((env) => env.id !== id);
-				},
-			);
-			return { oldEnvs };
-		},
-		onSettled: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['environment', collectionId],
-			});
-		},
-		onError: () => {
-			toast({
-				title: "Couldn't delete a variable",
-				description: 'Please try again',
-				variant: 'destructive',
-			});
-		},
-	});
+  const mutation = useMutation({
+    mutationFn: async (id: string) =>
+      apiService
+        ?.delete<IApiResponse<boolean>>(`/environment/${id}`)
+        .then((res) => res.payload),
+    onMutate: (id: string) => {
+      queryClient.cancelQueries({
+        queryKey: ['environment', collectionId],
+      });
+      const oldEnvs = queryClient.getQueryData<Environment[]>([
+        'environment',
+        collectionId,
+      ]);
+      queryClient.setQueryData<Environment[]>(
+        ['environment', collectionId],
+        (oldData) => {
+          return oldData?.filter((env) => env.id !== id);
+        },
+      );
+      return { oldEnvs };
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['environment', collectionId],
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Couldn't delete a variable",
+        description: 'Please try again',
+        variant: 'destructive',
+      });
+    },
+  });
 
-	return mutation;
+  return mutation;
 }
 
 export function useEditEnvironmentMutation({
-	collectionId,
+  collectionId,
 }: {
-	collectionId?: string;
+  collectionId?: string;
 }) {
-	const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-	const mutation = useMutation({
-		mutationFn: async ({
-			id,
-			name,
-			value,
-			collectionId,
-		}: {
-			id: string;
-			name: string;
-			value: string;
-			collectionId: string;
-		}) =>
-			apiService
-				?.patch<IApiResponse<Environment>>('/environment', {
-					id,
-					name,
-					value,
-					collectionId,
-				})
-				.then((res) => res.payload),
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['environment', collectionId],
-			});
-		},
-		onError: (variables: Environment) => {
-			toast({
-				title: 'Something went wrong!',
-				description: `Couldn't edit a variable: ${variables.name}`,
-				variant: 'destructive',
-			});
-		},
-	});
+  const mutation = useMutation({
+    mutationFn: async ({
+      id,
+      name,
+      value,
+      collectionId,
+    }: {
+      id: string;
+      name: string;
+      value: string;
+      collectionId: string;
+    }) =>
+      apiService
+        ?.patch<IApiResponse<Environment>>('/environment', {
+          id,
+          name,
+          value,
+          collectionId,
+        })
+        .then((res) => res.payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['environment', collectionId],
+      });
+    },
+    onError: (variables: Environment) => {
+      toast({
+        title: 'Something went wrong!',
+        description: `Couldn't edit a variable: ${variables.name}`,
+        variant: 'destructive',
+      });
+    },
+  });
 
-	return mutation;
+  return mutation;
 }
