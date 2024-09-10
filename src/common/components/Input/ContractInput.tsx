@@ -16,13 +16,17 @@ function ContractInput({
 	loadContract,
 	runInvocation,
 	method,
+	hideRunButton = false,
+	handleOpenUploadWasmModal,
 }: Readonly<{
-	defaultValue: string;
+	defaultValue?: string;
 	defaultNetwork: string;
 	loading: boolean;
 	loadContract: (contractId: string) => void;
 	runInvocation: () => void;
 	method?: Method;
+	hideRunButton?: boolean;
+	handleOpenUploadWasmModal: () => void;
 }>) {
 	const [contractId, setContractId] = React.useState(defaultValue);
 
@@ -57,7 +61,7 @@ function ContractInput({
 			className="flex items-center gap-4 p-2 border rounded-md"
 			data-test="contract-input-container"
 		>
-			{defaultNetwork !== 'AUTO_DETECT' && (
+			{defaultNetwork !== 'AUTO_DETECT' && contractId && (
 				<div
 					className="flex flex-col items-start gap-1 mr-2"
 					data-test="contract-input-network-container"
@@ -71,7 +75,7 @@ function ContractInput({
 					</p>
 				</div>
 			)}
-			<div className="flex w-full group">
+			<div className="flex w-full gap-4 group">
 				{defaultValue ? (
 					<div className="relative flex items-center justify-between flex-1 w-full">
 						<span
@@ -110,6 +114,21 @@ function ContractInput({
 						/>
 					</EnvironmentDropdownContainer>
 				)}
+				{!contractId && (
+					<Button
+						data-test="contract-input-btn-load"
+						className="w-auto px-8 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+						onClick={handleOpenUploadWasmModal}
+					>
+						{!loading ? (
+							'UPLOAD'
+						) : (
+							<div className="flex items-center gap-1">
+								<Loader className="animate-spin" size="14" /> Uploading
+							</div>
+						)}
+					</Button>
+				)}
 				{!defaultValue ? (
 					<Button
 						data-test="contract-input-btn-load"
@@ -126,22 +145,24 @@ function ContractInput({
 						)}
 					</Button>
 				) : (
-					<Button
-						data-test="contract-input-btn-load"
-						className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-						onClick={runInvocation}
-						type="button"
-						disabled={loading || !method}
-					>
-						{!loading ? (
-							'RUN'
-						) : (
-							<div className="flex items-center gap-2">
-								<Loader className="w-auto font-bold animate-spin" size="20" />
-								<p>Running</p>
-							</div>
-						)}
-					</Button>
+					!hideRunButton && (
+						<Button
+							data-test="contract-input-btn-load"
+							className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+							onClick={runInvocation}
+							type="button"
+							disabled={loading || !method}
+						>
+							{!loading ? (
+								'RUN'
+							) : (
+								<div className="flex items-center gap-2">
+									<Loader className="w-auto font-bold animate-spin" size="20" />
+									<p>Running</p>
+								</div>
+							)}
+						</Button>
+					)
 				)}
 			</div>
 			{showEditContractDialog && (

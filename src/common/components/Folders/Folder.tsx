@@ -1,6 +1,6 @@
 import { GanttChart } from 'lucide-react';
 import React, { Fragment } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import DeleteEntityDialog from '../Entity/DeleteEntityDialog';
 import EditEntityDialog from '../Entity/EditEntityDialog';
@@ -20,13 +20,14 @@ import {
 } from '@/common/components/ui/accordion';
 import { Folder as IFolder } from '@/common/types/folder';
 
-function Folder({ folder }: { folder: IFolder }) {
+function Folder({ folder }: Readonly<{ folder: IFolder }>) {
 	const params = useParams();
 	const [isOpen, setIsOpen] = React.useState<string[] | undefined>();
 	const [openDialog, setOpenDialog] = React.useState<'edit' | 'delete' | null>(
 		null,
 	);
 
+	const navegate = useNavigate();
 	const { mutate: deleteFolderMutation } = useDeleteFolderMutation({
 		collectionId: params?.collectionId,
 	});
@@ -45,6 +46,21 @@ function Folder({ folder }: { folder: IFolder }) {
 			}
 		}
 	}, [folder, params?.invocationId]);
+
+	function handleDeleteFolder() {
+		deleteFolderMutation(folder.id);
+		window.umami.track('Delete folder');
+		setOpenDialog(null);
+		if (params?.invocationId && folder) {
+			const folderHasInvocation = folder.invocations?.find(
+				(invocation) => invocation.id === params?.invocationId,
+			);
+
+			if (folderHasInvocation) {
+				navegate(`/collection/${params?.collectionId}`);
+			}
+		}
+	}
 
 	return (
 		<Fragment>
@@ -113,11 +129,7 @@ function Folder({ folder }: { folder: IFolder }) {
 				description="This will permanently delete your folder and all related invocations."
 				open={openDialog === 'delete'}
 				onOpenChange={() => setOpenDialog(null)}
-				onConfirm={() => {
-					deleteFolderMutation(folder.id);
-					window.umami.track('Delete folder');
-					setOpenDialog(null);
-				}}
+				onConfirm={handleDeleteFolder}
 			/>
 			<EditEntityDialog
 				id={folder.id}

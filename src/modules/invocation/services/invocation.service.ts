@@ -1,3 +1,4 @@
+import { Invocation } from '@/common/types/invocation';
 import { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
 import { apiService } from '@/config/axios/services/api.service';
 
@@ -45,6 +46,16 @@ export class InvocationService {
 		return await apiService
 			?.get<IApiResponse<unknown>>(
 				`/collection/${this.collectionId}/environment?name=${name}`,
+			)
+			.then((res) => {
+				return res.payload;
+			});
+	}
+
+	async getInvocationByCollectionId() {
+		return await apiService
+			?.get<IApiResponse<Invocation[]>>(
+				`/collection/${this.collectionId}/invocations`,
 			)
 			.then((res) => {
 				return res.payload;

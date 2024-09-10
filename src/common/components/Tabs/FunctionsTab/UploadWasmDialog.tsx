@@ -67,6 +67,7 @@ function UploadWasmDialog({
 		setFiles(updatedList);
 		setSignedTransactionXDR(null);
 	}
+
 	async function handleUploadWasm() {
 		if (files.length === 0) return;
 

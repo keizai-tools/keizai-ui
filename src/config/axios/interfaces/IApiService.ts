@@ -1,4 +1,4 @@
-import type { AxiosHeaderValue } from 'axios';
+import { AxiosHeaderValue } from 'axios';
 
 export interface IApiService<C> {
 	get: <T = unknown>(url: string, config?: C) => Promise<T>;

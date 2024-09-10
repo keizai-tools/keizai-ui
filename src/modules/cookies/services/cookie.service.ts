@@ -8,10 +8,10 @@ import {
 } from '../interfaces/ITokenPayload';
 import { StoredCookies } from '../interfaces/cookies.enum';
 
-import { NETWORK } from '@/common/types/soroban.enum';
+import { BACKEND_NETWORK, NETWORK } from '@/common/types/soroban.enum';
 import {
 	IWalletContent,
-	type IWallet,
+	IWallet,
 } from '@/modules/auth/interfaces/IAuthenticationContext';
 
 class CookieService<T extends ITokenPayload> implements ICookieService<T> {
@@ -128,9 +128,10 @@ class CookieService<T extends ITokenPayload> implements ICookieService<T> {
 
 	getAllWalletCookies(): IWallet {
 		const wallets: IWallet = {
-			[NETWORK.SOROBAN_MAINNET]: null,
-			[NETWORK.SOROBAN_TESTNET]: null,
-			[NETWORK.SOROBAN_FUTURENET]: null,
+			[BACKEND_NETWORK.SOROBAN_MAINNET]: null,
+			[BACKEND_NETWORK.SOROBAN_TESTNET]: null,
+			[BACKEND_NETWORK.SOROBAN_FUTURENET]: null,
+			[BACKEND_NETWORK.AUTO_DETECT]: null,
 		};
 
 		for (const network of Object.values(NETWORK)) {
