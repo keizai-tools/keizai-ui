@@ -17,85 +17,85 @@ import Root from '@/pages/root';
 import Providers from '@/providers/providers';
 
 const router = createBrowserRouter([
-	{
-		path: '/',
-		element: <Providers />,
-		children: [
-			{
-				path: '/',
-				element: (
-					<ProtectedRoute>
-						<Root />
-					</ProtectedRoute>
-				),
-				children: [
-					{
-						index: true,
-						element: <Home />,
-					},
-					{
-						path: 'change-password',
+  {
+    path: '/',
+    element: <Providers />,
+    children: [
+      {
+        path: '/',
+        element: (
+          <ProtectedRoute>
+            <Root />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: <Home />,
+          },
+          {
+            path: 'change-password',
 
-						element: <ChangePassword />,
-					},
-					{
-						path: 'collection/:collectionId',
-						element: <CollectionPage />,
-						children: [
-							{
-								index: true,
-								element: <CollectionCTAPage />,
-							},
+            element: <ChangePassword />,
+          },
+          {
+            path: 'collection/:collectionId',
+            element: <CollectionPage />,
+            children: [
+              {
+                index: true,
+                element: <CollectionCTAPage />,
+              },
 
-							{
-								path: 'variables',
-								element: <CollectionVariablesContainer />,
-							},
-							{
-								path: 'invocation/:invocationId',
-								element: <InvocationPage />,
-							},
-							{
-								path: 'invocations',
-								element: <InvocationByCollection />,
-							},
-						],
-					},
-				],
-			},
-			{
-				path: '/auth',
-				element: <AuthPage />,
-				children: [
-					{
-						index: true,
-						element: <Login />,
-					},
-					{
-						path: 'login',
-						element: <Login />,
-					},
-					{
-						path: 'register',
-						element: <CreateAccount />,
-					},
-					{
-						path: 'forgot-password',
-						element: <RecoverPassword />,
-					},
-					{
-						path: 'reset-password',
-						element: <ResetPassword />,
-					},
-				],
-			},
-		],
-	},
+              {
+                path: 'variables',
+                element: <CollectionVariablesContainer />,
+              },
+              {
+                path: 'invocation/:invocationId',
+                element: <InvocationPage />,
+              },
+              {
+                path: 'invocations',
+                element: <InvocationByCollection />,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: '/auth',
+        element: <AuthPage />,
+        children: [
+          {
+            index: true,
+            element: <Login />,
+          },
+          {
+            path: 'login',
+            element: <Login />,
+          },
+          {
+            path: 'register',
+            element: <CreateAccount />,
+          },
+          {
+            path: 'forgot-password',
+            element: <RecoverPassword />,
+          },
+          {
+            path: 'reset-password',
+            element: <ResetPassword />,
+          },
+        ],
+      },
+    ],
+  },
 
-	{
-		path: '*',
-		element: <Navigate to="/" />,
-	},
+  {
+    path: '*',
+    element: <Navigate to="/" />,
+  },
 ]);
 
 export default router;

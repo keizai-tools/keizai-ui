@@ -6,19 +6,19 @@ import { Environment } from '@/common/types/environment';
 type EnvironmentContextType = Environment[] | [];
 
 export const EnvironmentContext = React.createContext<EnvironmentContextType>(
-	[],
+  [],
 );
 
 export function EnvironmentProvider({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	const { environments } = useEnvironments();
+  const { environments } = useEnvironments();
 
-	return (
-		<EnvironmentContext.Provider value={environments}>
-			{children}
-		</EnvironmentContext.Provider>
-	);
+  return (
+    <EnvironmentContext.Provider value={environments}>
+      {children}
+    </EnvironmentContext.Provider>
+  );
 }

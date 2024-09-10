@@ -5,24 +5,24 @@ import FullscreenLoading from '@/common/views/fullscreenLoading';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 function ProtectedRoute({
-	children,
+  children,
 }: Readonly<{
-	children: ReactNode;
+  children: ReactNode;
 }>): ReactElement | null {
-	const { handleRefreshSession, statusState } = useAuthProvider();
-	useEffect(() => {
-		handleRefreshSession();
-	}, [handleRefreshSession]);
+  const { handleRefreshSession, statusState } = useAuthProvider();
+  useEffect(() => {
+    handleRefreshSession();
+  }, [handleRefreshSession]);
 
-	if (statusState.refreshSession.loading) {
-		return <FullscreenLoading />;
-	}
+  if (statusState.refreshSession.loading) {
+    return <FullscreenLoading />;
+  }
 
-	if (statusState.refreshSession.status) {
-		return <Fragment>{children}</Fragment>;
-	} else {
-		return <Navigate to="auth/login" replace />;
-	}
+  if (statusState.refreshSession.status) {
+    return <Fragment>{children}</Fragment>;
+  } else {
+    return <Navigate to="auth/login" replace />;
+  }
 }
 
 export default ProtectedRoute;

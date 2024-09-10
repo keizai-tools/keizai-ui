@@ -4,19 +4,19 @@ import React, { Fragment } from 'react';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 export const AppLoader = ({
-	children,
+  children,
 }: {
-	children: React.ReactNode;
+  children: React.ReactNode;
 }): JSX.Element => {
-	const { statusState } = useAuthProvider();
+  const { statusState } = useAuthProvider();
 
-	if (statusState.refreshSession.loading) {
-		return (
-			<div className="flex items-center justify-center w-full">
-				<Loader className="animate-spin" size={36} />
-			</div>
-		);
-	}
+  if (statusState.refreshSession.loading) {
+    return (
+      <div className="flex items-center justify-center w-full">
+        <Loader className="animate-spin" size={36} />
+      </div>
+    );
+  }
 
-	return <Fragment>{children}</Fragment>;
+  return <Fragment>{children}</Fragment>;
 };
