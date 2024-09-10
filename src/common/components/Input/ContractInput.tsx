@@ -1,5 +1,6 @@
 import { Loader } from 'lucide-react';
 import React from 'react';
+import { NavLink, useParams } from 'react-router-dom';
 
 import EnvironmentDropdownContainer from '../Environments/EnvironmentDropdownContainer';
 import EnvironmentInput from './EnvironmentInput';
@@ -16,8 +17,9 @@ function ContractInput({
 	loadContract,
 	runInvocation,
 	method,
-	hideRunButton = false,
 	handleOpenUploadWasmModal,
+	viewMode = false,
+	invocationID,
 }: Readonly<{
 	defaultValue?: string;
 	defaultNetwork: string;
@@ -25,10 +27,12 @@ function ContractInput({
 	loadContract: (contractId: string) => void;
 	runInvocation: () => void;
 	method?: Method;
-	hideRunButton?: boolean;
-	handleOpenUploadWasmModal: () => void;
+	handleOpenUploadWasmModal?: () => void;
+	viewMode?: boolean;
+	invocationID?: string;
 }>) {
 	const [contractId, setContractId] = React.useState(defaultValue);
+	const params = useParams();
 
 	const [showEditContractDialog, setShowEditContractDialog] =
 		React.useState(false);
@@ -55,6 +59,8 @@ function ContractInput({
 		handleSearchEnvironment(value);
 		setContractId(value);
 	}
+
+	console.log(params);
 
 	return (
 		<div
@@ -86,18 +92,33 @@ function ContractInput({
 						>
 							{defaultValue}
 						</span>
-						<Button
-							variant="link"
-							className="absolute right-0 invisible group-hover:visible bg-background"
-							data-test="btn-edit-contract-address"
-							onClick={() => {
-								setShowEditContractDialog(true);
-								if (window.umami)
-									window?.umami?.track('Open edit contract address dialog');
-							}}
-						>
-							Edit contract address
-						</Button>
+						{!viewMode ? (
+							<Button
+								variant="link"
+								className="absolute right-0 invisible group-hover:visible bg-background"
+								data-test="btn-edit-contract-address"
+								onClick={() => {
+									setShowEditContractDialog(true);
+									if (window.umami)
+										window?.umami?.track('Open edit contract address dialog');
+								}}
+							>
+								Edit contract address
+							</Button>
+						) : (
+							<Button
+								variant="link"
+								className="absolute right-0 invisible group-hover:visible bg-background"
+								data-test="btn-edit-contract-address"
+								asChild
+							>
+								<NavLink
+									to={`/collection/${params.collectionId}/invocation/${invocationID}`}
+								>
+									Edit contract settings
+								</NavLink>
+							</Button>
+						)}
 					</div>
 				) : (
 					<EnvironmentDropdownContainer
@@ -145,7 +166,7 @@ function ContractInput({
 						)}
 					</Button>
 				) : (
-					!hideRunButton && (
+					!viewMode && (
 						<Button
 							data-test="contract-input-btn-load"
 							className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
@@ -165,7 +186,7 @@ function ContractInput({
 					)
 				)}
 			</div>
-			{showEditContractDialog && (
+			{!viewMode && showEditContractDialog && (
 				<SaveContractDialog
 					open={showEditContractDialog}
 					onOpenChange={setShowEditContractDialog}
