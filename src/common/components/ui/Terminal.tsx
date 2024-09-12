@@ -1,17 +1,30 @@
 import React from 'react';
 
+import { Button } from './button';
+
 import { useResize } from '@/common/hooks/useResize';
 import { generateUniqueID } from '@/utils/functions/generateUniqueID';
 
 export type TerminalEntry = {
   preInvocation?: React.ReactNode;
   postInvocation?: React.ReactNode;
-  title?: React.ReactNode;
+  title: React.ReactNode;
   message: React.ReactNode | string;
   isError: boolean;
+  invocationId?: string;
 };
 
-function Terminal({ entries }: Readonly<{ entries: TerminalEntry[] }>) {
+interface TerminalProps {
+  entries: TerminalEntry[];
+  onClear?: () => void;
+  showClearButton?: boolean;
+}
+
+function Terminal({
+  entries,
+  onClear,
+  showClearButton = false,
+}: TerminalProps) {
   const terminalRef = React.useRef<HTMLDivElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const resizeTopRef = React.useRef<HTMLDivElement>(null);
@@ -47,7 +60,17 @@ function Terminal({ entries }: Readonly<{ entries: TerminalEntry[] }>) {
         className="h-full pb-4 mx-2 overflow-y-auto text-zinc-600 scrollbar scrollbar-thumb-slate-700 scrollbar-w-2 scrollbar-thumb-rounded"
         data-test="terminal-scrollbar-container"
       >
-        <span className="font-bold">Welcome to keizai 1.0.0 - OUTPUT</span>
+        <div className="flex justify-between items-center pb-4">
+          <span className="font-bold">Welcome to keizai 1.0.0 - OUTPUT</span>
+          {showClearButton && (
+            <Button
+              className="w-auto px-8 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              onClick={onClear}
+            >
+              Clear Console
+            </Button>
+          )}
+        </div>
         <div
           ref={terminalRef}
           className="flex flex-col gap-4 py-5"
@@ -64,6 +87,11 @@ function Terminal({ entries }: Readonly<{ entries: TerminalEntry[] }>) {
                 } border-l-2 pl-2`}
                 data-test="terminal-entry-title"
               >
+                {entry.invocationId && (
+                  <div className="text-xs text-gray-500">
+                    Invocation ID: {entry.invocationId}
+                  </div>
+                )}
                 {entry.preInvocation}
                 {entry.title}
                 <span className="ml-4" data-test="terminal-entry-message">
