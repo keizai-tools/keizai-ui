@@ -51,6 +51,7 @@ function useInvocations(
           isError: false,
           message: String(serviceToRun),
           title,
+          invocationId: invocation,
           serviceResponse: await runKeizaiService(serviceToRun, invocation),
         };
       } catch (error) {
@@ -59,6 +60,7 @@ function useInvocations(
           message: String(`${error} from Pre-invocation script`),
           title: `${title} Error`,
           serviceToRun: String(serviceToRun),
+          invocationId: invocation,
         };
       }
     },
@@ -112,6 +114,7 @@ function useInvocations(
         const preInvocationResponse = await handleRunService(
           'Pre-Invocation',
           invocation.preInvocation ?? '',
+          invocation.id,
         );
 
         const response = await runInvocation(invocation.id, signedTransaction);
@@ -130,13 +133,21 @@ function useInvocations(
 
         setContractResponses((prev) => [
           ...prev,
-          { contractId: invocation.contractId, ...invocationResponse },
+          {
+            contractId: invocation.contractId,
+            ...invocationResponse,
+            invocationId: invocation.id,
+          },
         ]);
       } catch (error) {
         const errorResponse = handleAxiosError(error as IApiResponseError);
         setContractResponses((prev) => [
           ...prev,
-          { contractId: invocation.contractId, ...errorResponse },
+          {
+            contractId: invocation.contractId,
+            ...errorResponse,
+            invocationId: invocation.id,
+          },
         ]);
       }
     }
@@ -155,7 +166,7 @@ function useInvocations(
     setIsRunningInvocation(true);
 
     try {
-      const results = [];
+      const results: TerminalEntry[] = [];
       for (const invocation of invocations) {
         try {
           if (
@@ -179,6 +190,7 @@ function useInvocations(
           const preInvocationResponse = await handleRunService(
             'Pre-Invocation',
             invocation.preInvocation ?? '',
+            invocation.id,
           );
 
           const response = await runInvocation(
@@ -198,13 +210,13 @@ function useInvocations(
             postInvocationResponse?.serviceResponse,
           );
 
-          results.push({ ...invocationResponse });
+          results.push({ ...invocationResponse, invocationId: invocation.id });
         } catch (error) {
           const errorResponse = handleAxiosError(error);
-          results.push({ contractId: invocation.contractId, ...errorResponse });
+          results.push({ ...errorResponse });
         }
       }
-      setContractResponses(results);
+      setContractResponses((prev) => [...prev, ...results]);
     } catch (error) {
       console.error('Error running invocations in parallel:', error);
     } finally {
@@ -218,11 +230,16 @@ function useInvocations(
     wallet,
   ]);
 
+  const clearContractResponses = () => {
+    setContractResponses([]);
+  };
+
   return {
     contractResponses,
     handleRunInvocationSequential,
     isRunningInvocation,
     handleRunInvocationParallel,
+    clearContractResponses,
   };
 }
 
