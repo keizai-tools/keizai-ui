@@ -29,6 +29,7 @@ export default function InvocationByCollection() {
     handleRunInvocationSequential,
     isRunningInvocation,
     handleRunInvocationParallel,
+    clearContractResponses,
   } = useInvocations(invocations, wallet, connectWallet);
 
   function toggleTerminalVisibility(event: KeyboardEvent) {
@@ -71,6 +72,10 @@ export default function InvocationByCollection() {
     } else {
       handleRunInvocationSequential();
     }
+  };
+
+  const handleClearConsole = () => {
+    clearContractResponses();
   };
 
   return (
@@ -133,7 +138,11 @@ export default function InvocationByCollection() {
         <div className="relative flex flex-col w-full h-full gap-2 overflow-hidden">
           {isTerminalVisible && (
             <div className="flex-grow p-10">
-              <Terminal entries={contractResponses} />
+              <Terminal
+                entries={contractResponses}
+                onClear={handleClearConsole}
+                showClearButton={true}
+              />
             </div>
           )}
         </div>

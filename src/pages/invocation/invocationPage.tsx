@@ -183,7 +183,9 @@ function InvocationPageContent({
               postInvocationValue={postInvocationValue}
               setIsTerminalVisible={setIsTerminalVisible}
             />
-            {isTerminalVisible && <Terminal entries={contractResponses} />}
+            {isTerminalVisible && (
+              <Terminal entries={contractResponses} showClearButton={false} />
+            )}
           </div>
         ) : (
           <InvocationCTAPage />
