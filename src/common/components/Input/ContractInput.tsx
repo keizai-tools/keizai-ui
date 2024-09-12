@@ -83,9 +83,9 @@ function ContractInput({
         {defaultValue ? (
           <div className="relative flex items-center justify-between flex-1 w-full">
             <span
-              className={
+              className={`${
                 RegExp(/{{(.*?)}}/).exec(defaultValue) ? 'text-primary' : ''
-              }
+              } select-none`}
               data-test="contract-input-address"
             >
               {defaultValue}
