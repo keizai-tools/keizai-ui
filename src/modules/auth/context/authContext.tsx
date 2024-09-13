@@ -140,8 +140,11 @@ export function AuthProvider({
     async (network: NETWORK): Promise<void> => {
       try {
         setStatusState('wallet', { loading: true });
-        const response = await signerConnectWallet(network);
-        if (!response) throw new Error('Failed to connect wallet');
+        let response = await signerConnectWallet(network);
+        if (!response?.publicKey || !response?.wallet)
+          response = await signerConnectWallet(network);
+        if (!response?.publicKey || !response?.wallet)
+          throw new Error('Failed to connect wallet');
         setConnectWallet({
           publicKey: response.publicKey,
           type: response.wallet,
