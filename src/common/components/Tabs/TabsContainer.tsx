@@ -1,4 +1,3 @@
-import { Button } from '../ui/button';
 import EventsTab from './EventsTab/EventsTab';
 import FunctionsTab from './FunctionsTab/FunctionsTab';
 import PreInvocationTab from './PreInvocationTab/PreInvocationTab';
@@ -24,14 +23,12 @@ type TabsProps = {
   data: Invocation;
   preInvocationValue: string;
   postInvocationValue: string;
-  setIsTerminalVisible: (value: React.SetStateAction<boolean>) => void;
 };
 
 function TabsContainer({
   data,
   preInvocationValue,
   postInvocationValue,
-  setIsTerminalVisible,
 }: Readonly<TabsProps>) {
   const { setPreInvocationEditorValue, setPostInvocationEditorValue } =
     useEditor(preInvocationValue, postInvocationValue);
@@ -56,14 +53,6 @@ function TabsContainer({
             );
           })}
         </TabsList>
-        <Button
-          className="w-auto px-8 py-3 mx-2 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-          variant="outline"
-          onClick={() => setIsTerminalVisible((prev) => !prev)}
-          data-test="functions-tabs-console"
-        >
-          Console
-        </Button>
       </div>
       <TabsContent value="functions" className="h-full">
         <FunctionsTab
