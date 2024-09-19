@@ -58,6 +58,7 @@ function InvocationPageContent({
         contractName="Collection"
         folderName={folderName ?? ''}
         contractInvocationName={invocation.name}
+        contractInvocationId={invocation.id}
       />
       <ContractInput
         defaultValue={invocation.contractId ?? ''}
