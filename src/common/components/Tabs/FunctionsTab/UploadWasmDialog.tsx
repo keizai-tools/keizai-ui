@@ -160,7 +160,6 @@ function UploadWasmDialog({
     if (!signedTransactionXDR || signedTransactionXDR.length === 0) return;
 
     setLoading(true);
-    console.log('signedTransactionXDR', signedTransactionXDR);
 
     try {
       const signedContract = await runUploadWasmMutation.mutateAsync({

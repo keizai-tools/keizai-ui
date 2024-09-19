@@ -60,8 +60,6 @@ function ContractInput({
     setContractId(value);
   }
 
-  console.log(params);
-
   return (
     <div
       className="flex items-center gap-4 p-2 border rounded-md"

@@ -5,6 +5,7 @@ import { IRefreshSessionResponse } from '../interfaces/IRefreshSessionResponse';
 import { ISignInResponse } from '../interfaces/ISignInResponse';
 import { ISignUpResponse } from '../interfaces/ISignUpResponse';
 import { ISuccessfulAuthenticationResponse } from '../interfaces/ISuccessfulAuthenticationResponse';
+import type { IValidateToken } from '../interfaces/IValidateToken';
 
 import { IApiService } from '@/config/axios/interfaces/IApiService';
 import { apiService } from '@/config/axios/services/api.service';
@@ -38,6 +39,7 @@ class AuthService implements IAuthService {
       config,
     );
   }
+
   async resendConfirmationCode(email: string, config?: AxiosRequestConfig) {
     return await this.api.post<ISuccessfulAuthenticationResponse>(
       '/auth/resend-confirmation-code',
@@ -45,6 +47,7 @@ class AuthService implements IAuthService {
       config,
     );
   }
+
   async forgotPassword(email: string, config?: AxiosRequestConfig) {
     return await this.api.post<ISuccessfulAuthenticationResponse>(
       '/auth/forgot-password',
@@ -52,6 +55,7 @@ class AuthService implements IAuthService {
       config,
     );
   }
+
   async refreshToken(
     email: string,
     refreshToken: string,
@@ -76,6 +80,7 @@ class AuthService implements IAuthService {
       config,
     );
   }
+
   async changePassword(
     proposedPassword: string,
     previousPassword: string,
@@ -86,6 +91,11 @@ class AuthService implements IAuthService {
       { proposedPassword, previousPassword },
       config,
     );
+  }
+
+  async validateToken(config?: AxiosRequestConfig) {
+    return (await this.api.get<IValidateToken>('/auth/validate-token', config))
+      .payload;
   }
 }
 
