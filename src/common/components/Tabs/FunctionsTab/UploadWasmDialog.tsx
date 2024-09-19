@@ -24,6 +24,7 @@ import { BACKEND_NETWORK, type NETWORK } from '@/common/types/soroban.enum';
 import OverlayLoading from '@/common/views/OverlayLoading';
 import { IApiResponseError } from '@/config/axios/interfaces/IApiResponseError';
 import { IWalletContent } from '@/modules/auth/interfaces/IAuthenticationContext';
+import SignerError from '@/modules/signer/errors/signerError';
 import signTransaction from '@/modules/signer/functions/signTransaction';
 
 interface UploadWasmDialogProps {
@@ -96,16 +97,12 @@ function UploadWasmDialog({
         description: details.description,
         variant: 'destructive',
       });
-    } finally {
-      setLoading(false);
     }
   }
 
   async function handlePrepareUpload() {
     if (files.length === 0) return;
-
     setLoading(true);
-
     try {
       const { file, name } = files[0];
       const formData = new FormData();
@@ -123,6 +120,13 @@ function UploadWasmDialog({
 
       setSignedTransactionXDR(signedTransaction);
     } catch (error) {
+      if (error instanceof SignerError) {
+        toast({
+          title: 'Failed to sign transaction',
+          description: error.message,
+          variant: 'destructive',
+        });
+      }
       const { details } = error as IApiResponseError;
       const description = details?.description || '';
       const contractExists = description.includes('ExistingValue');
@@ -154,6 +158,8 @@ function UploadWasmDialog({
       setLoading(false);
       setError(message);
       setSignedTransactionXDR(null);
+    } finally {
+      setLoading(false);
     }
   }
   async function handleRunUploadWasm() {

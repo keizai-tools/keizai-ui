@@ -140,6 +140,15 @@ function InvocationPageContent({
     }
   }
 
+  function handleLoadContractWithLoading(contractId: string) {
+    if (!loading && !isLoadingContract) setLoading(true);
+    handleLoadContract(contractId);
+  }
+
+  useEffect(() => {
+    if (data.contractId && loading) setLoading(false);
+  }, [data, loading, setLoading]);
+
   useEffect(() => {
     window.addEventListener('keydown', toggleTerminalVisibility);
 
@@ -193,7 +202,7 @@ function InvocationPageContent({
         open={isModalOpen}
         onOpenChange={handleCloseModal}
         data={data}
-        handleLoadContract={handleLoadContract}
+        handleLoadContract={handleLoadContractWithLoading}
         wallet={wallet[data.network as keyof typeof wallet]}
         setLoading={setLoading}
         loading={loading}
