@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, PlusIcon } from 'lucide-react';
+import { ArrowLeftIcon, PlusIcon, ListVideo } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import NewEntityDialog from '../Entity/NewEntityDialog';
@@ -9,6 +9,11 @@ import {
   useFoldersByCollectionIdQuery,
   useCreateFolderMutation,
 } from '@/common/api/folders';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/common/components/ui/tooltip';
 
 function Folders() {
   const params = useParams();
@@ -63,13 +68,35 @@ function Folders() {
       data-test="collections-container"
     >
       <div data-test="folders-container">
-        <Button
-          variant="link"
-          className="flex items-center gap-2 p-0 text-xs text-primary"
-          onClick={() => navigate('/')}
-        >
-          <ArrowLeftIcon size={16} /> Collections
-        </Button>
+        <div className="flex items-center justify-between mb-3">
+          <Button
+            variant="link"
+            className="flex items-center gap-2 p-0 text-xs text-primary"
+            onClick={() => navigate('/')}
+          >
+            <ArrowLeftIcon size={16} /> Collections
+          </Button>
+          <Tooltip delayDuration={100}>
+            <TooltipTrigger>
+              <Link
+                data-test="invocations-by-collection-btn-link"
+                className={`flex h-auto gap-1 px-0 py-1 text-xs ${
+                  currentRoute.includes(
+                    `/collection/${params.collectionId}/invocations`,
+                  )
+                    ? 'text-primary'
+                    : 'text-slate-500 hover:text-slate-100'
+                }`}
+                to={`/collection/${params.collectionId}/invocations`}
+              >
+                <ListVideo size={16} />
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Collection runner</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
         <div
           className="flex items-center justify-between mb-3"
           data-test="collections-header"
@@ -97,21 +124,6 @@ function Folders() {
           </NewEntityDialog>
         </div>
         {renderFoldersContent()}
-        <Link
-          data-test="invocations-by-collection-btn-link"
-          to={`/collection/${params.collectionId}/invocations`}
-        >
-          <h4
-            data-test="invocations-header-title"
-            className={`text-lg font-bold ${
-              currentRoute ===
-                `/collection/${params.collectionId}/invocations` &&
-              'text-primary'
-            }`}
-          >
-            Invocations
-          </h4>
-        </Link>
       </div>
       <div className="w-full mb-4 text-base font-semibold text-center hover:underline">
         <Link

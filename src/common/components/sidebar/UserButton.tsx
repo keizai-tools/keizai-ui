@@ -41,7 +41,9 @@ function UserButton() {
           className="flex items-center gap-2 py-2 pr-8 cursor-pointer"
           onClick={navigateChangePassword}
         >
-          <UnlockKeyhole className="w-4 h-4" />
+          <UnlockKeyhole
+            className={`text-gray-500 transition-colors duration-300 cursor-pointer hover:text-primary active:text-primary`}
+          />
           <span>Change password</span>
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -49,7 +51,9 @@ function UserButton() {
           className="flex items-center gap-2 py-2 pr-8 mt-1 cursor-pointer"
           onClick={handleSignOut}
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut
+            className={`text-gray-500 transition-colors duration-300 cursor-pointer hover:text-primary active:text-primary`}
+          />
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

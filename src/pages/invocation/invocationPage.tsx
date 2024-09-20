@@ -103,7 +103,6 @@ function InvocationPageContent({
   setLoading: (loading: boolean) => void;
 }>) {
   const { handleUpdateNetwork } = useNetwork(false);
-  const [isTerminalVisible, setIsTerminalVisible] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const {
@@ -133,20 +132,23 @@ function InvocationPageContent({
     setIsModalOpen(false);
   }
 
-  function toggleTerminalVisibility(event: KeyboardEvent) {
-    if (event.ctrlKey && event.key === 'j') {
-      event.preventDefault();
-      setIsTerminalVisible((prev) => !prev);
-    }
+  function handleLoadContractWithLoading(contractId: string) {
+    if (!loading && !isLoadingContract) setLoading(true);
+    handleLoadContract(contractId);
+  }
+
+  function handleLoadContractWithLoading(contractId: string) {
+    if (!loading && !isLoadingContract) setLoading(true);
+    handleLoadContract(contractId);
   }
 
   useEffect(() => {
-    window.addEventListener('keydown', toggleTerminalVisibility);
+    if (data.contractId && loading) setLoading(false);
+  }, [data, loading, setLoading]);
 
-    return () => {
-      window.removeEventListener('keydown', toggleTerminalVisibility);
-    };
-  }, []);
+  useEffect(() => {
+    if (data.contractId && loading) setLoading(false);
+  }, [data, loading, setLoading]);
 
   return (
     <Fragment>
@@ -181,9 +183,8 @@ function InvocationPageContent({
               data={data}
               preInvocationValue={preInvocationValue}
               postInvocationValue={postInvocationValue}
-              setIsTerminalVisible={setIsTerminalVisible}
             />
-            {isTerminalVisible && <Terminal entries={contractResponses} />}
+            <Terminal entries={contractResponses} />
           </div>
         ) : (
           <InvocationCTAPage />
@@ -193,7 +194,7 @@ function InvocationPageContent({
         open={isModalOpen}
         onOpenChange={handleCloseModal}
         data={data}
-        handleLoadContract={handleLoadContract}
+        handleLoadContract={handleLoadContractWithLoading}
         wallet={wallet[data.network as keyof typeof wallet]}
         setLoading={setLoading}
         loading={loading}

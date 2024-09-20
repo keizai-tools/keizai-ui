@@ -60,8 +60,6 @@ function ContractInput({
     setContractId(value);
   }
 
-  console.log(params);
-
   return (
     <div
       className="flex items-center gap-4 p-2 border rounded-md"
@@ -85,9 +83,9 @@ function ContractInput({
         {defaultValue ? (
           <div className="relative flex items-center justify-between flex-1 w-full">
             <span
-              className={
+              className={`${
                 RegExp(/{{(.*?)}}/).exec(defaultValue) ? 'text-primary' : ''
-              }
+              } select-none`}
               data-test="contract-input-address"
             >
               {defaultValue}
