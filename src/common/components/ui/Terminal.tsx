@@ -3,8 +3,6 @@ import React, { useState, useEffect } from 'react';
 
 import { Button } from './button';
 
-import { Button } from './button';
-
 import { useResize } from '@/common/hooks/useResize';
 import { generateUniqueID } from '@/utils/functions/generateUniqueID';
 
@@ -27,7 +25,7 @@ function Terminal({
   entries,
   onClear,
   showClearButton = false,
-}: TerminalProps) {
+}: Readonly<TerminalProps>) {
   const [isTerminalVisible, setIsTerminalVisible] = useState(true);
   const terminalRef = React.useRef<HTMLDivElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -76,7 +74,7 @@ function Terminal({
         ref={containerRef}
         style={{ height: isTerminalVisible ? 'auto' : '0' }}
       >
-        <div className="flex justify-between items-center pb-4">
+        <div className="flex items-center justify-between pb-4">
           <span className="font-bold">Welcome to keizai 1.0.0 - OUTPUT</span>
           {showClearButton && (
             <Button
@@ -117,36 +115,36 @@ function Terminal({
             data-test="terminal-entry-container"
           >
             {entries
-            .slice()
-            .reverse()
-            .map((entry) => (
-              <div
-                key={generateUniqueID()}
-                className={`flex flex-col gap-1 text-sm text-zinc-200 ${
-                  entry.isError ? 'border-red-500' : 'border-green-700'
-                } border-l-2 pl-2`}
-                data-test="terminal-entry-title"
-              >
-                {entry.invocationId && (
-                  <div className="text-xs text-gray-500">
-                    Invocation ID: {entry.invocationId}
-                  </div>
-                )}
-                {entry.preInvocation}
-                {entry.title}
-                <span className="ml-4" data-test="terminal-entry-message">
-                  {entry.isError
-                    ? entry.message instanceof String ||
-                      typeof entry.message === 'string'
-                      ? entry.message
-                          ?.split('\n')
-                          .map((line, index) => <div key={index}>{line}</div>)
-                      : entry.message
-                    : JSON.stringify(entry.message, null, 2)}
-                </span>
-                {entry.postInvocation}
-              </div>
-            ))}
+              .slice()
+              .reverse()
+              .map((entry) => (
+                <div
+                  key={generateUniqueID()}
+                  className={`flex flex-col gap-1 text-sm text-zinc-200 ${
+                    entry.isError ? 'border-red-500' : 'border-green-700'
+                  } border-l-2 pl-2`}
+                  data-test="terminal-entry-title"
+                >
+                  {entry.invocationId && (
+                    <div className="text-xs text-gray-500">
+                      Invocation ID: {entry.invocationId}
+                    </div>
+                  )}
+                  {entry.preInvocation}
+                  {entry.title}
+                  <span className="ml-4" data-test="terminal-entry-message">
+                    {entry.isError
+                      ? entry.message instanceof String ||
+                        typeof entry.message === 'string'
+                        ? entry.message
+                            ?.split('\n')
+                            .map((line, index) => <div key={index}>{line}</div>)
+                        : entry.message
+                      : JSON.stringify(entry.message, null, 2)}
+                  </span>
+                  {entry.postInvocation}
+                </div>
+              ))}
           </div>
         </div>
       </div>
