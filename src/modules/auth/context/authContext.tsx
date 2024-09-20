@@ -140,8 +140,11 @@ export function AuthProvider({
     async (network: NETWORK): Promise<void> => {
       try {
         setStatusState('wallet', { loading: true });
-        const response = await signerConnectWallet(network);
-        if (!response) throw new Error('Failed to connect wallet');
+        let response = await signerConnectWallet(network);
+        if (!response?.publicKey || !response?.wallet)
+          response = await signerConnectWallet(network);
+        if (!response?.publicKey || !response?.wallet)
+          throw new Error('Failed to connect wallet');
         setConnectWallet({
           publicKey: response.publicKey,
           type: response.wallet,
@@ -331,6 +334,7 @@ export function AuthProvider({
       }
       return forgotPassword(email);
     },
+
     [navigate, setStatusState, toast],
   );
 
@@ -350,21 +354,17 @@ export function AuthProvider({
             status: false,
             loading: false,
           });
+          navigate('auth/login');
           return;
         }
 
-        if (!accessToken && (email || refreshToken)) {
+        if (!accessToken) {
           const { payload } = await authService.refreshToken(
             email,
             refreshToken,
           );
-          cookieService.setAccessTokenCookie(accessToken);
+          cookieService.setAccessTokenCookie(payload.accessToken);
           apiService.setAuthentication(payload.accessToken);
-          setStatusState('refreshSession', {
-            status: true,
-            loading: false,
-          });
-          return;
         }
 
         setStatusState('refreshSession', {
@@ -381,15 +381,16 @@ export function AuthProvider({
           setStatusState('refreshSession', {
             error: error.details.description,
           });
-          if (error.details.description !== 'Invalid Refresh Token') {
+
+          if (error.details.description === 'Invalid Refresh Token') {
+            cookieService.removeAll();
+            cookieService.removeAllWalletCookies();
+          } else {
             toast({
               title: 'Error',
               description: error.details.description,
               variant: 'destructive',
             });
-          } else {
-            cookieService.removeAll();
-            cookieService.removeAllWalletCookies();
           }
         } else {
           toast({
@@ -398,6 +399,7 @@ export function AuthProvider({
             variant: 'destructive',
           });
         }
+
         setStatusState('signIn', {
           error: null,
           loading: false,
