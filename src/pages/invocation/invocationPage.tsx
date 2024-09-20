@@ -137,6 +137,15 @@ function InvocationPageContent({
     handleLoadContract(contractId);
   }
 
+  function handleLoadContractWithLoading(contractId: string) {
+    if (!loading && !isLoadingContract) setLoading(true);
+    handleLoadContract(contractId);
+  }
+
+  useEffect(() => {
+    if (data.contractId && loading) setLoading(false);
+  }, [data, loading, setLoading]);
+
   useEffect(() => {
     if (data.contractId && loading) setLoading(false);
   }, [data, loading, setLoading]);
