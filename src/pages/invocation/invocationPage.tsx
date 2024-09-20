@@ -103,7 +103,6 @@ function InvocationPageContent({
   setLoading: (loading: boolean) => void;
 }>) {
   const { handleUpdateNetwork } = useNetwork(false);
-  const [isTerminalVisible, setIsTerminalVisible] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const {
@@ -133,11 +132,9 @@ function InvocationPageContent({
     setIsModalOpen(false);
   }
 
-  function toggleTerminalVisibility(event: KeyboardEvent) {
-    if (event.ctrlKey && event.key === 'j') {
-      event.preventDefault();
-      setIsTerminalVisible((prev) => !prev);
-    }
+  function handleLoadContractWithLoading(contractId: string) {
+    if (!loading && !isLoadingContract) setLoading(true);
+    handleLoadContract(contractId);
   }
 
   function handleLoadContractWithLoading(contractId: string) {
@@ -150,12 +147,8 @@ function InvocationPageContent({
   }, [data, loading, setLoading]);
 
   useEffect(() => {
-    window.addEventListener('keydown', toggleTerminalVisibility);
-
-    return () => {
-      window.removeEventListener('keydown', toggleTerminalVisibility);
-    };
-  }, []);
+    if (data.contractId && loading) setLoading(false);
+  }, [data, loading, setLoading]);
 
   return (
     <Fragment>
@@ -190,9 +183,8 @@ function InvocationPageContent({
               data={data}
               preInvocationValue={preInvocationValue}
               postInvocationValue={postInvocationValue}
-              setIsTerminalVisible={setIsTerminalVisible}
             />
-            {isTerminalVisible && <Terminal entries={contractResponses} />}
+            <Terminal entries={contractResponses} />
           </div>
         ) : (
           <InvocationCTAPage />
