@@ -82,39 +82,43 @@ export default function InvocationByCollection() {
           <p>{error}</p>
         ) : (
           <div className="flex flex-col space-y-6 w-full">
-            <h2>Invocations</h2>
-            <div className="flex items-center justify-end space-x-4">
-              <select
-                className="border rounded-md p-2  bg-blue-500"
-                value={executionMode}
-                onChange={(e) =>
-                  setExecutionMode(e.target.value as 'sequential' | 'parallel')
-                }
-              >
-                <option value="parallel">Parallel</option>
-                <option value="sequential">Sequential</option>
-              </select>
-              <Button
-                className="w-auto px-3 py-2 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background bg-blue-500 text-white rounded-md self-end"
-                onClick={handleExecution}
-                disabled={isRunningInvocation}
-              >
-                {!isRunningInvocation ? (
-                  executionMode === 'sequential' ? (
-                    'Run All Sequential'
+            <div className="flex items-center justify-between p-4">
+              <h2 className="text-lg font-bold">Collection Runner</h2>
+              <div className="flex items-center justify-end space-x-4">
+                <select
+                  className="bg-primary rounded-lg text-primary-foreground w-auto px-6 py-2 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  value={executionMode}
+                  onChange={(e) =>
+                    setExecutionMode(
+                      e.target.value as 'sequential' | 'parallel',
+                    )
+                  }
+                >
+                  <option value="parallel">Parallel</option>
+                  <option value="sequential">Sequential</option>
+                </select>
+                <Button
+                  className="w-auto px-8 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  onClick={handleExecution}
+                  disabled={isRunningInvocation}
+                >
+                  {!isRunningInvocation ? (
+                    executionMode === 'sequential' ? (
+                      'Run All Sequential'
+                    ) : (
+                      'Run All Parallel'
+                    )
                   ) : (
-                    'Run All Parallel'
-                  )
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Loader
-                      className="w-auto font-bold animate-spin"
-                      size="16"
-                    />
-                    <p>Running</p>
-                  </div>
-                )}
-              </Button>
+                    <div className="flex items-center gap-2">
+                      <Loader
+                        className="w-auto font-bold animate-spin"
+                        size="16"
+                      />
+                      <p>Running</p>
+                    </div>
+                  )}
+                </Button>
+              </div>
             </div>
             <div className="flex flex-col ">
               {invocations?.map((invocation) => (
