@@ -1,4 +1,7 @@
-import React from 'react';
+import { PanelBottomClose, PanelBottomOpen } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+
+import { Button } from './button';
 
 import { Button } from './button';
 
@@ -25,6 +28,7 @@ function Terminal({
   onClear,
   showClearButton = false,
 }: TerminalProps) {
+  const [isTerminalVisible, setIsTerminalVisible] = useState(true);
   const terminalRef = React.useRef<HTMLDivElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
   const resizeTopRef = React.useRef<HTMLDivElement>(null);
@@ -45,20 +49,32 @@ function Terminal({
     }
   }, [onResizeCrossAxis]);
 
+  function toggleTerminalVisibility(event: KeyboardEvent) {
+    if (event.ctrlKey && event.key === 'j') {
+      event.preventDefault();
+      setIsTerminalVisible((prev) => !prev);
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('keydown', toggleTerminalVisibility);
+
+    return () => {
+      window.removeEventListener('keydown', toggleTerminalVisibility);
+    };
+  }, []);
+
   return (
-    <div
-      className="absolute inset-x-0 bottom-0 z-40 mx-3 bg-background"
-      data-test="terminal-container"
-      ref={containerRef}
-    >
+    <>
       <div
-        className="h-0.5 w-full border-t-2 dark:border-t-border border-zinc-600 cursor-ns-resize pb-4"
-        data-test="terminal-border-resize"
-        ref={resizeTopRef}
-      ></div>
-      <div
-        className="h-full pb-4 mx-2 overflow-y-auto text-zinc-600 scrollbar scrollbar-thumb-slate-700 scrollbar-w-2 scrollbar-thumb-rounded"
-        data-test="terminal-scrollbar-container"
+        className={`absolute inset-x-0 bottom-0 z-40 mx-3 bg-background transition-transform duration-300 ease-in-out ${
+          isTerminalVisible
+            ? 'transform translate-y-0'
+            : 'transform translate-y-full'
+        }`}
+        data-test="terminal-container"
+        ref={containerRef}
+        style={{ height: isTerminalVisible ? 'auto' : '0' }}
       >
         <div className="flex justify-between items-center pb-4">
           <span className="font-bold">Welcome to keizai 1.0.0 - OUTPUT</span>
@@ -72,11 +88,35 @@ function Terminal({
           )}
         </div>
         <div
-          ref={terminalRef}
-          className="flex flex-col gap-4 py-5"
-          data-test="terminal-entry-container"
+          className="h-0.5 w-full border-t-2 dark:border-t-border border-zinc-600 cursor-ns-resize pb-4"
+          data-test="terminal-border-resize"
+          ref={resizeTopRef}
+        ></div>
+        <div
+          className={`overflow-y-auto text-zinc-600 scrollbar scrollbar-thumb-slate-700 scrollbar-w-2 scrollbar-thumb-rounded transition-opacity duration-300 ease-in-out ${
+            isTerminalVisible ? 'opacity-100' : 'opacity-0'
+          }`}
+          data-test="terminal-scrollbar-container"
+          style={{ height: isTerminalVisible ? 'auto' : '0' }}
         >
-          {entries
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="icon"
+              asChild
+              onClick={() => setIsTerminalVisible(false)}
+            >
+              <PanelBottomClose className="p-2 text-white transition-colors duration-300 cursor-pointer hover:text-primary" />
+            </Button>
+
+            <span className="font-bold">Welcome to keizai 1.0.0 - OUTPUT</span>
+          </div>
+          <div
+            ref={terminalRef}
+            className="flex flex-col gap-4 py-5"
+            data-test="terminal-entry-container"
+          >
+            {entries
             .slice()
             .reverse()
             .map((entry) => (
@@ -107,9 +147,20 @@ function Terminal({
                 {entry.postInvocation}
               </div>
             ))}
+          </div>
         </div>
       </div>
-    </div>
+      {!isTerminalVisible && (
+        <Button
+          variant="outline"
+          size="icon"
+          asChild
+          onClick={() => setIsTerminalVisible(true)}
+        >
+          <PanelBottomOpen className="p-2 text-white transition-colors duration-300 cursor-pointer hover:text-primary" />
+        </Button>
+      )}
+    </>
   );
 }
 
