@@ -24,7 +24,9 @@ export function EditorTab({
   children: React.ReactNode;
   customKeizaiEditor: string;
 }) {
-  const [theme, setTheme] = useState<string>('vs-dark');
+  const [theme, setTheme] = useState<string>(
+    localStorage.getItem('editor-theme') ?? 'night-owl',
+  );
   const [loadedThemes, setLoadedThemes] = useState<Record<string, boolean>>({
     vs: true,
     'vs-dark': true,
@@ -33,6 +35,14 @@ export function EditorTab({
   const [themeList, setThemeList] = useState<ThemeList>({});
   const [editorReady, setEditorReady] = useState<boolean>(false);
   const monacoRef = useRef<typeof monaco | null>(null);
+
+  const onThemeChange = async (value: string) => {
+    if (!loadedThemes[value]) {
+      await loadTheme(value);
+    }
+    setTheme(value);
+    localStorage.setItem('editor-theme', value);
+  };
 
   const loadTheme = useCallback(
     async (value: string) => {
@@ -58,12 +68,15 @@ export function EditorTab({
   );
 
   const initializeEditor = useCallback(async () => {
+    const response = await fetch('/themes/themelist.json');
+    const data: ThemeList = await response.json();
+    setThemeList(data);
+
     self.MonacoEnvironment = {
       getWorker(_, label) {
-        if (label === 'typescript' || label === 'javascript') {
-          return new tsWorker();
-        }
-        return new editorWorker();
+        return label === 'typescript' || label === 'javascript'
+          ? new tsWorker()
+          : new editorWorker();
       },
     };
 
@@ -74,57 +87,40 @@ export function EditorTab({
       'keizai.d.ts',
     );
 
-    const storedThemeName = localStorage.getItem('editor-theme');
-    if (storedThemeName) {
-      await loadTheme(storedThemeName);
-      setTheme(storedThemeName);
-    }
+    const storedThemeName = localStorage.getItem('editor-theme') ?? 'night-owl';
+    await loadTheme(storedThemeName);
+    setTheme(storedThemeName);
+    monacoRef.current.editor.setTheme(storedThemeName);
+
     setEditorReady(true);
-  }, [customKeizaiEditor, loadTheme]);
+  }, [customKeizaiEditor]);
+
+  useEffect(() => {
+    initializeEditor();
+  }, [initializeEditor, theme, editorReady]);
 
   useEffect(() => {
     initializeEditor();
   }, [initializeEditor]);
 
   useEffect(() => {
-    if (monacoRef.current && editorReady) {
+    if (editorReady && monacoRef.current && theme) {
       monacoRef.current.editor.setTheme(theme);
     }
   }, [theme, editorReady]);
 
-  useEffect(() => {
-    fetch('/themes/themelist.json')
-      .then((response) => response.json())
-      .then((data: ThemeList) => setThemeList(data));
-  }, []);
-
-  const onThemeChange = async (value: string) => {
-    if (!loadedThemes[value]) {
-      await loadTheme(value);
-    }
-    setTheme(value);
-    localStorage.setItem('editor-theme', value);
-  };
-
   return (
     <>
       <Select value={theme} onValueChange={onThemeChange}>
-        <SelectTrigger
-          className="w-[20%] gap-2 px-4 py-3 mb-2 font-bold border-2 rounded-md shadow-md border-slate-900 text-slate-500 focus:outline-none focus:ring-0 ring-0 focus-visible:ring-0 focus:ring-transparent"
-          data-test="contract-input-network"
-        >
+        <SelectTrigger className="w-[20%] gap-2 px-4 py-3 mb-2 font-bold border-2 rounded-md shadow-md border-slate-900 text-slate-500 focus:outline-none focus:ring-0 ring-0 focus-visible:ring-0 focus:ring-transparent">
           <SelectValue
             aria-label={theme}
-            data-test="contract-input-selected-network"
             className="flex items-center justify-between"
           >
             {cleanAndCapitalize(theme)}
           </SelectValue>
         </SelectTrigger>
-        <SelectContent
-          data-test="contract-select-networks-container"
-          className="w-full p-1 overflow-hidden rounded-md shadow-lg scrollbar h-36 ring-1 ring-black ring-opacity-5 scrollbar-thumb-gray-300 scrollbar-track-gray-100"
-        >
+        <SelectContent className="w-full p-1 overflow-hidden rounded-md shadow-lg scrollbar h-36 ring-1 ring-black ring-opacity-5 scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           {Object.keys(themeList).map((key) => (
             <SelectItem
               key={key}
@@ -136,9 +132,11 @@ export function EditorTab({
           ))}
         </SelectContent>
       </Select>
-      <div className="w-full h-[95%] rounded-2xl" id="editor">
-        {editorReady && children}
-      </div>
+      {editorReady && (
+        <div className="w-full h-[95%] rounded-2xl" id="editor">
+          {children}
+        </div>
+      )}
     </>
   );
 }
