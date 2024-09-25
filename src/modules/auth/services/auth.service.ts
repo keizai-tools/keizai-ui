@@ -5,7 +5,7 @@ import { IRefreshSessionResponse } from '../interfaces/IRefreshSessionResponse';
 import { ISignInResponse } from '../interfaces/ISignInResponse';
 import { ISignUpResponse } from '../interfaces/ISignUpResponse';
 import { ISuccessfulAuthenticationResponse } from '../interfaces/ISuccessfulAuthenticationResponse';
-import type { IValidateToken } from '../interfaces/IValidateToken';
+import { IValidateToken } from '../interfaces/IValidateToken';
 
 import { IApiService } from '@/config/axios/interfaces/IApiService';
 import { apiService } from '@/config/axios/services/api.service';
