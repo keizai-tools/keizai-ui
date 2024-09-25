@@ -338,76 +338,56 @@ export function AuthProvider({
     [navigate, setStatusState, toast],
   );
 
-  const handleRefreshSession = useCallback(() => {
-    async function refreshSession() {
-      setStatusState('refreshSession', { loading: true });
-      try {
-        const email: string =
-          cookieService.getCookie(StoredCookies.EMAIL) ?? '';
-        const accessToken: string =
-          cookieService.getCookie(StoredCookies.ACCESS_TOKEN) ?? '';
-        const refreshToken: string =
-          cookieService.getCookie(StoredCookies.REFRESH_TOKEN) ?? '';
+  const handleRefreshSession = useCallback(async () => {
+    setStatusState('refreshSession', { loading: true });
+    try {
+      const email = cookieService.getCookie(StoredCookies.EMAIL);
+      const refreshToken = cookieService.getCookie(StoredCookies.REFRESH_TOKEN);
+      const accessToken = cookieService.getCookie(StoredCookies.ACCESS_TOKEN);
 
-        if (!email || !refreshToken) {
-          setStatusState('refreshSession', {
-            status: false,
-            loading: false,
-          });
-          navigate('auth/login');
-          return;
-        }
-
-        if (!accessToken) {
-          const { payload } = await authService.refreshToken(
-            email,
-            refreshToken,
-          );
-          cookieService.setAccessTokenCookie(payload.accessToken);
-          apiService.setAuthentication(payload.accessToken);
-        }
-
-        setStatusState('refreshSession', {
-          status: true,
-          loading: false,
-        });
-      } catch (error) {
-        setStatusState('refreshSession', {
-          status: false,
-          loading: false,
-        });
-
-        if (error instanceof ApiResponseError) {
-          setStatusState('refreshSession', {
-            error: error.details.description,
-          });
-
-          if (error.details.description === 'Invalid Refresh Token') {
-            cookieService.removeAll();
-            cookieService.removeAllWalletCookies();
-          } else {
-            toast({
-              title: 'Error',
-              description: error.details.description,
-              variant: 'destructive',
-            });
-          }
-        } else {
-          toast({
-            title: 'Error',
-            description: `Unknown error when refreshing session: ${error}`,
-            variant: 'destructive',
-          });
-        }
-
-        setStatusState('signIn', {
-          error: null,
-          loading: false,
-        });
+      if (!email || !refreshToken) {
+        setStatusState('refreshSession', { status: false, loading: false });
         navigate('auth/login');
+        return;
       }
+
+      if (accessToken) {
+        await authService.validateToken();
+        setStatusState('refreshSession', { status: true, loading: false });
+        return;
+      }
+
+      const { payload } = await authService.refreshToken(email, refreshToken);
+      cookieService.setAccessTokenCookie(payload.accessToken);
+      apiService.setAuthentication(payload.accessToken);
+
+      setStatusState('refreshSession', { status: true, loading: false });
+    } catch (error: unknown) {
+      setStatusState('refreshSession', { status: false, loading: false });
+      const errorMessage =
+        error instanceof ApiResponseError
+          ? error.details.description
+          : `Unknown error when refreshing session: ${error}`;
+
+      setStatusState('refreshSession', { error: errorMessage });
+
+      if (
+        error instanceof ApiResponseError &&
+        errorMessage === 'Invalid Refresh Token'
+      ) {
+        cookieService.removeAll();
+        cookieService.removeAllWalletCookies();
+      } else {
+        toast({
+          title: 'Error',
+          description: 'Token expired, please sign in again',
+          variant: 'destructive',
+        });
+      }
+
+      setStatusState('signIn', { error: null, loading: false });
+      navigate('auth/login');
     }
-    return refreshSession();
   }, [setStatusState, navigate, toast]);
 
   const handleSignOut = useCallback(() => {
