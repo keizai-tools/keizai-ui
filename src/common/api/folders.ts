@@ -1,147 +1,154 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import useAxios from '../hooks/useAxios';
 import { Folder } from '../types/folder';
 
-export const useFoldersQuery = () => {
-	const axios = useAxios();
+import type { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
+import { apiService } from '@/config/axios/services/api.service';
 
-	const query = useQuery<Folder[]>({
-		queryKey: ['folders'],
-		queryFn: async () => axios?.get('/folder').then((res) => res.data),
-	});
+export function useFoldersQuery() {
+  const query = useQuery<Folder[]>({
+    queryKey: ['folders'],
+    queryFn: async () =>
+      apiService?.get<IApiResponse<Folder[]>>('/folder').then((res) => {
+        return res.payload;
+      }),
+  });
 
-	return query;
-};
+  return query;
+}
 
-export const useFolderQuery = ({ id }: { id?: string }) => {
-	const axios = useAxios();
+export function useFolderQuery({ id }: { id?: string }) {
+  const query = useQuery<Folder>({
+    queryKey: ['folder', id],
+    queryFn: async () =>
+      apiService?.get<IApiResponse<Folder>>(`/folder/${id}`).then((res) => {
+        return res.payload;
+      }),
+    enabled: !!id,
+  });
 
-	const query = useQuery<Folder>({
-		queryKey: ['folder', id],
-		queryFn: async () => axios?.get(`/folder/${id}`).then((res) => res.data),
-		enabled: !!id,
-	});
+  return query;
+}
 
-	return query;
-};
+export function useFoldersByCollectionIdQuery({ id }: { id?: string }) {
+  const query = useQuery<Folder[]>({
+    queryKey: ['collection', id, 'folders'],
+    queryFn: async () =>
+      apiService
+        ?.get<IApiResponse<Folder[]>>(`/collection/${id}/folders`)
+        .then((res) => res.payload),
+    enabled: !!id,
+  });
 
-export const useFoldersByCollectionIdQuery = ({ id }: { id?: string }) => {
-	const axios = useAxios();
+  return query;
+}
 
-	const query = useQuery<Folder[]>({
-		queryKey: ['collection', id, 'folders'],
-		queryFn: async () =>
-			axios?.get(`/collection/${id}/folders`).then((res) => res.data),
-		enabled: !!id,
-	});
+export function useCreateFolderMutation() {
+  const queryClient = useQueryClient();
 
-	return query;
-};
+  const mutation = useMutation({
+    mutationFn: async ({
+      name,
+      collectionId,
+    }: {
+      name: string;
+      collectionId: string;
+    }) =>
+      apiService
+        ?.post<IApiResponse<Folder>>('/folder', { name, collectionId })
+        .then((res) => res.payload),
+    onSuccess: (_, { collectionId }) => {
+      queryClient.invalidateQueries({
+        queryKey: ['collection', collectionId, 'folders'],
+      });
+    },
+  });
 
-export const useCreateFolderMutation = () => {
-	const queryClient = useQueryClient();
-	const axios = useAxios();
+  return mutation;
+}
 
-	const mutation = useMutation({
-		mutationFn: async ({
-			name,
-			collectionId,
-		}: {
-			name: string;
-			collectionId: string;
-		}) =>
-			axios?.post('/folder', { name, collectionId }).then((res) => res.data),
-		onSuccess: (_, { collectionId }) => {
-			queryClient.invalidateQueries({
-				queryKey: ['collection', collectionId, 'folders'],
-			});
-		},
-	});
-
-	return mutation;
-};
-
-export const useDeleteFolderMutation = ({
-	collectionId,
+export function useDeleteFolderMutation({
+  collectionId,
 }: {
-	collectionId?: string;
-}) => {
-	const queryClient = useQueryClient();
-	const axios = useAxios();
+  collectionId?: string;
+}) {
+  const queryClient = useQueryClient();
 
-	const mutation = useMutation({
-		mutationFn: async (id: string) =>
-			axios?.delete(`/folder/${id}`).then((res) => res.data),
-		onMutate: async (id) => {
-			await queryClient.cancelQueries({
-				queryKey: ['collection', collectionId, 'folders'],
-			});
+  const mutation = useMutation({
+    mutationFn: async (id: string) =>
+      apiService?.delete<IApiResponse<boolean>>(`/folder/${id}`).then((res) => {
+        return res.payload;
+      }),
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({
+        queryKey: ['collection', collectionId, 'folders'],
+      });
 
-			const previousFolders = queryClient.getQueryData<Folder[]>([
-				'collection',
-				collectionId,
-				'folders',
-			]);
+      const previousFolders = queryClient.getQueryData<Folder[]>([
+        'collection',
+        collectionId,
+        'folders',
+      ]);
 
-			queryClient.setQueryData(
-				['collection', collectionId, 'folders'],
-				previousFolders?.filter((folder) => folder.id !== id),
-			);
+      queryClient.setQueryData(
+        ['collection', collectionId, 'folders'],
+        previousFolders?.filter((folder) => folder.id !== id),
+      );
 
-			return {
-				previousFolders,
-			};
-		},
-		onSettled: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['collection', collectionId, 'folders'],
-			});
-		},
-	});
+      return {
+        previousFolders,
+      };
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['collection', collectionId, 'folders'],
+      });
+    },
+  });
 
-	return mutation;
-};
+  return mutation;
+}
 
-export const useEditFolderMutation = ({
-	collectionId,
+export function useEditFolderMutation({
+  collectionId,
 }: {
-	collectionId?: string;
-}) => {
-	const queryClient = useQueryClient();
-	const axios = useAxios();
+  collectionId?: string;
+}) {
+  const queryClient = useQueryClient();
 
-	const mutation = useMutation({
-		mutationFn: async ({ id, name }: { id: string; name: string }) =>
-			axios?.patch('/folder', { id, name }).then((res) => res.data),
-		onMutate: async ({ id, name }) => {
-			await queryClient.cancelQueries({
-				queryKey: ['collection', collectionId, 'folders'],
-			});
+  const mutation = useMutation({
+    mutationFn: async ({ id, name }: { id: string; name: string }) =>
+      apiService
+        ?.patch<IApiResponse<Folder>>('/folder', { id, name })
+        .then((res) => res.payload),
+    onMutate: async ({ id, name }) => {
+      await queryClient.cancelQueries({
+        queryKey: ['collection', collectionId, 'folders'],
+      });
 
-			const previousFolders = queryClient.getQueryData<Folder[]>([
-				'collection',
-				collectionId,
-				'folders',
-			]);
+      const previousFolders = queryClient.getQueryData<Folder[]>([
+        'collection',
+        collectionId,
+        'folders',
+      ]);
 
-			queryClient.setQueryData(
-				['collection', collectionId, 'folders'],
-				previousFolders?.map((folder) =>
-					folder.id === id ? { ...folder, name } : folder,
-				),
-			);
+      queryClient.setQueryData(
+        ['collection', collectionId, 'folders'],
+        previousFolders?.map((folder) =>
+          folder.id === id ? { ...folder, name } : folder,
+        ),
+      );
 
-			return {
-				previousFolders,
-			};
-		},
-		onSettled: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['collection', collectionId, 'folders'],
-			});
-		},
-	});
+      return {
+        previousFolders,
+      };
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['collection', collectionId, 'folders'],
+      });
+    },
+  });
 
-	return mutation;
-};
+  return mutation;
+}

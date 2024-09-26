@@ -1,24 +1,22 @@
 import { Loader } from 'lucide-react';
-import React from 'react';
+import React, { Fragment } from 'react';
 
-import { useAuth } from '@/services/auth/hook/useAuth';
-
-('use client');
+import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 export const AppLoader = ({
-	children,
+  children,
 }: {
-	children: React.ReactNode;
+  children: React.ReactNode;
 }): JSX.Element => {
-	const { isLoading } = useAuth();
+  const { statusState } = useAuthProvider();
 
-	if (isLoading) {
-		return (
-			<div className="flex items-center justify-center w-full">
-				<Loader className="animate-spin" size={36} />
-			</div>
-		);
-	}
+  if (statusState.refreshSession.loading) {
+    return (
+      <div className="flex items-center justify-center w-full">
+        <Loader className="animate-spin" size={36} />
+      </div>
+    );
+  }
 
-	return <>{children}</>;
+  return <Fragment>{children}</Fragment>;
 };

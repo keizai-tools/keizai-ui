@@ -1,45 +1,47 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import useAxios from '../hooks/useAxios';
 import { Method } from '../types/method';
 
-export const useMethodQuery = ({ id }: { id?: string }) => {
-	const axios = useAxios();
+import type { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
+import { apiService } from '@/config/axios/services/api.service';
 
-	const query = useQuery<Method>({
-		queryKey: ['method', id],
-		queryFn: async () => axios?.get(`/method/${id}`).then((res) => res.data),
-		enabled: !!id,
-	});
+export function useMethodQuery({ id }: { id?: string }) {
+  const query = useQuery<Method>({
+    queryKey: ['method', id],
+    queryFn: async () =>
+      apiService
+        ?.get<IApiResponse<Method>>(`/method/${id}`)
+        .then((res) => res.payload),
+    enabled: !!id,
+  });
 
-	return query;
-};
+  return query;
+}
 
-export const useEditParametersMethodMutation = () => {
-	const queryClient = useQueryClient();
-	const axios = useAxios();
+export function useEditParametersMethodMutation() {
+  const queryClient = useQueryClient();
 
-	const mutation = useMutation({
-		mutationFn: async ({
-			id,
-			invocationId,
-			parameters,
-		}: {
-			id: string;
-			invocationId: string;
-			parameters: { name: string; value: string }[];
-		}) =>
-			axios
-				?.patch(`/method`, {
-					id,
-					invocationId,
-					params: parameters,
-				})
-				.then((res) => res.data),
-		onSettled: (_, __, { id }) => {
-			queryClient.invalidateQueries({ queryKey: ['method', id] });
-		},
-	});
+  const mutation = useMutation({
+    mutationFn: async ({
+      id,
+      invocationId,
+      parameters,
+    }: {
+      id: string;
+      invocationId: string;
+      parameters: { name: string; value: string }[];
+    }) =>
+      apiService
+        ?.patch<IApiResponse<Method>>(`/method`, {
+          id,
+          invocationId,
+          params: parameters,
+        })
+        .then((res) => res.payload),
+    onSettled: (_, __, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ['method', id] });
+    },
+  });
 
-	return mutation;
-};
+  return mutation;
+}

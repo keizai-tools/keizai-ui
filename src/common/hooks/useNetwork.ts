@@ -1,24 +1,22 @@
-import React from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useEditNetworkMutation } from '../api/invocations';
 import useContractEvents from './useContractEvents';
 
-function useNetwork(defaultNetwork: string) {
-	const [selectNetwork, setSelectNetwork] = React.useState(defaultNetwork);
-	const { mutate } = useEditNetworkMutation();
-	const { removeEventsFromStorage } = useContractEvents();
-	const params = useParams();
+function useNetwork(showToast = true) {
+  const { mutate } = useEditNetworkMutation(showToast);
+  const { removeEventsFromStorage } = useContractEvents();
+  const params = useParams();
 
-	const handleUpdateNetwork = async (network: string) => {
-		await mutate({
-			network,
-			id: params.invocationId as string,
-		});
-		removeEventsFromStorage(params.invocationId as string);
-	};
+  function handleUpdateNetwork(network: string) {
+    mutate({
+      network,
+      id: params.invocationId as string,
+    });
+    removeEventsFromStorage(params.invocationId as string);
+  }
 
-	return { selectNetwork, setSelectNetwork, handleUpdateNetwork };
+  return { handleUpdateNetwork };
 }
 
 export default useNetwork;

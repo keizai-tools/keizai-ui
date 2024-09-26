@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - main
+      - staging
 
 env:
   PORT: 3000
@@ -18,6 +19,7 @@ env:
 
 jobs:
   build:
+    permissions: write-all
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

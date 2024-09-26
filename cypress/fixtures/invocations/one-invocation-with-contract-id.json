@@ -1,78 +1,78 @@
 {
-	"name": "Invocation",
-	"secretKey": "SDKNQ6MRYBO7D54VE6TLUUX7M6VGPUQ7SKBWPJRGDF6M4KB6GEFVNOVV",
-	"publicKey": "GCXCT7YTGKPNYGE6YTLOOLYB37J6RRIJXUSJUYYR54DENWM2AFO6LHEY",
-	"preInvocation": "",
-	"contractId": "CBZAF32HDJCHHCAOO7NY3I4WOGY7ZFGOY4DY3ZMG3JJXAZH7LKEPMFCJ",
-	"id": "635bbf80-0787-47e2-900c-f44d5f53559d",
-	"folder": {
-		"name": "Folder",
-		"id": "5ffed16a-6c59-4543-afb5-7c0f85e0723e"
-	},
-	"methods": [
-		{
-			"name": "increment",
-			"inputs": [],
-			"outputs": [
-				{
-					"type": "SC_SPEC_TYPE_U32"
-				}
-			],
-			"params": [],
-			"docs": null,
-			"id": "465b4248-266b-402a-8f86-171295f0ee5c"
-		},
-		{
-			"name": "inc_by",
-			"inputs": [
-				{
-					"name": "increment",
-					"type": "SC_SPEC_TYPE_U32"
-				}
-			],
-			"outputs": [
-				{
-					"type": "SC_SPEC_TYPE_U32"
-				}
-			],
-			"params": [
-				{
-					"name": "increment",
-					"value": ""
-				}
-			],
-			"docs": "Increment by a specified integer.",
-			"id": "74de9a5b-e756-4464-8944-162efa4ab803"
-		},
-		{
-			"name": "clear",
-			"inputs": [],
-			"outputs": [],
-			"params": [],
-			"docs": null,
-			"id": "c783755b-82f3-48e3-97d1-01f351a1d98e"
-		}
-	],
-	"selectedMethod": {
-		"name": "inc_by",
-		"inputs": [
-			{
-				"name": "increment",
-				"type": "SC_SPEC_TYPE_U32"
-			}
-		],
-		"outputs": [
-			{
-				"type": "SC_SPEC_TYPE_U32"
-			}
-		],
-		"params": [
-			{
-				"name": "increment",
-				"value": ""
-			}
-		],
-		"docs": "Increment by a specified integer.",
-		"id": "74de9a5b-e756-4464-8944-162efa4ab803"
-	}
+  "name": "Invocation",
+  "secretKey": "SDKNQ6MRYBO7D54VE6TLUUX7M6VGPUQ7SKBWPJRGDF6M4KB6GEFVNOVV",
+  "publicKey": "GCXCT7YTGKPNYGE6YTLOOLYB37J6RRIJXUSJUYYR54DENWM2AFO6LHEY",
+  "preInvocation": "",
+  "contractId": "CBZAF32HDJCHHCAOO7NY3I4WOGY7ZFGOY4DY3ZMG3JJXAZH7LKEPMFCJ",
+  "id": "635bbf80-0787-47e2-900c-f44d5f53559d",
+  "folder": {
+    "name": "Folder",
+    "id": "5ffed16a-6c59-4543-afb5-7c0f85e0723e"
+  },
+  "methods": [
+    {
+      "name": "increment",
+      "inputs": [],
+      "outputs": [
+        {
+          "type": "SC_SPEC_TYPE_U32"
+        }
+      ],
+      "params": [],
+      "docs": null,
+      "id": "465b4248-266b-402a-8f86-171295f0ee5c"
+    },
+    {
+      "name": "inc_by",
+      "inputs": [
+        {
+          "name": "increment",
+          "type": "SC_SPEC_TYPE_U32"
+        }
+      ],
+      "outputs": [
+        {
+          "type": "SC_SPEC_TYPE_U32"
+        }
+      ],
+      "params": [
+        {
+          "name": "increment",
+          "value": ""
+        }
+      ],
+      "docs": "Increment by a specified integer.",
+      "id": "74de9a5b-e756-4464-8944-162efa4ab803"
+    },
+    {
+      "name": "clear",
+      "inputs": [],
+      "outputs": [],
+      "params": [],
+      "docs": null,
+      "id": "c783755b-82f3-48e3-97d1-01f351a1d98e"
+    }
+  ],
+  "selectedMethod": {
+    "name": "inc_by",
+    "inputs": [
+      {
+        "name": "increment",
+        "type": "SC_SPEC_TYPE_U32"
+      }
+    ],
+    "outputs": [
+      {
+        "type": "SC_SPEC_TYPE_U32"
+      }
+    ],
+    "params": [
+      {
+        "name": "increment",
+        "value": ""
+      }
+    ],
+    "docs": "Increment by a specified integer.",
+    "id": "74de9a5b-e756-4464-8944-162efa4ab803"
+  }
 }

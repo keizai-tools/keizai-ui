@@ -1,18 +1,18 @@
 [
-	{
-		"id": "45cb5f2a-5c38-4cef-a0ac-bb292682c018",
-		"name": "Collection",
-		"folders": [
-			{
-				"name": "Folder",
-				"id": "758947e5-67b0-4780-896c-0a9b021f3dd3",
-				"invocations": []
-			},
-			{
-				"name": "Folder1",
-				"id": "e6f32a7c-8cbc-4546-9a31-eaa880bbaf01",
-				"invocations": []
-			}
-		]
-	}
+  {
+    "id": "45cb5f2a-5c38-4cef-a0ac-bb292682c018",
+    "name": "Collection",
+    "folders": [
+      {
+        "name": "Folder",
+        "id": "758947e5-67b0-4780-896c-0a9b021f3dd3",
+        "invocations": []
+      },
+      {
+        "name": "Folder1",
+        "id": "e6f32a7c-8cbc-4546-9a31-eaa880bbaf01",
+        "invocations": []
+      }
+    ]
+  }
 ]

@@ -1,274 +1,423 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useToast } from '../components/ui/use-toast';
-import useAxios from '../hooks/useAxios';
 import { Invocation, InvocationResponse } from '../types/invocation';
+import { BACKEND_NETWORK } from '../types/soroban.enum';
 
-export const useInvocationQuery = ({ id }: { id?: string }) => {
-	const axios = useAxios();
+import { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
+import { apiService } from '@/config/axios/services/api.service';
 
-	const query = useQuery<Invocation>({
-		queryKey: ['invocation', id],
-		queryFn: async () =>
-			axios?.get(`/invocation/${id}`).then((res) => res.data),
-		enabled: !!id,
-	});
+export function useInvocationQuery({ id }: { id?: string }) {
+  const query = useQuery<Invocation>({
+    queryKey: ['invocation', id],
+    queryFn: async () =>
+      apiService
+        ?.get<IApiResponse<Invocation>>(`/invocation/${id}`)
+        .then((response) => response.payload),
+    enabled: !!id,
+  });
 
-	return query;
-};
+  return query;
+}
 
-export const useRunInvocationQuery = ({ id }: { id?: string }) => {
-	const axios = useAxios();
+export function useRunInvocationQuery({ id }: { id?: string }) {
+  return async (signedTransactionXDR: string | null) => {
+    const response = await apiService?.post<IApiResponse<InvocationResponse>>(
+      `/invocation/${id}/run`,
+      {
+        signedTransactionXDR: signedTransactionXDR ?? '',
+      },
+    );
+    return response.payload;
+  };
+}
 
-	return () => {
-		return axios
-			?.get<InvocationResponse>(`/invocation/${id}/run`)
-			.then((res) => res.data);
-	};
-};
+export function usePrepareInvocationQuery({ id }: { id?: string }) {
+  return async () => {
+    const response = await apiService?.get<
+      IApiResponse<
+        | string
+        | {
+            status: number;
+            message: string;
+            name: string;
+            response: string;
+          }
+      >
+    >(`/invocation/${id}/prepare`);
+    return response.payload;
+  };
+}
 
-export const useCreateInvocationMutation = () => {
-	const params = useParams();
-	const queryClient = useQueryClient();
-	const axios = useAxios();
+export function useCreateInvocationMutation() {
+  const params = useParams();
+  const queryClient = useQueryClient();
 
-	const mutation = useMutation({
-		mutationFn: async ({
-			name,
-			folderId,
-		}: {
-			name: string;
-			folderId: string;
-		}) =>
-			axios
-				?.post('/invocation', {
-					name,
-					folderId,
-				})
-				.then((res) => res.data),
-		onSettled: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['collection', params.collectionId, 'folders'],
-			});
-		},
-	});
+  const mutation = useMutation({
+    mutationFn: async ({
+      name,
+      folderId,
+    }: {
+      name: string;
+      folderId: string;
+    }) =>
+      apiService
+        ?.post<IApiResponse<Invocation>>('/invocation', {
+          name,
+          folderId,
+        })
+        .then((response) => response.payload),
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['collection', params.collectionId, 'folders'],
+      });
+    },
+  });
 
-	return mutation;
-};
+  return mutation;
+}
 
-export const useEditInvocationMutation = () => {
-	const params = useParams();
-	const queryClient = useQueryClient();
-	const axios = useAxios();
+export function useEditInvocationMutation() {
+  const params = useParams();
+  const queryClient = useQueryClient();
 
-	const mutation = useMutation({
-		mutationFn: async ({
-			id,
-			name,
-			folderId,
-			contractId,
-			selectedMethodId,
-		}: {
-			id: string;
-			name?: string;
-			folderId?: string;
-			contractId?: string;
-			selectedMethodId?: string;
-		}) =>
-			axios
-				?.patch('/invocation', {
-					id,
-					name,
-					folderId,
-					contractId,
-					selectedMethodId,
-				})
-				.then((res) => res.data)
-				.catch(() => {
-					if (contractId) {
-						window.umami.track('Error loading contract', { contractId });
-					}
-				}),
-		onSuccess: (_, { name, id }) => {
-			if (name) {
-				queryClient.invalidateQueries({
-					queryKey: ['collection', params.collectionId, 'folders'],
-				});
-			} else {
-				queryClient.invalidateQueries({ queryKey: ['invocation', id] });
-			}
-		},
-	});
+  const mutation = useMutation({
+    mutationFn: async ({
+      id,
+      name,
+      folderId,
+      contractId,
+      selectedMethodId,
+    }: {
+      id: string;
+      name?: string;
+      folderId?: string;
+      contractId?: string;
+      selectedMethodId?: string;
+    }) =>
+      apiService
+        ?.patch<IApiResponse<Invocation>>('/invocation', {
+          id,
+          name,
+          folderId,
+          contractId,
+          selectedMethodId,
+        })
+        .then((response) => {
+          return response.payload;
+        })
+        .catch(() => {
+          if (contractId) {
+            window.umami.track('Error loading contract', { contractId });
+          }
+        }),
+    onSuccess: (_, { name, id }) => {
+      if (name) {
+        queryClient.invalidateQueries({
+          queryKey: ['collection', params.collectionId, 'folders'],
+        });
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['invocation', id] });
+      }
+    },
+  });
 
-	return mutation;
-};
+  return mutation;
+}
 
-export const useEditSelectedMethodMutation = () => {
-	const queryClient = useQueryClient();
-	const axios = useAxios();
+export function useEditSelectedMethodMutation() {
+  const queryClient = useQueryClient();
 
-	const mutation = useMutation({
-		mutationFn: async ({
-			id,
-			selectedMethodId,
-		}: {
-			id: string;
-			selectedMethodId?: string;
-		}) =>
-			axios
-				?.patch('/invocation', {
-					id,
-					selectedMethodId,
-				})
-				.then((res) => res.data),
-		onMutate: async ({ id, selectedMethodId }) => {
-			await queryClient.cancelQueries({ queryKey: ['invocation', id] });
+  const mutation = useMutation({
+    mutationFn: async ({
+      id,
+      selectedMethodId,
+    }: {
+      id: string;
+      selectedMethodId?: string;
+    }) =>
+      apiService
+        ?.patch<IApiResponse<Invocation>>('/invocation', {
+          id,
+          selectedMethodId,
+        })
+        .then((response) => response.payload),
+    onMutate: async ({ id, selectedMethodId }) => {
+      await queryClient.cancelQueries({ queryKey: ['invocation', id] });
 
-			const previousInvocation = queryClient.getQueryData<Invocation>([
-				'invocation',
-				id,
-			]);
+      const previousInvocation = queryClient.getQueryData<Invocation>([
+        'invocation',
+        id,
+      ]);
 
-			queryClient.setQueryData(['invocation', id], {
-				...previousInvocation,
-				selectedMethod: {
-					id: selectedMethodId,
-				},
-			});
+      queryClient.setQueryData(['invocation', id], {
+        ...previousInvocation,
+        selectedMethod: {
+          id: selectedMethodId,
+        },
+      });
 
-			return {
-				previousInvocation,
-			};
-		},
-	});
+      return {
+        previousInvocation,
+      };
+    },
+  });
 
-	return mutation;
-};
+  return mutation;
+}
 
-export const useDeleteInvocationMutation = () => {
-	const params = useParams();
-	const queryClient = useQueryClient();
-	const axios = useAxios();
+export function useDeleteInvocationMutation() {
+  const params = useParams();
+  const queryClient = useQueryClient();
 
-	const mutation = useMutation({
-		mutationFn: async (id: string) =>
-			axios?.delete(`/invocation/${id}`).then((res) => res.data),
-		onSettled: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['collection', params.collectionId, 'folders'],
-			});
-		},
-	});
+  const mutation = useMutation({
+    mutationFn: async (id: string) =>
+      apiService
+        ?.delete<IApiResponse<boolean>>(`/invocation/${id}`)
+        .then((response) => response.payload),
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['collection', params.collectionId, 'folders'],
+      });
+    },
+  });
 
-	return mutation;
-};
+  return mutation;
+}
 
-export const useEditNetworkMutation = () => {
-	const queryClient = useQueryClient();
-	const axios = useAxios();
-	const { toast } = useToast();
+export function useEditNetworkMutation(showToast: boolean) {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
-	const mutation = useMutation({
-		mutationFn: async ({ network, id }: { network: string; id: string }) =>
-			axios?.patch(`/invocation`, {
-				network,
-				id,
-			}),
-		onMutate: ({ network, id }) => {
-			const previousInvocation = queryClient.getQueryData<Invocation>([
-				'invocation',
-				id,
-			]);
+  const mutation = useMutation({
+    mutationFn: async ({ network, id }: { network: string; id: string }) =>
+      apiService
+        ?.patch<IApiResponse<Invocation>>(`/invocation`, {
+          network,
+          id,
+        })
+        .then((response) => response.payload),
 
-			queryClient.setQueryData(['invocation', id], {
-				...previousInvocation,
-				network,
-			});
+    onMutate: ({ network, id }) => {
+      const previousInvocation = queryClient.getQueryData<Invocation>([
+        'invocation',
+        id,
+      ]);
 
-			return {
-				previousInvocation,
-			};
-		},
-		onError: () => {
-			toast({
-				title: 'Something went wrong!',
-				description: "Couldn't change network, please try again",
-				variant: 'destructive',
-			});
-		},
-		onSuccess: (_, { id }) => {
-			queryClient.invalidateQueries({ queryKey: ['invocation', id] });
-			toast({
-				title: 'Successfully!',
-				description: 'Network has been changed',
-			});
-		},
-	});
-	return mutation;
-};
+      queryClient.setQueryData(['invocation', id], {
+        ...previousInvocation,
+        network,
+      });
 
-export const useEditInvocationKeysMutation = () => {
-	const queryClient = useQueryClient();
-	const axios = useAxios();
+      return {
+        previousInvocation,
+      };
+    },
+    onError: () => {
+      toast({
+        title: 'Something went wrong!',
+        description: "Couldn't change network, please try again",
+        variant: 'destructive',
+      });
+    },
+    onSuccess: (data) => {
+      if (data) queryClient.setQueryData(['invocation', data.id], data);
+      if (showToast) {
+        toast({
+          title: 'Successfully!',
+          description: 'Network has been changed',
+        });
+      }
+    },
+  });
+  return mutation;
+}
 
-	const mutation = useMutation({
-		mutationFn: async ({
-			id,
-			secretKey,
-			publicKey,
-		}: {
-			id: string;
-			secretKey?: string;
-			publicKey?: string;
-		}) =>
-			axios
-				?.patch('/invocation', {
-					id,
-					secretKey,
-					publicKey,
-				})
-				.then((res) => res.data),
-		onSuccess: (data) => {
-			queryClient.setQueryData(['invocation', data.id], data);
-		},
-	});
+export function useEditInvocationKeysMutation() {
+  const queryClient = useQueryClient();
+  const lastParamsRef = useRef<{
+    id: string;
+    contractId?: string;
+    secretKey?: string;
+    publicKey?: string;
+    network?: BACKEND_NETWORK;
+  } | null>(null);
 
-	return mutation;
-};
+  const mutation = useMutation({
+    mutationFn: async ({
+      id,
+      contractId,
+      secretKey,
+      publicKey,
+      network,
+    }: {
+      id: string;
+      contractId?: string;
+      secretKey?: string;
+      publicKey?: string;
+      network?: BACKEND_NETWORK;
+    }) => {
+      if (
+        lastParamsRef.current &&
+        lastParamsRef.current.id === id &&
+        lastParamsRef.current.contractId === contractId &&
+        lastParamsRef.current.secretKey === secretKey &&
+        lastParamsRef.current.publicKey === publicKey &&
+        lastParamsRef.current.network === network
+      ) {
+        return;
+      }
 
-export const useEditPreInvocationMutation = () => {
-	const axios = useAxios();
-	const queryClient = useQueryClient();
-	const mutation = useMutation({
-		mutationFn: async ({
-			id,
-			preInvocation,
-			postInvocation,
-		}: {
-			id: string;
-			preInvocation?: string;
-			postInvocation?: string;
-		}) => {
-			axios
-				?.patch('/invocation', {
-					id,
-					preInvocation,
-					postInvocation,
-				})
-				.then((res) => res.data);
-		},
-		onSuccess(_, variables) {
-			const oldData = queryClient.getQueryData<Invocation>([
-				'invocation',
-				variables.id,
-			]);
-			queryClient.setQueryData(['invocation', variables.id], {
-				...oldData,
-				preInvocation: variables.preInvocation ?? oldData?.preInvocation,
-				postInvocation: variables.postInvocation ?? oldData?.postInvocation,
-			});
-		},
-	});
-	return mutation;
-};
+      lastParamsRef.current = { id, contractId, secretKey, publicKey, network };
+
+      return apiService
+        ?.patch<IApiResponse<Invocation>>('/invocation', {
+          id,
+          secretKey,
+          publicKey,
+          network,
+          contractId,
+        })
+        .then((response) => response.payload);
+    },
+    onSuccess: (data) => {
+      if (data) queryClient.setQueryData(['invocation', data.id], data);
+    },
+  });
+
+  return mutation;
+}
+
+export function useEditPreInvocationMutation() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: async ({
+      id,
+      preInvocation,
+      postInvocation,
+    }: {
+      id: string;
+      preInvocation?: string;
+      postInvocation?: string;
+    }) => {
+      apiService
+        ?.patch<IApiResponse<Invocation>>('/invocation', {
+          id,
+          preInvocation,
+          postInvocation,
+        })
+        .then((response) => response.payload);
+    },
+    onSuccess(_, variables) {
+      const oldData = queryClient.getQueryData<Invocation>([
+        'invocation',
+        variables.id,
+      ]);
+      queryClient.setQueryData(['invocation', variables.id], {
+        ...oldData,
+        preInvocation: variables.preInvocation ?? oldData?.preInvocation,
+        postInvocation: variables.postInvocation ?? oldData?.postInvocation,
+      });
+    },
+  });
+  return mutation;
+}
+
+export function useUploadWasmMutation() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: async ({
+      formData,
+      id,
+    }: {
+      formData: FormData;
+      id: string;
+    }) => {
+      return await apiService
+        ?.post<IApiResponse<string>>(`invocation/${id}/upload/wasm`, formData)
+        .then((response) => response.payload);
+    },
+    onSuccess: (data, { id }) => {
+      if (typeof data !== 'string') {
+        throw new Error(data);
+      }
+      const newContractId = id;
+      queryClient.invalidateQueries({ queryKey: ['invocation'] });
+      return newContractId;
+    },
+  });
+  return mutation;
+}
+
+export function usePrepareUploadWasmMutation() {
+  const mutation = useMutation({
+    mutationFn: async ({
+      formData,
+      id,
+    }: {
+      formData?: FormData;
+      id?: string;
+    }) => {
+      return await apiService?.post<IApiResponse<string>>(
+        `invocation/${id}/upload/prepare`,
+        formData,
+      );
+    },
+  });
+
+  return mutation;
+}
+
+export function useRunUploadWasmMutation() {
+  const mutation = useMutation({
+    mutationFn: async ({
+      id,
+      signedTransactionXDR,
+      deploy = false,
+    }: {
+      id: string;
+      signedTransactionXDR: string;
+      deploy: boolean;
+    }) => {
+      const response = await apiService?.post<
+        IApiResponse<
+          string | { status: string; title: string; response: string }
+        >
+      >(`invocation/${id}/upload/run`, {
+        signedTransactionXDR,
+        deploy,
+      });
+
+      return response.payload;
+    },
+  });
+  return mutation;
+}
+
+export function useEditContractIdMutation() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      id,
+      contractId,
+    }: {
+      id: string;
+      contractId: string;
+    }) =>
+      apiService
+        ?.patch<IApiResponse<Invocation>>('/invocation', {
+          id,
+          contractId,
+        })
+        .then((response) => response.payload),
+    onSuccess: (_, { id, contractId }) => {
+      queryClient.invalidateQueries({ queryKey: ['invocation', id] });
+      queryClient.invalidateQueries({ queryKey: ['invocation', contractId] });
+    },
+  });
+
+  return mutation;
+}
