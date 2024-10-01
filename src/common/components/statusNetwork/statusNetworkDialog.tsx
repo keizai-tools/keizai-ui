@@ -1,3 +1,4 @@
+import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import NetworkStatus from './networkStatus';
 
@@ -11,7 +12,7 @@ export default function StatusNetworkDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }>) {
-  const { data, isLoading } = useStatusNetworkQuery();
+  const { data, isLoading, refetch, isRefetching } = useStatusNetworkQuery();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -36,19 +37,27 @@ export default function StatusNetworkDialog({
           <NetworkStatus
             name={NETWORK.SOROBAN_MAINNET}
             isOperational={!!data?.mainNetwork}
-            isLoading={isLoading}
+            isLoading={isLoading || isRefetching}
           />
           <NetworkStatus
             name={NETWORK.SOROBAN_TESTNET}
             isOperational={!!data?.testNetwork}
-            isLoading={isLoading}
+            isLoading={isLoading || isRefetching}
           />
           <NetworkStatus
             name={NETWORK.SOROBAN_FUTURENET}
             isOperational={!!data?.futureNetwork}
-            isLoading={isLoading}
+            isLoading={isLoading || isRefetching}
           />
         </div>
+        <Button
+          onClick={() => refetch()}
+          variant="outline"
+          className="w-auto px-8 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          disabled={isLoading || isRefetching}
+        >
+          {isLoading ? 'Reloading...' : 'Reload Status'}
+        </Button>
       </DialogContent>
     </Dialog>
   );
