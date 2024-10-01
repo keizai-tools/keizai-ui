@@ -109,9 +109,8 @@ export function useEditInvocationMutation() {
           return response.payload;
         })
         .catch(() => {
-          if (contractId) {
+          if (contractId && window.umami)
             window.umami.track('Error loading contract', { contractId });
-          }
         }),
     onSuccess: (_, { name, id }) => {
       if (name) {
