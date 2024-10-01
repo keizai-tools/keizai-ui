@@ -82,6 +82,7 @@ export function useCreateInvocationMutation() {
 export function useEditInvocationMutation() {
   const params = useParams();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const mutation = useMutation({
     mutationFn: async ({
@@ -109,6 +110,11 @@ export function useEditInvocationMutation() {
           return response.payload;
         })
         .catch(() => {
+          toast({
+            title: 'Something went wrong!',
+            description: 'There was an error while editing this invocation.',
+            variant: 'destructive',
+          });
           if (contractId && window.umami)
             window.umami.track('Error loading contract', { contractId });
         }),
