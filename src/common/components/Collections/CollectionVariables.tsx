@@ -37,7 +37,7 @@ export const CollectionVariables = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      environments: environments as Environment[],
+      environments: environments,
     },
   });
 
@@ -60,7 +60,7 @@ export const CollectionVariables = ({
       environments: fields.filter((field) => field.id !== id),
     });
     deleteEnvironmentMutation(id);
-    window.umami.track('Delete collection variable');
+    if (window.umami) window.umami.track('Delete collection variable');
   };
 
   const onSubmit = (data: { environments: Environment[] | undefined }) => {
@@ -69,9 +69,10 @@ export const CollectionVariables = ({
     );
     if (environmentsToCreate) {
       createEnvironmentsMutation(environmentsToCreate);
-      window.umami.track('Save collection variables', {
-        amount: environmentsToCreate.length,
-      });
+      if (window.umami)
+        window.umami.track('Save collection variables', {
+          amount: environmentsToCreate.length,
+        });
     }
   };
 

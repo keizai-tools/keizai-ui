@@ -2,7 +2,13 @@ import loader from '@monaco-editor/loader';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  Fragment,
+} from 'react';
 
 import {
   Select,
@@ -20,10 +26,10 @@ interface ThemeList {
 export function EditorTab({
   children,
   customKeizaiEditor,
-}: {
+}: Readonly<{
   children: React.ReactNode;
   customKeizaiEditor: string;
-}) {
+}>) {
   const [theme, setTheme] = useState<string>(
     localStorage.getItem('editor-theme') ?? 'night-owl',
   );
@@ -42,6 +48,9 @@ export function EditorTab({
     }
     setTheme(value);
     localStorage.setItem('editor-theme', value);
+    if (monacoRef.current) {
+      monacoRef.current.editor.setTheme(value);
+    }
   };
 
   const loadTheme = useCallback(
@@ -68,6 +77,8 @@ export function EditorTab({
   );
 
   const initializeEditor = useCallback(async () => {
+    if (editorReady) return;
+
     const response = await fetch('/themes/themelist.json');
     const data: ThemeList = await response.json();
     setThemeList(data);
@@ -89,28 +100,17 @@ export function EditorTab({
 
     const storedThemeName = localStorage.getItem('editor-theme') ?? 'night-owl';
     await loadTheme(storedThemeName);
-    setTheme(storedThemeName);
     monacoRef.current.editor.setTheme(storedThemeName);
 
     setEditorReady(true);
-  }, [customKeizaiEditor]);
-
-  useEffect(() => {
-    initializeEditor();
-  }, [initializeEditor, theme, editorReady]);
+  }, [customKeizaiEditor, loadTheme, editorReady]);
 
   useEffect(() => {
     initializeEditor();
   }, [initializeEditor]);
 
-  useEffect(() => {
-    if (editorReady && monacoRef.current && theme) {
-      monacoRef.current.editor.setTheme(theme);
-    }
-  }, [theme, editorReady]);
-
   return (
-    <>
+    <Fragment>
       <Select value={theme} onValueChange={onThemeChange}>
         <SelectTrigger className="w-[20%] gap-2 px-4 py-3 mb-2 font-bold border-2 rounded-md shadow-md border-slate-900 text-slate-500 focus:outline-none focus:ring-0 ring-0 focus-visible:ring-0 focus:ring-transparent">
           <SelectValue
@@ -132,11 +132,9 @@ export function EditorTab({
           ))}
         </SelectContent>
       </Select>
-      {editorReady && (
-        <div className="w-full h-[95%] rounded-2xl" id="editor">
-          {children}
-        </div>
-      )}
-    </>
+      <div className="w-full h-[95%] rounded-2xl" id="editor">
+        {children}
+      </div>
+    </Fragment>
   );
 }

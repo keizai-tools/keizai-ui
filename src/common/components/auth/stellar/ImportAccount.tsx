@@ -24,20 +24,19 @@ enum SECRET_KEY_ERROR {
 function ImportAccount({
   invocationId,
   editKeys,
-}: {
+}: Readonly<{
   invocationId: string;
   editKeys: UseMutateFunction<
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    any,
+    unknown,
     Error,
     {
       id: string;
-      secretKey?: string | undefined;
-      publicKey?: string | undefined;
+      secretKey?: string;
+      publicKey?: string;
     },
     unknown
   >;
-}) {
+}>) {
   const [isError, setIsError] = React.useState(false);
   const { connectAccount } = useStellar();
   const {
@@ -57,11 +56,11 @@ function ImportAccount({
     },
   });
   const submitAndReset = async ({ secretKey }: { secretKey: string }) => {
-    await mutate(secretKey);
+    mutate(secretKey);
     reset({
       secretKey: '',
     });
-    window.umami.track('Import account');
+    if (window.umami) window.umami.track('Import account');
     setIsError(false);
   };
 
