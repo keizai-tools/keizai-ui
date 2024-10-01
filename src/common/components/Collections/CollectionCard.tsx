@@ -30,8 +30,8 @@ const CollectionCard = ({
   const { mutate, isPending } = useUpdateCollectionMutation();
 
   const handleEditCollection = async ({ name }: { name: string }) => {
-    await mutate({ id, name });
-    window.umami.track('Edit collection');
+    mutate({ id, name });
+    if (window.umami) window.umami.track('Edit collection');
     setActiveDialog(null);
   };
 
@@ -44,9 +44,10 @@ const CollectionCard = ({
         onClick={() => navigate(`/collection/${id}`)}
       >
         <span data-test="collection-folder-title">{name}</span>
-        <div className="flex flex-col justify-start items-start">
+
+        <div className="flex flex-col items-start justify-start">
           <span
-            className="text-slate-400 font-medium"
+            className="font-medium text-slate-400"
             data-test="collection-folder-quantity"
           >
             {foldersCount === 0
@@ -54,14 +55,15 @@ const CollectionCard = ({
               : `${foldersCount} ${foldersCount === 1 ? 'Folder' : 'Folders'}`}
           </span>
           {foldersCount > 0 && (
-            <span className="text-slate-400 font-medium">
+
+            <span className="font-medium text-slate-400">
               {invocationsCount === 0 ? 'No' : invocationsCount}{' '}
               {invocationsCount === 1 ? 'Invocation' : 'Invocations'}
             </span>
           )}
         </div>
       </Button>
-      <div className="absolute right-5 top-6 text-white">
+      <div className="absolute text-white right-5 top-6">
         <MoreOptions
           onClickEdit={() => setActiveDialog('edit')}
           onClickDelete={() => setActiveDialog('delete')}
@@ -74,7 +76,7 @@ const CollectionCard = ({
         description="This will permanently delete your collection and all of its contents."
         onConfirm={() => {
           deleteCollectionMutation(id);
-          window.umami.track('Delete collection');
+          if (window.umami) window.umami.track('Delete collection');
         }}
       />
       <EditEntityDialog

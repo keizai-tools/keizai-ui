@@ -26,12 +26,12 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
   return (
     <>
       <div
-        className="flex justify-between items-center w-full text-slate-100 text-sm group"
+        className="flex items-center justify-between w-full text-sm text-slate-100 group"
         data-test="invocation-item"
       >
         <Button
           variant="link"
-          className="text-slate-100 w-full flex justify-start"
+          className="flex justify-start w-full text-slate-100"
           asChild
         >
           <NavLink to={`invocation/${invocation?.id}`}>
@@ -68,7 +68,7 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
         onOpenChange={() => setOpenDialog(null)}
         onConfirm={() => {
           deleteInvocationMutation(invocation.id);
-          window.umami.track('Delete invocation');
+          if (window.umami) window.umami.track('Delete invocation');
           if (params?.invocationId === invocation.id) {
             navigate('/collection/' + params.collectionId);
           }
@@ -87,7 +87,7 @@ const InvocationListItem = ({ invocation }: { invocation: Invocation }) => {
             id: invocation.id,
             name: name,
           });
-          window.umami.track('Edit invocation');
+          if (window.umami) window.umami.track('Edit invocation');
           setOpenDialog(null);
         }}
         isLoading={isEditingInvocation}
