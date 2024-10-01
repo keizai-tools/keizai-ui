@@ -142,6 +142,16 @@ function InvocationPageContent({
   }, [data, loading, setLoading]);
 
   useEffect(() => {
+    if (
+      !data.contractId &&
+      !isModalOpen &&
+      data.network !== BACKEND_NETWORK.AUTO_DETECT
+    ) {
+      handleUpdateNetwork(BACKEND_NETWORK.AUTO_DETECT);
+    }
+  }, [data.contractId, data.network, handleUpdateNetwork, isModalOpen]);
+
+  useEffect(() => {
     if (data.contractId && loading) setLoading(false);
   }, [data, loading, setLoading]);
 
