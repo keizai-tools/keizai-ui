@@ -3,6 +3,7 @@ import React from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 
 import EnvironmentDropdownContainer from '../Environments/EnvironmentDropdownContainer';
+import { useToast } from '../ui/use-toast';
 import EnvironmentInput from './EnvironmentInput';
 import SaveContractDialog from './SaveContractDialog';
 
@@ -33,7 +34,20 @@ function ContractInput({
 }>) {
   const [contractId, setContractId] = React.useState(defaultValue);
   const params = useParams();
-
+  const { toast } = useToast();
+  function copyToClipboard() {
+    navigator.clipboard
+      .writeText(contractId)
+      .then(() => {
+        toast({
+          title: 'Copied to clipboard',
+          description: 'Contract ID copied to clipboard',
+        });
+      })
+      .catch((err) => {
+        console.error('Failed to copy: ', err);
+      });
+  }
   const [showEditContractDialog, setShowEditContractDialog] =
     React.useState(false);
   const {
@@ -165,22 +179,36 @@ function ContractInput({
           </Button>
         ) : (
           !viewMode && (
-            <Button
-              data-test="contract-input-btn-load"
-              className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              onClick={runInvocation}
-              type="button"
-              disabled={loading || !method}
-            >
-              {!loading ? (
-                'RUN'
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Loader className="w-auto font-bold animate-spin" size="20" />
-                  <p>Running</p>
-                </div>
-              )}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                data-test="contract-input-btn-load"
+                className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                onClick={copyToClipboard}
+                type="button"
+                disabled={loading || !method}
+              >
+                COPY CONTRACT ID
+              </Button>
+              <Button
+                data-test="contract-input-btn-load"
+                className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                onClick={runInvocation}
+                type="button"
+                disabled={loading || !method}
+              >
+                {!loading ? (
+                  'RUN'
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Loader
+                      className="w-auto font-bold animate-spin"
+                      size="20"
+                    />
+                    <p>Running</p>
+                  </div>
+                )}
+              </Button>
+            </div>
           )
         )}
       </div>
