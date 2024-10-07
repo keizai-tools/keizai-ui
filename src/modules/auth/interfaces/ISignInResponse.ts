@@ -9,6 +9,7 @@ export interface ISignInResponse {
     user: {
       email: string;
       externalId: string;
+      memoId: string;
       roles: string[];
       id: number;
       createdAt: string;

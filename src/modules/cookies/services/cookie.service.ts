@@ -59,6 +59,14 @@ class CookieService<T extends ITokenPayload> implements ICookieService<T> {
     }
   }
 
+  setMemoIdCookie(memoId: string): void {
+    try {
+      this.cookies.set(StoredCookies.MEMO_ID, memoId, { path: '/' });
+    } catch (error) {
+      console.error('Error setting memoId cookie:', error);
+    }
+  }
+
   getCookie(name: StoredCookies): string | undefined {
     try {
       return this.cookies.get(name);
