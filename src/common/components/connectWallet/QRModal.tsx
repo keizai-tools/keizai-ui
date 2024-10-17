@@ -14,8 +14,7 @@ export default function QRModal({
 }: Readonly<{ wallet: IWallet; stellarMemo: string }>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
-  const publicKeyTest =
-    'GBGE6C3EVOVCZPWEA5TXAH2FV5R3WNWLQWJFKAAN5UTXIR327M6XIO5R';
+  const publicKeyTest = import.meta.env.VITE_PUBLIC_KEY_TEST;
 
   function copyMemo() {
     const memoToCopy = `${stellarMemo}`;
@@ -70,13 +69,6 @@ export default function QRModal({
                   className="h-full transition-all duration-300 ease-in-out transform cursor-pointer hover:text-primary hover:scale-110"
                   onClick={copyMemo}
                 />
-                {/* <Button
-                  onClick={() => ()}
-                  variant="outline"
-                  className="mx-4 w-40 h-8 py-1 text-sm font-bold transition-all duration-300 ease-in-out transform border-2 whitespace-nowrap hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                >
-                  Confirm payment
-                </Button> */}
               </p>
               <p className="text-sm mt-2 text-red-600">
                 * MEMO ID is required or you will lose your coins.
