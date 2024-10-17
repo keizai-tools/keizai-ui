@@ -49,7 +49,7 @@ function Folder({ folder }: Readonly<{ folder: IFolder }>) {
 
   function handleDeleteFolder() {
     deleteFolderMutation(folder.id);
-    window.umami.track('Delete folder');
+    if (window.umami) window.umami.track('Delete folder');
     setOpenDialog(null);
     if (params?.invocationId && folder) {
       const folderHasInvocation = folder.invocations?.find(
@@ -140,7 +140,7 @@ function Folder({ folder }: Readonly<{ folder: IFolder }>) {
         description="Let's name your folder"
         onEdit={({ name }) => {
           editFolderMutation({ id: folder.id, name: name });
-          window.umami.track('Edit folder');
+          if (window.umami) window.umami.track('Edit folder');
           setOpenDialog(null);
         }}
         isLoading={isEditingFolder}

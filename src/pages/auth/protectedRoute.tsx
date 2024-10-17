@@ -11,8 +11,17 @@ function ProtectedRoute({
 }>): ReactElement | null {
   const { handleRefreshSession, statusState } = useAuthProvider();
   useEffect(() => {
-    handleRefreshSession();
-  }, [handleRefreshSession]);
+    if (
+      !statusState.refreshSession.status &&
+      !statusState.refreshSession.loading
+    ) {
+      handleRefreshSession();
+    }
+  }, [
+    handleRefreshSession,
+    statusState.refreshSession.loading,
+    statusState.refreshSession.status,
+  ]);
 
   if (statusState.refreshSession.loading) {
     return <FullscreenLoading />;

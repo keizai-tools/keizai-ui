@@ -31,33 +31,61 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <Home />,
+            element: (
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            ),
           },
           {
             path: 'change-password',
 
-            element: <ChangePassword />,
+            element: (
+              <ProtectedRoute>
+                <ChangePassword />
+              </ProtectedRoute>
+            ),
           },
           {
             path: 'collection/:collectionId',
-            element: <CollectionPage />,
+            element: (
+              <ProtectedRoute>
+                <CollectionPage />
+              </ProtectedRoute>
+            ),
             children: [
               {
                 index: true,
-                element: <CollectionCTAPage />,
+                element: (
+                  <ProtectedRoute>
+                    <CollectionCTAPage />
+                  </ProtectedRoute>
+                ),
               },
 
               {
                 path: 'variables',
-                element: <CollectionVariablesContainer />,
+                element: (
+                  <ProtectedRoute>
+                    <CollectionVariablesContainer />
+                  </ProtectedRoute>
+                ),
               },
               {
                 path: 'invocation/:invocationId',
-                element: <InvocationPage />,
+                element: (
+                  <ProtectedRoute>
+                    <InvocationPage />
+                  </ProtectedRoute>
+                ),
               },
               {
                 path: 'invocations',
-                element: <InvocationByCollection />,
+                element: (
+                  <ProtectedRoute>
+                    <InvocationByCollection />
+                  </ProtectedRoute>
+                ),
               },
             ],
           },

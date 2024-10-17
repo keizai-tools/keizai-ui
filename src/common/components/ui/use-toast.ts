@@ -10,6 +10,7 @@ type ToasterToast = ToastProps & {
   title?: React.ReactNode;
   description?: React.ReactNode;
   action?: ToastActionElement;
+  variant?: 'default' | 'destructive';
 };
 
 const actionTypes = {
@@ -71,6 +72,12 @@ function addToRemoveQueue(toastId: string) {
 export function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'ADD_TOAST':
+      if (action.toast.variant === 'destructive') {
+        return {
+          ...state,
+          toasts: [action.toast],
+        };
+      }
       return {
         ...state,
         toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),

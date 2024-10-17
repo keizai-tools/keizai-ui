@@ -74,17 +74,7 @@ function Terminal({
         ref={containerRef}
         style={{ height: isTerminalVisible ? 'auto' : '0' }}
       >
-        <div className="flex items-center justify-between pb-4">
-          <span className="font-bold">Welcome to keizai 1.0.0 - OUTPUT</span>
-          {showClearButton && (
-            <Button
-              className="w-auto px-8 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              onClick={onClear}
-            >
-              Clear Console
-            </Button>
-          )}
-        </div>
+        <div className="flex items-center justify-between pb-4"></div>
         <div
           className="h-0.5 w-full border-t-2 dark:border-t-border border-zinc-600 cursor-ns-resize pb-4"
           data-test="terminal-border-resize"
@@ -97,17 +87,29 @@ function Terminal({
           data-test="terminal-scrollbar-container"
           style={{ height: isTerminalVisible ? 'auto' : '0' }}
         >
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="icon"
-              asChild
-              onClick={() => setIsTerminalVisible(false)}
-            >
-              <PanelBottomClose className="p-2 text-white transition-colors duration-300 cursor-pointer hover:text-primary" />
-            </Button>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Button
+                variant="outline"
+                size="icon"
+                asChild
+                onClick={() => setIsTerminalVisible(false)}
+              >
+                <PanelBottomClose className="p-2 text-white transition-colors duration-300 cursor-pointer hover:text-primary" />
+              </Button>
 
-            <span className="font-bold">Welcome to keizai 1.0.0 - OUTPUT</span>
+              <span className="font-bold">
+                Welcome to keizai 1.0.0 - OUTPUT
+              </span>
+            </div>
+            {showClearButton && (
+              <Button
+                className="w-auto px-8 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                onClick={onClear}
+              >
+                Clear Console
+              </Button>
+            )}
           </div>
           <div
             ref={terminalRef}
