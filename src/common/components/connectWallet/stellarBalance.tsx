@@ -41,8 +41,6 @@ function StellarBalance({
 
       try {
         const account = await server.loadAccount(publicKey);
-        console.log(account);
-
         setBalances(account.balances);
       } catch (err) {
         console.error(err);
