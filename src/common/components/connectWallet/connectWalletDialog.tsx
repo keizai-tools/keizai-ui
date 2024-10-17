@@ -3,6 +3,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import QRModal from './QRModal';
+import BalanceComponent from './balanceComponent';
 import { NetworkSection } from './networkSection';
 import StellarBalance from './stellarBalance';
 
@@ -99,6 +100,7 @@ export default function ConnectWalletDialog({
                   publicKey={wallet?.MAINNET?.publicKey}
                   network="mainnet"
                 />
+                <BalanceComponent />
                 <QRModal wallet={wallet} stellarMemo={memoId} />
               </div>
             )}
