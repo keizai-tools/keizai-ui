@@ -249,6 +249,7 @@ export function AuthProvider({
 
           cookieService.setAccessTokenCookie(accessToken);
           cookieService.setMemoIdCookie(user.memoId);
+          cookieService.setBalanceCookie(user.balance);
           cookieService.setRefreshTokenCookie(refreshToken, decodedToken.exp);
           cookieService.setEmailCookie(email, decodedToken.exp);
           apiService.setAuthentication(accessToken);

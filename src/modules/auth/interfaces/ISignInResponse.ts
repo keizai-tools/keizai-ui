@@ -10,6 +10,7 @@ export interface ISignInResponse {
       email: string;
       externalId: string;
       memoId: string;
+      balance: number;
       roles: string[];
       id: number;
       createdAt: string;

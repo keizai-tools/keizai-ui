@@ -67,6 +67,14 @@ class CookieService<T extends ITokenPayload> implements ICookieService<T> {
     }
   }
 
+  setBalanceCookie(balance: number): void {
+    try {
+      this.cookies.set(StoredCookies.BALANCE, balance, { path: '/' });
+    } catch (error) {
+      console.error('Error setting balance cookie:', error);
+    }
+  }
+
   getCookie(name: StoredCookies): string | undefined {
     try {
       return this.cookies.get(name);

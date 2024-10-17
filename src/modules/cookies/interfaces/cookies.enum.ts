@@ -3,4 +3,5 @@ export enum StoredCookies {
   ACCESS_TOKEN = 'accessToken',
   EMAIL = 'email',
   MEMO_ID = 'memoId',
+  BALANCE = 'balance',
 }
