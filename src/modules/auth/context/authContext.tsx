@@ -243,11 +243,13 @@ export function AuthProvider({
         try {
           const response = await authService.signIn(email, password);
           const { payload } = response;
-          const { accessToken, refreshToken, idToken } = payload;
+          const { accessToken, refreshToken, idToken, user } = payload;
           const decodedToken = cookieService.decodeToken(idToken);
           if (!decodedToken) throw new Error(UNRECOGNIZED_TOKEN_ERROR);
 
           cookieService.setAccessTokenCookie(accessToken);
+          cookieService.setMemoIdCookie(user.memoId);
+          cookieService.setBalanceCookie(user.balance);
           cookieService.setRefreshTokenCookie(refreshToken, decodedToken.exp);
           cookieService.setEmailCookie(email, decodedToken.exp);
           apiService.setAuthentication(accessToken);
