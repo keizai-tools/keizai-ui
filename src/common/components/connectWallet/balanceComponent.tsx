@@ -44,7 +44,7 @@ function BalanceComponent() {
     }
   };
 
-  return <div>Balance Keizai: {balance.toFixed(2)}</div>;
+  return <div>Balance Keizai: {balance.toFixed(2)} USDC</div>;
 }
 
 export default BalanceComponent;
