@@ -6,7 +6,13 @@ import { Button } from '../ui/button';
 
 import { useCreateInvocationMutation } from '@/common/api/invocations';
 
-const NewInvocationButton = ({ folderId }: { folderId: string }) => {
+const NewInvocationButton = ({
+  folderId,
+  collectionId,
+}: {
+  folderId?: string;
+  collectionId?: string;
+}) => {
   const { mutate, isPending } = useCreateInvocationMutation();
   const navigate = useNavigate();
 
@@ -18,7 +24,11 @@ const NewInvocationButton = ({ folderId }: { folderId: string }) => {
       isLoading={isPending}
       onSubmit={({ name }) => {
         mutate(
-          { name, folderId },
+          {
+            name,
+            folderId: folderId,
+            collectionId: collectionId,
+          },
           {
             onSuccess: (invocation) => {
               navigate(`invocation/${invocation.id}`);
