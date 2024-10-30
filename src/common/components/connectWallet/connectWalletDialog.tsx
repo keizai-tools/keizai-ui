@@ -7,6 +7,12 @@ import BalanceComponent from './balanceComponent';
 import { NetworkSection } from './networkSection';
 import StellarBalance from './stellarBalance';
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/common/components/ui/accordion';
 import { NETWORK } from '@/common/types/soroban.enum';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 import { StoredCookies } from '@/modules/cookies/interfaces/cookies.enum';
@@ -27,6 +33,7 @@ export default function ConnectWalletDialog({
   const [showDisconnectWarning, setShowDisconnectWarning] = useState(false);
   const [replaceAutoGenerate, setReplaceAutoGenerate] = useState(false);
   const memoId: string = cookieService.getCookie(StoredCookies.MEMO_ID) ?? '';
+  const [openNetworks, setOpenNetworks] = useState<string[]>([]);
 
   const atLeastOneConnected: boolean =
     !!wallet.MAINNET?.publicKey ||
@@ -85,6 +92,14 @@ export default function ConnectWalletDialog({
     }
   }, [confirmCreateAccount, onCreateAccount, replaceAutoGenerate, wallet]);
 
+  function toggleNetwork(network: string) {
+    setOpenNetworks((prev) =>
+      prev.includes(network)
+        ? prev.filter((n) => n !== network)
+        : [...prev, network],
+    );
+  }
+
   return (
     <Fragment>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -95,47 +110,77 @@ export default function ConnectWalletDialog({
           <DialogHeader>
             {wallet.MAINNET?.publicKey && (
               <div className="flex flex-row items-center justify-between gap-4">
-                <StellarBalance
-                  title="Mainnet"
-                  publicKey={wallet?.MAINNET?.publicKey}
-                  network="mainnet"
-                />
                 <BalanceComponent />
                 <QRModal wallet={wallet} stellarMemo={memoId} />
               </div>
             )}
           </DialogHeader>
-          <NetworkSection
-            network={NETWORK.SOROBAN_MAINNET}
-            wallet={wallet.MAINNET}
-            connectWallet={connectWallet}
-            disconnectWallet={disconnectWallet}
-          />
+          <Accordion type="multiple">
+            <AccordionItem value="mainnet">
+              <AccordionTrigger onClick={() => toggleNetwork('mainnet')}>
+                Mainnet Network Status
+              </AccordionTrigger>
+              {openNetworks.includes('mainnet') && (
+                <AccordionContent>
+                  <StellarBalance
+                    title="Mainnet"
+                    publicKey={wallet?.MAINNET?.publicKey}
+                    network="mainnet"
+                  />
+                  <NetworkSection
+                    network={NETWORK.SOROBAN_MAINNET}
+                    wallet={wallet.MAINNET}
+                    connectWallet={connectWallet}
+                    disconnectWallet={disconnectWallet}
+                  />
+                </AccordionContent>
+              )}
+            </AccordionItem>
 
-          <StellarBalance
-            title="Testnet"
-            publicKey={wallet?.TESTNET?.publicKey}
-            network="testnet"
-          />
-          <NetworkSection
-            network={NETWORK.SOROBAN_TESTNET}
-            wallet={wallet.TESTNET}
-            connectWallet={connectWallet}
-            disconnectWallet={disconnectWallet}
-          />
-          {wallet.FUTURENET?.publicKey && (
-            <StellarBalance
-              title="Futurenet"
-              publicKey={wallet?.FUTURENET?.publicKey}
-              network="futurenet"
-            />
-          )}
-          <NetworkSection
-            network={NETWORK.SOROBAN_FUTURENET}
-            wallet={wallet.FUTURENET}
-            connectWallet={connectWallet}
-            disconnectWallet={disconnectWallet}
-          />
+            <AccordionItem value="testnet">
+              <AccordionTrigger onClick={() => toggleNetwork('testnet')}>
+                Testnet Network Status
+              </AccordionTrigger>
+              {openNetworks.includes('testnet') && (
+                <AccordionContent>
+                  <StellarBalance
+                    title="Testnet"
+                    publicKey={wallet?.TESTNET?.publicKey}
+                    network="testnet"
+                  />
+                  <NetworkSection
+                    network={NETWORK.SOROBAN_TESTNET}
+                    wallet={wallet.TESTNET}
+                    connectWallet={connectWallet}
+                    disconnectWallet={disconnectWallet}
+                  />
+                </AccordionContent>
+              )}
+            </AccordionItem>
+
+            {wallet.FUTURENET?.publicKey && (
+              <AccordionItem value="futurenet">
+                <AccordionTrigger onClick={() => toggleNetwork('futurenet')}>
+                  Futurenet Network Status
+                </AccordionTrigger>
+                {openNetworks.includes('futurenet') && (
+                  <AccordionContent>
+                    <StellarBalance
+                      title="Futurenet"
+                      publicKey={wallet.FUTURENET?.publicKey}
+                      network="futurenet"
+                    />
+                    <NetworkSection
+                      network={NETWORK.SOROBAN_FUTURENET}
+                      wallet={wallet.FUTURENET}
+                      connectWallet={connectWallet}
+                      disconnectWallet={disconnectWallet}
+                    />
+                  </AccordionContent>
+                )}
+              </AccordionItem>
+            )}
+          </Accordion>
           <Button
             onClick={handleCreateAccount}
             className="w-auto px-8 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
