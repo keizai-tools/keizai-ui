@@ -8,14 +8,12 @@ interface Balance {
 
 interface StellarBalanceProps {
   publicKey?: string;
-  network?: 'testnet' | 'mainnet' | 'futurenet';
-  title?: string;
+  networkBalance?: string;
 }
 
 function StellarBalance({
-  title,
   publicKey,
-  network = 'testnet',
+  networkBalance = 'testnet',
 }: Readonly<StellarBalanceProps>) {
   const [balances, setBalances] = useState<Balance[]>([]);
   const [error, setError] = useState('');
@@ -26,11 +24,11 @@ function StellarBalance({
       setBalances([]);
 
       if (!publicKey) {
-        setError('Por favor, introduce una clave pública.');
+        setError('No public key provided');
         return;
       }
 
-      const networkUrl = getNetworkUrl(network);
+      const networkUrl = getNetworkUrl(networkBalance);
 
       if (!networkUrl) {
         setError('The selected network is not valid.');
@@ -49,10 +47,10 @@ function StellarBalance({
     };
 
     fetchBalance();
-  }, [publicKey, network]);
+  }, [publicKey, networkBalance]);
 
-  const getNetworkUrl = (network: string): string | null => {
-    switch (network) {
+  const getNetworkUrl = (networkBalance: string): string | null => {
+    switch (networkBalance) {
       case 'testnet':
         return 'https://horizon-testnet.stellar.org';
       case 'mainnet':
@@ -65,16 +63,20 @@ function StellarBalance({
   };
 
   return (
-    <div>
+    <div className="w-full">
       {error && <p className="text-red-500 text-xs">{error}</p>}
 
       {balances.length > 0 && (
-        <div>
-          <ul>
+        <div className="flex items-center w-full gap-4 p-4 border-2 border-solid rounded-lg bg-slate-950 border-offset-background">
+          <ul className="w-full">
             {balances.map((balance, index) => (
-              <li key={index} className="text-xs">
-                Balance {title}: {balance.balance} - Asset Type:{' '}
-                {balance.asset_type}
+              <li key={index} className="flex items-center gap-4">
+                <p className="h-full text-center pointer-events-none whitespace-nowrap w-min text-slate-600">
+                  Balance
+                </p>
+                <p className="w-full h-full overflow-hidden font-light text-start whitespace-nowrap">
+                  {balance.balance} - Asset Type: {balance.asset_type}
+                </p>
               </li>
             ))}
           </ul>
