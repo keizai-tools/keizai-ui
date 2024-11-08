@@ -1,50 +1,46 @@
-import { useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { RefreshCw } from 'lucide-react';
+import { useState } from 'react';
 
 import { StoredCookies } from '@/modules/cookies/interfaces/cookies.enum';
 import { cookieService } from '@/modules/cookies/services/cookie.service';
+import { userService } from '@/modules/user/services/user.service';
 
 function BalanceComponent() {
   const [balance, setBalance] = useState<number>(
     parseFloat(cookieService.getCookie(StoredCookies.BALANCE) || '0'),
   );
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [connectionStatus, setConnectionStatus] =
-    useState<string>('Connecting...');
+  const [message, setMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    const newSocket = io('http://localhost:3002', {
-      autoConnect: true,
-    });
-    setSocket(newSocket);
+  const refreshBalance = async () => {
+    setLoading(true);
+    setMessage(null);
 
-    newSocket.on('connect', () => {
-      setConnectionStatus('Connected');
-    });
-
-    newSocket.on('balanceUpdate', (data) => {
-      setBalance(data.balance);
-      setBalanceCookie(data.balance);
-    });
-
-    newSocket.on('disconnect', () => {
-      setConnectionStatus('Disconnected');
-    });
-
-    return () => {
-      newSocket.disconnect();
-    };
-  }, []);
-
-  const setBalanceCookie = (balance: number): void => {
     try {
-      cookieService.setBalanceCookie(balance);
+      const response = await userService.UserMe();
+      const updatedBalance = response.payload.balance;
+
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      setBalance(updatedBalance);
+      cookieService.setBalanceCookie(updatedBalance);
     } catch (error) {
-      console.error('Error setting balance cookie:', error);
+      console.error('Error al actualizar el balance:', error);
+      setMessage('Error al actualizar el balance. Inténtalo de nuevo.');
+    } finally {
+      setLoading(false);
     }
   };
 
-  return <div>Balance Keizai: {balance.toFixed(2)} USDC</div>;
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div>Balance Keizai: {balance.toFixed(2)} USDC</div>
+      <button onClick={refreshBalance} disabled={loading}>
+        <RefreshCw className={loading ? 'animate-spin' : ''} size="20" />
+      </button>
+      {message && <p>{message}</p>}
+    </div>
+  );
 }
 
 export default BalanceComponent;
