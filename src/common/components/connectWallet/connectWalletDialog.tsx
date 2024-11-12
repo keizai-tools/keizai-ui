@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import QRModal from './QRModal';
 import BalanceComponent from './balanceComponent';
 import { NetworkSection } from './networkSection';
-import StellarBalance from './stellarBalance';
 
 import {
   Accordion,
@@ -122,11 +121,6 @@ export default function ConnectWalletDialog({
               </AccordionTrigger>
               {openNetworks.includes('mainnet') && (
                 <AccordionContent>
-                  <StellarBalance
-                    title="Mainnet"
-                    publicKey={wallet?.MAINNET?.publicKey}
-                    network="mainnet"
-                  />
                   <NetworkSection
                     network={NETWORK.SOROBAN_MAINNET}
                     wallet={wallet.MAINNET}
@@ -143,11 +137,6 @@ export default function ConnectWalletDialog({
               </AccordionTrigger>
               {openNetworks.includes('testnet') && (
                 <AccordionContent>
-                  <StellarBalance
-                    title="Testnet"
-                    publicKey={wallet?.TESTNET?.publicKey}
-                    network="testnet"
-                  />
                   <NetworkSection
                     network={NETWORK.SOROBAN_TESTNET}
                     wallet={wallet.TESTNET}
@@ -165,11 +154,6 @@ export default function ConnectWalletDialog({
                 </AccordionTrigger>
                 {openNetworks.includes('futurenet') && (
                   <AccordionContent>
-                    <StellarBalance
-                      title="Futurenet"
-                      publicKey={wallet.FUTURENET?.publicKey}
-                      network="futurenet"
-                    />
                     <NetworkSection
                       network={NETWORK.SOROBAN_FUTURENET}
                       wallet={wallet.FUTURENET}

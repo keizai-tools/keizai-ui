@@ -44,32 +44,45 @@ export default function QRModal({
         Recharge Wallet
       </Button>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="flex flex-col w-auto h-auto gap-4 p-6 font-bold border-2 border-solid rounded-lg shadow-lg border-offset-background max-w-prose">
+        <DialogContent className="flex flex-col w-auto h-auto gap-6 p-6 font-bold border-2 border-solid rounded-lg shadow-lg border-offset-background max-w-prose">
           <DialogHeader>
-            <DialogTitle className="text-xl font-semibold select-none text-red-500">
+            <DialogTitle className="text-xl text-center font-semibold select-none text-red-500">
               Both MEMO ID and address are required or you will lose your coins.
             </DialogTitle>
+            <DialogTitle className="text-xl text-center font-semibold select-none text-red-500">
+              Only payments in USDC are accepted. Other assets will not be
+              processed.
+            </DialogTitle>
           </DialogHeader>
+
           {wallet.MAINNET?.publicKey && (
-            <div className="mt-4">
-              <h3 className="text-lg font-semibold">Wallet Address</h3>
-              <QRCodeCanvas value={publicKeyTest} size={100} level="H" />
-              <p className="text-sm flex items-center gap-4">
-                {publicKeyTest}
+            <div className="flex flex-col items-start justify-between w-auto h-full gap-4 p-6 font-bold border-2 border-solid rounded-lg border-offset-background bg-slate-900 ">
+              <div className="flex items-center w-full gap-4 p-4 border-2 border-solid rounded-lg bg-slate-950 border-offset-background">
+                <QRCodeCanvas value={publicKeyTest} size={100} level="H" />
+                <p className="h-full text-center pointer-events-none whitespace-nowrap w-min text-slate-600">
+                  Wallet Address
+                </p>
+                <p className="w-full h-full overflow-hidden font-light text-center whitespace-nowrap">
+                  {publicKeyTest}
+                </p>
                 <Copy
                   className="h-full transition-all duration-300 ease-in-out transform cursor-pointer hover:text-primary hover:scale-110"
                   onClick={copyWalletAddress}
                 />
-              </p>
-              <h3 className="text-lg font-semibold mt-2">Memo ID</h3>
-              <QRCodeCanvas value={stellarMemo} size={100} level="H" />
-              <p className="text-sm flex items-center gap-4">
-                {stellarMemo}
+              </div>
+              <div className="flex items-center w-full gap-4 p-4 border-2 border-solid rounded-lg bg-slate-950 border-offset-background">
+                <QRCodeCanvas value={stellarMemo} size={100} level="H" />
+                <p className="h-full text-center pointer-events-none whitespace-nowrap w-min text-slate-600">
+                  Memo ID
+                </p>
+                <p className="w-full h-full overflow-hidden font-light text-start whitespace-nowrap">
+                  {stellarMemo}
+                </p>
                 <Copy
                   className="h-full transition-all duration-300 ease-in-out transform cursor-pointer hover:text-primary hover:scale-110"
                   onClick={copyMemo}
                 />
-              </p>
+              </div>
               <p className="text-sm mt-2 text-red-600">
                 * MEMO ID is required or you will lose your coins.
               </p>
