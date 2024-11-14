@@ -63,7 +63,7 @@
     "react-simple-code-editor": "^0.13.1",
     "simple-stellar-signer-api": "^1.0.2-b",
     "sort-by": "^0.0.2",
-    "stellar-sdk": "^11.0.1",
+    "stellar-sdk": "^13.0.0-rc.1",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
     "universal-cookie": "^7.1.4",
