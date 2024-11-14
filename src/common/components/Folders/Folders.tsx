@@ -2,6 +2,7 @@ import { ArrowLeftIcon, PlusIcon, ListVideo } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 
 import NewEntityDialog from '../Entity/NewEntityDialog';
+import InvocationListItem from '../Invocations/InvocationListItem';
 import { Button } from '../ui/button';
 import Folder from './Folder';
 
@@ -10,6 +11,10 @@ import {
   useCreateFolderMutation,
 } from '@/common/api/folders';
 import {
+  useCreateInvocationMutation,
+  useInvocationsByCollectionIdQuery,
+} from '@/common/api/invocations';
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -17,24 +22,39 @@ import {
 
 function Folders() {
   const params = useParams();
-  const { data, isLoading } = useFoldersByCollectionIdQuery({
-    id: params.collectionId,
-  });
+  const { data: folders, isLoading: isLoadingFolders } =
+    useFoldersByCollectionIdQuery({
+      id: params.collectionId,
+    });
+  const { data: invocations, isLoading: isLoadingInvocations } =
+    useInvocationsByCollectionIdQuery({
+      id: params.collectionId,
+    });
 
   const currentRoute = location.pathname;
 
-  const { mutate, isPending } = useCreateFolderMutation();
+  const { mutate: createFolder, isPending: isCreatingFolder } =
+    useCreateFolderMutation();
+  const { mutate: createInvocation, isPending: isCreatingInvocation } =
+    useCreateInvocationMutation();
   const navigate = useNavigate();
 
   async function onCreateFolder({ name }: { name: string }) {
     if (params.collectionId) {
-      mutate({ name, collectionId: params.collectionId });
+      createFolder({ name, collectionId: params.collectionId });
       if (window.umami) window?.umami?.track('Create folder');
     }
   }
 
+  async function onCreateInvocation({ name }: { name: string }) {
+    if (params.collectionId) {
+      createInvocation({ name, collectionId: params.collectionId });
+      if (window.umami) window?.umami?.track('Create invocation');
+    }
+  }
+
   function renderFoldersContent() {
-    if (isLoading) {
+    if (isLoadingFolders) {
       return (
         <span className="text-xs text-slate-400" data-test="collection-loading">
           Loading folders...
@@ -42,10 +62,10 @@ function Folders() {
       );
     }
 
-    if (data && data.length > 0) {
+    if (folders && folders.length > 0) {
       return (
         <div className="flex flex-col text-slate-400">
-          {data.map((folder) => (
+          {folders.map((folder) => (
             <Folder key={folder.id} folder={folder} />
           ))}
         </div>
@@ -60,6 +80,26 @@ function Folders() {
         Create your first folder here
       </span>
     );
+  }
+
+  function renderInvocationsContent() {
+    if (isLoadingInvocations) {
+      return (
+        <span className="text-xs text-slate-400" data-test="collection-loading">
+          Loading invocations...
+        </span>
+      );
+    }
+
+    if (invocations && invocations.length > 0) {
+      return (
+        <div className="flex flex-col text-slate-400">
+          {invocations.map((invocation) => (
+            <InvocationListItem key={invocation.id} invocation={invocation} />
+          ))}
+        </div>
+      );
+    }
   }
 
   return (
@@ -98,7 +138,7 @@ function Folders() {
           </Tooltip>
         </div>
         <div
-          className="flex items-center justify-between mb-3"
+          className="flex items-center justify-between mt-3"
           data-test="collections-header"
         >
           <h4
@@ -111,7 +151,7 @@ function Folders() {
             title="New folder"
             description="Let's name your folder"
             defaultName="Folder"
-            isLoading={isPending}
+            isLoading={isCreatingFolder}
             onSubmit={onCreateFolder}
           >
             <Button
@@ -124,6 +164,33 @@ function Folders() {
           </NewEntityDialog>
         </div>
         {renderFoldersContent()}
+        <div
+          className="flex items-center justify-between mb-3"
+          data-test="collections-invocations-header"
+        >
+          <h4
+            className="text-lg font-bold"
+            data-test="collections-invocations-header-title"
+          >
+            Invocations
+          </h4>
+          <NewEntityDialog
+            title="New invocation"
+            description="Let's name your invocation"
+            defaultName="Invocation"
+            isLoading={isCreatingInvocation}
+            onSubmit={onCreateInvocation}
+          >
+            <Button
+              variant="link"
+              className="flex h-auto gap-1 px-0 py-1 text-xs text-slate-500 hover:text-slate-100"
+              data-test="collections-header-btn-new-invocation"
+            >
+              <PlusIcon size={12} /> Add
+            </Button>
+          </NewEntityDialog>
+        </div>
+        {renderInvocationsContent()}
       </div>
       <div className="w-full mb-4 text-base font-semibold text-center hover:underline">
         <Link

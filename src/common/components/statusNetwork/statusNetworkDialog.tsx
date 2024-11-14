@@ -13,7 +13,6 @@ export default function StatusNetworkDialog({
   onOpenChange: (open: boolean) => void;
 }>) {
   const { data, isLoading, refetch, isRefetching } = useStatusNetworkQuery();
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent

@@ -34,6 +34,7 @@ function ContractInput({
 }>) {
   const [contractId, setContractId] = React.useState(defaultValue);
   const params = useParams();
+
   const { toast } = useToast();
   function copyToClipboard() {
     navigator.clipboard
@@ -73,7 +74,6 @@ function ContractInput({
     handleSearchEnvironment(value);
     setContractId(value);
   }
-
   return (
     <div
       className="flex items-center gap-4 p-2 border rounded-md"

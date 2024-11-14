@@ -78,7 +78,6 @@ export function EditorTab({
 
   const initializeEditor = useCallback(async () => {
     if (editorReady) return;
-
     const response = await fetch('/themes/themelist.json');
     const data: ThemeList = await response.json();
     setThemeList(data);
@@ -101,7 +100,6 @@ export function EditorTab({
     const storedThemeName = localStorage.getItem('editor-theme') ?? 'night-owl';
     await loadTheme(storedThemeName);
     monacoRef.current.editor.setTheme(storedThemeName);
-
     setEditorReady(true);
   }, [customKeizaiEditor, loadTheme, editorReady]);
 

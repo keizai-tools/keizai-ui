@@ -59,24 +59,41 @@ export function useCreateInvocationMutation() {
     mutationFn: async ({
       name,
       folderId,
+      collectionId,
     }: {
       name: string;
-      folderId: string;
+      folderId?: string;
+      collectionId?: string;
     }) =>
       apiService
         ?.post<IApiResponse<Invocation>>('/invocation', {
           name,
-          folderId,
+          folderId: folderId,
+          collectionId: collectionId,
         })
         .then((response) => response.payload),
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ['collection', params.collectionId, 'folders'],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['collection', params.collectionId, 'invocation'],
+      });
     },
   });
 
   return mutation;
+}
+
+export function useInvocationsByCollectionIdQuery({ id }: { id?: string }) {
+  return useQuery<Invocation[]>({
+    queryKey: ['collection', id, 'invocation'],
+    queryFn: async () =>
+      apiService
+        ?.get<IApiResponse<Invocation[]>>(`/collection/${id}/invocation`)
+        .then((response) => response.payload),
+    enabled: !!id,
+  });
 }
 
 export function useEditInvocationMutation() {
@@ -118,13 +135,15 @@ export function useEditInvocationMutation() {
           if (contractId && window.umami)
             window.umami.track('Error loading contract', { contractId });
         }),
-    onSuccess: (_, { name, id }) => {
-      if (name) {
-        queryClient.invalidateQueries({
-          queryKey: ['collection', params.collectionId, 'folders'],
-        });
-      } else {
-        queryClient.invalidateQueries({ queryKey: ['invocation', id] });
+    onSuccess: (data, { name, id }) => {
+      if (data) {
+        if (name) {
+          queryClient.invalidateQueries({
+            queryKey: ['collection', params.collectionId, 'folders'],
+          });
+        } else {
+          queryClient.invalidateQueries({ queryKey: ['invocation', id] });
+        }
       }
     },
   });
@@ -185,6 +204,9 @@ export function useDeleteInvocationMutation() {
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ['collection', params.collectionId, 'folders'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['collection', params.collectionId, 'invocation'],
       });
     },
   });
