@@ -1,6 +1,6 @@
 import { IStatusState, IStatus } from './IStatusState';
 
-import { NETWORK, BACKEND_NETWORK } from '@/common/types/soroban.enum';
+import { NETWORK } from '@/common/types/soroban.enum';
 import { WalletType } from '@/modules/signer/constants/enums';
 
 export interface IAuthenticationContext {
@@ -15,6 +15,7 @@ export interface IAuthenticationContext {
   handleRefreshSession: () => Promise<void>;
   handleSignOut: () => void;
   statusState: IStatusState;
+  onCreateAccountEphimeral: (urlEphimeral: string) => void;
   connectWallet(network: Partial<NETWORK>): Promise<void>;
   disconnectWallet(network?: Partial<NETWORK>): void;
   onCreateAccount(
@@ -35,10 +36,11 @@ export interface IAuthenticationContext {
 }
 
 export interface IWallet {
-  [BACKEND_NETWORK.SOROBAN_MAINNET]: IWalletContent | null;
-  [BACKEND_NETWORK.SOROBAN_TESTNET]: IWalletContent | null;
-  [BACKEND_NETWORK.SOROBAN_FUTURENET]: IWalletContent | null;
-  [BACKEND_NETWORK.AUTO_DETECT]: null;
+  [NETWORK.SOROBAN_MAINNET]: IWalletContent | null;
+  [NETWORK.SOROBAN_TESTNET]: IWalletContent | null;
+  [NETWORK.SOROBAN_FUTURENET]: IWalletContent | null;
+  [NETWORK.EPHEMERAL]: IWalletContent | null;
+  [NETWORK.AUTO_DETECT]: IWalletContent | null;
 }
 
 export interface IWalletContent {
