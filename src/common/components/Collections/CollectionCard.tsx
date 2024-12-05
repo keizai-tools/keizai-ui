@@ -44,6 +44,7 @@ const CollectionCard = ({
         onClick={() => navigate(`/collection/${id}`)}
       >
         <span data-test="collection-folder-title">{name}</span>
+
         <div className="flex flex-col items-start justify-start">
           <span
             className="font-medium text-slate-400"

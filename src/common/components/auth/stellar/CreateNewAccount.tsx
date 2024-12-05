@@ -2,7 +2,7 @@ import { UseMutateFunction } from '@tanstack/react-query';
 
 import { Button } from '../../ui/button';
 
-import useStellar from '@/modules/stellar/hook/useStellar';
+import useStellar from '@/common/hooks/useStellar';
 
 function CreateNewAccount({
   invocationId,
