@@ -70,3 +70,22 @@ export function useEphemeralStopMutation() {
   });
   return mutation;
 }
+
+export function useEphemeralFriendBotMutation() {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: async ({ publicKey }: { publicKey: string }) => {
+      return await apiService
+        ?.get<IApiResponse<unknown>>(
+          `/ephemeral-environment/friendbot?addr=${publicKey}`,
+        )
+        .then((response) => {
+          return response.payload;
+        });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ephemeral-environment'] });
+    },
+  });
+  return mutation;
+}
