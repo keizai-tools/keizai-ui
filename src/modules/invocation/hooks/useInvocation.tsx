@@ -145,7 +145,6 @@ function useInvocationHandlers(
       if (preInvocationResponse.isError) {
         setContractResponses((prev) => [...prev, preInvocationResponse]);
       } else {
-        console.log('signedTransaction', signedTransaction);
         const response = await runInvocation(signedTransaction);
 
         const postInvocationResponse = await handleRunService(
