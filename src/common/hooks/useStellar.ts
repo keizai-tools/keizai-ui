@@ -40,7 +40,7 @@ function useStellar() {
     publicKey: string;
     network?: NETWORK;
     urlEphimeral?: string;
-  }) {
+  }): Promise<boolean> {
     const networkUrls = {
       [NETWORK.SOROBAN_FUTURENET]: `${FRIENDBOT.FUTURENET}${publicKey}`,
       [NETWORK.SOROBAN_TESTNET]: `${FRIENDBOT.TESTNET}${publicKey}`,
@@ -66,6 +66,7 @@ function useStellar() {
       const url = networkUrls[network as keyof typeof networkUrls];
       await fetchWithRetry(url);
     }
+    return true;
   }
 
   return { connectAccount, createNewAccount, fundingAccount };
