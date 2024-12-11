@@ -28,16 +28,16 @@ export default function Providers() {
       }}
       flagsmith={flagsmith}
     >
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <AuthProvider>
             <TooltipProvider>
               <Outlet />
               <Toaster />
             </TooltipProvider>
-          </QueryClientProvider>
-        </AuthProvider>
-      </ThemeProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
     </FlagsmithProvider>
   );
 }
