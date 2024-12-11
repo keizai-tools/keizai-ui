@@ -164,6 +164,10 @@ export function useUploadHandlers({
         signedTransactionXDR: signedTransactionXDR as string,
         deploy: false,
       });
+
+      console.log({
+        signedContract,
+      });
       const signedTransaction = await signTransaction(
         signedContract as string,
         data.network,
