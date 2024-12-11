@@ -4,8 +4,6 @@ import ErrorMessage from '../../Form/ErrorMessage';
 import { Button } from '../../ui/button';
 import { type FileData, CustomDragDrop } from './DragAndDropContainer';
 
-import type { EphemeralStatus } from '@/common/hooks/useEphemeral';
-
 export default function EphemeralContent({
   files,
   uploadFiles,
@@ -14,22 +12,27 @@ export default function EphemeralContent({
   status,
   handleStart,
   handleStop,
-  isLoading,
+  loading,
   handleButtonClick,
   buttonLabel,
-  setIsEphemeral,
+  setEphemeral,
 }: Readonly<{
   files: FileData[];
   uploadFiles: (f: FileData[]) => void;
   deleteFile: (indexFile: number) => void;
   error: string | null;
-  status?: EphemeralStatus;
+  status?: {
+    status: string;
+    taskArn: string;
+    publicIp: string;
+    isEphemeral: boolean;
+  };
   handleStart: (options: { interval: number }) => void;
   handleStop: () => void;
-  isLoading: boolean;
+  loading: boolean;
   handleButtonClick: () => void;
   buttonLabel: string;
-  setIsEphemeral: React.Dispatch<React.SetStateAction<boolean>>;
+  setEphemeral: (status: boolean) => void;
 }>) {
   return (
     <Fragment>
@@ -82,7 +85,7 @@ export default function EphemeralContent({
           data-test="edit-entity-dialog-btn-submit"
           onClick={() => {
             files.flatMap((_file, index) => deleteFile(index));
-            setIsEphemeral(false);
+            setEphemeral(false);
           }}
         >
           Cancel
@@ -93,9 +96,9 @@ export default function EphemeralContent({
             className="px-4 py-2 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105"
             data-test="edit-entity-dialog-btn-submit"
             onClick={() => handleStart({ interval: 10 })}
-            disabled={isLoading}
+            disabled={loading}
           >
-            {isLoading ? 'Starting...' : 'Start Ephemeral'}
+            {loading ? 'Starting...' : 'Start Ephemeral'}
           </Button>
         ) : (
           <Button
@@ -107,9 +110,9 @@ export default function EphemeralContent({
               files.flatMap((_file, index) => deleteFile(index));
               handleStop();
             }}
-            disabled={isLoading}
+            disabled={loading}
           >
-            {isLoading ? 'Stopping...' : 'Stop Ephemeral'}
+            {loading ? 'Stopping...' : 'Stop Ephemeral'}
           </Button>
         )}
         {files.length > 0 && (

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useCallback, useEffect, useState } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import {
   useEphemeralStatusMutation,
@@ -11,14 +11,7 @@ import useNetwork from './useNetwork';
 
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
-export interface EphemeralStatus {
-  status: string;
-  taskArn: string;
-  publicIp: string;
-  isEphemeral?: boolean;
-}
-
-function useEphemeral() {
+export function useEphemeral(setLoading: (loading: boolean) => void) {
   const {
     mutateAsync: getStatus,
     isPending: isStatusPending,
@@ -35,38 +28,59 @@ function useEphemeral() {
     isError: isStopError,
   } = useEphemeralStopMutation();
 
-  const { statusState, onCreateAccountEphimeral } = useAuthProvider();
+  const { statusState, onCreateAccountEphimeral, onDeleteAccountEphimeral } =
+    useAuthProvider();
   const { handleUpdateNetwork } = useNetwork(false);
 
-  const [status, setStatus] = useState<EphemeralStatus>({
+  const [status, setStatus] = useState({
     status: 'STOPPED',
     taskArn: '',
     publicIp: '',
     isEphemeral: false,
   });
 
-  const fetchStatus = async () => {
+  const fetchStatus = useCallback(async (): Promise<void> => {
     try {
       if (status.status === 'STOPPED') {
         const currentStatus = await getStatus();
         if (currentStatus.status === 'RUNNING') {
-          setStatus(currentStatus);
-          onCreateAccountEphimeral(currentStatus.publicIp);
+          setStatus({
+            ...currentStatus,
+            isEphemeral: true,
+          });
           handleUpdateNetwork(NETWORK.EPHEMERAL);
+          onCreateAccountEphimeral(currentStatus.publicIp);
         }
       }
     } catch (error) {
       console.error('Failed to fetch status:', error);
     }
-  };
+  }, [status.status, getStatus, onCreateAccountEphimeral, handleUpdateNetwork]);
+
+  const isLoading = useMemo(
+    () =>
+      [
+        isStartPending,
+        isStopPending,
+        isStatusPending,
+        statusState.wallet.loading,
+      ].some(Boolean),
+    [
+      isStartPending,
+      isStopPending,
+      isStatusPending,
+      statusState.wallet.loading,
+    ],
+  );
 
   useEffect(() => {
     fetchStatus();
   }, []);
 
   const handleStart = useCallback(
-    async ({ interval }: { interval: number }) => {
+    async ({ interval }: { interval: number }): Promise<void> => {
       try {
+        setLoading(true);
         const startResponse = await startEphemeral({ interval });
         if (startResponse) {
           setStatus({
@@ -80,14 +94,18 @@ function useEphemeral() {
         }
       } catch (error) {
         console.error('Failed to start ephemeral instance:', error);
+      } finally {
+        setLoading(false);
       }
     },
     [startEphemeral, onCreateAccountEphimeral, handleUpdateNetwork],
   );
 
-  const handleStop = useCallback(async () => {
+  const handleStop = useCallback(async (): Promise<void> => {
     try {
+      setLoading(true);
       await stopEphemeral();
+      onDeleteAccountEphimeral();
       setStatus({
         status: 'STOPPED',
         taskArn: '',
@@ -96,21 +114,22 @@ function useEphemeral() {
       });
     } catch (error) {
       console.error('Failed to stop ephemeral instance:', error);
+    } finally {
+      setLoading(false);
     }
   }, [stopEphemeral]);
 
-  const isLoading = [
-    isStartPending,
-    isStopPending,
-    isStatusPending,
-    statusState.wallet.loading,
-  ].some(Boolean);
-  const isError = [
-    isStatusError,
-    isStartError,
-    isStopError,
-    statusState.wallet.error,
-  ].some(Boolean);
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
+
+  const isError = useMemo(
+    () =>
+      [isStatusError, isStartError, isStopError, statusState.wallet.error].some(
+        Boolean,
+      ),
+    [isStatusError, isStartError, isStopError, statusState.wallet.error],
+  );
 
   return {
     status,
@@ -119,7 +138,7 @@ function useEphemeral() {
     isError,
     isLoading,
     fetchStatus,
+    setEphemeral: (variable: boolean) =>
+      setStatus({ ...status, isEphemeral: variable }),
   };
 }
-
-export default useEphemeral;

@@ -13,6 +13,7 @@ import ContractInput from '@/common/components/Input/ContractInput';
 import UploadWasmDialog from '@/common/components/Tabs/FunctionsTab/UploadWasmDialog';
 import TabsContainer from '@/common/components/Tabs/TabsContainer';
 import Terminal from '@/common/components/ui/Terminal';
+import { Button } from '@/common/components/ui/button';
 import useWasmFileHandler from '@/common/hooks/useUploadWasm';
 import { Invocation } from '@/common/types/invocation';
 import { NETWORK } from '@/common/types/soroban.enum';
@@ -34,14 +35,9 @@ function InvocationPage() {
     if (data?.contractId && data?.methods?.length) {
       setLoading(false);
     }
-  }, [data, data?.contractId, setLoading]);
+  }, [data]);
 
   useEffect(() => {
-    console.log({
-      wallet: wallet[data?.network as keyof typeof wallet],
-      data,
-      wallets: wallet,
-    });
     if (data && wallet[data.network as keyof typeof wallet]) {
       editKeys({
         id: data.id,
@@ -111,7 +107,6 @@ function InvocationPageContent({
     wallet,
     setLoading,
     connectWallet,
-    loading,
   );
 
   return (
@@ -120,11 +115,21 @@ function InvocationPageContent({
         className="relative flex flex-col w-full max-h-screen gap-4 p-3 overflow-hidden"
         data-test="invocation-section-container"
       >
-        <Breadcrumb
-          contractName="Collection"
-          folderName={data.folder?.name ?? ''}
-          contractInvocationName={data.name}
-        />
+        <div
+          className="flex items-center justify-between w-full"
+          data-test="breadcrumb-container"
+        >
+          <Breadcrumb
+            contractName="Collection"
+            folderName={data.folder?.name ?? ''}
+            contractInvocationName={data.name}
+          />
+          {uploadWasm.status?.publicIp && (
+            <Button onClick={uploadWasm.handleStop} className="mt-2">
+              Stop Ephemeral
+            </Button>
+          )}
+        </div>
         <ContractInput
           defaultValue={data.contractId ?? ''}
           defaultNetwork={data.network}

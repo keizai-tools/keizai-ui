@@ -10,25 +10,25 @@ import type { Invocation } from '@/common/types/invocation';
 import { NETWORK } from '@/common/types/soroban.enum';
 
 export default function NonEphemeralContent({
-  files,
-  uploadFiles,
+  data,
   deleteFile,
   error,
-  data,
-  setIsEphemeral,
   handleButtonClick,
   buttonLabel,
   onOpenChange,
+  uploadFiles,
+  files,
+  setEphemeral,
 }: Readonly<{
   files: FileData[];
   uploadFiles: (f: FileData[]) => void;
   deleteFile: (indexFile: number) => void;
   error: string | null;
   data: Invocation;
-  setIsEphemeral: React.Dispatch<React.SetStateAction<boolean>>;
   handleButtonClick: () => void;
   buttonLabel: string;
   onOpenChange: () => void;
+  setEphemeral: (status: boolean) => void;
 }>) {
   return (
     <Fragment>
@@ -51,7 +51,7 @@ export default function NonEphemeralContent({
           <div>
             {data.network !== NETWORK.AUTO_DETECT && (
               <SelectNetwork
-                setEphemeral={setIsEphemeral}
+                setEphemeral={setEphemeral}
                 network={data.network}
               />
             )}

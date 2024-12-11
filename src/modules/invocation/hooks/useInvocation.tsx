@@ -20,7 +20,7 @@ import { IWallet } from '@/modules/auth/interfaces/IAuthenticationContext';
 import { InvocationService } from '@/modules/invocation/services/invocation.service';
 import signTransaction from '@/modules/signer/functions/signTransaction';
 
-function useInvocation(
+function useInvocationHandlers(
   invocation: Invocation,
   wallet: IWallet,
   connectWallet: (network: Partial<NETWORK>) => Promise<void>,
@@ -145,6 +145,7 @@ function useInvocation(
       if (preInvocationResponse.isError) {
         setContractResponses((prev) => [...prev, preInvocationResponse]);
       } else {
+        console.log('signedTransaction', signedTransaction);
         const response = await runInvocation(signedTransaction);
 
         const postInvocationResponse = await handleRunService(
@@ -195,4 +196,4 @@ function useInvocation(
   };
 }
 
-export default useInvocation;
+export default useInvocationHandlers;
