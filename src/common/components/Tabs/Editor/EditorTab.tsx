@@ -2,7 +2,6 @@ import loader from '@monaco-editor/loader';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
-
 import React, {
   useEffect,
   useState,
@@ -107,7 +106,6 @@ export function EditorTab({
   useEffect(() => {
     initializeEditor();
   }, [initializeEditor]);
-
 
   return (
     <Fragment>

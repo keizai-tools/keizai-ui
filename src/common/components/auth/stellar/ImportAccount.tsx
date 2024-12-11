@@ -14,7 +14,7 @@ import {
 } from '../../ui/dialog';
 import { Input } from '../../ui/input';
 
-import useStellar from '@/modules/stellar/hook/useStellar';
+import useStellar from '@/common/hooks/useStellar';
 
 enum SECRET_KEY_ERROR {
   REQUIRED = 'Secret key is required',
@@ -56,7 +56,6 @@ function ImportAccount({
     },
   });
   const submitAndReset = async ({ secretKey }: { secretKey: string }) => {
-
     mutate(secretKey);
     reset({
       secretKey: '',

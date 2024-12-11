@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 
 import { useToast } from '../components/ui/use-toast';
 import { Invocation, InvocationResponse } from '../types/invocation';
-import { BACKEND_NETWORK } from '../types/soroban.enum';
+import { NETWORK } from '../types/soroban.enum';
 
 import { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
 import { apiService } from '@/config/axios/services/api.service';
@@ -269,7 +269,7 @@ export function useEditInvocationKeysMutation() {
     contractId?: string;
     secretKey?: string;
     publicKey?: string;
-    network?: BACKEND_NETWORK;
+    network?: NETWORK;
   } | null>(null);
 
   const mutation = useMutation({
@@ -284,7 +284,7 @@ export function useEditInvocationKeysMutation() {
       contractId?: string;
       secretKey?: string;
       publicKey?: string;
-      network?: BACKEND_NETWORK;
+      network?: NETWORK;
     }) => {
       if (
         lastParamsRef.current &&

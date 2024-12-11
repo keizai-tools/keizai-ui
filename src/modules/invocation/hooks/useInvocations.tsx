@@ -9,7 +9,7 @@ import {
 
 import { TerminalEntry } from '@/common/components/ui/Terminal';
 import { Invocation, InvocationResponse } from '@/common/types/invocation';
-import { BACKEND_NETWORK, NETWORK } from '@/common/types/soroban.enum';
+import { NETWORK } from '@/common/types/soroban.enum';
 import { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
 import { IApiResponseError } from '@/config/axios/interfaces/IApiResponseError';
 import { apiService } from '@/config/axios/services/api.service';
@@ -94,7 +94,7 @@ function useInvocations(
     for (const invocation of invocations) {
       try {
         if (
-          invocation.network === BACKEND_NETWORK.SOROBAN_MAINNET &&
+          invocation.network === NETWORK.SOROBAN_MAINNET &&
           !wallet[NETWORK.SOROBAN_MAINNET]
         ) {
           await connectWallet(NETWORK.SOROBAN_MAINNET);
@@ -170,7 +170,7 @@ function useInvocations(
       for (const invocation of invocations) {
         try {
           if (
-            invocation.network === BACKEND_NETWORK.SOROBAN_MAINNET &&
+            invocation.network === NETWORK.SOROBAN_MAINNET &&
             !wallet[NETWORK.SOROBAN_MAINNET]
           ) {
             await connectWallet(NETWORK.SOROBAN_MAINNET);
