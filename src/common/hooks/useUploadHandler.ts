@@ -165,9 +165,6 @@ export function useUploadHandlers({
         deploy: false,
       });
 
-      console.log({
-        signedContract,
-      });
       const signedTransaction = await signTransaction(
         signedContract as string,
         data.network,
