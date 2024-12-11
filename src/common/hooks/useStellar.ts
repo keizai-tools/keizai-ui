@@ -3,9 +3,12 @@ import { Keypair } from 'stellar-sdk';
 import { IKeypair } from '../../modules/stellar/domain/keypair';
 import { STELLAR_RESPONSE } from '../../modules/stellar/validators/stellarExceptions';
 
+import { useEphemeralFriendBotMutation } from '@/common/api/ephemeral';
 import { FRIENDBOT, NETWORK } from '@/common/types/soroban.enum';
 
 function useStellar() {
+  const { mutateAsync: friendBotMutate } = useEphemeralFriendBotMutation();
+
   async function connectAccount(secretKey: string): Promise<IKeypair> {
     try {
       const keyPair = Keypair.fromSecret(secretKey);
@@ -59,9 +62,7 @@ function useStellar() {
     }
 
     if (urlEphimeral) {
-      await fetchWithRetry(
-        `http://${urlEphimeral}:8000/friendbot?addr=${publicKey}`,
-      );
+      await friendBotMutate({ publicKey });
     } else {
       const url = networkUrls[network as keyof typeof networkUrls];
       await fetchWithRetry(url);
@@ -69,7 +70,11 @@ function useStellar() {
     return true;
   }
 
-  return { connectAccount, createNewAccount, fundingAccount };
+  return {
+    connectAccount,
+    createNewAccount,
+    fundingAccount,
+  };
 }
 
 export default useStellar;
