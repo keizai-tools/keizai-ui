@@ -16,6 +16,7 @@ export interface IAuthenticationContext {
   handleSignOut: () => void;
   statusState: IStatusState;
   onCreateAccountEphimeral: (urlEphimeral: string) => void;
+  onDeleteAccountEphimeral: () => void;
   connectWallet(network: Partial<NETWORK>): Promise<void>;
   disconnectWallet(network?: Partial<NETWORK>): void;
   onCreateAccount(
