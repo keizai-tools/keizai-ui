@@ -6,20 +6,32 @@ import {
   SelectValue,
 } from '@/common/components/ui/select';
 import useNetwork from '@/common/hooks/useNetwork';
-import { NETWORK, BACKEND_NETWORK } from '@/common/types/soroban.enum';
+import { NETWORK } from '@/common/types/soroban.enum';
 
-function SelectNetwork({ network }: Readonly<{ network: BACKEND_NETWORK }>) {
+function SelectNetwork({
+  network,
+  setEphemeral,
+}: Readonly<{
+  network: NETWORK;
+  setEphemeral: (isEphemeral: boolean) => void;
+}>) {
   const { handleUpdateNetwork } = useNetwork(false);
 
-  function openEditNetworkDialog(network: string) {
-    handleUpdateNetwork(network);
-    if (window.umami) window?.umami?.track('Change network');
+  function handleNetworkChange(selectedNetwork: NETWORK) {
+    if (selectedNetwork === NETWORK.EPHEMERAL) {
+      setEphemeral(true);
+      handleUpdateNetwork(NETWORK.EPHEMERAL);
+    } else {
+      setEphemeral(false);
+      handleUpdateNetwork(selectedNetwork);
+      if (window.umami) window.umami.track('Change network');
+    }
   }
 
   return (
-    <Select value={network} onValueChange={openEditNetworkDialog}>
+    <Select value={network} onValueChange={handleNetworkChange}>
       <SelectTrigger
-        className="w-auto gap-2 px-4 py-3 font-bold border-2 rounded-md shadow-md border-slate-900 text-slate-500 focus:outline-none focus:ring-0 ring-0 focus-visible:ring-0 focus:ring-transparent "
+        className="w-auto gap-2 px-4 py-3 font-bold border-2 rounded-md shadow-md border-slate-900 text-slate-500 focus:outline-none focus:ring-0 ring-0 focus-visible:ring-0 focus:ring-transparent"
         data-test="contract-input-network"
       >
         <SelectValue
@@ -56,8 +68,16 @@ function SelectNetwork({ network }: Readonly<{ network: BACKEND_NETWORK }>) {
         >
           {NETWORK.SOROBAN_MAINNET}
         </SelectItem>
+        <SelectItem
+          value={NETWORK.EPHEMERAL}
+          data-test="contract-select-network-ephemeral"
+          className="transition-colors duration-200 cursor-pointer text-slate-700"
+        >
+          {NETWORK.EPHEMERAL}
+        </SelectItem>
       </SelectContent>
     </Select>
   );
 }
+
 export default SelectNetwork;

@@ -39,17 +39,17 @@ export default function QRModal({
       <Button
         onClick={() => setIsModalOpen(true)}
         variant="outline"
-        className="mx-4 w-40 h-8 py-1 text-sm font-bold transition-all duration-300 ease-in-out transform border-2 whitespace-nowrap hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="w-40 h-8 py-1 mx-4 text-sm font-bold transition-all duration-300 ease-in-out transform border-2 whitespace-nowrap hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         Recharge Wallet
       </Button>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="flex flex-col w-auto h-auto gap-6 p-6 font-bold border-2 border-solid rounded-lg shadow-lg border-offset-background max-w-prose">
           <DialogHeader>
-            <DialogTitle className="text-xl text-center font-semibold select-none text-red-500">
+            <DialogTitle className="text-xl font-semibold text-center text-red-500 select-none">
               Both MEMO ID and address are required or you will lose your coins.
             </DialogTitle>
-            <DialogTitle className="text-xl text-center font-semibold select-none text-red-500">
+            <DialogTitle className="text-xl font-semibold text-center text-red-500 select-none">
               Only payments in USDC are accepted. Other assets will not be
               processed.
             </DialogTitle>
@@ -83,7 +83,7 @@ export default function QRModal({
                   onClick={copyMemo}
                 />
               </div>
-              <p className="text-sm mt-2 text-red-600">
+              <p className="mt-2 text-sm text-red-600">
                 * MEMO ID is required or you will lose your coins.
               </p>
             </div>

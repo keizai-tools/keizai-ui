@@ -15,12 +15,12 @@ import { TerminalEntry } from '@/common/components/ui/Terminal';
 import { useToast } from '@/common/components/ui/use-toast';
 import useContractEvents from '@/common/hooks/useContractEvents';
 import { Invocation } from '@/common/types/invocation';
-import { BACKEND_NETWORK, NETWORK } from '@/common/types/soroban.enum';
+import { NETWORK } from '@/common/types/soroban.enum';
 import { IWallet } from '@/modules/auth/interfaces/IAuthenticationContext';
 import { InvocationService } from '@/modules/invocation/services/invocation.service';
 import signTransaction from '@/modules/signer/functions/signTransaction';
 
-function useInvocation(
+function useInvocationHandlers(
   invocation: Invocation,
   wallet: IWallet,
   connectWallet: (network: Partial<NETWORK>) => Promise<void>,
@@ -112,7 +112,7 @@ function useInvocation(
     try {
       let signedTransaction: string | null = null;
       if (
-        invocation.network === BACKEND_NETWORK.SOROBAN_MAINNET &&
+        invocation.network === NETWORK.SOROBAN_MAINNET &&
         !wallet[NETWORK.SOROBAN_MAINNET]
       ) {
         connectWallet(NETWORK.SOROBAN_MAINNET);
@@ -195,4 +195,4 @@ function useInvocation(
   };
 }
 
-export default useInvocation;
+export default useInvocationHandlers;

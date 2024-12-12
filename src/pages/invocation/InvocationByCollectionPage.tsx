@@ -7,7 +7,7 @@ import Breadcrumb from '@/common/components/Breadcrumb/Breadcrumb';
 import ContractInput from '@/common/components/Input/ContractInput';
 import { Invocation } from '@/common/types/invocation';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
-import useInvocation from '@/modules/invocation/hooks/useInvocation';
+import useInvocationHandlers from '@/modules/invocation/hooks/useInvocation';
 
 function InvocationByCollectionPage({
   invocation,
@@ -33,7 +33,7 @@ function InvocationPageContent({
     isLoadingContract,
     handleRunInvocation,
     isRunningInvocation,
-  } = useInvocation(invocation, wallet, connectWallet);
+  } = useInvocationHandlers(invocation, wallet, connectWallet);
 
   useEffect(() => {
     if (wallet[invocation.network as keyof typeof wallet]) {

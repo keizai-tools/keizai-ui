@@ -202,11 +202,11 @@ export function CustomDragDrop({
       )}
 
       {ownerLicense.length > 0 && (
-        <div className="flex justify-center mt-4 align-middle gap-y-4 gap-x-4">
+        <div className="flex justify-center w-full mt-4 align-middle gap-y-4 gap-x-4">
           {ownerLicense.map((file, index) => (
             <div
               key={index}
-              className="px-3 w-[50%] gap-4 py-3 rounded-md bg-slate-900 flex justify-between align-middle items-center"
+              className="px-3 w-[100%] gap-4 py-3 border-2 border-solid rounded-lg border-offset-background  bg-slate-900 flex justify-between align-middle items-center"
             >
               <div className="flex items-center gap-2">
                 <FileText className="text-primary" />

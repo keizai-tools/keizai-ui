@@ -1,5 +1,5 @@
 import { Loader } from 'lucide-react';
-import React, { Fragment, useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 
 import InvocationCTAPage from './invocationCTAPage';
@@ -13,13 +13,13 @@ import ContractInput from '@/common/components/Input/ContractInput';
 import UploadWasmDialog from '@/common/components/Tabs/FunctionsTab/UploadWasmDialog';
 import TabsContainer from '@/common/components/Tabs/TabsContainer';
 import Terminal from '@/common/components/ui/Terminal';
-import useNetwork from '@/common/hooks/useNetwork';
+import { Button } from '@/common/components/ui/button';
+import useWasmFileHandler from '@/common/hooks/useUploadWasm';
 import { Invocation } from '@/common/types/invocation';
-import { BACKEND_NETWORK, NETWORK } from '@/common/types/soroban.enum';
+import { NETWORK } from '@/common/types/soroban.enum';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 import { IWallet } from '@/modules/auth/interfaces/IAuthenticationContext';
 import { IStatusState } from '@/modules/auth/interfaces/IStatusState';
-import useInvocation from '@/modules/invocation/hooks/useInvocation';
 
 function InvocationPage() {
   const params = useParams();
@@ -35,7 +35,7 @@ function InvocationPage() {
     if (data?.contractId && data?.methods?.length) {
       setLoading(false);
     }
-  }, [data, data?.contractId, setLoading]);
+  }, [data]);
 
   useEffect(() => {
     if (data && wallet[data.network as keyof typeof wallet]) {
@@ -102,58 +102,12 @@ function InvocationPageContent({
   connectWallet: (network: Partial<NETWORK>) => Promise<void>;
   setLoading: (loading: boolean) => void;
 }>) {
-  const { handleUpdateNetwork } = useNetwork(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const {
-    handleLoadContract,
-    isLoadingContract,
-    contractResponses,
-    handleRunInvocation,
-    isRunningInvocation,
-  } = useInvocation(data, wallet, connectWallet);
-
-  const preInvocationValue = React.useMemo(() => {
-    return data.preInvocation ?? '';
-  }, [data]);
-
-  const postInvocationValue = React.useMemo(() => {
-    return data.postInvocation ?? '';
-  }, [data]);
-
-  function handleOpenUploadWasmModal() {
-    if (data.network === BACKEND_NETWORK.AUTO_DETECT)
-      handleUpdateNetwork(NETWORK.SOROBAN_FUTURENET);
-    setIsModalOpen(true);
-  }
-
-  function handleCloseModal() {
-    handleUpdateNetwork(BACKEND_NETWORK.AUTO_DETECT);
-    setIsModalOpen(false);
-  }
-
-  function handleLoadContractWithLoading(contractId: string) {
-    if (!loading && !isLoadingContract) setLoading(true);
-    handleLoadContract(contractId);
-  }
-
-  useEffect(() => {
-    if (data.contractId && loading) setLoading(false);
-  }, [data, loading, setLoading]);
-
-  useEffect(() => {
-    if (
-      !data.contractId &&
-      !isModalOpen &&
-      data.network !== BACKEND_NETWORK.AUTO_DETECT
-    ) {
-      handleUpdateNetwork(BACKEND_NETWORK.AUTO_DETECT);
-    }
-  }, [data.contractId, data.network, handleUpdateNetwork, isModalOpen]);
-
-  useEffect(() => {
-    if (data.contractId && loading) setLoading(false);
-  }, [data, loading, setLoading]);
+  const uploadWasm = useWasmFileHandler(
+    data,
+    wallet,
+    setLoading,
+    connectWallet,
+  );
 
   return (
     <Fragment>
@@ -161,23 +115,33 @@ function InvocationPageContent({
         className="relative flex flex-col w-full max-h-screen gap-4 p-3 overflow-hidden"
         data-test="invocation-section-container"
       >
-        <Breadcrumb
-          contractName="Collection"
-          folderName={data.folder?.name ?? ''}
-          contractInvocationName={data.name}
-        />
+        <div
+          className="flex items-center justify-between w-full"
+          data-test="breadcrumb-container"
+        >
+          <Breadcrumb
+            contractName="Collection"
+            folderName={data.folder?.name ?? ''}
+            contractInvocationName={data.name}
+          />
+          {uploadWasm.status?.publicIp && (
+            <Button onClick={uploadWasm.handleStop} className="mt-2">
+              Stop Ephemeral
+            </Button>
+          )}
+        </div>
         <ContractInput
           defaultValue={data.contractId ?? ''}
           defaultNetwork={data.network}
-          loadContract={handleLoadContract}
-          runInvocation={handleRunInvocation}
+          loadContract={uploadWasm.handleLoadContract}
+          runInvocation={uploadWasm.handleRunInvocation}
           method={data.selectedMethod}
           loading={
-            isLoadingContract ||
-            isRunningInvocation ||
+            uploadWasm.isLoadingContract ||
+            uploadWasm.isRunningInvocation ||
             statusState.wallet.loading
           }
-          handleOpenUploadWasmModal={handleOpenUploadWasmModal}
+          handleOpenUploadWasmModal={uploadWasm.handleOpenUploadWasmModal}
         />
         {data.contractId ? (
           <div
@@ -186,23 +150,22 @@ function InvocationPageContent({
           >
             <TabsContainer
               data={data}
-              preInvocationValue={preInvocationValue}
-              postInvocationValue={postInvocationValue}
+              preInvocationValue={uploadWasm.preInvocationValue}
+              postInvocationValue={uploadWasm.postInvocationValue}
             />
-            <Terminal entries={contractResponses} />
+            <Terminal entries={uploadWasm.contractResponses} />
           </div>
         ) : (
           <InvocationCTAPage />
         )}
       </div>
       <UploadWasmDialog
-        open={isModalOpen}
-        onOpenChange={handleCloseModal}
+        open={uploadWasm.isModalOpen}
+        onOpenChange={uploadWasm.handleCloseModal}
         data={data}
-        handleLoadContract={handleLoadContractWithLoading}
         wallet={wallet[data.network as keyof typeof wallet]}
-        setLoading={setLoading}
         loading={loading}
+        {...uploadWasm}
       />
     </Fragment>
   );
