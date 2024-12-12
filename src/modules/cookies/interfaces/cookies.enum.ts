@@ -4,4 +4,5 @@ export enum StoredCookies {
   EMAIL = 'email',
   MEMO_ID = 'memoId',
   BALANCE = 'balance',
+  USER_ID = 'userId',
 }

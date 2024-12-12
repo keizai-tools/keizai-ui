@@ -75,6 +75,14 @@ class CookieService<T extends ITokenPayload> implements ICookieService<T> {
     }
   }
 
+  setUserIdCookie(userId: number): void {
+    try {
+      this.cookies.set(StoredCookies.USER_ID, userId, { path: '/' });
+    } catch (error) {
+      console.error('Error setting user ID cookie:', error);
+    }
+  }
+
   getCookie(name: StoredCookies): string | undefined {
     try {
       return this.cookies.get(name);
