@@ -116,6 +116,7 @@ Readonly<UploadWasmDialogProps>) {
                 error={error}
                 status={status}
                 loading={loading}
+                data={data}
                 handleStart={handleStart}
                 handleStop={handleStop}
                 handleButtonClick={handleButtonClick}

@@ -20,7 +20,9 @@ function SelectNetwork({
   function handleNetworkChange(selectedNetwork: NETWORK) {
     if (selectedNetwork === NETWORK.EPHEMERAL) {
       setEphemeral(true);
+      handleUpdateNetwork(NETWORK.EPHEMERAL);
     } else {
+      setEphemeral(false);
       handleUpdateNetwork(selectedNetwork);
       if (window.umami) window.umami.track('Change network');
     }
