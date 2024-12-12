@@ -1,8 +1,19 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 
 import ErrorMessage from '../../Form/ErrorMessage';
+import SelectInterval from '../../Input/SelectInterval';
+import SelectNetwork from '../../Input/SelectNetwork';
+import SelectWasmFile from '../../Input/selectWasmFile';
+import ConnectWalletDialog from '../../connectWallet/connectWalletDialog';
 import { Button } from '../../ui/button';
 import { type FileData, CustomDragDrop } from './DragAndDropContainer';
+
+import { useWasmFilesQuery } from '@/common/api/invocations';
+import { Invocation } from '@/common/types/invocation';
+import { NETWORK } from '@/common/types/soroban.enum';
+import { StoredCookies } from '@/modules/cookies/interfaces/cookies.enum';
+import { cookieService } from '@/modules/cookies/services/cookie.service';
+import { userService } from '@/modules/user/services/user.service';
 
 export default function EphemeralContent({
   files,
@@ -10,6 +21,7 @@ export default function EphemeralContent({
   deleteFile,
   error,
   status,
+  data,
   handleStart,
   handleStop,
   loading,
@@ -18,6 +30,7 @@ export default function EphemeralContent({
   setEphemeral,
 }: Readonly<{
   files: FileData[];
+  data: Invocation;
   uploadFiles: (f: FileData[]) => void;
   deleteFile: (indexFile: number) => void;
   error: string | null;
@@ -34,6 +47,67 @@ export default function EphemeralContent({
   buttonLabel: string;
   setEphemeral: (status: boolean) => void;
 }>) {
+  const [selectedFile, setSelectedFile] = useState<string>('');
+  const [balance, setBalance] = useState<number>(0);
+  const [isWalletDialogOpen, setIsWalletDialogOpen] = useState(false);
+  const [selectedInterval, setSelectedInterval] = useState<number | null>(null);
+
+  useEffect(() => {
+    async function fetchBalance() {
+      const response = await userService.UserMe();
+      setBalance(response.payload.balance);
+    }
+    fetchBalance();
+  }, []);
+
+  const {
+    data: wasmFiles = [],
+    error: wasmFilesError,
+    isLoading: wasmFilesLoading,
+  } = useWasmFilesQuery({ invocationId: data.id });
+
+  if (balance <= 0) {
+    return (
+      <div className="flex flex-col items-center gap-4">
+        <p className="text-lg font-bold text-red-500">
+          You do not have a sufficient balance for the ephemeral environment.
+        </p>
+        <Button
+          type="button"
+          className="px-4 py-2 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105"
+          onClick={() => setIsWalletDialogOpen(true)}
+        >
+          Recharge Balance
+        </Button>
+        {isWalletDialogOpen && (
+          <ConnectWalletDialog
+            open={isWalletDialogOpen}
+            onOpenChange={(open) => setIsWalletDialogOpen(open)}
+          />
+        )}
+        {data.network !== NETWORK.AUTO_DETECT && (
+          <SelectNetwork setEphemeral={setEphemeral} network={data.network} />
+        )}
+      </div>
+    );
+  }
+
+  const handleStartClick = async () => {
+    if (selectedInterval !== null) {
+      try {
+        const userId = cookieService.getCookie(StoredCookies.USER_ID);
+        if (userId === undefined) {
+          console.error('User ID cookie not found');
+          return;
+        }
+        await userService.updateUserBalance(userId, selectedInterval);
+        handleStart({ interval: selectedInterval });
+      } catch (error) {
+        console.error('Error updating user balance:', error);
+      }
+    }
+  };
+
   return (
     <Fragment>
       {status?.status === 'RUNNING' && (
@@ -50,6 +124,19 @@ export default function EphemeralContent({
               message={error}
               testName="import-account-modal-error"
               styles="text-sm text-red-500"
+            />
+          )}
+          {wasmFilesLoading ? (
+            <p>Loading available Wasm files...</p>
+          ) : wasmFilesError ? (
+            <p>Error loading files: {wasmFilesError.message}</p>
+          ) : (
+            <SelectWasmFile
+              wasmFiles={wasmFiles}
+              selectedFile={selectedFile}
+              onFileChange={(file) => {
+                setSelectedFile(file);
+              }}
             />
           )}
         </Fragment>
@@ -91,15 +178,21 @@ export default function EphemeralContent({
           Cancel
         </Button>
         {status?.status === 'STOPPED' ? (
-          <Button
-            type="submit"
-            className="px-4 py-2 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105"
-            data-test="edit-entity-dialog-btn-submit"
-            onClick={() => handleStart({ interval: 10 })}
-            disabled={loading}
-          >
-            {loading ? 'Starting...' : 'Start Ephemeral'}
-          </Button>
+          <>
+            <SelectInterval
+              interval={selectedInterval}
+              setInterval={setSelectedInterval}
+            />
+            <Button
+              type="submit"
+              className="px-4 py-2 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105"
+              data-test="edit-entity-dialog-btn-submit"
+              onClick={handleStartClick}
+              disabled={loading || selectedInterval === null}
+            >
+              {loading ? 'Starting...' : 'Start Ephemeral'}
+            </Button>
+          </>
         ) : (
           <Button
             type="submit"
@@ -126,6 +219,9 @@ export default function EphemeralContent({
           </Button>
         )}
       </div>
+      {data.network !== NETWORK.AUTO_DETECT && (
+        <SelectNetwork setEphemeral={setEphemeral} network={data.network} />
+      )}
     </Fragment>
   );
 }

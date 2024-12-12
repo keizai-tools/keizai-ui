@@ -22,6 +22,32 @@ export function useInvocationQuery({ id }: { id?: string }) {
   return query;
 }
 
+export function useWasmFilesQuery({ invocationId }: { invocationId: string }) {
+  return useQuery<{ id: string; url: string }[]>({
+    queryKey: ['invocation', invocationId, 'wasm-files'],
+    queryFn: async () => {
+      const response = await apiService.get<
+        IApiResponse<{ id: string; url: string }[]>
+      >(`/invocation/${invocationId}/wasm-files`);
+      return response.payload;
+    },
+  });
+}
+
+export async function checkIfWasmExists(fileBuffer: Buffer): Promise<boolean> {
+  try {
+    const response = await apiService.post<IApiResponse<{ exists: boolean }>>(
+      '/invocation/checkFileExists',
+      {
+        fileBuffer,
+      },
+    );
+    return response.payload.exists;
+  } catch (error) {
+    throw new Error('Failed to check file existence');
+  }
+}
+
 export function useRunInvocationQuery({ id }: { id?: string }) {
   return async (signedTransactionXDR: string | null) => {
     const response = await apiService?.post<IApiResponse<InvocationResponse>>(
@@ -86,11 +112,11 @@ export function useCreateInvocationMutation() {
 }
 
 export function useInvocationsByCollectionIdQuery({ id }: { id?: string }) {
-  return useQuery<Invocation[]>({
+  return useQuery<string[]>({
     queryKey: ['collection', id, 'invocation'],
     queryFn: async () =>
       apiService
-        ?.get<IApiResponse<Invocation[]>>(`/collection/${id}/invocation`)
+        ?.get<IApiResponse<string[]>>(`/collection/${id}/invocation`)
         .then((response) => response.payload),
     enabled: !!id,
   });
