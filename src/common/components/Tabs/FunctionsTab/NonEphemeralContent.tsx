@@ -40,6 +40,8 @@ export default function NonEphemeralContent({
     isLoading: wasmFilesLoading,
   } = useWasmFilesQuery({ invocationId: data.id });
 
+  const noFilesMessage = 'No WASM files available.';
+
   return (
     <Fragment>
       <CustomDragDrop
@@ -60,6 +62,8 @@ export default function NonEphemeralContent({
         <p>Loading available Wasm files...</p>
       ) : wasmFilesError ? (
         <p>Error loading files: {wasmFilesError.message}</p>
+      ) : wasmFiles.length === 0 ? (
+        <p>{noFilesMessage}</p>
       ) : (
         <SelectWasmFile
           wasmFiles={wasmFiles}
