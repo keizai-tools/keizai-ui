@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import QRModal from './QRModal';
 import BalanceComponent from './balanceComponent';
 import { NetworkSection } from './networkSection';
-import StellarBalance from './stellarBalance';
 
 import {
   Accordion,
