@@ -48,8 +48,12 @@ export function useEphemeral(setLoading: (loading: boolean) => void) {
             ...currentStatus,
             isEphemeral: true,
           });
-          handleUpdateNetwork(NETWORK.EPHEMERAL);
-          onCreateAccountEphimeral(currentStatus.publicIp);
+          try {
+            handleUpdateNetwork(NETWORK.EPHEMERAL);
+            onCreateAccountEphimeral(currentStatus.publicIp);
+          } catch (error) {
+            console.error('Failed to update network:', error);
+          }
         }
       }
     } catch (error) {
@@ -89,8 +93,12 @@ export function useEphemeral(setLoading: (loading: boolean) => void) {
             publicIp: startResponse.publicIp,
             isEphemeral: true,
           });
-          onCreateAccountEphimeral(startResponse.publicIp);
-          handleUpdateNetwork(NETWORK.EPHEMERAL);
+          try {
+            handleUpdateNetwork(NETWORK.EPHEMERAL);
+            onCreateAccountEphimeral(startResponse.publicIp);
+          } catch (error) {
+            console.error('Failed to update network:', error);
+          }
         }
       } catch (error) {
         console.error('Failed to start ephemeral instance:', error);
