@@ -15,6 +15,11 @@ function StartOverlayLoading() {
     ];
 
     let currentStage = 0;
+
+    setStatusMessage(stages[currentStage]);
+    currentStage++;
+    currentStage++;
+
     const interval = setInterval(() => {
       setStatusMessage(stages[currentStage]);
       currentStage++;
@@ -22,7 +27,7 @@ function StartOverlayLoading() {
       if (currentStage >= stages.length) {
         clearInterval(interval);
       }
-    }, 30000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, []);
