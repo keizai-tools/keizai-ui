@@ -14,7 +14,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Loader } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Outlet, useParams } from 'react-router-dom';
 
 import InvocationByCollectionPage from '../invocation/InvocationByCollectionPage';
@@ -29,7 +29,9 @@ import {
   SelectValue,
 } from '@/common/components/ui/select';
 import { useToast } from '@/common/components/ui/use-toast';
+import { useEphemeral } from '@/common/hooks/useEphemeral';
 import { Invocation } from '@/common/types/invocation';
+import { NETWORK } from '@/common/types/soroban.enum';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 import useInvocations from '@/modules/invocation/hooks/useInvocations';
 import { InvocationService } from '@/modules/invocation/services/invocation.service';
@@ -92,6 +94,7 @@ export default function InvocationByCollection() {
   const { collectionId } = useParams<{ collectionId: string }>();
   const { wallet, connectWallet } = useAuthProvider();
   const { toast } = useToast();
+  const { status: ephemeralStatus } = useEphemeral(setLoading);
 
   const [executionMode, setExecutionMode] = useState<'parallel' | 'sequential'>(
     'parallel',
@@ -103,7 +106,12 @@ export default function InvocationByCollection() {
     isRunningInvocation,
     handleRunInvocationParallel,
     clearContractResponses,
-  } = useInvocations(invocations, wallet, connectWallet);
+  } = useInvocations(
+    invocations,
+    wallet,
+    connectWallet,
+    ephemeralStatus.status,
+  );
 
   useEffect(() => {
     const fetchInvocations = async () => {
@@ -130,6 +138,15 @@ export default function InvocationByCollection() {
 
     fetchInvocations();
   }, [collectionId]);
+
+  const filteredInvocations = useMemo(() => {
+    if (ephemeralStatus.status === 'STOPPED') {
+      return invocations.filter(
+        (invocation) => invocation.network !== NETWORK.EPHEMERAL,
+      );
+    }
+    return invocations;
+  }, [invocations, ephemeralStatus.status]);
 
   const handleExecution = () => {
     if (executionMode === 'parallel') {
@@ -204,7 +221,7 @@ export default function InvocationByCollection() {
             onDragEnd={handleDragEnd}
           >
             <SortableContext
-              items={invocations.map((invocation) => invocation.id)}
+              items={filteredInvocations.map((invocation) => invocation.id)}
               strategy={verticalListSortingStrategy}
             >
               <div className="flex flex-col w-full">
@@ -284,7 +301,7 @@ export default function InvocationByCollection() {
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  {invocations?.map((invocation) => (
+                  {filteredInvocations?.map((invocation) => (
                     <SortableItem key={invocation.id} id={invocation.id}>
                       <InvocationByCollectionPage invocation={invocation} />
                     </SortableItem>

@@ -6,8 +6,6 @@ import {
   useEphemeralStartMutation,
   useEphemeralStopMutation,
 } from '../api/ephemeral';
-import { NETWORK } from '../types/soroban.enum';
-import useNetwork from './useNetwork';
 
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
@@ -30,7 +28,6 @@ export function useEphemeral(setLoading: (loading: boolean) => void) {
 
   const { statusState, onCreateAccountEphimeral, onDeleteAccountEphimeral } =
     useAuthProvider();
-  const { handleUpdateNetwork } = useNetwork(false);
 
   const [status, setStatus] = useState({
     status: 'STOPPED',
@@ -48,14 +45,17 @@ export function useEphemeral(setLoading: (loading: boolean) => void) {
             ...currentStatus,
             isEphemeral: true,
           });
-          handleUpdateNetwork(NETWORK.EPHEMERAL);
-          onCreateAccountEphimeral(currentStatus.publicIp);
+          try {
+            onCreateAccountEphimeral(currentStatus.publicIp);
+          } catch (error) {
+            console.error('Failed to update network:', error);
+          }
         }
       }
     } catch (error) {
       console.error('Failed to fetch status:', error);
     }
-  }, [status.status, getStatus, onCreateAccountEphimeral, handleUpdateNetwork]);
+  }, [status.status, getStatus, onCreateAccountEphimeral]);
 
   const isLoading = useMemo(
     () =>
@@ -89,8 +89,11 @@ export function useEphemeral(setLoading: (loading: boolean) => void) {
             publicIp: startResponse.publicIp,
             isEphemeral: true,
           });
-          onCreateAccountEphimeral(startResponse.publicIp);
-          handleUpdateNetwork(NETWORK.EPHEMERAL);
+          try {
+            onCreateAccountEphimeral(startResponse.publicIp);
+          } catch (error) {
+            console.error('Failed to update network:', error);
+          }
         }
       } catch (error) {
         console.error('Failed to start ephemeral instance:', error);
@@ -98,7 +101,7 @@ export function useEphemeral(setLoading: (loading: boolean) => void) {
         setLoading(false);
       }
     },
-    [startEphemeral, onCreateAccountEphimeral, handleUpdateNetwork],
+    [startEphemeral, onCreateAccountEphimeral],
   );
 
   const handleStop = useCallback(async (): Promise<void> => {
