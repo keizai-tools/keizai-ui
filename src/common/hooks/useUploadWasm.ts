@@ -57,29 +57,6 @@ export default function useWasmFileHandler(
     handleUpdateNetwork,
   ]);
 
-  // const resetNetworkState = useCallback((): void => {
-  //   const shouldSetEphemeral = status?.status === 'RUNNING';
-  //   if (shouldSetEphemeral && !data.contractId) {
-  //     setNetwork((prevNetwork) => {
-  //       if (prevNetwork !== data.network) {
-  //         setSignedTransactionXDR(null);
-  //         setError(null);
-  //         handleOpenUploadWasmModal();
-  //         return data.network;
-  //       }
-  //       return prevNetwork;
-  //     });
-  //   }
-  // }, [
-  //   status?.status,
-  //   data.contractId,
-  //   data.network,
-  //   handleOpenUploadWasmModal,
-  //   setNetwork,
-  //   setSignedTransactionXDR,
-  //   setError,
-  // ]);
-
   return {
     ...FileHandler,
     ...UploadHandler,

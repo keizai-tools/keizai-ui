@@ -34,7 +34,10 @@ function BalanceComponent() {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <div>Balance Keizai: {balance.toFixed(4)} USDC</div>
+      <div>
+        Balance Keizai:{' '}
+        {Number.isFinite(balance) ? balance.toFixed(4) : '0.0000'} USDC
+      </div>
       <button onClick={refreshBalance} disabled={loading}>
         <RefreshCw className={loading ? 'animate-spin' : ''} size="20" />
       </button>

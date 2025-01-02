@@ -27,16 +27,19 @@ class UserService implements IUserService {
     }>('/user/fargate-time', config);
   }
 
-  async updateUserBalance(
-    userId: string,
-    interval: number,
-    config?: AxiosRequestConfig,
-  ) {
-    return await this.api.post(
-      '/user/update-balance/' + userId,
-      { interval },
-      config,
-    );
+  async getPricePerMinute(config?: AxiosRequestConfig) {
+    return await this.api.get<{
+      success: boolean;
+      statusCode: number;
+      message: string;
+      payload: { costPerMinute: number };
+      timestamp: string;
+      path: string;
+    }>('/user/fargate-cost-per-minute', config);
+  }
+
+  async updateUserBalance(interval: number, config?: AxiosRequestConfig) {
+    return await this.api.post('/user/update-balance/', { interval }, config);
   }
 }
 

@@ -17,11 +17,15 @@ function SelectInterval({
   setInterval: (interval: number) => void;
 }>) {
   const [fargateTime, setFargateTime] = useState<number | null>(null);
+  const [costPerMinute, setCostPerMinute] = useState<number | null>(null);
+
+  const [totalCost, setTotalCost] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchFargateTime = async () => {
       try {
         const response = await userService.getFargateTime();
+
         setFargateTime(response.payload.fargateTime);
       } catch (error) {
         console.error('Error fetching Fargate time:', error);
@@ -31,9 +35,26 @@ function SelectInterval({
     fetchFargateTime();
   }, []);
 
+  useEffect(() => {
+    const fetchPricePerMinute = async () => {
+      try {
+        const response = await userService.getPricePerMinute();
+        setCostPerMinute(response.payload.costPerMinute);
+      } catch (error) {
+        console.error('Error fetching price per minute:', error);
+      }
+    };
+
+    fetchPricePerMinute();
+  }, []);
+
   const handleIntervalChange = (selectedInterval: string) => {
     const interval = Number(selectedInterval);
     setInterval(interval);
+    if (costPerMinute) {
+      const cost = interval * costPerMinute;
+      setTotalCost(cost);
+    }
   };
 
   const availableIntervals = [5, 10, 15, 30, 60].filter(
@@ -47,41 +68,51 @@ function SelectInterval({
           You do not have a sufficient minimum balance to select an interval.
         </p>
       ) : (
-        <Select
-          value={interval !== null ? String(interval) : 'Select an interval'}
-          onValueChange={handleIntervalChange}
-        >
-          <SelectTrigger
-            className="w-auto gap-2 px-4 py-3 font-bold border-2 rounded-md shadow-md border-slate-900 text-slate-500 focus:outline-none focus:ring-0 ring-0 focus-visible:ring-0 focus:ring-transparent"
-            data-test="interval-select-trigger"
+        <div className="flex items-center space-x-4">
+          <Select
+            value={interval !== null ? String(interval) : 'Select an interval'}
+            onValueChange={handleIntervalChange}
           >
-            <SelectValue
-              aria-label={
-                interval !== null ? String(interval) : 'Select an interval'
-              }
-              data-test="interval-select-value"
-              className="flex items-center justify-between"
+            <SelectTrigger
+              className="w-auto gap-2 px-4 py-3 font-bold border-2 rounded-md shadow-md border-slate-900 text-slate-500 focus:outline-none focus:ring-0 ring-0 focus-visible:ring-0 focus:ring-transparent"
+              data-test="interval-select-trigger"
             >
-              {interval !== null ? `${interval} minutes` : 'Select an interval'}
-            </SelectValue>
-          </SelectTrigger>
-
-          <SelectContent
-            data-test="interval-select-content"
-            className="w-full mt-2 overflow-hidden rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
-          >
-            {availableIntervals.map((value) => (
-              <SelectItem
-                key={value}
-                value={String(value)}
-                data-test={`interval-select-item-${value}`}
-                className="transition-colors duration-200 cursor-pointer text-slate-700"
+              <SelectValue
+                aria-label={
+                  interval !== null ? String(interval) : 'Select an interval'
+                }
+                data-test="interval-select-value"
+                className="flex items-center justify-between"
               >
-                {`${value} minutes`}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+                {interval !== null
+                  ? `${interval} minutes`
+                  : 'Select an interval'}
+              </SelectValue>
+            </SelectTrigger>
+
+            <SelectContent
+              data-test="interval-select-content"
+              className="w-full mt-2 overflow-hidden rounded-md shadow-lg ring-1 ring-black ring-opacity-5"
+            >
+              {availableIntervals.map((value) => (
+                <SelectItem
+                  key={value}
+                  value={String(value)}
+                  data-test={`interval-select-item-${value}`}
+                  className="transition-colors duration-200 cursor-pointer text-slate-700"
+                >
+                  {`${value} minutes`}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {totalCost !== null && (
+            <div className="font-semibold text-slate-500">
+              {' '}
+              Cost for this interval: ${totalCost.toFixed(4)}{' '}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
