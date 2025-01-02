@@ -5,6 +5,9 @@ import { Link, useLocation } from 'react-router-dom';
 import ConnectWalletDialog from '../connectWallet/connectWalletDialog';
 import StatusNetworkDialog from '../statusNetwork/statusNetworkDialog';
 import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
+import { DropdownMenu, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import EphemeralContentDialog from './EphemeralcontentDialog';
 import NetworkButton from './NetworkButton';
 import UserButton from './UserButton';
@@ -84,20 +87,38 @@ export default function Sidebar() {
         </div>
       </div>
       <div className="flex flex-col items-center justify-center gap-4 mb-4">
-        <div>
-          <Container onClick={handleOpenEphemeralDialog} />
+        <Tooltip delayDuration={100}>
+          <TooltipTrigger>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  data-test="sidebar-btn-user"
+                >
+                  <Container
+                    onClick={handleOpenEphemeralDialog}
+                    className=" transition-colors duration-300 cursor-pointer hover:text-primary active:text-primary"
+                  />
+                </Button>
 
-          <EphemeralContentDialog
-            open={openEphemeralDialog}
-            onOpenChange={handleCloseEphemeralDialog}
-            loading={loading || isEphemeralLoading}
-            error={isError ? 'Error managing ephemeral instance' : null}
-            status={status}
-            setEphemeral={setEphemeral}
-            handleStart={handleStart}
-            handleStop={handleStop}
-          />
-        </div>
+                <EphemeralContentDialog
+                  open={openEphemeralDialog}
+                  onOpenChange={handleCloseEphemeralDialog}
+                  loading={loading || isEphemeralLoading}
+                  error={isError ? 'Error managing ephemeral instance' : null}
+                  status={status}
+                  setEphemeral={setEphemeral}
+                  handleStart={handleStart}
+                  handleStop={handleStop}
+                />
+              </DropdownMenuTrigger>
+            </DropdownMenu>
+          </TooltipTrigger>
+          <TooltipContent side="right">
+            <p>Ephimeral Environment</p>
+          </TooltipContent>
+        </Tooltip>
         <NetworkButton
           globeColor={globeColor}
           walletColor={walletColor}
