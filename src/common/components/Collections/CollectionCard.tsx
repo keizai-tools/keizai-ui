@@ -5,6 +5,7 @@ import DeleteEntityDialog from '../Entity/DeleteEntityDialog';
 import EditEntityDialog from '../Entity/EditEntityDialog';
 import MoreOptions from '../Entity/MoreOptions';
 import { Button } from '../ui/button';
+import { useToast } from '../ui/use-toast';
 
 import {
   useDeleteCollectionMutation,
@@ -28,9 +29,25 @@ const CollectionCard = ({
   const navigate = useNavigate();
   const { mutate: deleteCollectionMutation } = useDeleteCollectionMutation();
   const { mutate, isPending } = useUpdateCollectionMutation();
+  const { toast } = useToast();
 
   const handleEditCollection = async ({ name }: { name: string }) => {
-    mutate({ id, name });
+    mutate(
+      { id, name },
+      {
+        onError: (error: any) => {
+          const errorMessage =
+            error.response?.data?.message ||
+            error.message ||
+            'An error occurred';
+          toast({
+            title: 'Error',
+            description: errorMessage,
+            variant: 'destructive',
+          });
+        },
+      },
+    );
     if (window.umami) window.umami.track('Edit collection');
     setActiveDialog(null);
   };
