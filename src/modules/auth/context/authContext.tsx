@@ -17,6 +17,7 @@ import {
 import { authService } from '../services/auth.service';
 
 import { useToast } from '@/common/components/ui/use-toast';
+import { EphemeralProvider } from '@/common/context/EphemeralContext';
 import useStellar from '@/common/hooks/useStellar';
 import { NETWORK } from '@/common/types/soroban.enum';
 import { ApiResponseError } from '@/config/axios/errors/ApiResponseError';
@@ -638,6 +639,8 @@ export function AuthProvider({
   );
 
   return (
-    <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={contextValue}>
+      <EphemeralProvider>{children}</EphemeralProvider>
+    </AuthContext.Provider>
   );
 }

@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from 'react';
+import { createContext, ReactNode, useMemo, useState } from 'react';
 
 import { useEphemeral as useEphemeralHook } from '../hooks/useEphemeral';
 
@@ -39,6 +39,4 @@ export const EphemeralProvider = ({ children }: EphemeralProviderProps) => {
   );
 };
 
-export const useEphemeral = () => {
-  return useContext(EphemeralContext);
-};
+export { EphemeralContext };
