@@ -112,11 +112,11 @@ export function useCreateInvocationMutation() {
 }
 
 export function useInvocationsByCollectionIdQuery({ id }: { id?: string }) {
-  return useQuery<string[]>({
+  return useQuery<Invocation[]>({
     queryKey: ['collection', id, 'invocation'],
     queryFn: async () =>
       apiService
-        ?.get<IApiResponse<string[]>>(`/collection/${id}/invocation`)
+        ?.get<IApiResponse<Invocation[]>>(`/collection/${id}/invocation`)
         .then((response) => response.payload),
     enabled: !!id,
   });
