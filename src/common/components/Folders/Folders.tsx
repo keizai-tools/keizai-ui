@@ -153,6 +153,7 @@ function Folders() {
             defaultName="Folder"
             isLoading={isCreatingFolder}
             onSubmit={onCreateFolder}
+            elementList={folders}
           >
             <Button
               variant="link"
@@ -180,6 +181,7 @@ function Folders() {
             defaultName="Invocation"
             isLoading={isCreatingInvocation}
             onSubmit={onCreateInvocation}
+            elementList={invocations}
           >
             <Button
               variant="link"
