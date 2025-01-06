@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import NewEntityDialog from '../Entity/NewEntityDialog';
 import InvocationListItem from '../Invocations/InvocationListItem';
 import { Button } from '../ui/button';
+import { useToast } from '../ui/use-toast';
 import Folder from './Folder';
 
 import {
@@ -38,17 +39,48 @@ function Folders() {
   const { mutate: createInvocation, isPending: isCreatingInvocation } =
     useCreateInvocationMutation();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   async function onCreateFolder({ name }: { name: string }) {
     if (params.collectionId) {
-      createFolder({ name, collectionId: params.collectionId });
+      createFolder(
+        { name, collectionId: params.collectionId },
+        {
+          onError: (error: any) => {
+            const errorMessage =
+              error.response?.data?.message ||
+              error.message ||
+              'An error occurred';
+            toast({
+              title: 'Error',
+              description: errorMessage,
+              variant: 'destructive',
+            });
+          },
+        },
+      );
       if (window.umami) window?.umami?.track('Create folder');
     }
   }
 
   async function onCreateInvocation({ name }: { name: string }) {
     if (params.collectionId) {
-      createInvocation({ name, collectionId: params.collectionId });
+      createInvocation(
+        { name, collectionId: params.collectionId },
+        {
+          onError: (error: any) => {
+            const errorMessage =
+              error.response?.data?.message ||
+              error.message ||
+              'An error occurred';
+            toast({
+              title: 'Error',
+              description: errorMessage,
+              variant: 'destructive',
+            });
+          },
+        },
+      );
       if (window.umami) window?.umami?.track('Create invocation');
     }
   }
