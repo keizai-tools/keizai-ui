@@ -7,6 +7,7 @@ import {
   IWalletContent,
   IWallet,
 } from '../interfaces/IAuthenticationContext';
+import type { ErrorValue } from '../interfaces/IStatusState';
 import {
   SIGN_UP_SUCCESS_MESSAGE,
   CONFIRMATION_SENT_MESSAGE,
@@ -254,7 +255,7 @@ export function AuthProvider({
         } catch (error) {
           setStatusState('signUp', {
             status: false,
-            error: null,
+            error: error as ErrorValue,
             loading: false,
           });
           if (error instanceof ApiResponseError) {
