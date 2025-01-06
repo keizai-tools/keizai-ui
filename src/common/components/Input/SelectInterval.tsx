@@ -57,14 +57,14 @@ function SelectInterval({
     }
   };
 
-  const availableIntervals = [5, 10, 15, 30, 60].filter(
+  const availableIntervals = [1, 5, 10, 15, 30, 60].filter(
     (value) => fargateTime !== null && value <= fargateTime,
   );
 
   return (
     <div>
       {fargateTime !== null && fargateTime < 5 ? (
-        <p className="text-red-500">
+        <p className="text-red-400">
           You do not have a sufficient minimum balance to select an interval.
         </p>
       ) : (
