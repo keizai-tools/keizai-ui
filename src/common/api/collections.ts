@@ -40,7 +40,10 @@ export function useNewCollectionMutation() {
     mutationFn: async ({ name }: { name: string }) =>
       apiService
         ?.post<IApiResponse<Collection>>('/collection', { name })
-        .then((res) => res.payload),
+        .then((res) => res.payload)
+        .catch((error) => {
+          throw error.response?.data || error;
+        }),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['collections'] });
       navigate(`/collection/${data.id}`);
@@ -88,7 +91,10 @@ export function useUpdateCollectionMutation() {
     mutationFn: async ({ id, name }: { id: string; name: string }) =>
       apiService
         ?.patch<IApiResponse<Collection>>(`/collection/`, { id, name })
-        .then((res) => res.payload),
+        .then((res) => res.payload)
+        .catch((error) => {
+          throw error.response?.data || error;
+        }),
     onMutate: async ({ id, name }) => {
       await queryClient.cancelQueries({ queryKey: ['collections'] });
 
