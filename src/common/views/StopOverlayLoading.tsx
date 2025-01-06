@@ -2,7 +2,6 @@ import { Loader } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 function StopOverlayLoading() {
-  const opacity = 0.2;
   const [statusMessage, setStatusMessage] = useState('');
 
   useEffect(() => {
@@ -36,11 +35,13 @@ function StopOverlayLoading() {
     <div
       className="fixed inset-0 z-50 flex flex-col items-center justify-center backdrop-blur-sm"
       style={{
-        backgroundColor: `hsla(222.2, 84%, 4.9%, ${opacity})`,
+        backgroundColor: `hsla(222.2, 84%, 4.9%, 0.8)`,
       }}
     >
-      <Loader className="animate-spin mb-4" size="36" />
-      <p className="text-white text-center">{statusMessage}</p>
+      <Loader className="mb-4 animate-spin" size="36" />
+      <p className="text-lg text-center text-white shadow-lg">
+        {statusMessage}
+      </p>
     </div>
   );
 }
