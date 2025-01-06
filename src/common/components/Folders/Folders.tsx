@@ -46,7 +46,10 @@ function Folders() {
       createFolder(
         { name, collectionId: params.collectionId },
         {
-          onError: (error: any) => {
+          onError: (error: {
+            response?: { data?: { message?: string } };
+            message?: string;
+          }) => {
             const errorMessage =
               error.response?.data?.message ||
               error.message ||
@@ -68,7 +71,10 @@ function Folders() {
       createInvocation(
         { name, collectionId: params.collectionId },
         {
-          onError: (error: any) => {
+          onError: (error: {
+            response?: { data?: { message?: string } };
+            message?: string;
+          }) => {
             const errorMessage =
               error.response?.data?.message ||
               error.message ||
