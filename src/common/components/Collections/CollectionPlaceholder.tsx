@@ -20,7 +20,10 @@ const CollectionPlaceholder = () => {
         mutate(
           { name },
           {
-            onError: (error: any) => {
+            onError: (error: {
+              response?: { data?: { message?: string } };
+              message?: string;
+            }) => {
               const errorMessage =
                 error.response?.data?.message ||
                 error.message ||
