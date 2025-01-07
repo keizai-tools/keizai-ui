@@ -2,11 +2,13 @@ import { ListPlusIcon } from 'lucide-react';
 
 import NewEntityDialog from '../Entity/NewEntityDialog';
 import { Button } from '../ui/button';
+import { useToast } from '../ui/use-toast';
 
 import { useNewCollectionMutation } from '@/common/api/collections';
 
 const CollectionPlaceholder = () => {
   const { mutate, isPending } = useNewCollectionMutation();
+  const { toast } = useToast();
 
   return (
     <NewEntityDialog
@@ -15,7 +17,25 @@ const CollectionPlaceholder = () => {
       defaultName="Collection"
       isLoading={isPending}
       onSubmit={async ({ name }) => {
-        mutate({ name });
+        mutate(
+          { name },
+          {
+            onError: (error: {
+              response?: { data?: { message?: string } };
+              message?: string;
+            }) => {
+              const errorMessage =
+                error.response?.data?.message ||
+                error.message ||
+                'An error occurred';
+              toast({
+                title: 'Error',
+                description: errorMessage,
+                variant: 'destructive',
+              });
+            },
+          },
+        );
         if (window.umami) window.umami.track('Create collection');
       }}
     >

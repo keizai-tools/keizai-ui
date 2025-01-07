@@ -11,7 +11,7 @@ import NetworkButton from './NetworkButton';
 import UserButton from './UserButton';
 
 import { useStatusNetworkQuery } from '@/common/api/statusNetwork';
-import { useEphemeral } from '@/common/hooks/useEphemeral';
+import { useEphemeral } from '@/common/context/useEphemeralContext';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 export default function Sidebar() {
@@ -22,15 +22,22 @@ export default function Sidebar() {
   const [openNetworkStatus, setOpenNetworkStatus] = useState(false);
   const [openEphemeralDialog, setOpenEphemeralDialog] = useState(false);
 
-  const [loading, setLoading] = useState(false);
+  const ephemeralContext = useEphemeral();
   const {
     status,
-    handleStart,
-    handleStop,
+    handleStart = async ({ interval }: { interval: number }) => {
+      console.log(`Starting with interval: ${interval}`);
+    },
+    handleStop = async () => {
+      console.log('Stopping');
+    },
     isError,
     isLoading: isEphemeralLoading,
-    setEphemeral,
-  } = useEphemeral(setLoading);
+    setEphemeral = (variable: boolean) => {
+      console.log(`Setting ephemeral to: ${variable}`);
+    },
+    loading,
+  } = ephemeralContext || {};
 
   const location = useLocation();
   const currentRoute = location.pathname;
@@ -110,9 +117,9 @@ export default function Sidebar() {
         <EphemeralContentDialog
           open={openEphemeralDialog}
           onOpenChange={handleCloseEphemeralDialog}
-          loading={loading || isEphemeralLoading}
+          loading={!!loading || !!isEphemeralLoading}
           error={isError ? 'Error managing ephemeral instance' : null}
-          status={status}
+          status={status || { status: '', taskArn: '', isEphemeral: false }}
           setEphemeral={setEphemeral}
           handleStart={handleStart}
           handleStop={handleStop}
