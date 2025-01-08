@@ -95,7 +95,7 @@ export const EphemeralProvider = ({ children }: EphemeralProviderProps) => {
   useEffect(() => {
     const fetchTimer = setInterval(async () => {
       await ephemeral.fetchStatus();
-    }, 10000);
+    }, 60000);
 
     return () => clearInterval(fetchTimer);
   }, [ephemeral]);
@@ -111,7 +111,7 @@ export const EphemeralProvider = ({ children }: EphemeralProviderProps) => {
     if (status.status === 'STOPPED') {
       const fetchTimer = setInterval(async () => {
         await ephemeral.fetchStatus();
-      }, 10000);
+      }, 30000);
 
       return () => clearInterval(fetchTimer);
     }
