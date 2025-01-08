@@ -9,36 +9,24 @@ import { Button } from '../ui/button';
 import EphemeralContentDialog from './EphemeralcontentDialog';
 import NetworkButton from './NetworkButton';
 import UserButton from './UserButton';
+import WasmFilesDialog from './WasmFilesDialog';
 
 import { useStatusNetworkQuery } from '@/common/api/statusNetwork';
-import { useEphemeral } from '@/common/context/useEphemeralContext';
+import { useEphemeralProvider } from '@/common/context/useEphemeralContext';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 export default function Sidebar() {
   const { wallet } = useAuthProvider();
   const { data, isLoading } = useStatusNetworkQuery();
 
-  const [openConnectWallet, setOpenConnectWallet] = useState(false);
-  const [openNetworkStatus, setOpenNetworkStatus] = useState(false);
-  const [openEphemeralDialog, setOpenEphemeralDialog] = useState(false);
+  const [dialogs, setDialogs] = useState({
+    connectWallet: false,
+    networkStatus: false,
+    ephemeral: false,
+    wasmFiles: false,
+  });
 
-  const ephemeralContext = useEphemeral();
-  const {
-    status,
-    handleStart = async ({ interval }: { interval: number }) => {
-      console.log(`Starting with interval: ${interval}`);
-    },
-    handleStop = async () => {
-      console.log('Stopping');
-    },
-    isError,
-    isLoading: isEphemeralLoading,
-    setEphemeral = (variable: boolean) => {
-      console.log(`Setting ephemeral to: ${variable}`);
-    },
-    loading,
-  } = ephemeralContext || {};
-
+  const { countdown } = useEphemeralProvider();
   const location = useLocation();
   const currentRoute = location.pathname;
 
@@ -62,8 +50,9 @@ export default function Sidebar() {
     }
   }
 
-  const handleOpenEphemeralDialog = () => setOpenEphemeralDialog(true);
-  const handleCloseEphemeralDialog = () => setOpenEphemeralDialog(false);
+  function handleDialogToggle(dialogName: string, isOpen: boolean) {
+    setDialogs((prev) => ({ ...prev, [dialogName]: isOpen }));
+  }
 
   return (
     <div
@@ -97,44 +86,66 @@ export default function Sidebar() {
           size="icon"
           asChild
           data-test="sidebar-btn-user"
-          onClick={handleOpenEphemeralDialog}
+          onClick={() => handleDialogToggle('ephemeral', true)}
           tooltip="Ephemeral Container"
         >
           <Container
-            className="p-2 transition-colors duration-300 cursor-pointer hover:text-primary"
+            className={`p-2 transition-colors duration-300 cursor-pointer hover:text-primary ${countdown.countdownColor}`}
             data-test="sidebar-btn-ephemeral"
           />
         </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          asChild
+          data-test="sidebar-btn-wasm"
+          onClick={() => handleDialogToggle('wasmFiles', true)}
+          tooltip="Wasm Files"
+        >
+          <LibraryBig
+            className="p-2 transition-colors duration-300 cursor-pointer hover:text-primary"
+            data-test="sidebar-btn-wasm"
+          />
+        </Button>
+
         <NetworkButton
           globeColor={globeColor}
           walletColor={walletColor}
-          setOpenConnectWallet={setOpenConnectWallet}
-          setOpenNetworkStatus={setOpenNetworkStatus}
+          setOpenConnectWallet={() => handleDialogToggle('connectWallet', true)}
+          setOpenNetworkStatus={() => handleDialogToggle('networkStatus', true)}
         />
         <UserButton />
       </div>
-      {openEphemeralDialog && (
+      {dialogs.wasmFiles && (
+        <WasmFilesDialog
+          open={dialogs.wasmFiles}
+          onOpenChange={() =>
+            handleDialogToggle('wasmFiles', !dialogs.wasmFiles)
+          }
+        />
+      )}
+      {dialogs.ephemeral && (
         <EphemeralContentDialog
-          open={openEphemeralDialog}
-          onOpenChange={handleCloseEphemeralDialog}
-          loading={!!loading || !!isEphemeralLoading}
-          error={isError ? 'Error managing ephemeral instance' : null}
-          status={status || { status: '', taskArn: '', isEphemeral: false }}
-          setEphemeral={setEphemeral}
-          handleStart={handleStart}
-          handleStop={handleStop}
+          open={dialogs.ephemeral}
+          onOpenChange={() =>
+            handleDialogToggle('ephemeral', !dialogs.ephemeral)
+          }
         />
       )}
-      {openConnectWallet && (
+      {dialogs.connectWallet && (
         <ConnectWalletDialog
-          open={openConnectWallet}
-          onOpenChange={(open: boolean) => setOpenConnectWallet(open)}
+          open={dialogs.connectWallet}
+          onOpenChange={() =>
+            handleDialogToggle('connectWallet', !dialogs.connectWallet)
+          }
         />
       )}
-      {openNetworkStatus && (
+      {dialogs.networkStatus && (
         <StatusNetworkDialog
-          open={openNetworkStatus}
-          onOpenChange={(open: boolean) => setOpenNetworkStatus(open)}
+          open={dialogs.networkStatus}
+          onOpenChange={() =>
+            handleDialogToggle('networkStatus', !dialogs.networkStatus)
+          }
         />
       )}
     </div>
