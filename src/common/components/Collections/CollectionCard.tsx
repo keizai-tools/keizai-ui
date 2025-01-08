@@ -5,6 +5,7 @@ import DeleteEntityDialog from '../Entity/DeleteEntityDialog';
 import EditEntityDialog from '../Entity/EditEntityDialog';
 import MoreOptions from '../Entity/MoreOptions';
 import { Button } from '../ui/button';
+import { useToast } from '../ui/use-toast';
 
 import {
   useDeleteCollectionMutation,
@@ -28,9 +29,28 @@ const CollectionCard = ({
   const navigate = useNavigate();
   const { mutate: deleteCollectionMutation } = useDeleteCollectionMutation();
   const { mutate, isPending } = useUpdateCollectionMutation();
+  const { toast } = useToast();
 
   const handleEditCollection = async ({ name }: { name: string }) => {
-    mutate({ id, name });
+    mutate(
+      { id, name },
+      {
+        onError: (error: {
+          response?: { data?: { message?: string } };
+          message?: string;
+        }) => {
+          const errorMessage =
+            error.response?.data?.message ||
+            error.message ||
+            'An error occurred';
+          toast({
+            title: 'Error',
+            description: errorMessage,
+            variant: 'destructive',
+          });
+        },
+      },
+    );
     if (window.umami) window.umami.track('Edit collection');
     setActiveDialog(null);
   };
@@ -54,12 +74,10 @@ const CollectionCard = ({
               ? 'No folders'
               : `${foldersCount} ${foldersCount === 1 ? 'Folder' : 'Folders'}`}
           </span>
-          {foldersCount > 0 && (
-            <span className="font-medium text-slate-400">
-              {invocationsCount === 0 ? 'No' : invocationsCount}{' '}
-              {invocationsCount === 1 ? 'Invocation' : 'Invocations'}
-            </span>
-          )}
+          <span className="font-medium text-slate-400">
+            {invocationsCount === 0 ? 'No' : invocationsCount}{' '}
+            {invocationsCount === 1 ? 'Invocation' : 'Invocations'}
+          </span>
         </div>
       </Button>
       <div className="absolute text-white right-5 top-6">

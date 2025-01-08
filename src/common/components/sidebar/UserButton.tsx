@@ -27,6 +27,7 @@ function UserButton() {
           size="icon"
           asChild
           data-test="sidebar-btn-user"
+          tooltip="User Configuration"
         >
           <User2 className="p-2 transition-colors duration-300 cursor-pointer hover:text-primary" />
         </Button>

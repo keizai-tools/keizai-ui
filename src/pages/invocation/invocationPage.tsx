@@ -13,7 +13,6 @@ import ContractInput from '@/common/components/Input/ContractInput';
 import UploadWasmDialog from '@/common/components/Tabs/FunctionsTab/UploadWasmDialog';
 import TabsContainer from '@/common/components/Tabs/TabsContainer';
 import Terminal from '@/common/components/ui/Terminal';
-import { Button } from '@/common/components/ui/button';
 import useWasmFileHandler from '@/common/hooks/useUploadWasm';
 import { Invocation } from '@/common/types/invocation';
 import { NETWORK } from '@/common/types/soroban.enum';
@@ -108,7 +107,6 @@ function InvocationPageContent({
     setLoading,
     connectWallet,
   );
-
   return (
     <Fragment>
       <div
@@ -124,11 +122,6 @@ function InvocationPageContent({
             folderName={data.folder?.name ?? ''}
             contractInvocationName={data.name}
           />
-          {uploadWasm.status?.publicIp && (
-            <Button onClick={uploadWasm.handleStop} className="mt-2">
-              Stop Ephemeral
-            </Button>
-          )}
         </div>
         <ContractInput
           defaultValue={data.contractId ?? ''}
@@ -164,8 +157,8 @@ function InvocationPageContent({
         onOpenChange={uploadWasm.handleCloseModal}
         data={data}
         wallet={wallet[data.network as keyof typeof wallet]}
-        loading={loading}
         {...uploadWasm}
+        loading={loading || uploadWasm.loading}
       />
     </Fragment>
   );

@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import NewEntityDialog from '../Entity/NewEntityDialog';
 import InvocationListItem from '../Invocations/InvocationListItem';
 import { Button } from '../ui/button';
+import { useToast } from '../ui/use-toast';
 import Folder from './Folder';
 
 import {
@@ -19,6 +20,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/common/components/ui/tooltip';
+import { useEphemeralProvider } from '@/common/context/useEphemeralContext';
+import NETWORKS from '@/modules/signer/constants/networks';
 
 function Folders() {
   const params = useParams();
@@ -30,7 +33,7 @@ function Folders() {
     useInvocationsByCollectionIdQuery({
       id: params.collectionId,
     });
-
+  const { status } = useEphemeralProvider();
   const currentRoute = location.pathname;
 
   const { mutate: createFolder, isPending: isCreatingFolder } =
@@ -38,17 +41,54 @@ function Folders() {
   const { mutate: createInvocation, isPending: isCreatingInvocation } =
     useCreateInvocationMutation();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   async function onCreateFolder({ name }: { name: string }) {
     if (params.collectionId) {
-      createFolder({ name, collectionId: params.collectionId });
+      createFolder(
+        { name, collectionId: params.collectionId },
+        {
+          onError: (error: {
+            response?: { data?: { message?: string } };
+            message?: string;
+          }) => {
+            const errorMessage =
+              error.response?.data?.message ||
+              error.message ||
+              'An error occurred';
+            toast({
+              title: 'Error',
+              description: errorMessage,
+              variant: 'destructive',
+            });
+          },
+        },
+      );
       if (window.umami) window?.umami?.track('Create folder');
     }
   }
 
   async function onCreateInvocation({ name }: { name: string }) {
     if (params.collectionId) {
-      createInvocation({ name, collectionId: params.collectionId });
+      createInvocation(
+        { name, collectionId: params.collectionId },
+        {
+          onError: (error: {
+            response?: { data?: { message?: string } };
+            message?: string;
+          }) => {
+            const errorMessage =
+              error.response?.data?.message ||
+              error.message ||
+              'An error occurred';
+            toast({
+              title: 'Error',
+              description: errorMessage,
+              variant: 'destructive',
+            });
+          },
+        },
+      );
       if (window.umami) window?.umami?.track('Create invocation');
     }
   }
@@ -94,9 +134,17 @@ function Folders() {
     if (invocations && invocations.length > 0) {
       return (
         <div className="flex flex-col text-slate-400">
-          {invocations.map((invocation) => (
-            <InvocationListItem key={invocation.id} invocation={invocation} />
-          ))}
+          {invocations
+            .filter(
+              (invocation) =>
+                !(
+                  invocation.network === NETWORKS.EPHEMERAL &&
+                  status.status === 'STOPPED'
+                ),
+            )
+            .map((invocation) => (
+              <InvocationListItem key={invocation.id} invocation={invocation} />
+            ))}
         </div>
       );
     }
@@ -107,7 +155,7 @@ function Folders() {
       className="min-w-[250px] flex flex-col justify-between border-r dark:border-r-border h-full px-3 py-1 gap-4"
       data-test="collections-container"
     >
-      <div data-test="folders-container">
+      <div data-test="folders-container ">
         <div className="flex items-center justify-between mb-3">
           <Button
             variant="link"
@@ -137,60 +185,66 @@ function Folders() {
             </TooltipContent>
           </Tooltip>
         </div>
-        <div
-          className="flex items-center justify-between mt-3"
-          data-test="collections-header"
-        >
-          <h4
-            className="text-lg font-bold"
-            data-test="collections-header-title"
+        <div>
+          <div
+            className="flex items-center justify-between mt-3"
+            data-test="collections-header"
           >
-            Folders
-          </h4>
-          <NewEntityDialog
-            title="New folder"
-            description="Let's name your folder"
-            defaultName="Folder"
-            isLoading={isCreatingFolder}
-            onSubmit={onCreateFolder}
-          >
-            <Button
-              variant="link"
-              className="flex h-auto gap-1 px-0 py-1 text-xs text-slate-500 hover:text-slate-100"
-              data-test="collections-header-btn-new"
+            <h4
+              className="text-lg font-bold"
+              data-test="collections-header-title"
             >
-              <PlusIcon size={12} /> Add
-            </Button>
-          </NewEntityDialog>
-        </div>
-        {renderFoldersContent()}
-        <div
-          className="flex items-center justify-between mb-3"
-          data-test="collections-invocations-header"
-        >
-          <h4
-            className="text-lg font-bold"
-            data-test="collections-invocations-header-title"
-          >
-            Invocations
-          </h4>
-          <NewEntityDialog
-            title="New invocation"
-            description="Let's name your invocation"
-            defaultName="Invocation"
-            isLoading={isCreatingInvocation}
-            onSubmit={onCreateInvocation}
-          >
-            <Button
-              variant="link"
-              className="flex h-auto gap-1 px-0 py-1 text-xs text-slate-500 hover:text-slate-100"
-              data-test="collections-header-btn-new-invocation"
+              Folders
+            </h4>
+            <NewEntityDialog
+              title="New folder"
+              description="Let's name your folder"
+              defaultName="Folder"
+              isLoading={isCreatingFolder}
+              onSubmit={onCreateFolder}
+              elementList={folders}
             >
-              <PlusIcon size={12} /> Add
-            </Button>
-          </NewEntityDialog>
+              <Button
+                variant="link"
+                className="flex h-auto gap-1 px-0 py-1 text-xs text-slate-500 hover:text-slate-100"
+                data-test="collections-header-btn-new"
+              >
+                <PlusIcon size={12} /> Add
+              </Button>
+            </NewEntityDialog>
+          </div>
+          {renderFoldersContent()}
         </div>
-        {renderInvocationsContent()}
+        <div className="mt-5 ">
+          <div
+            className="flex items-center justify-between mb-3"
+            data-test="collections-invocations-header"
+          >
+            <h4
+              className="text-lg font-bold"
+              data-test="collections-invocations-header-title"
+            >
+              Invocations
+            </h4>
+            <NewEntityDialog
+              title="New invocation"
+              description="Let's name your invocation"
+              defaultName="Invocation"
+              isLoading={isCreatingInvocation}
+              onSubmit={onCreateInvocation}
+              elementList={invocations}
+            >
+              <Button
+                variant="link"
+                className="flex h-auto gap-1 px-0 py-1 text-xs text-slate-500 hover:text-slate-100"
+                data-test="collections-header-btn-new-invocation"
+              >
+                <PlusIcon size={12} /> Add
+              </Button>
+            </NewEntityDialog>
+          </div>
+          {renderInvocationsContent()}
+        </div>
       </div>
       <div className="w-full mb-4 text-base font-semibold text-center hover:underline">
         <Link

@@ -2,22 +2,20 @@ import { Loader } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 function StopOverlayLoading() {
-  const opacity = 0.2;
   const [statusMessage, setStatusMessage] = useState('');
 
   useEffect(() => {
     const stages = [
-      'Stopping services...',
-      'Releasing resources...',
-      'Updating status...',
-      'Closing connections...',
-      'Terminating the environment...',
+      'Stopping all running services...',
+      'Releasing allocated resources...',
+      'Updating system status...',
+      'Closing all active connections...',
+      'Terminating the environment and cleaning up...',
     ];
 
     let currentStage = 0;
 
     setStatusMessage(stages[currentStage]);
-    currentStage++;
     currentStage++;
 
     const interval = setInterval(() => {
@@ -34,13 +32,14 @@ function StopOverlayLoading() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center backdrop-blur-sm"
+      className="fixed inset-0  z-[100000] flex flex-col items-center justify-center backdrop-blur-sm"
       style={{
-        backgroundColor: `hsla(222.2, 84%, 4.9%, ${opacity})`,
+        backgroundColor: `hsla(222.2, 84%, 4.9%, 0.8)`,
+        pointerEvents: 'none',
       }}
     >
-      <Loader className="animate-spin mb-4" size="36" />
-      <p className="text-white text-center">{statusMessage}</p>
+      <Loader className="mb-4 animate-spin" size="36" />
+      <p className="text-lg text-center text-white">{statusMessage}</p>
     </div>
   );
 }

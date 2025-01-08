@@ -13,7 +13,7 @@ import { Method } from '@/common/types/method';
 
 function ContractInput({
   defaultValue = '',
-  defaultNetwork,
+  defaultNetwork: network,
   loading,
   loadContract,
   runInvocation,
@@ -79,7 +79,7 @@ function ContractInput({
       className="flex items-center gap-4 p-2 border rounded-md"
       data-test="contract-input-container"
     >
-      {defaultNetwork !== 'AUTO_DETECT' && contractId && (
+      {network !== 'AUTO_DETECT' && contractId && (
         <div
           className="flex flex-col items-start gap-1 mr-2"
           data-test="contract-input-network-container"
@@ -89,7 +89,7 @@ function ContractInput({
             className="text-sm font-bold text-gray-400 select-none text-primary"
             data-test="contract-input-network"
           >
-            {defaultNetwork}
+            {network}
           </p>
         </div>
       )}
@@ -185,7 +185,7 @@ function ContractInput({
                 className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 onClick={copyToClipboard}
                 type="button"
-                disabled={loading || !method}
+                disabled={loading}
               >
                 COPY CONTRACT ID
               </Button>

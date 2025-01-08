@@ -92,11 +92,7 @@ export default function ConnectWalletDialog({
   }, [confirmCreateAccount, onCreateAccount, replaceAutoGenerate, wallet]);
 
   function toggleNetwork(network: string) {
-    setOpenNetworks((prev) =>
-      prev.includes(network)
-        ? prev.filter((n) => n !== network)
-        : [...prev, network],
-    );
+    setOpenNetworks((prev) => (prev.includes(network) ? [] : [network]));
   }
 
   return (
@@ -104,17 +100,17 @@ export default function ConnectWalletDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent
           data-test="dialog-edit-contract-address-container"
-          className="flex flex-col w-auto h-auto gap-4 p-6 font-bold border-2 border-solid rounded-lg shadow-lg border-offset-background max-w-prose"
+          className="flex flex-col w-auto h-auto gap-2 p-6 font-bold border-2 border-solid rounded-lg shadow-lg border-offset-background max-w-prose"
         >
           <DialogHeader>
-            {wallet.MAINNET?.publicKey && (
-              <div className="flex flex-row items-center justify-between gap-4">
-                <BalanceComponent />
+            <div className="flex flex-row items-center justify-between gap-4">
+              <BalanceComponent />
+              {wallet.MAINNET?.publicKey && (
                 <QRModal wallet={wallet} stellarMemo={memoId} />
-              </div>
-            )}
+              )}
+            </div>
           </DialogHeader>
-          <Accordion type="multiple">
+          <Accordion type="single">
             <AccordionItem value="mainnet">
               <AccordionTrigger onClick={() => toggleNetwork('mainnet')}>
                 Mainnet Network Status

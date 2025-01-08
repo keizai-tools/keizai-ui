@@ -25,8 +25,8 @@ function BalanceComponent() {
       setBalance(updatedBalance);
       cookieService.setBalanceCookie(updatedBalance);
     } catch (error) {
-      console.error('Error al actualizar el balance:', error);
-      setMessage('Error al actualizar el balance. Inténtalo de nuevo.');
+      console.error('Error updating balance:', error);
+      setMessage('Error updating balance. Please try again.');
     } finally {
       setLoading(false);
     }

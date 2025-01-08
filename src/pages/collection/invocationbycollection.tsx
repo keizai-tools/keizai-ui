@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from '@/common/components/ui/select';
 import { useToast } from '@/common/components/ui/use-toast';
-import { useEphemeral } from '@/common/hooks/useEphemeral';
+import { useEphemeralProvider } from '@/common/context/useEphemeralContext';
 import { Invocation } from '@/common/types/invocation';
 import { NETWORK } from '@/common/types/soroban.enum';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
@@ -94,7 +94,7 @@ export default function InvocationByCollection() {
   const { collectionId } = useParams<{ collectionId: string }>();
   const { wallet, connectWallet } = useAuthProvider();
   const { toast } = useToast();
-  const { status: ephemeralStatus } = useEphemeral(setLoading);
+  const { status: ephemeralStatus } = useEphemeralProvider();
 
   const [executionMode, setExecutionMode] = useState<'parallel' | 'sequential'>(
     'parallel',
@@ -194,7 +194,7 @@ export default function InvocationByCollection() {
           </div>
         ) : error ? (
           <div
-            className="flex flex-wrap items-center justify-center w-full gap-12 mt-48 h-fit"
+            className="flex flex-wrap items-center justify-center w-full h-full gap-12"
             data-test="collection-empty-invocation-container"
           >
             <img

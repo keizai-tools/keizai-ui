@@ -27,6 +27,7 @@ function NetworkButton({
           size="icon"
           asChild
           data-test="sidebar-btn-user"
+          tooltip="Network Status"
         >
           <Link className="p-2 transition-colors duration-300 cursor-pointer hover:text-primary" />
         </Button>

@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import type { FileData } from '../components/Tabs/FunctionsTab/DragAndDropContainer';
 import { useToast } from '../components/ui/use-toast';
 import { Invocation, InvocationResponse } from '../types/invocation';
 import { NETWORK } from '../types/soroban.enum';
@@ -22,13 +23,13 @@ export function useInvocationQuery({ id }: { id?: string }) {
   return query;
 }
 
-export function useWasmFilesQuery({ invocationId }: { invocationId: string }) {
-  return useQuery<{ id: string; url: string }[]>({
-    queryKey: ['invocation', invocationId, 'wasm-files'],
+export function useWasmFilesQuery() {
+  return useQuery<{ id: string }[]>({
+    queryKey: ['invocation', 'wasm-files'],
     queryFn: async () => {
-      const response = await apiService.get<
-        IApiResponse<{ id: string; url: string }[]>
-      >(`/invocation/${invocationId}/wasm-files`);
+      const response = await apiService.get<IApiResponse<{ id: string }[]>>(
+        `/invocation/wasm-files/list`,
+      );
       return response.payload;
     },
   });
@@ -112,11 +113,11 @@ export function useCreateInvocationMutation() {
 }
 
 export function useInvocationsByCollectionIdQuery({ id }: { id?: string }) {
-  return useQuery<string[]>({
+  return useQuery<Invocation[]>({
     queryKey: ['collection', id, 'invocation'],
     queryFn: async () =>
       apiService
-        ?.get<IApiResponse<string[]>>(`/collection/${id}/invocation`)
+        ?.get<IApiResponse<Invocation[]>>(`/collection/${id}/invocation`)
         .then((response) => response.payload),
     enabled: !!id,
   });
@@ -267,13 +268,6 @@ export function useEditNetworkMutation(showToast: boolean) {
       return {
         previousInvocation,
       };
-    },
-    onError: () => {
-      toast({
-        title: 'Something went wrong!',
-        description: "Couldn't change network, please try again",
-        variant: 'destructive',
-      });
     },
     onSuccess: (data) => {
       if (data) queryClient.setQueryData(['invocation', data.id], data);
@@ -473,4 +467,56 @@ export function useEditContractIdMutation() {
   });
 
   return mutation;
+}
+
+export function useDownloadWasmFileQuery({ fileName }: { fileName: string }) {
+  return useQuery<FileData>({
+    queryKey: ['downloadWasmFile', fileName],
+    queryFn: async () => {
+      const response = await apiService.get<
+        IApiResponse<{
+          name: string;
+          file: {
+            data: number[];
+            type: string;
+          };
+          type: string;
+          size: number;
+        }>
+      >(`/invocation/wasm-files/${fileName}/download`);
+      const { name, file, size, type } = response.payload;
+      const fileData: FileData = {
+        name,
+        file: new File([new Uint8Array(file.data)], name, {
+          type,
+        }),
+        type,
+        size,
+      };
+      return fileData;
+    },
+    enabled: !!fileName,
+  });
+}
+
+export function useEphemeralInvocationsMutation() {
+  const params = useParams();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiService.delete<IApiResponse<string[]>>(
+        `/collection/invocations/network-ephemeral`,
+      );
+
+      if (
+        params.invocationId &&
+        response.payload.includes(params.invocationId)
+      ) {
+        navigate(`/`);
+      }
+
+      return response.payload;
+    },
+  });
 }

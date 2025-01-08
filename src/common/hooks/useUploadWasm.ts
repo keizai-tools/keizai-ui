@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 
-import { useEphemeral as useEphemeralHandlers } from './useEphemeral';
+import { useEphemeralProvider } from '../context/useEphemeralContext';
 import { useFileHandlers } from './useFileHandler';
 import useNetwork from './useNetwork';
 import { useNetworkHandlers } from './useNetworkHandlers';
@@ -33,7 +33,7 @@ export default function useWasmFileHandler(
     setError: FileHandler.setError,
   });
 
-  const EphemeralHandlers = useEphemeralHandlers(setLoading);
+  const EphemeralHandlers = useEphemeralProvider();
 
   const InvocationHandlers = useInvocationHandlers(data, wallet, connectWallet);
 

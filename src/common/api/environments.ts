@@ -13,8 +13,6 @@ export function useEnvironmentsQuery({
 }) {
   const query = useQuery<Environment[]>({
     queryKey: ['environment', collectionId],
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
     queryFn: async () =>
       apiService
         ?.get<IApiResponse<Environment[]>>(

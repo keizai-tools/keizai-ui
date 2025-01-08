@@ -31,7 +31,12 @@ async function messageHandler<T extends ISignMessage | IConnectMessage>({
         const handlers: { [key: string]: () => void } = {
           [MessageEventType.READY]: () => {
             ready = true;
-            popupWindow.postMessage(postConfig, origin);
+            if (popupWindow) {
+              popupWindow.postMessage(postConfig, origin);
+            } else {
+              reject(new Error('Failed to open popup window'));
+              window.removeEventListener('message', handleMessage);
+            }
             clearTimeout(timeout);
           },
           [MessageEventType.CANCEL]: () => {
@@ -47,6 +52,7 @@ async function messageHandler<T extends ISignMessage | IConnectMessage>({
         (handlers[messageResponse.type] || handlers['default'])();
       }
     }
+
     window.addEventListener('message', handleMessage);
   });
 }
