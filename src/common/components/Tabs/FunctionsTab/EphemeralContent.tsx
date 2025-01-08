@@ -13,13 +13,22 @@ export default function EphemeralContent({
   handleStart,
   handleStop,
   loading,
+  formattedCountdown,
+  countdownColor,
 }: Readonly<{
   error: string | null;
   status?: {
     status: string;
     taskArn: string;
+    publicIp: string;
+    taskStartedAt: string;
+    taskStoppedAt: string;
+    executionInterval: number;
     isEphemeral: boolean;
   };
+  formattedCountdown: string;
+  countdown: number | null;
+  countdownColor: string;
   handleStart: (options: { interval: number }) => void;
   handleStop: () => void;
   loading: boolean;
@@ -78,21 +87,57 @@ export default function EphemeralContent({
 
   return (
     <Fragment>
-      <div className="flex flex-col w-full h-full gap-6 p-6 font-bold border-2 border-solid rounded-lg border-offset-background bg-slate-900">
+      <div className="flex flex-col w-full h-full p-6 font-bold border-2 border-solid rounded-lg border-offset-background bg-slate-900">
         <div className="flex items-center justify-between w-full gap-2">
-          <span className="text-base text-gray-500 ">Ephemeral Status:</span>
+          <span className="text-base text-gray-500">Ephemeral Status:</span>
           <span
             className={`text-sm ${
-              status?.status === 'STOPPED' ? 'text-red-500' : 'text-green-500'
+              status?.status === 'STOPPED' ? 'text-red-400' : 'text-green-400'
             }`}
           >
             {status?.status}
           </span>
         </div>
+        {status?.status !== 'STOPPED' && status && (
+          <div>
+            <div className="flex items-center justify-between w-full gap-2">
+              <span className="text-base text-gray-500">Started At:</span>
+              <span className="text-sm">
+                {new Date(status.taskStartedAt).toLocaleString()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between w-full gap-2">
+              <span className="text-base text-gray-500">Will Stop At:</span>
+              <span className="text-sm">
+                {new Date(
+                  new Date(status.taskStartedAt).getTime() +
+                    status.executionInterval * 60000,
+                ).toLocaleString()}
+              </span>
+            </div>
+            <div className="flex items-center justify-between w-full gap-2">
+              <span className="text-base text-gray-500">Countdown:</span>
+              <span className={`text-sm ${countdownColor}`}>
+                {formattedCountdown}
+              </span>
+            </div>
+            <div className="flex items-center justify-between w-full gap-2">
+              <span className="text-base text-gray-500">
+                Selected Interval:
+              </span>
+              <span className="text-sm">
+                {status.executionInterval} minutes
+              </span>
+            </div>
+          </div>
+        )}
       </div>
       <div className="flex flex-col w-full h-full gap-6 p-6 font-bold border-2 border-solid rounded-lg border-offset-background">
         {status?.status === 'STOPPED' ? (
-          <>
+          <div
+            className="flex items-center justify-between w-full gap-2"
+            data-test="edit-entity-dialog-interval"
+          >
             <SelectInterval
               interval={selectedInterval}
               setInterval={setSelectedInterval}
@@ -106,7 +151,7 @@ export default function EphemeralContent({
             >
               {loading ? 'Starting...' : 'Start Ephemeral'}
             </Button>
-          </>
+          </div>
         ) : (
           <Button
             type="submit"
