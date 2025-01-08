@@ -14,7 +14,7 @@ export default function QRModal({
 }: Readonly<{ wallet: IWallet; stellarMemo: string }>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
-  const publicKeyTest = import.meta.env.VITE_PUBLIC_KEY_TEST;
+  const publicKeyEnv = import.meta.env.VITE_PUBLIC_KEY;
 
   function copyMemo() {
     const memoToCopy = `${stellarMemo}`;
@@ -26,7 +26,7 @@ export default function QRModal({
   }
 
   function copyWalletAddress() {
-    const addressToCopy = `${publicKeyTest}`;
+    const addressToCopy = `${publicKeyEnv}`;
     navigator.clipboard.writeText(addressToCopy);
     toast({
       title: 'Copied!',
@@ -58,12 +58,12 @@ export default function QRModal({
           {wallet.MAINNET?.publicKey && (
             <div className="flex flex-col items-start justify-between w-auto h-full gap-4 p-6 font-bold border-2 border-solid rounded-lg border-offset-background bg-slate-900 ">
               <div className="flex items-center w-full gap-4 p-4 border-2 border-solid rounded-lg bg-slate-950 border-offset-background">
-                <QRCodeCanvas value={publicKeyTest} size={100} level="H" />
+                <QRCodeCanvas value={publicKeyEnv} size={100} level="H" />
                 <p className="h-full text-center pointer-events-none whitespace-nowrap w-min text-slate-600">
                   Wallet Address
                 </p>
                 <p className="w-full h-full overflow-hidden font-light text-center whitespace-nowrap">
-                  {publicKeyTest}
+                  {publicKeyEnv}
                 </p>
                 <Copy
                   className="h-full transition-all duration-300 ease-in-out transform cursor-pointer hover:text-primary hover:scale-110"
