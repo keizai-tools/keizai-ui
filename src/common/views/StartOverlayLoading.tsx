@@ -7,16 +7,16 @@ function StartOverlayLoading() {
   useEffect(() => {
     const stages = [
       'Initializing the environment...',
-      'Provisioning EC2 instances...',
-      'Configuring the network and services...',
-      'Deploying applications...',
+      'Provisioning the container on Fargate...',
+      'Checking if Friend Bot is working...',
+      'Checking if Cores are operational...',
+      'Checking other internal features...',
       'Finalizing the configuration...',
     ];
 
     let currentStage = 0;
 
     setStatusMessage(stages[currentStage]);
-    currentStage++;
     currentStage++;
 
     const interval = setInterval(() => {
@@ -33,15 +33,14 @@ function StartOverlayLoading() {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center backdrop-blur-sm"
+      className="fixed inset-0 flex flex-col items-center justify-center z-[100000] backdrop-blur-sm"
       style={{
         backgroundColor: `hsla(222.2, 84%, 4.9%, 0.8)`,
+        pointerEvents: 'none',
       }}
     >
       <Loader className="mb-4 animate-spin" size="36" />
-      <p className="text-lg text-center text-white shadow-lg">
-        {statusMessage}
-      </p>
+      <p className="text-lg text-center text-white">{statusMessage}</p>
     </div>
   );
 }
