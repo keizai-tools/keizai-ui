@@ -14,7 +14,7 @@ export default function QRModal({
 }: Readonly<{ wallet: IWallet; stellarMemo: string }>) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
-  const publicKeyTest = import.meta.env.VITE_PUBLIC_KEY_TEST;
+  const publicKeyTest = import.meta.env.VITE_PUBLIC_KEY;
 
   function copyMemo() {
     const memoToCopy = `${stellarMemo}`;
