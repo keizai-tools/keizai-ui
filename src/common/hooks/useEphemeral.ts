@@ -1,20 +1,40 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 
 import {
   useEphemeralStatusMutation,
   useEphemeralStartMutation,
   useEphemeralStopMutation,
 } from '../api/ephemeral';
+import { useEphemeralInvocationsMutation } from '../api/invocations';
 
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
-export function useEphemeral(setLoading: (loading: boolean) => void) {
-  const {
-    mutateAsync: getStatus,
-    isPending: isStatusPending,
-    isError: isStatusError,
-  } = useEphemeralStatusMutation();
+export function useEphemeral(
+  setLoading: (loading: boolean) => void,
+  setStatus: (status: {
+    status: string;
+    taskArn: string;
+    publicIp: string;
+    taskStartedAt: string;
+    taskStoppedAt: string;
+    executionInterval: number;
+    isEphemeral: boolean;
+  }) => void,
+  status: {
+    status: string;
+    taskArn: string;
+    publicIp: string;
+    taskStartedAt: string;
+    taskStoppedAt: string;
+    executionInterval: number;
+    isEphemeral: boolean;
+  },
+) {
+  const { mutateAsync: getStatus, isError: isStatusError } =
+    useEphemeralStatusMutation();
+  const { mutateAsync } = useEphemeralInvocationsMutation();
+
   const {
     mutateAsync: startEphemeral,
     isPending: isStartPending,
@@ -29,65 +49,52 @@ export function useEphemeral(setLoading: (loading: boolean) => void) {
   const { statusState, onCreateAccountEphimeral, onDeleteAccountEphimeral } =
     useAuthProvider();
 
-  const [status, setStatus] = useState({
-    status: 'STOPPED',
-    taskArn: '',
-    publicIp: '',
-    isEphemeral: false,
-  });
-
   const fetchStatus = useCallback(async (): Promise<void> => {
     try {
-      if (status.status === 'STOPPED') {
-        const currentStatus = await getStatus();
-        if (currentStatus.status === 'RUNNING') {
-          setStatus({
-            ...currentStatus,
-            isEphemeral: true,
-          });
-          try {
-            onCreateAccountEphimeral(currentStatus.publicIp);
-          } catch (error) {
-            console.error('Failed to update network:', error);
-          }
+      const currentStatus = await getStatus();
+
+      setStatus({
+        ...currentStatus,
+        isEphemeral: currentStatus.status === 'RUNNING',
+      });
+      if (currentStatus.status === 'RUNNING') {
+        try {
+          onCreateAccountEphimeral(currentStatus.publicIp);
+        } catch (error) {
+          console.error('Failed to update network:', error);
         }
       }
     } catch (error) {
-      console.error('Failed to fetch status:', error);
+      onDeleteAccountEphimeral();
+      await mutateAsync();
+      setStatus({
+        status: 'STOPPED',
+        taskArn: '',
+        publicIp: '',
+        isEphemeral: false,
+        executionInterval: 0,
+        taskStartedAt: '',
+        taskStoppedAt: '',
+      });
     }
-  }, [status.status, getStatus, onCreateAccountEphimeral]);
+  }, [getStatus, onCreateAccountEphimeral]);
 
   const isLoading = useMemo(
     () =>
-      [
-        isStartPending,
-        isStopPending,
-        isStatusPending,
-        statusState.wallet.loading,
-      ].some(Boolean),
-    [
-      isStartPending,
-      isStopPending,
-      isStatusPending,
-      statusState.wallet.loading,
-    ],
+      [isStartPending, isStopPending, statusState.wallet.loading].some(Boolean),
+    [isStartPending, isStopPending, statusState.wallet.loading],
   );
-
-  useEffect(() => {
-    fetchStatus();
-  }, []);
 
   const handleStart = useCallback(
     async ({ interval }: { interval: number }): Promise<void> => {
       try {
         setLoading(true);
+        onDeleteAccountEphimeral();
         const startResponse = await startEphemeral({ interval });
         if (startResponse) {
           setStatus({
-            status: 'RUNNING',
-            taskArn: startResponse.taskArn,
-            publicIp: startResponse.publicIp,
             isEphemeral: true,
+            ...startResponse,
           });
           try {
             onCreateAccountEphimeral(startResponse.publicIp);
@@ -107,13 +114,16 @@ export function useEphemeral(setLoading: (loading: boolean) => void) {
   const handleStop = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
-      await stopEphemeral();
       onDeleteAccountEphimeral();
+      await stopEphemeral();
       setStatus({
         status: 'STOPPED',
         taskArn: '',
         publicIp: '',
         isEphemeral: false,
+        executionInterval: 0,
+        taskStartedAt: '',
+        taskStoppedAt: '',
       });
     } catch (error) {
       console.error('Failed to stop ephemeral instance:', error);
@@ -141,6 +151,7 @@ export function useEphemeral(setLoading: (loading: boolean) => void) {
     isError,
     isLoading,
     fetchStatus,
+    walletLoading: statusState.wallet.loading,
     setEphemeral: (variable: boolean) =>
       setStatus({ ...status, isEphemeral: variable }),
   };
