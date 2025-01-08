@@ -21,6 +21,9 @@ export function useCollectionsQuery() {
 export function useCollectionQuery(collectionId: string | undefined) {
   const query = useQuery<Collection>({
     queryKey: ['collection', collectionId],
+    refetchInterval: 2000,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
     queryFn: async () =>
       apiService
         ?.get<IApiResponse<Collection>>(`/collection/${collectionId}`)

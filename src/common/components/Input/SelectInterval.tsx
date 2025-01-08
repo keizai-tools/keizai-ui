@@ -64,7 +64,7 @@ function SelectInterval({
   return (
     <div>
       {fargateTime !== null && fargateTime < 5 ? (
-        <p className="text-red-400">
+        <p className="text-sm text-red-400">
           You do not have a sufficient minimum balance to select an interval.
         </p>
       ) : (
@@ -107,9 +107,8 @@ function SelectInterval({
             </SelectContent>
           </Select>
           {totalCost !== null && (
-            <div className="font-semibold text-slate-500">
-              {' '}
-              Cost for this interval: ${totalCost.toFixed(4)}{' '}
+            <div className="text-sm font-semibold text-slate-500">
+              Cost for this interval: ${totalCost.toFixed(3)}
             </div>
           )}
         </div>

@@ -5,24 +5,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/common/components/ui/select';
+import { useEphemeralProvider } from '@/common/context/useEphemeralContext';
 import useNetwork from '@/common/hooks/useNetwork';
 import { NETWORK } from '@/common/types/soroban.enum';
 
 function SelectNetwork({
   network,
-  setEphemeral,
 }: Readonly<{
   network: NETWORK;
-  setEphemeral: (isEphemeral: boolean) => void;
 }>) {
   const { handleUpdateNetwork } = useNetwork(false);
-
+  const { status } = useEphemeralProvider();
   function handleNetworkChange(selectedNetwork: NETWORK) {
     if (selectedNetwork === NETWORK.EPHEMERAL) {
-      setEphemeral(true);
       handleUpdateNetwork(NETWORK.EPHEMERAL);
     } else {
-      setEphemeral(false);
       handleUpdateNetwork(selectedNetwork);
       if (window.umami) window.umami.track('Change network');
     }
@@ -68,13 +65,15 @@ function SelectNetwork({
         >
           {NETWORK.SOROBAN_MAINNET}
         </SelectItem>
-        <SelectItem
-          value={NETWORK.EPHEMERAL}
-          data-test="contract-select-network-ephemeral"
-          className="transition-colors duration-200 cursor-pointer text-slate-700"
-        >
-          {NETWORK.EPHEMERAL}
-        </SelectItem>
+        {status.isEphemeral && (
+          <SelectItem
+            value={NETWORK.EPHEMERAL}
+            data-test="contract-select-network-ephemeral"
+            className="transition-colors duration-200 cursor-pointer text-slate-700"
+          >
+            {NETWORK.EPHEMERAL}
+          </SelectItem>
+        )}
       </SelectContent>
     </Select>
   );

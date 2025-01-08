@@ -6,13 +6,16 @@ import { Button } from '../ui/button';
 import { useToast } from '../ui/use-toast';
 
 import { useCreateInvocationMutation } from '@/common/api/invocations';
+import type { Invocation } from '@/common/types/invocation';
 
 const NewInvocationButton = ({
   folderId,
   collectionId,
+  elementList,
 }: {
   folderId?: string;
   collectionId?: string;
+  elementList?: Invocation[];
 }) => {
   const { mutate, isPending } = useCreateInvocationMutation();
   const navigate = useNavigate();
@@ -24,6 +27,7 @@ const NewInvocationButton = ({
       title="New invocation"
       description="Let's name your invocation"
       isLoading={isPending}
+      elementList={elementList}
       onSubmit={({ name }) => {
         mutate(
           {

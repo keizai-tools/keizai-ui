@@ -74,12 +74,10 @@ const CollectionCard = ({
               ? 'No folders'
               : `${foldersCount} ${foldersCount === 1 ? 'Folder' : 'Folders'}`}
           </span>
-          {foldersCount > 0 && (
-            <span className="font-medium text-slate-400">
-              {invocationsCount === 0 ? 'No' : invocationsCount}{' '}
-              {invocationsCount === 1 ? 'Invocation' : 'Invocations'}
-            </span>
-          )}
+          <span className="font-medium text-slate-400">
+            {invocationsCount === 0 ? 'No' : invocationsCount}{' '}
+            {invocationsCount === 1 ? 'Invocation' : 'Invocations'}
+          </span>
         </div>
       </Button>
       <div className="absolute text-white right-5 top-6">

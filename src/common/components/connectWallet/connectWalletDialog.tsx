@@ -103,12 +103,12 @@ export default function ConnectWalletDialog({
           className="flex flex-col w-auto h-auto gap-2 p-6 font-bold border-2 border-solid rounded-lg shadow-lg border-offset-background max-w-prose"
         >
           <DialogHeader>
-            {wallet.MAINNET?.publicKey && (
-              <div className="flex flex-row items-center justify-between gap-4">
-                <BalanceComponent />
+            <div className="flex flex-row items-center justify-between gap-4">
+              <BalanceComponent />
+              {wallet.MAINNET?.publicKey && (
                 <QRModal wallet={wallet} stellarMemo={memoId} />
-              </div>
-            )}
+              )}
+            </div>
           </DialogHeader>
           <Accordion type="single">
             <AccordionItem value="mainnet">

@@ -1,16 +1,13 @@
 import { Loader } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-function StartOverlayLoading() {
+function WalletOverlayLoading() {
   const [statusMessage, setStatusMessage] = useState('');
 
   useEffect(() => {
     const stages = [
-      'Initializing the environment...',
-      'Provisioning the container on Fargate...',
-      'Checking if Friend Bot is working...',
-      'Checking if Cores are operational...',
-      'Checking other internal features...',
+      'Creating the account for the ephemeral environment...',
+      'Funding the account for usage...',
       'Finalizing the configuration...',
     ];
 
@@ -45,4 +42,4 @@ function StartOverlayLoading() {
   );
 }
 
-export default StartOverlayLoading;
+export default WalletOverlayLoading;

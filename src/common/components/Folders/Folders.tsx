@@ -20,6 +20,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/common/components/ui/tooltip';
+import { useEphemeralProvider } from '@/common/context/useEphemeralContext';
+import NETWORKS from '@/modules/signer/constants/networks';
 
 function Folders() {
   const params = useParams();
@@ -31,7 +33,7 @@ function Folders() {
     useInvocationsByCollectionIdQuery({
       id: params.collectionId,
     });
-
+  const { status } = useEphemeralProvider();
   const currentRoute = location.pathname;
 
   const { mutate: createFolder, isPending: isCreatingFolder } =
@@ -132,9 +134,17 @@ function Folders() {
     if (invocations && invocations.length > 0) {
       return (
         <div className="flex flex-col text-slate-400">
-          {invocations.map((invocation) => (
-            <InvocationListItem key={invocation.id} invocation={invocation} />
-          ))}
+          {invocations
+            .filter(
+              (invocation) =>
+                !(
+                  invocation.network === NETWORKS.EPHEMERAL &&
+                  status.status === 'STOPPED'
+                ),
+            )
+            .map((invocation) => (
+              <InvocationListItem key={invocation.id} invocation={invocation} />
+            ))}
         </div>
       );
     }

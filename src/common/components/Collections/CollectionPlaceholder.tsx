@@ -5,8 +5,9 @@ import { Button } from '../ui/button';
 import { useToast } from '../ui/use-toast';
 
 import { useNewCollectionMutation } from '@/common/api/collections';
+import type { Collection } from '@/common/types/collection';
 
-const CollectionPlaceholder = () => {
+function CollectionPlaceholder({ elementList }: { elementList: Collection[] }) {
   const { mutate, isPending } = useNewCollectionMutation();
   const { toast } = useToast();
 
@@ -15,6 +16,7 @@ const CollectionPlaceholder = () => {
       title="New collection"
       description="Let's name your collection"
       defaultName="Collection"
+      elementList={elementList}
       isLoading={isPending}
       onSubmit={async ({ name }) => {
         mutate(
@@ -49,6 +51,6 @@ const CollectionPlaceholder = () => {
       </Button>
     </NewEntityDialog>
   );
-};
+}
 
 export default CollectionPlaceholder;
