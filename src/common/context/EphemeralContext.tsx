@@ -103,19 +103,13 @@ export const EphemeralProvider = ({ children }: EphemeralProviderProps) => {
   useEffect(() => {
     if (statusState.signIn.status) {
       ephemeral.fetchStatus();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusState.signIn.status]);
-
-  useEffect(() => {
-    if (status.status === 'STOPPED') {
       const fetchTimer = setInterval(async () => {
         await ephemeral.fetchStatus();
       }, 30000);
 
       return () => clearInterval(fetchTimer);
     }
-  }, [status.status, ephemeral]);
+  }, [statusState.signIn.status, ephemeral]);
 
   const formattedCountdown = useMemo(() => {
     if (countdown === null) return '';
