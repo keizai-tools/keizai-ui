@@ -58,10 +58,18 @@ export const EphemeralProvider = ({ children }: EphemeralProviderProps) => {
   });
   const [isStarting, setIsStarting] = useState(false);
   const [isStopping, setIsStopping] = useState(false);
+
   const ephemeral = useEphemeralHook(setLoading, setStatus, status);
   const { statusState } = useAuthProvider();
-
   const { mutateAsync } = useEphemeralInvocationsMutation();
+
+  const [hasFetchedStatus, setHasFetchedStatus] = useState(false);
+  useEffect(() => {
+    if (statusState.signIn.status && !hasFetchedStatus) {
+      ephemeral.fetchStatus();
+      setHasFetchedStatus(true);
+    }
+  }, [statusState.signIn.status, ephemeral, hasFetchedStatus]);
 
   useEffect(() => {
     if (
@@ -70,12 +78,13 @@ export const EphemeralProvider = ({ children }: EphemeralProviderProps) => {
       status.executionInterval
     ) {
       const interval = setInterval(() => {
-        const now = new Date().getTime();
+        const now = Date.now();
         const startTime = new Date(status.taskStartedAt).getTime();
         const endTime = startTime + status.executionInterval * 60000;
-        const timeLeft = endTime - now;
-        setCountdown(timeLeft > 0 ? timeLeft : 0);
-        if (timeLeft <= 0) {
+        const timeLeft = Math.max(endTime - now, 0);
+
+        setCountdown(timeLeft);
+        if (timeLeft === 0) {
           setStatus({
             status: 'STOPPED',
             taskArn: '',
@@ -93,23 +102,46 @@ export const EphemeralProvider = ({ children }: EphemeralProviderProps) => {
   }, [status]);
 
   useEffect(() => {
-    const fetchTimer = setInterval(async () => {
-      await ephemeral.fetchStatus();
-    }, 60000);
+    if (!statusState.signIn.status) return;
 
-    return () => clearInterval(fetchTimer);
-  }, [ephemeral]);
+    let intervalId: NodeJS.Timeout | null = null;
 
-  useEffect(() => {
-    if (statusState.signIn.status) {
-      ephemeral.fetchStatus();
-      const fetchTimer = setInterval(async () => {
+    const manageFetch = async () => {
+      try {
         await ephemeral.fetchStatus();
-      }, 30000);
+      } catch (error) {
+        console.error('Error fetching status:', error);
+      }
+    };
 
-      return () => clearInterval(fetchTimer);
-    }
-  }, [statusState.signIn.status, ephemeral]);
+    const startInterval = (intervalTime: number) => {
+      if (intervalId) clearInterval(intervalId);
+      intervalId = setInterval(manageFetch, intervalTime);
+    };
+
+    const initialTimeout = setTimeout(() => {
+      let intervalTime;
+      if (status.status === 'STOPPED') {
+        intervalTime = 30000;
+      } else {
+        const now = Date.now();
+        const stopTime = new Date(status.taskStoppedAt).getTime();
+        const timeLeft = Math.max(stopTime - now, 0);
+        intervalTime = Math.max(timeLeft / 10, 10000);
+      }
+      startInterval(intervalTime);
+    }, 10000);
+
+    return () => {
+      if (intervalId) clearInterval(intervalId);
+      clearTimeout(initialTimeout);
+    };
+  }, [
+    statusState.signIn.status,
+    status.status,
+    status.taskStoppedAt,
+    ephemeral,
+  ]);
 
   const formattedCountdown = useMemo(() => {
     if (countdown === null) return '';
