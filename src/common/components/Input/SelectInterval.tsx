@@ -57,7 +57,7 @@ function SelectInterval({
     }
   };
 
-  const availableIntervals = [1, 5, 10, 15, 30, 60].filter(
+  const availableIntervals = [5, 10, 15, 30, 60, 90, 120, 180, 240, 300].filter(
     (value) => fargateTime !== null && value <= fargateTime,
   );
 
