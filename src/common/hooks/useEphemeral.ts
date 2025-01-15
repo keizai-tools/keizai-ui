@@ -46,7 +46,7 @@ export function useEphemeral(
     isError: isStopError,
   } = useEphemeralStopMutation();
 
-  const { statusState, onCreateAccountEphimeral, onDeleteAccountEphimeral } =
+  const { statusState, onCreateAccountEphemeral, onDeleteAccountEphemeral } =
     useAuthProvider();
 
   const fetchStatus = useCallback(async (): Promise<void> => {
@@ -59,14 +59,14 @@ export function useEphemeral(
       });
       if (currentStatus.status === 'RUNNING') {
         try {
-          onCreateAccountEphimeral(currentStatus.publicIp);
+          onCreateAccountEphemeral(currentStatus.publicIp);
         } catch (error) {
           console.error('Failed to update network:', error);
         }
       }
     } catch (error) {
-      onDeleteAccountEphimeral();
       await mutateAsync();
+      onDeleteAccountEphemeral();
       setStatus({
         status: 'STOPPED',
         taskArn: '',
@@ -77,7 +77,7 @@ export function useEphemeral(
         taskStoppedAt: '',
       });
     }
-  }, [getStatus, onCreateAccountEphimeral]);
+  }, [getStatus, onCreateAccountEphemeral]);
 
   const isLoading = useMemo(
     () =>
@@ -89,7 +89,7 @@ export function useEphemeral(
     async ({ interval }: { interval: number }): Promise<void> => {
       try {
         setLoading(true);
-        onDeleteAccountEphimeral();
+        onDeleteAccountEphemeral();
         const startResponse = await startEphemeral({ interval });
         if (startResponse) {
           setStatus({
@@ -97,7 +97,7 @@ export function useEphemeral(
             ...startResponse,
           });
           try {
-            onCreateAccountEphimeral(startResponse.publicIp);
+            onCreateAccountEphemeral(startResponse.publicIp);
           } catch (error) {
             console.error('Failed to update network:', error);
           }
@@ -108,13 +108,13 @@ export function useEphemeral(
         setLoading(false);
       }
     },
-    [startEphemeral, onCreateAccountEphimeral],
+    [startEphemeral, onCreateAccountEphemeral],
   );
 
   const handleStop = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
-      onDeleteAccountEphimeral();
+      onDeleteAccountEphemeral();
       await stopEphemeral();
       setStatus({
         status: 'STOPPED',
