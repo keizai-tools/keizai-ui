@@ -91,7 +91,7 @@ export const CollectionVariables = ({
             Collections variables
           </h1>
           <p
-            className="px-2 text-sm font-semibold text-slate-500"
+            className="px-2 text-sm font-semibold text-slate-400"
             data-test="collection-variables-collection-name"
           >
             {collection?.name}
@@ -100,7 +100,7 @@ export const CollectionVariables = ({
         <div>
           <Button
             type="button"
-            className="font-semibold"
+            className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             data-test="collection-variables-btn-add"
             onClick={addNewInputVariable}
           >
@@ -132,7 +132,7 @@ export const CollectionVariables = ({
           <div className="flex justify-end pt-4 mr-8">
             <Button
               type="submit"
-              className="font-semibold"
+              className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               data-test="collection-variables-btn-save"
             >
               Save

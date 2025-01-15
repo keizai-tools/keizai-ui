@@ -28,7 +28,7 @@ function SelectNetwork({
   return (
     <Select value={network} onValueChange={handleNetworkChange}>
       <SelectTrigger
-        className="w-auto gap-2 px-4 py-3 font-bold border-2 rounded-md shadow-md border-slate-900 text-slate-500 focus:outline-none focus:ring-0 ring-0 focus-visible:ring-0 focus:ring-transparent"
+        className="w-auto gap-2 px-4 py-3 font-bold border-2 rounded-md shadow-md border-slate-900 text-slate-400 focus:outline-none focus:ring-0 ring-0 focus-visible:ring-0 focus:ring-transparent"
         data-test="contract-input-network"
       >
         <SelectValue

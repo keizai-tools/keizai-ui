@@ -95,7 +95,7 @@ const FunctionParameterInput = ({
                   .join(' ')}
               </span>
               {parameterType && isKeyOfSCSpecTypeMap(parameterType) && (
-                <span className="absolute right-3 top-[10px] text-sm text-slate-500 z-auto pointer-events-none">
+                <span className="absolute right-3 top-[10px] text-sm text-slate-400 z-auto pointer-events-none">
                   {SCSpecTypeMap[parameterType]}
                 </span>
               )}

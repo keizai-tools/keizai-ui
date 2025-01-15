@@ -123,12 +123,12 @@ function Terminal({
                 <div
                   key={generateUniqueID()}
                   className={`flex flex-col gap-1 text-sm text-zinc-200 ${
-                    entry.isError ? 'border-red-500' : 'border-green-700'
+                    entry.isError ? 'border-red-400' : 'border-green-700'
                   } border-l-2 pl-2`}
                   data-test="terminal-entry-title"
                 >
                   {entry.invocationId && (
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-gray-400">
                       Invocation ID: {entry.invocationId}
                     </div>
                   )}
@@ -156,6 +156,7 @@ function Terminal({
           size="icon"
           asChild
           onClick={() => setIsTerminalVisible(true)}
+          className="absolute z-50 bottom-4 left-4"
         >
           <PanelBottomOpen className="p-2 text-white transition-colors duration-300 cursor-pointer hover:text-primary" />
         </Button>

@@ -64,7 +64,7 @@ function StellarBalance({
 
   return (
     <div className="w-full">
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-xs text-red-400">{error}</p>}
 
       {balances.length > 0 && (
         <div className="flex items-center w-full gap-4 p-4 border-2 border-solid rounded-lg bg-slate-950 border-offset-background">

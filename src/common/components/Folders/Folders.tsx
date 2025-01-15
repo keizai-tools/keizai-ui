@@ -106,7 +106,7 @@ function Folders() {
       return (
         <div className="flex flex-col text-slate-400">
           {folders.map((folder) => (
-            <Folder key={folder.id} folder={folder} />
+            <Folder key={folder.id} folder={folder} elementList={folders} />
           ))}
         </div>
       );

@@ -202,7 +202,7 @@ export default function InvocationByCollection() {
               width={400}
               height={400}
               alt="No invocation selected"
-              className="transition-transform duration-500 transform hover:scale-110"
+              className="transition-transform duration-400 transform hover:scale-110"
             />
             <div data-test="collection-empty-invocation-description">
               <h1 className="text-2xl text-primary">

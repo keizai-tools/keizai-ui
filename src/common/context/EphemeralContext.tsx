@@ -9,14 +9,12 @@ import {
 
 import { useEphemeralInvocationsMutation } from '../api/invocations';
 import { useEphemeral as useEphemeralHook } from '../hooks/useEphemeral';
-import WalletOverlayLoading from '../views/WalletOverlayLoading';
 
-import StartOverlayLoading from '@/common/views/StartOverlayLoading';
-import StopOverlayLoading from '@/common/views/StopOverlayLoading';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 interface EphemeralContextType {
   loading: boolean;
+  walletLoading: boolean;
   status: {
     status: string;
     taskArn: string;
@@ -36,6 +34,8 @@ interface EphemeralContextType {
   isError: boolean;
   isLoading: boolean;
   setEphemeral: (variable: boolean) => void;
+  isStarting: boolean;
+  isStopping: boolean;
 }
 
 const EphemeralContext = createContext<EphemeralContextType | null>(null);
@@ -64,12 +64,26 @@ export const EphemeralProvider = ({ children }: EphemeralProviderProps) => {
   const { mutateAsync } = useEphemeralInvocationsMutation();
 
   const [hasFetchedStatus, setHasFetchedStatus] = useState(false);
+
+  console.log({
+    statusState: statusState,
+    hasFetchedStatus,
+  });
+
   useEffect(() => {
-    if (statusState.signIn.status && !hasFetchedStatus) {
+    if (
+      (statusState.signIn.status || statusState.refreshSession.loading) &&
+      !hasFetchedStatus
+    ) {
       ephemeral.fetchStatus();
       setHasFetchedStatus(true);
     }
-  }, [statusState.signIn.status, ephemeral, hasFetchedStatus]);
+  }, [
+    statusState.signIn.status,
+    ephemeral,
+    hasFetchedStatus,
+    statusState.refreshSession.loading,
+  ]);
 
   useEffect(() => {
     if (
@@ -214,9 +228,6 @@ export const EphemeralProvider = ({ children }: EphemeralProviderProps) => {
   return (
     <EphemeralContext.Provider value={value}>
       {children}
-      {ephemeral.walletLoading && <WalletOverlayLoading />}
-      {isStarting && <StartOverlayLoading />}
-      {isStopping && <StopOverlayLoading />}
     </EphemeralContext.Provider>
   );
 };
