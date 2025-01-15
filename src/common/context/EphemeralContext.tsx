@@ -154,9 +154,12 @@ export const EphemeralProvider = ({ children }: EphemeralProviderProps) => {
 
   const formattedCountdown = useMemo(() => {
     if (countdown === null) return '';
+    const hours = Math.floor(
+      (countdown % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+    );
     const minutes = Math.floor((countdown % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((countdown % (1000 * 60)) / 1000);
-    return `${minutes}m ${seconds}s`;
+    return `${hours > 0 ? `${hours}h ` : ''}${minutes}m ${seconds}s`;
   }, [countdown]);
 
   const countdownColor = useMemo(() => {
