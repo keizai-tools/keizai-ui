@@ -1,7 +1,7 @@
 import { Fragment, ReactElement, ReactNode, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 
-import FullscreenLoading from '@/common/views/fullscreenLoading';
+import OverlayLoading from '@/common/views/OverlayLoading';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 function ProtectedRoute({
@@ -24,7 +24,7 @@ function ProtectedRoute({
   ]);
 
   if (statusState.refreshSession.loading) {
-    return <FullscreenLoading />;
+    return <OverlayLoading />;
   }
 
   if (statusState.refreshSession.status) {

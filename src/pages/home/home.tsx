@@ -6,7 +6,7 @@ import CollectionPlaceholder from '@/common/components/Collections/CollectionPla
 import CollectionsEmptyState from '@/common/components/Collections/CollectionsEmptyState';
 import { useEphemeralProvider } from '@/common/context/useEphemeralContext';
 import { NETWORK } from '@/common/types/soroban.enum';
-import FullscreenLoading from '@/common/views/fullscreenLoading';
+import OverlayLoading from '@/common/views/OverlayLoading';
 
 export default function Home() {
   const { data, isLoading, refetch } = useCollectionsQuery();
@@ -17,7 +17,7 @@ export default function Home() {
   }, [refetch, status]);
 
   if (isLoading) {
-    return <FullscreenLoading />;
+    return <OverlayLoading />;
   }
 
   return (

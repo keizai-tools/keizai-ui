@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Link, Navigate, Outlet } from 'react-router-dom';
 
-import FullscreenLoading from '@/common/views/fullscreenLoading';
+import OverlayLoading from '@/common/views/OverlayLoading';
 import { useAuthProvider } from '@/modules/auth/hooks/useAuthProvider';
 
 function AuthPage() {
@@ -12,7 +12,7 @@ function AuthPage() {
   }, [handleRefreshSession]);
 
   if (statusState.refreshSession.loading) {
-    return <FullscreenLoading />;
+    return <OverlayLoading />;
   }
 
   if (statusState.refreshSession.status) {
