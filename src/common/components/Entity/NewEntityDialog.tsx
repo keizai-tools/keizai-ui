@@ -13,7 +13,7 @@ import {
 import { Input } from '../ui/input';
 
 function isNameValid(name: string): boolean {
-  const nameRegex = /^[a-zA-Z0-9]+$/;
+  const nameRegex = /^(?!\s)(?!.*\s$).+$/;
   return !!name.trim() && nameRegex.test(name);
 }
 
@@ -50,8 +50,8 @@ function NewEntityDialog({
     if (!newName.trim()) {
       errors.push('Name must not be empty or contain only spaces.');
     }
-    if (!/^[a-zA-Z0-9]+$/.test(newName)) {
-      errors.push('Name must not have special characters.');
+    if (/^\s|\s$/.test(newName)) {
+      errors.push('Name must not start or end with spaces.');
     }
     if (elementList && elementList.some((el) => el.name === newName)) {
       errors.push('Name is already in use.');
@@ -66,8 +66,8 @@ function NewEntityDialog({
     if (!name.trim()) {
       errors.push('Name must not be empty or contain only spaces.');
     }
-    if (!/^[a-zA-Z0-9]+$/.test(name)) {
-      errors.push('Name must not have special characters.');
+    if (/^\s|\s$/.test(name)) {
+      errors.push('Name must not start or end with spaces.');
     }
     if (elementList && elementList.some((el) => el.name === name)) {
       errors.push('Name is already in use.');

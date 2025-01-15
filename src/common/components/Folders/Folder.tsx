@@ -22,7 +22,15 @@ import { useEphemeralProvider } from '@/common/context/useEphemeralContext';
 import { Folder as IFolder } from '@/common/types/folder';
 import NETWORKS from '@/modules/signer/constants/networks';
 
-function Folder({ folder }: Readonly<{ folder: IFolder }>) {
+function Folder({
+  folder,
+  elementList,
+}: Readonly<{
+  folder: IFolder;
+  elementList?: {
+    name: string;
+  }[];
+}>) {
   const params = useParams();
   const [isOpen, setIsOpen] = React.useState<string[] | undefined>();
   const [openDialog, setOpenDialog] = React.useState<'edit' | 'delete' | null>(
@@ -147,6 +155,7 @@ function Folder({ folder }: Readonly<{ folder: IFolder }>) {
       />
       <EditEntityDialog
         id={folder.id}
+        elementList={elementList}
         defaultName={folder.name}
         open={openDialog === 'edit'}
         onOpenChange={() => setOpenDialog(null)}
