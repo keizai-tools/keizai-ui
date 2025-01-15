@@ -37,10 +37,6 @@ class UserService implements IUserService {
       path: string;
     }>('/user/fargate-cost-per-minute', config);
   }
-
-  async updateUserBalance(interval: number, config?: AxiosRequestConfig) {
-    return await this.api.post('/user/update-balance/', { interval }, config);
-  }
 }
 
 export const userService = new UserService(apiService);
