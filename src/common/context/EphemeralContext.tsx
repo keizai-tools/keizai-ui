@@ -65,11 +65,6 @@ export const EphemeralProvider = ({ children }: EphemeralProviderProps) => {
 
   const [hasFetchedStatus, setHasFetchedStatus] = useState(false);
 
-  console.log({
-    statusState: statusState,
-    hasFetchedStatus,
-  });
-
   useEffect(() => {
     if (
       (statusState.signIn.status || statusState.refreshSession.loading) &&
