@@ -38,11 +38,11 @@ function useStellar() {
   async function fundingAccount({
     network,
     publicKey,
-    urlEphimeral,
+    urlEphemeral,
   }: {
     publicKey: string;
     network?: NETWORK;
-    urlEphimeral?: string;
+    urlEphemeral?: string;
   }): Promise<boolean> {
     const networkUrls = {
       [NETWORK.SOROBAN_FUTURENET]: `${FRIENDBOT.FUTURENET}${publicKey}`,
@@ -61,7 +61,7 @@ function useStellar() {
       } while (!response?.ok);
     }
 
-    if (urlEphimeral) {
+    if (urlEphemeral) {
       await friendBotMutate({ publicKey });
     } else {
       const url = networkUrls[network as keyof typeof networkUrls];

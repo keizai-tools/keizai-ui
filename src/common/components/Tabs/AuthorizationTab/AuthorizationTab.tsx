@@ -16,7 +16,7 @@ function AuthorizationTab({
   defaultValues,
 }: Readonly<{
   invocationId: string;
-  network: string;
+  network: NETWORK;
   defaultValues: IKeypair;
 }>) {
   const { connectWallet, wallet, disconnectWallet } = useAuthProvider();

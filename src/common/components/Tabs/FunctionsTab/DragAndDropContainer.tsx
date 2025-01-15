@@ -171,7 +171,7 @@ export function CustomDragDrop({
         >
           <div className="flex flex-col flex-1">
             <Upload className="mx-auto mb-2 text-gray-400" />
-            <div className="text-xs font-normal text-gray-500">
+            <div className="text-xs font-normal text-gray-400">
               <input
                 className="hidden opacity-0"
                 type="file"
@@ -189,12 +189,12 @@ export function CustomDragDrop({
                 >
                   Click to upload
                 </span>
-                <span className="text-xs font-normal text-gray-500 select-none">
+                <span className="text-xs font-normal text-gray-400 select-none">
                   or drag and drop
                 </span>
               </div>
             </div>
-            <div className="text-xs font-normal text-gray-500 select-none">
+            <div className="text-xs font-normal text-gray-400 select-none">
               Only WASM files
             </div>
           </div>
@@ -210,7 +210,7 @@ export function CustomDragDrop({
             >
               <div className="flex items-center gap-2">
                 <FileText className="text-primary" />
-                <div className="flex flex-col text-xs font-medium text-gray-500 select-none">
+                <div className="flex flex-col text-xs font-medium text-gray-400 select-none">
                   {truncateFileName(file.name, 15)}
                   <div className="text-sm font-medium text-gray-400">{`${Math.floor(
                     file.size / 1024,
@@ -218,7 +218,7 @@ export function CustomDragDrop({
                 </div>
               </div>
               <X
-                className={`text-gray-500 transition-colors duration-300 cursor-pointer hover:text-red-300 active:text-primary`}
+                className={`text-gray-400 transition-colors duration-300 cursor-pointer hover:text-red-300 active:text-primary`}
                 onClick={() => onDelete(index)}
               />
             </div>

@@ -43,7 +43,7 @@ function NetworkButton({
           onClick={() => setOpenNetworkStatus(true)}
         >
           <Globe
-            className={`text-gray-500 ${globeColor} transition-colors duration-300 cursor-pointer hover:text-primary active:text-primary`}
+            className={`text-gray-400 ${globeColor} transition-colors duration-300 cursor-pointer hover:text-primary active:text-primary`}
             data-test="sidebar-btn-network-status"
           />
 
@@ -55,7 +55,7 @@ function NetworkButton({
           onClick={() => setOpenConnectWallet(true)}
         >
           <Wallet
-            className={`text-gray-500 ${walletColor}  transition-colors duration-300 cursor-pointer hover:text-primary active:text-primary`}
+            className={`text-gray-400 ${walletColor}  transition-colors duration-300 cursor-pointer hover:text-primary active:text-primary`}
             data-test="sidebar-btn-wallet"
           />
           <span>Wallet Status</span>

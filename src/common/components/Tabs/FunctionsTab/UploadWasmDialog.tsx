@@ -98,7 +98,7 @@ function UploadWasmDialog({
   return (
     <Fragment>
       {loading ? (
-        <OverlayLoading />
+        <OverlayLoading type="upload" />
       ) : (
         <Dialog open={open} onOpenChange={onOpenChange}>
           <DialogContent

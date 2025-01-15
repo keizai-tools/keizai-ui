@@ -74,7 +74,7 @@ function SelectInterval({
             onValueChange={handleIntervalChange}
           >
             <SelectTrigger
-              className="w-auto gap-2 px-4 py-3 font-bold border-2 rounded-md shadow-md border-slate-900 text-slate-500 focus:outline-none focus:ring-0 ring-0 focus-visible:ring-0 focus:ring-transparent"
+              className="w-auto gap-2 px-4 py-3 font-bold border-2 rounded-md shadow-md border-slate-900 text-slate-400 focus:outline-none focus:ring-0 ring-0 focus-visible:ring-0 focus:ring-transparent"
               data-test="interval-select-trigger"
             >
               <SelectValue
@@ -107,7 +107,7 @@ function SelectInterval({
             </SelectContent>
           </Select>
           {totalCost !== null && (
-            <div className="text-sm font-semibold text-slate-500">
+            <div className="text-sm font-semibold text-slate-400">
               Cost for this interval: ${totalCost.toFixed(3)}
             </div>
           )}

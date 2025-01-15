@@ -1,4 +1,4 @@
-import { Loader } from 'lucide-react';
+import { Copy, Loader } from 'lucide-react';
 import React from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 
@@ -182,15 +182,20 @@ function ContractInput({
             <div className="flex gap-2">
               <Button
                 data-test="contract-input-btn-load"
+                variant="secondary"
                 className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 onClick={copyToClipboard}
                 type="button"
                 disabled={loading}
               >
-                COPY CONTRACT ID
+                <Copy
+                  className="cursor-pointer"
+                  data-test="events-tab-btn-copy"
+                />
               </Button>
               <Button
                 data-test="contract-input-btn-load"
+                variant="default"
                 className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 onClick={runInvocation}
                 type="button"

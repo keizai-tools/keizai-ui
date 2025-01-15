@@ -10,7 +10,7 @@ export default function InvocationCTAPage() {
         height={300}
         data-test="collection-empty-invocation-img"
         alt="No invocation selected"
-        className="transition-transform duration-500 transform hover:scale-110"
+        className="transition-transform duration-400 transform hover:scale-110"
       />
       <div
         className="text-center md:text-left"

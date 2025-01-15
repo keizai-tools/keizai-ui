@@ -13,6 +13,7 @@ import {
 import { useDebouncedCallback } from 'use-debounce';
 
 import ErrorMessage from '../Form/ErrorMessage';
+import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
 import { useEditEnvironmentMutation } from '@/common/api/environments';
@@ -126,7 +127,7 @@ export default function EnvironmentItem({
               placeholder="Name"
               className={`${
                 !environment.id && errors.environments?.[index]?.name
-                  ? 'border-red-500'
+                  ? 'border-red-400'
                   : ''
               }`}
               data-test="collection-variables-input-name"
@@ -156,7 +157,7 @@ export default function EnvironmentItem({
               {...valueField}
               placeholder="Value"
               className={`${
-                errors.environments?.[index]?.value ? 'border-red-500' : ''
+                errors.environments?.[index]?.value ? 'border-red-400' : ''
               }`}
               data-test="collection-variables-input-value"
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -177,7 +178,8 @@ export default function EnvironmentItem({
           />
         )}
       </div>
-      <button
+      <Button
+        variant="secondary"
         type="button"
         data-test="collection-variables-btn-delete"
         className={`font-semibold ${
@@ -187,8 +189,8 @@ export default function EnvironmentItem({
           environment.id ? deleteMutation(environment.id) : removeItem(index);
         }}
       >
-        <Trash2 className="w-6 h-6 cursor-pointer text-slate-500 hover:text-primary" />
-      </button>
+        <Trash2 className="w-6 h-6 cursor-pointer text-slate-400 hover:text-primary" />
+      </Button>
     </li>
   );
 }
