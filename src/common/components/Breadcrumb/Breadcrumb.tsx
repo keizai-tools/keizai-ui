@@ -1,4 +1,4 @@
-const Breadcrumb = ({
+function Breadcrumb({
   contractName,
   folderName,
   contractInvocationName,
@@ -8,15 +8,23 @@ const Breadcrumb = ({
   folderName: string;
   contractInvocationName: string;
   contractInvocationId?: string;
-}) => {
+}) {
   return (
     <div className="flex gap-1 text-sm" data-test="breadcrumb-container">
       <span
         className="text-background-300"
         data-test="breadcrumb-contract-name"
       >
-        {contractName} / {folderName} /
+        {contractName} /
       </span>
+      {folderName && (
+        <span
+          className="text-background-300"
+          data-test="breadcrumb-folder-name"
+        >
+          {folderName} /
+        </span>
+      )}
       <span
         className="font-bold"
         data-test="breadcrumb-contract-invocation-name"
@@ -25,6 +33,6 @@ const Breadcrumb = ({
       </span>
     </div>
   );
-};
+}
 
 export default Breadcrumb;

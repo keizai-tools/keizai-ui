@@ -171,7 +171,7 @@ export function CustomDragDrop({
         >
           <div className="flex flex-col flex-1">
             <Upload className="mx-auto mb-2 text-gray-400" />
-            <div className="text-xs font-normal text-gray-500">
+            <div className="text-xs font-normal text-gray-400">
               <input
                 className="hidden opacity-0"
                 type="file"
@@ -189,12 +189,12 @@ export function CustomDragDrop({
                 >
                   Click to upload
                 </span>
-                <span className="text-xs font-normal text-gray-500 select-none">
+                <span className="text-xs font-normal text-gray-400 select-none">
                   or drag and drop
                 </span>
               </div>
             </div>
-            <div className="text-xs font-normal text-gray-500 select-none">
+            <div className="text-xs font-normal text-gray-400 select-none">
               Only WASM files
             </div>
           </div>
@@ -202,15 +202,15 @@ export function CustomDragDrop({
       )}
 
       {ownerLicense.length > 0 && (
-        <div className="flex justify-center mt-4 align-middle gap-y-4 gap-x-4">
+        <div className="flex justify-center w-full mt-4 align-middle gap-y-4 gap-x-4">
           {ownerLicense.map((file, index) => (
             <div
               key={index}
-              className="px-3 w-[50%] gap-4 py-3 rounded-md bg-slate-900 flex justify-between align-middle items-center"
+              className="px-3 w-[100%] gap-4 py-3 border-2 border-solid rounded-lg border-offset-background  bg-slate-900 flex justify-between align-middle items-center"
             >
               <div className="flex items-center gap-2">
                 <FileText className="text-primary" />
-                <div className="flex flex-col text-xs font-medium text-gray-500 select-none">
+                <div className="flex flex-col text-xs font-medium text-gray-400 select-none">
                   {truncateFileName(file.name, 15)}
                   <div className="text-sm font-medium text-gray-400">{`${Math.floor(
                     file.size / 1024,
@@ -218,7 +218,7 @@ export function CustomDragDrop({
                 </div>
               </div>
               <X
-                className={`text-gray-500 transition-colors duration-300 cursor-pointer hover:text-red-300 active:text-primary`}
+                className={`text-gray-400 transition-colors duration-300 cursor-pointer hover:text-red-300 active:text-primary`}
                 onClick={() => onDelete(index)}
               />
             </div>

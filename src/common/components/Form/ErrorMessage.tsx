@@ -21,9 +21,12 @@ function ErrorMessage({
   type,
 }: Readonly<PropsErrorMessage>) {
   return (
-    <div>
+    <div
+      className="flex flex-col items-start justify-between"
+      data-test="error-message"
+    >
       <div
-        className={`text-red-400 flex items-center gap-2 m-2 justify-center	w-full ${styles}`}
+        className={`text-red-400 flex items-center gap-2 m-2 justify-center ${styles}`}
         data-test={testName}
       >
         <AlertCircle className="w-4 h-4" />
@@ -35,7 +38,7 @@ function ErrorMessage({
       </div>
       {type === 'password' && !message.includes('required') && (
         <ul
-          className="ml-12 text-sm text-red-500"
+          className="ml-12 text-sm text-red-400"
           data-test="password-error-requeriment"
         >
           {passwordRequeriment.map((req) => (

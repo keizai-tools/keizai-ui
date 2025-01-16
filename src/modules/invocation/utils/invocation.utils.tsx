@@ -58,7 +58,7 @@ export function handleAxiosError(error: unknown) {
     return {
       isError: true,
       title: (
-        <div className="flex items-center gap-2 font-semibold text-red-500">
+        <div className="flex items-center gap-2 font-semibold text-red-400">
           <AlertCircle size={16} />
           Error
         </div>
@@ -73,7 +73,7 @@ export function handleAxiosError(error: unknown) {
   return {
     isError: true,
     title: (
-      <div className="flex items-center gap-2 font-semibold text-red-500">
+      <div className="flex items-center gap-2 font-semibold text-red-400">
         <AlertCircle size={16} />
         Error
       </div>
@@ -86,7 +86,7 @@ export function failedRunContract(response: string) {
   return {
     isError: true,
     title: (
-      <div className="flex items-center gap-2 font-semibold text-red-500">
+      <div className="flex items-center gap-2 font-semibold text-red-400">
         <AlertCircle size={16} />
         Failed
       </div>
@@ -142,7 +142,7 @@ export function getInvocationResponse(
     return {
       isError: true,
       title: (
-        <div className="flex items-center gap-2 font-semibold text-red-500">
+        <div className="flex items-center gap-2 font-semibold text-red-400">
           <AlertCircle size={16} />
           {response.title.charAt(0).toUpperCase() + response.title.slice(1)}
         </div>

@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import type { FileData } from '../components/Tabs/FunctionsTab/DragAndDropContainer';
 import { useToast } from '../components/ui/use-toast';
 import { Invocation, InvocationResponse } from '../types/invocation';
-import { BACKEND_NETWORK } from '../types/soroban.enum';
+import { NETWORK } from '../types/soroban.enum';
 
 import { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
 import { apiService } from '@/config/axios/services/api.service';
@@ -20,6 +21,32 @@ export function useInvocationQuery({ id }: { id?: string }) {
   });
 
   return query;
+}
+
+export function useWasmFilesQuery() {
+  return useQuery<{ id: string }[]>({
+    queryKey: ['invocation', 'wasm-files'],
+    queryFn: async () => {
+      const response = await apiService.get<IApiResponse<{ id: string }[]>>(
+        `/invocation/wasm-files/list`,
+      );
+      return response.payload;
+    },
+  });
+}
+
+export async function checkIfWasmExists(fileBuffer: Buffer): Promise<boolean> {
+  try {
+    const response = await apiService.post<IApiResponse<{ exists: boolean }>>(
+      '/invocation/checkFileExists',
+      {
+        fileBuffer,
+      },
+    );
+    return response.payload.exists;
+  } catch (error) {
+    throw new Error('Failed to check file existence');
+  }
 }
 
 export function useRunInvocationQuery({ id }: { id?: string }) {
@@ -59,24 +86,41 @@ export function useCreateInvocationMutation() {
     mutationFn: async ({
       name,
       folderId,
+      collectionId,
     }: {
       name: string;
-      folderId: string;
+      folderId?: string;
+      collectionId?: string;
     }) =>
       apiService
         ?.post<IApiResponse<Invocation>>('/invocation', {
           name,
-          folderId,
+          folderId: folderId,
+          collectionId: collectionId,
         })
         .then((response) => response.payload),
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: ['collection', params.collectionId, 'folders'],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['collection', params.collectionId, 'invocation'],
+      });
     },
   });
 
   return mutation;
+}
+
+export function useInvocationsByCollectionIdQuery({ id }: { id?: string }) {
+  return useQuery<Invocation[]>({
+    queryKey: ['collection', id, 'invocation'],
+    queryFn: async () =>
+      apiService
+        ?.get<IApiResponse<Invocation[]>>(`/collection/${id}/invocation`)
+        .then((response) => response.payload),
+    enabled: !!id,
+  });
 }
 
 export function useEditInvocationMutation() {
@@ -118,13 +162,15 @@ export function useEditInvocationMutation() {
           if (contractId && window.umami)
             window.umami.track('Error loading contract', { contractId });
         }),
-    onSuccess: (_, { name, id }) => {
-      if (name) {
-        queryClient.invalidateQueries({
-          queryKey: ['collection', params.collectionId, 'folders'],
-        });
-      } else {
-        queryClient.invalidateQueries({ queryKey: ['invocation', id] });
+    onSuccess: (data, { name, id }) => {
+      if (data) {
+        if (name) {
+          queryClient.invalidateQueries({
+            queryKey: ['collection', params.collectionId, 'folders'],
+          });
+        } else {
+          queryClient.invalidateQueries({ queryKey: ['invocation', id] });
+        }
       }
     },
   });
@@ -186,6 +232,9 @@ export function useDeleteInvocationMutation() {
       queryClient.invalidateQueries({
         queryKey: ['collection', params.collectionId, 'folders'],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['collection', params.collectionId, 'invocation'],
+      });
     },
   });
 
@@ -220,13 +269,6 @@ export function useEditNetworkMutation(showToast: boolean) {
         previousInvocation,
       };
     },
-    onError: () => {
-      toast({
-        title: 'Something went wrong!',
-        description: "Couldn't change network, please try again",
-        variant: 'destructive',
-      });
-    },
     onSuccess: (data) => {
       if (data) queryClient.setQueryData(['invocation', data.id], data);
       if (showToast) {
@@ -247,7 +289,7 @@ export function useEditInvocationKeysMutation() {
     contractId?: string;
     secretKey?: string;
     publicKey?: string;
-    network?: BACKEND_NETWORK;
+    network?: NETWORK;
   } | null>(null);
 
   const mutation = useMutation({
@@ -262,7 +304,7 @@ export function useEditInvocationKeysMutation() {
       contractId?: string;
       secretKey?: string;
       publicKey?: string;
-      network?: BACKEND_NETWORK;
+      network?: NETWORK;
     }) => {
       if (
         lastParamsRef.current &&
@@ -425,4 +467,56 @@ export function useEditContractIdMutation() {
   });
 
   return mutation;
+}
+
+export function useDownloadWasmFileQuery({ fileName }: { fileName: string }) {
+  return useQuery<FileData>({
+    queryKey: ['downloadWasmFile', fileName],
+    queryFn: async () => {
+      const response = await apiService.get<
+        IApiResponse<{
+          name: string;
+          file: {
+            data: number[];
+            type: string;
+          };
+          type: string;
+          size: number;
+        }>
+      >(`/invocation/wasm-files/${fileName}/download`);
+      const { name, file, size, type } = response.payload;
+      const fileData: FileData = {
+        name,
+        file: new File([new Uint8Array(file.data)], name, {
+          type,
+        }),
+        type,
+        size,
+      };
+      return fileData;
+    },
+    enabled: !!fileName,
+  });
+}
+
+export function useEphemeralInvocationsMutation() {
+  const params = useParams();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiService.delete<IApiResponse<string[]>>(
+        `/collection/invocations/network-ephemeral`,
+      );
+
+      if (
+        params.invocationId &&
+        response.payload.includes(params.invocationId)
+      ) {
+        navigate(`/`);
+      }
+
+      return response.payload;
+    },
+  });
 }

@@ -1,7 +1,8 @@
-import React, { Fragment } from 'react';
+import { Fragment, useState, useEffect } from 'react';
 
 import ErrorMessage from '../../Form/ErrorMessage';
 import SelectNetwork from '../../Input/SelectNetwork';
+import SelectWasmFile from '../../Input/selectWasmFile';
 import { Button } from '../../ui/button';
 import {
   Dialog,
@@ -11,247 +12,93 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../../ui/dialog';
-import { useToast } from '../../ui/use-toast';
 import { CustomDragDrop, FileData } from './DragAndDropContainer';
 
 import {
-  usePrepareUploadWasmMutation,
-  useRunUploadWasmMutation,
-  useUploadWasmMutation,
+  useWasmFilesQuery,
+  useDownloadWasmFileQuery,
 } from '@/common/api/invocations';
 import { Invocation } from '@/common/types/invocation';
-import { BACKEND_NETWORK, type NETWORK } from '@/common/types/soroban.enum';
+import { NETWORK } from '@/common/types/soroban.enum';
 import OverlayLoading from '@/common/views/OverlayLoading';
-import { IApiResponseError } from '@/config/axios/interfaces/IApiResponseError';
 import { IWalletContent } from '@/modules/auth/interfaces/IAuthenticationContext';
-import SignerError from '@/modules/signer/errors/signerError';
-import signTransaction from '@/modules/signer/functions/signTransaction';
 
 interface UploadWasmDialogProps {
   open: boolean;
   onOpenChange: () => void;
   data: Invocation;
-  handleLoadContract: (contractId: string) => void;
   wallet: IWalletContent | null;
-  setLoading: (loading: boolean) => void;
   loading: boolean;
+  files: FileData[];
+  uploadFiles: (files: FileData[]) => void;
+  deleteFile: (indexFile: number) => void;
+  error: string | null;
+  handleButtonClick: () => void;
+  signedTransactionXDR: string | null;
+  status: {
+    status: string;
+    taskArn: string;
+    isEphemeral: boolean;
+  };
+  handleStart: ({ interval }: { interval: number }) => Promise<void>;
+  handleStop: () => Promise<void>;
 }
+
 function UploadWasmDialog({
   open,
   onOpenChange,
   data,
-  handleLoadContract,
   wallet,
-  setLoading,
   loading,
+  files,
+  uploadFiles,
+  deleteFile,
+  error,
+  handleButtonClick,
+  signedTransactionXDR,
 }: Readonly<UploadWasmDialogProps>) {
-  const [files, setFiles] = React.useState<FileData[]>([]);
-  const [signedTransactionXDR, setSignedTransactionXDR] = React.useState<
-    string | null
-  >(null);
-
-  const [network, setNetwork] = React.useState<BACKEND_NETWORK>(data.network);
-  const [error, setError] = React.useState<string | null>(null);
-
-  const uploadWasmMutation = useUploadWasmMutation();
-  const prepareUploadMutation = usePrepareUploadWasmMutation();
-  const runUploadWasmMutation = useRunUploadWasmMutation();
-
-  const { toast } = useToast();
-
-  function uploadFiles(f: FileData[]) {
-    setFiles([...files, ...f]);
-    setSignedTransactionXDR(null);
-  }
-
-  function deleteFile(indexFile: number) {
-    const updatedList = files.filter((_, index) => index !== indexFile);
-    setFiles(updatedList);
-    setSignedTransactionXDR(null);
-  }
-
-  async function handleUploadWasm() {
-    if (files.length === 0) return;
-
-    setLoading(true);
-
-    try {
-      const { file, name } = files[0];
-      const formData = new FormData();
-      formData.append('wasm', file, name);
-
-      const contractId = await uploadWasmMutation.mutateAsync({
-        formData,
-        id: data.id,
-      });
-
-      handleLoadContract(contractId);
-      toast({
-        title: 'Wasm file uploaded',
-        description:
-          'The Wasm file of the contract has been deployed successfully',
-      });
-    } catch (error) {
-      const { details } = error as IApiResponseError;
-      toast({
-        title: 'Failed to upload Wasm file',
-        description: details.description,
-        variant: 'destructive',
-      });
-    }
-  }
-
-  async function handlePrepareUpload() {
-    if (files.length === 0) return;
-    setLoading(true);
-    try {
-      const { file, name } = files[0];
-      const formData = new FormData();
-      formData.append('wasm', file, name);
-
-      const { payload } = await prepareUploadMutation.mutateAsync({
-        formData,
-        id: data.id,
-      });
-
-      const signedTransaction = await signTransaction(
-        payload,
-        data.network as unknown as NETWORK,
-      );
-
-      setSignedTransactionXDR(signedTransaction);
-    } catch (error) {
-      if (error instanceof SignerError) {
-        toast({
-          title: 'Failed to sign transaction',
-          description: error.message,
-          variant: 'destructive',
-        });
-      }
-      const { details } = error as IApiResponseError;
-      const description = details?.description || '';
-      const contractExists = description.includes('ExistingValue');
-      const accountNotFound = description.includes('Account not found:');
-      let message: string;
-
-      if (Array.isArray(description)) {
-        message = description.join(', ');
-      } else if (accountNotFound) {
-        message =
-          'The account was not found. Please ensure the account is funded first.';
-      } else if (contractExists) {
-        const contractName =
-          description.split('contract:')[1]?.split(',')[0]?.trim() ?? '';
-        message = `The contract already has a Wasm file. ${contractName}`;
-      } else {
-        message = description;
-      }
-
-      if (!contractExists && !accountNotFound) {
-        toast({
-          title: 'Failed to prepare deployer contract',
-          description: message,
-          variant: 'destructive',
-        });
-      } else {
-        setError(message);
-      }
-      setLoading(false);
-      setError(message);
-      setSignedTransactionXDR(null);
-    } finally {
-      setLoading(false);
-    }
-  }
-  async function handleRunUploadWasm() {
-    if (!signedTransactionXDR || signedTransactionXDR.length === 0) return;
-
-    setLoading(true);
-
-    try {
-      const signedContract = await runUploadWasmMutation.mutateAsync({
-        id: data.id,
-        signedTransactionXDR,
-        deploy: false,
-      });
-
-      const signedTransaction = await signTransaction(
-        signedContract as string,
-        data.network as unknown as NETWORK,
-      );
-
-      const newContractId = await runUploadWasmMutation.mutateAsync({
-        id: data.id,
-        signedTransactionXDR: signedTransaction as string,
-        deploy: true,
-      });
-
-      handleLoadContract(newContractId as string);
-      toast({
-        title: 'Wasm file uploaded',
-        description:
-          'The Wasm file of the contract has been deployed successfully',
-      });
-    } catch (error) {
-      const { details } = error as IApiResponseError;
-      const message = details?.description || 'An unexpected error occurred';
-
-      toast({
-        title: 'Failed to run deployer contract',
-        description: message,
-        variant: 'destructive',
-      });
-      setSignedTransactionXDR(null);
-      setLoading(false);
-      setError(typeof message === 'string' ? message : message.join(', '));
-    }
-  }
-
-  function handleButtonClick() {
-    setError(null);
-    if (!wallet?.autoGenerated) {
-      if (signedTransactionXDR) {
-        handleRunUploadWasm();
-      } else {
-        handlePrepareUpload();
-      }
-    } else {
-      handleUploadWasm();
-    }
-  }
-
-  React.useEffect(() => {
-    if (!open) {
-      setFiles([]);
-      setSignedTransactionXDR(null);
-      setError(null);
-    }
-    if (data.network !== network) {
-      setNetwork(data.network);
-      setSignedTransactionXDR(null);
-      setError(null);
-    }
-  }, [data.network, network, open]);
-
-  const loadingLocal =
-    uploadWasmMutation.isPending ||
-    prepareUploadMutation.isPending ||
-    runUploadWasmMutation.isPending ||
-    loading;
-
-  let buttonLabel;
-  if (signedTransactionXDR) {
-    buttonLabel = 'Load';
-  } else if (!wallet?.autoGenerated) {
+  let buttonLabel = 'Load';
+  if (!signedTransactionXDR && !wallet?.autoGenerated) {
     buttonLabel = 'Prepare';
-  } else {
-    buttonLabel = 'Load';
+  }
+
+  const [selectedFile, setSelectedFile] =
+    useState<string>('Select a Wasm file');
+  const {
+    data: wasmFiles = [],
+    error: wasmFilesError,
+    isLoading: wasmFilesLoading,
+  } = useWasmFilesQuery();
+
+  const noFilesMessage = 'No WASM files available.';
+
+  const selected = wasmFiles.find((wasmFile) => wasmFile.id === selectedFile);
+  const { data: fileData, error: downloadError } = useDownloadWasmFileQuery(
+    selected ? { fileName: selected.id } : { fileName: '' },
+  );
+
+  useEffect(() => {
+    if (downloadError) {
+      console.error('Failed to download the file:', downloadError);
+    } else if (fileData) {
+      deleteFile(0);
+      uploadFiles([fileData]);
+    }
+  }, [deleteFile, downloadError, fileData, uploadFiles]);
+
+  function handleFileChange(file: string) {
+    if (file === 'Select a Wasm file') {
+      setSelectedFile('Select a Wasm file');
+      deleteFile(0);
+      return;
+    }
+    setSelectedFile(file);
   }
 
   return (
     <Fragment>
-      {loadingLocal ? (
-        <OverlayLoading />
+      {loading ? (
+        <OverlayLoading type="upload" />
       ) : (
         <Dialog open={open} onOpenChange={onOpenChange}>
           <DialogContent
@@ -263,7 +110,7 @@ function UploadWasmDialog({
                 data-test="import-account-modal-title"
                 className="text-lg select-none"
               >
-                Wasm Upload
+                Upload Wasm File
               </DialogTitle>
               <DialogDescription
                 data-test="import-account-modal-description"
@@ -271,53 +118,84 @@ function UploadWasmDialog({
               >
                 Please upload the WASM file of the contract
               </DialogDescription>
+              {data.network === NETWORK.EPHEMERAL ? (
+                <DialogDescription
+                  data-test="import-account-modal-description"
+                  className="text-sm select-none"
+                >
+                  This is an ephemeral network, the contract will be deployed on
+                  the network and will be available for a limited time.
+                </DialogDescription>
+              ) : null}
             </DialogHeader>
-            <CustomDragDrop
-              ownerLicense={files}
-              onUpload={uploadFiles}
-              onDelete={deleteFile}
-              count={1}
-              formats={['wasm']}
-            />
-            {error && (
-              <ErrorMessage
-                message={error}
-                testName="import-account-modal-error"
-                styles="text-sm align-middle"
-              />
-            )}
+            <Fragment>
+              {selectedFile === 'Select a Wasm file' ? (
+                <CustomDragDrop
+                  ownerLicense={files}
+                  onUpload={(newFiles) => uploadFiles([newFiles[0]])}
+                  onDelete={deleteFile}
+                  count={1}
+                  formats={['wasm']}
+                />
+              ) : null}
 
-            <DialogFooter className="mt-2">
-              <div className="flex items-center justify-between w-full">
-                <div>
-                  {data.network !== BACKEND_NETWORK.AUTO_DETECT && (
-                    <SelectNetwork network={data.network} />
-                  )}
-                </div>
-                <div className="flex items-center justify-between gap-2">
-                  {files.length > 0 && (
+              {error && (
+                <ErrorMessage
+                  message={error}
+                  testName="import-account-modal-error"
+                  styles="text-sm align-middle"
+                />
+              )}
+              <DialogFooter className="mt-2">
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex flex-col items-start gap-2">
+                    {wasmFilesLoading ? (
+                      <span className="text-sm">
+                        Loading available Wasm files...
+                      </span>
+                    ) : wasmFilesError ? (
+                      <ErrorMessage
+                        message="Failed to load WASM files"
+                        testName="import-account-modal-error"
+                        styles="text-sm align-middle"
+                      />
+                    ) : wasmFiles?.length === 0 ? (
+                      <span className="text-sm">{noFilesMessage}</span>
+                    ) : (
+                      <SelectWasmFile
+                        wasmFiles={wasmFiles}
+                        selectedFile={selectedFile}
+                        onFileChange={handleFileChange}
+                      />
+                    )}
+                    {data.network !== NETWORK.AUTO_DETECT && (
+                      <SelectNetwork network={data.network} />
+                    )}
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    {files?.length > 0 && (
+                      <Button
+                        type="submit"
+                        className="px-4 py-2 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105"
+                        data-test="edit-entity-dialog-btn-submit"
+                        onClick={handleButtonClick}
+                      >
+                        {buttonLabel}
+                      </Button>
+                    )}
                     <Button
                       type="submit"
                       className="px-4 py-2 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105"
+                      variant="outline"
                       data-test="edit-entity-dialog-btn-submit"
-                      onClick={handleButtonClick}
+                      onClick={onOpenChange}
                     >
-                      {buttonLabel}
+                      Cancel
                     </Button>
-                  )}
-
-                  <Button
-                    type="submit"
-                    className="px-4 py-2 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105"
-                    variant="outline"
-                    data-test="edit-entity-dialog-btn-submit"
-                    onClick={onOpenChange}
-                  >
-                    Cancel
-                  </Button>
+                  </div>
                 </div>
-              </div>
-            </DialogFooter>
+              </DialogFooter>
+            </Fragment>
           </DialogContent>
         </Dialog>
       )}

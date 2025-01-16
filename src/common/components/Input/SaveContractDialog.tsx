@@ -99,7 +99,7 @@ const SaveContractDialog = ({
           className="flex flex-col w-full"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <span className="mb-1 text-sm text-slate-500">
+          <span className="mb-1 text-sm text-slate-400">
             New contract address
           </span>
           <EnvironmentDropdownContainer

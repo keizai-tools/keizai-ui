@@ -8,7 +8,7 @@ import {
 } from '../interfaces/ITokenPayload';
 import { StoredCookies } from '../interfaces/cookies.enum';
 
-import { BACKEND_NETWORK, NETWORK } from '@/common/types/soroban.enum';
+import { NETWORK } from '@/common/types/soroban.enum';
 import {
   IWalletContent,
   IWallet,
@@ -56,6 +56,30 @@ class CookieService<T extends ITokenPayload> implements ICookieService<T> {
       this.cookies.set(StoredCookies.ACCESS_TOKEN, accessToken, { path: '/' });
     } catch (error) {
       console.error('Error setting access token cookie:', error);
+    }
+  }
+
+  setMemoIdCookie(memoId: string): void {
+    try {
+      this.cookies.set(StoredCookies.MEMO_ID, memoId, { path: '/' });
+    } catch (error) {
+      console.error('Error setting memoId cookie:', error);
+    }
+  }
+
+  setBalanceCookie(balance: number): void {
+    try {
+      this.cookies.set(StoredCookies.BALANCE, balance, { path: '/' });
+    } catch (error) {
+      console.error('Error setting balance cookie:', error);
+    }
+  }
+
+  setUserIdCookie(userId: number): void {
+    try {
+      this.cookies.set(StoredCookies.USER_ID, userId, { path: '/' });
+    } catch (error) {
+      console.error('Error setting user ID cookie:', error);
     }
   }
 
@@ -127,11 +151,12 @@ class CookieService<T extends ITokenPayload> implements ICookieService<T> {
   }
 
   getAllWalletCookies(): IWallet {
-    const wallets: IWallet = {
-      [BACKEND_NETWORK.SOROBAN_MAINNET]: null,
-      [BACKEND_NETWORK.SOROBAN_TESTNET]: null,
-      [BACKEND_NETWORK.SOROBAN_FUTURENET]: null,
-      [BACKEND_NETWORK.AUTO_DETECT]: null,
+    const wallets: { [key in NETWORK]: IWalletContent | null } = {
+      [NETWORK.SOROBAN_MAINNET]: null,
+      [NETWORK.SOROBAN_TESTNET]: null,
+      [NETWORK.SOROBAN_FUTURENET]: null,
+      [NETWORK.AUTO_DETECT]: null,
+      [NETWORK.EPHEMERAL]: null,
     };
 
     for (const network of Object.values(NETWORK)) {

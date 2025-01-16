@@ -78,7 +78,6 @@ export function EditorTab({
 
   const initializeEditor = useCallback(async () => {
     if (editorReady) return;
-
     const response = await fetch('/themes/themelist.json');
     const data: ThemeList = await response.json();
     setThemeList(data);
@@ -101,7 +100,6 @@ export function EditorTab({
     const storedThemeName = localStorage.getItem('editor-theme') ?? 'night-owl';
     await loadTheme(storedThemeName);
     monacoRef.current.editor.setTheme(storedThemeName);
-
     setEditorReady(true);
   }, [customKeizaiEditor, loadTheme, editorReady]);
 
@@ -112,7 +110,7 @@ export function EditorTab({
   return (
     <Fragment>
       <Select value={theme} onValueChange={onThemeChange}>
-        <SelectTrigger className="w-[20%] gap-2 px-4 py-3 mb-2 font-bold border-2 rounded-md shadow-md border-slate-900 text-slate-500 focus:outline-none focus:ring-0 ring-0 focus-visible:ring-0 focus:ring-transparent">
+        <SelectTrigger className="w-[20%] gap-2 px-4 py-3 mb-2 font-bold border-2 rounded-md shadow-md border-slate-900 text-slate-400 focus:outline-none focus:ring-0 ring-0 focus-visible:ring-0 focus:ring-transparent">
           <SelectValue
             aria-label={theme}
             className="flex items-center justify-between"

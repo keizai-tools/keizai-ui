@@ -9,7 +9,7 @@ import {
 
 import { TerminalEntry } from '@/common/components/ui/Terminal';
 import { Invocation, InvocationResponse } from '@/common/types/invocation';
-import { BACKEND_NETWORK, NETWORK } from '@/common/types/soroban.enum';
+import { NETWORK } from '@/common/types/soroban.enum';
 import { IApiResponse } from '@/config/axios/interfaces/IApiResponse';
 import { IApiResponseError } from '@/config/axios/interfaces/IApiResponseError';
 import { apiService } from '@/config/axios/services/api.service';
@@ -20,6 +20,7 @@ function useInvocations(
   invocations: Invocation[],
   wallet: IWallet,
   connectWallet: (network: Partial<NETWORK>) => Promise<void>,
+  ephemeralStatus: string,
 ) {
   const [contractResponses, setContractResponses] = useState<TerminalEntry[]>(
     [],
@@ -87,17 +88,33 @@ function useInvocations(
     return res.payload;
   };
 
+  const filteredInvocations = useMemo(() => {
+    if (ephemeralStatus === 'STOPPED') {
+      return invocations.filter(
+        (invocation) => invocation.network !== NETWORK.EPHEMERAL,
+      );
+    }
+    return invocations;
+  }, [invocations, ephemeralStatus]);
+
   const handleRunInvocationSequential = useCallback(async () => {
     if (isRunningInvocation) return;
     setIsRunningInvocation(true);
 
-    for (const invocation of invocations) {
+    for (const invocation of filteredInvocations) {
       try {
         if (
-          invocation.network === BACKEND_NETWORK.SOROBAN_MAINNET &&
+          invocation.network === NETWORK.SOROBAN_MAINNET &&
           !wallet[NETWORK.SOROBAN_MAINNET]
         ) {
           await connectWallet(NETWORK.SOROBAN_MAINNET);
+        }
+
+        if (
+          invocation.network === NETWORK.EPHEMERAL &&
+          ephemeralStatus === 'STOPPED'
+        ) {
+          throw new Error('Ephemeral network is stopped');
         }
 
         let signedTransaction: string | null = null;
@@ -107,7 +124,7 @@ function useInvocations(
           );
           signedTransaction = await signTransaction(
             invocationTransactionXDR,
-            invocation.network as unknown as NETWORK,
+            invocation.network,
           );
         }
 
@@ -154,11 +171,12 @@ function useInvocations(
 
     setIsRunningInvocation(false);
   }, [
-    invocations,
+    filteredInvocations,
     isRunningInvocation,
     handleRunService,
     connectWallet,
     wallet,
+    ephemeralStatus,
   ]);
 
   const handleRunInvocationParallel = useCallback(async () => {
@@ -167,13 +185,20 @@ function useInvocations(
 
     try {
       const results: TerminalEntry[] = [];
-      for (const invocation of invocations) {
+      for (const invocation of filteredInvocations) {
         try {
           if (
-            invocation.network === BACKEND_NETWORK.SOROBAN_MAINNET &&
+            invocation.network === NETWORK.SOROBAN_MAINNET &&
             !wallet[NETWORK.SOROBAN_MAINNET]
           ) {
             await connectWallet(NETWORK.SOROBAN_MAINNET);
+          }
+
+          if (
+            invocation.network === NETWORK.EPHEMERAL &&
+            ephemeralStatus === 'STOPPED'
+          ) {
+            throw new Error('Ephemeral network is stopped');
           }
 
           let signedTransaction = null;
@@ -223,11 +248,12 @@ function useInvocations(
       setIsRunningInvocation(false);
     }
   }, [
-    invocations,
+    filteredInvocations,
     isRunningInvocation,
     handleRunService,
     connectWallet,
     wallet,
+    ephemeralStatus,
   ]);
 
   const clearContractResponses = () => {

@@ -2,7 +2,8 @@ import { UseMutateFunction } from '@tanstack/react-query';
 
 import { Button } from '../../ui/button';
 
-import useStellar from '@/modules/stellar/hook/useStellar';
+import useStellar from '@/common/hooks/useStellar';
+import { NETWORK } from '@/common/types/soroban.enum';
 
 function CreateNewAccount({
   invocationId,
@@ -10,7 +11,7 @@ function CreateNewAccount({
   editKeys,
 }: Readonly<{
   invocationId: string;
-  network: string;
+  network: NETWORK;
   editKeys: UseMutateFunction<
     unknown,
     Error,
@@ -27,7 +28,10 @@ function CreateNewAccount({
   const onCreateAccount = () => {
     const keypair = createNewAccount();
     if (keypair) {
-      fundingAccount(network, keypair.publicKey as string);
+      fundingAccount({
+        publicKey: keypair.publicKey as string,
+        network,
+      });
       editKeys({ id: invocationId, ...keypair });
       if (window.umami) window.umami.track('Create new account');
     }

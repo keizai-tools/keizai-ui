@@ -11,8 +11,8 @@ export default function Root() {
 
   return (
     <main className="flex min-h-screen bg-background">
-      {flags.teams.enabled ? <SidebarV2 /> : <Sidebar />}
       <AppLoader>
+        {flags.teams.enabled ? <SidebarV2 /> : <Sidebar />}
         <Outlet />
         <FeedbackPopupButton />
       </AppLoader>

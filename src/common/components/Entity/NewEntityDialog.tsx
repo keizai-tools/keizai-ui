@@ -1,5 +1,4 @@
-import { ReactNode } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { ReactNode, useState } from 'react';
 
 import { Button } from '../ui/button';
 import {
@@ -13,6 +12,11 @@ import {
 } from '../ui/dialog';
 import { Input } from '../ui/input';
 
+function isNameValid(name: string): boolean {
+  const nameRegex = /^(?!\s)(?!.*\s$).+$/;
+  return !!name.trim() && nameRegex.test(name);
+}
+
 function NewEntityDialog({
   children,
   onSubmit,
@@ -20,6 +24,7 @@ function NewEntityDialog({
   title,
   description,
   defaultName,
+  elementList,
 }: Readonly<{
   children: ReactNode;
   onSubmit: ({ name }: { name: string }) => void;
@@ -27,21 +32,65 @@ function NewEntityDialog({
   title: string;
   description: string;
   defaultName: string;
+  elementList?: {
+    name: string;
+  }[];
 }>) {
-  const { control, handleSubmit, reset } = useForm({
-    defaultValues: {
-      name: defaultName,
-    },
-  });
+  const [name, setName] = useState(defaultName);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
+  const [isNameValidState, setIsNameValidState] = useState(
+    isNameValid(defaultName),
+  );
+  const [isOpen, setIsOpen] = useState(false);
 
-  async function submitAndReset({ name }: { name: string }) {
+  function handleNameChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const newName = event.target.value;
+    setName(newName);
+    const errors = [];
+    if (!newName.trim()) {
+      errors.push('Name must not be empty or contain only spaces.');
+    }
+    if (/^\s|\s$/.test(newName)) {
+      errors.push('Name must not start or end with spaces.');
+    }
+    if (elementList && elementList.some((el) => el.name === newName)) {
+      errors.push('Name is already in use.');
+    }
+    setErrorMessages(errors);
+    setIsNameValidState(errors.length === 0);
+  }
+
+  function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    const errors = [];
+    if (!name.trim()) {
+      errors.push('Name must not be empty or contain only spaces.');
+    }
+    if (/^\s|\s$/.test(name)) {
+      errors.push('Name must not start or end with spaces.');
+    }
+    if (elementList && elementList.some((el) => el.name === name)) {
+      errors.push('Name is already in use.');
+    }
+    if (errors.length > 0) {
+      setErrorMessages(errors);
+      return;
+    }
+    setErrorMessages([]);
     onSubmit({ name });
-    reset();
+    setName(defaultName);
+    setIsOpen(false);
+  }
+
+  function handleButtonClick(event: React.MouseEvent) {
+    handleSubmit(event);
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild onClick={() => setIsOpen(true)}>
+        {children}
+      </DialogTrigger>
       <DialogContent
         className="flex flex-col w-auto h-auto gap-4 p-6 font-bold border-2 border-solid rounded-lg shadow-lg border-offset-background max-w-prose"
         data-test="new-entity-dialog-container"
@@ -55,23 +104,29 @@ function NewEntityDialog({
         <form
           className="flex items-center gap-3 mt-4 space-x-2"
           data-test="new-entity-dialog-form-container"
-          onSubmit={handleSubmit(submitAndReset)}
+          onSubmit={(e) => e.preventDefault()}
         >
           <div className="grid flex-1 gap-2">
-            <Controller
-              control={control}
-              name="name"
-              rules={{ required: true }}
-              render={({ field }) => <Input {...field} />}
+            <Input
+              value={name}
+              onChange={handleNameChange}
+              data-test="new-entity-dialog-input-name"
             />
+            {errorMessages.length > 0 && (
+              <ul className="text-sm text-red-400">
+                {errorMessages.map((msg, index) => (
+                  <li key={index}>{msg}</li>
+                ))}
+              </ul>
+            )}
           </div>
           <DialogClose asChild>
             <Button
-              type="submit"
+              onClick={handleButtonClick}
               size="sm"
               className="w-auto px-8 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               data-test="new-entity-dialog-btn-submit"
-              disabled={isLoading}
+              disabled={isLoading || !isNameValidState}
             >
               {isLoading ? 'Creating...' : 'Create'}
             </Button>

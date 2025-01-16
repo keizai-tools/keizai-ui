@@ -1,4 +1,4 @@
-import { Loader } from 'lucide-react';
+import { Copy, Loader } from 'lucide-react';
 import React from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 
@@ -13,7 +13,7 @@ import { Method } from '@/common/types/method';
 
 function ContractInput({
   defaultValue = '',
-  defaultNetwork,
+  defaultNetwork: network,
   loading,
   loadContract,
   runInvocation,
@@ -34,6 +34,7 @@ function ContractInput({
 }>) {
   const [contractId, setContractId] = React.useState(defaultValue);
   const params = useParams();
+
   const { toast } = useToast();
   function copyToClipboard() {
     navigator.clipboard
@@ -73,13 +74,12 @@ function ContractInput({
     handleSearchEnvironment(value);
     setContractId(value);
   }
-
   return (
     <div
       className="flex items-center gap-4 p-2 border rounded-md"
       data-test="contract-input-container"
     >
-      {defaultNetwork !== 'AUTO_DETECT' && contractId && (
+      {network !== 'AUTO_DETECT' && contractId && (
         <div
           className="flex flex-col items-start gap-1 mr-2"
           data-test="contract-input-network-container"
@@ -89,7 +89,7 @@ function ContractInput({
             className="text-sm font-bold text-gray-400 select-none text-primary"
             data-test="contract-input-network"
           >
-            {defaultNetwork}
+            {network}
           </p>
         </div>
       )}
@@ -182,15 +182,20 @@ function ContractInput({
             <div className="flex gap-2">
               <Button
                 data-test="contract-input-btn-load"
+                variant="secondary"
                 className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 onClick={copyToClipboard}
                 type="button"
-                disabled={loading || !method}
+                disabled={loading}
               >
-                COPY CONTRACT ID
+                <Copy
+                  className="cursor-pointer"
+                  data-test="events-tab-btn-copy"
+                />
               </Button>
               <Button
                 data-test="contract-input-btn-load"
+                variant="default"
                 className="w-auto px-4 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                 onClick={runInvocation}
                 type="button"

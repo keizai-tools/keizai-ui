@@ -1,14 +1,23 @@
+import { useEffect } from 'react';
+
 import { useCollectionsQuery } from '@/common/api/collections';
 import CollectionCard from '@/common/components/Collections/CollectionCard';
 import CollectionPlaceholder from '@/common/components/Collections/CollectionPlaceholder';
 import CollectionsEmptyState from '@/common/components/Collections/CollectionsEmptyState';
-import FullscreenLoading from '@/common/views/fullscreenLoading';
+import { useEphemeralProvider } from '@/common/context/useEphemeralContext';
+import { NETWORK } from '@/common/types/soroban.enum';
+import OverlayLoading from '@/common/views/OverlayLoading';
 
 export default function Home() {
-  const { data, isLoading } = useCollectionsQuery();
+  const { data, isLoading, refetch } = useCollectionsQuery();
+  const { status } = useEphemeralProvider();
+
+  useEffect(() => {
+    refetch();
+  }, [refetch, status]);
 
   if (isLoading) {
-    return <FullscreenLoading />;
+    return <OverlayLoading />;
   }
 
   return (
@@ -23,11 +32,30 @@ export default function Home() {
       ) : (
         <div className="flex flex-wrap gap-8">
           {data?.map((collection) => {
-            const invocationsCount = collection.folders.reduce(
-              (total, folder) => total + folder.invocations.length,
-              0,
-            );
-
+            const invocationsCount =
+              collection.folders.reduce(
+                (total, folder) =>
+                  total +
+                  folder.invocations.filter((invocation) => {
+                    if (
+                      status.status === 'STOPPED' &&
+                      invocation.network === NETWORK.EPHEMERAL
+                    ) {
+                      return false;
+                    }
+                    return true;
+                  }).length,
+                0,
+              ) +
+              collection.invocations.filter((invocation) => {
+                if (
+                  status.status === 'STOPPED' &&
+                  invocation.network === NETWORK.EPHEMERAL
+                ) {
+                  return false;
+                }
+                return true;
+              }).length;
             return (
               <CollectionCard
                 key={collection.id}
@@ -38,7 +66,7 @@ export default function Home() {
               />
             );
           })}
-          <CollectionPlaceholder />
+          <CollectionPlaceholder elementList={data} />
         </div>
       )}
     </main>

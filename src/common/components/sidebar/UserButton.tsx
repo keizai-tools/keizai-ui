@@ -27,6 +27,7 @@ function UserButton() {
           size="icon"
           asChild
           data-test="sidebar-btn-user"
+          tooltip="User Configuration"
         >
           <User2 className="p-2 transition-colors duration-300 cursor-pointer hover:text-primary" />
         </Button>
@@ -42,7 +43,7 @@ function UserButton() {
           onClick={navigateChangePassword}
         >
           <UnlockKeyhole
-            className={`text-gray-500 transition-colors duration-300 cursor-pointer hover:text-primary active:text-primary`}
+            className={`text-gray-400 transition-colors duration-300 cursor-pointer hover:text-primary active:text-primary`}
           />
           <span>Change password</span>
         </DropdownMenuItem>
@@ -52,7 +53,7 @@ function UserButton() {
           onClick={handleSignOut}
         >
           <LogOut
-            className={`text-gray-500 transition-colors duration-300 cursor-pointer hover:text-primary active:text-primary`}
+            className={`text-gray-400 transition-colors duration-300 cursor-pointer hover:text-primary active:text-primary`}
           />
           <span>Log out</span>
         </DropdownMenuItem>
