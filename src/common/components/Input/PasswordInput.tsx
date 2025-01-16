@@ -8,6 +8,7 @@ interface IPropsPassword {
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   styles?: string;
   placeholder?: string;
+  darkMode?: boolean;
 }
 
 function PasswordInput({
@@ -15,6 +16,7 @@ function PasswordInput({
   styles,
   onChange,
   placeholder = 'Password',
+  darkMode = false,
 }: IPropsPassword) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -24,11 +26,17 @@ function PasswordInput({
 
   return (
     <div
-      className={`flex items-center border-2 px-3 rounded-md bg-white ${styles}`}
+      className={`flex items-center border-2 px-3 rounded-md ${
+        darkMode ? 'bg-background text-white' : 'bg-white text-black'
+      } ${styles}`}
     >
-      <Lock className="h-5 w-5 text-gray-400" />
+      <Lock
+        className={`w-5 h-5 ${darkMode ? 'text-gray-200' : 'text-gray-400'}`}
+      />
       <Input
-        className="pl-2 border-none focus-visible:ring-0 bg-white text-black"
+        className={`pl-2 ${
+          darkMode ? 'bg-background text-white' : 'bg-white text-black'
+        } border-none focus-visible:ring-0`}
         type={showPassword ? 'text' : 'password'}
         name="password"
         placeholder={placeholder}
@@ -38,9 +46,15 @@ function PasswordInput({
       />
       <div>
         {showPassword ? (
-          <EyeOff className="h-5 w-5 text-black" onClick={toggleShowPassword} />
+          <EyeOff
+            className={`w-5 h-5 ${darkMode ? 'text-white' : 'text-black'}`}
+            onClick={toggleShowPassword}
+          />
         ) : (
-          <Eye className="h-5 w-5 text-black" onClick={toggleShowPassword} />
+          <Eye
+            className={`w-5 h-5 ${darkMode ? 'text-white' : 'text-black'}`}
+            onClick={toggleShowPassword}
+          />
         )}
       </div>
     </div>
