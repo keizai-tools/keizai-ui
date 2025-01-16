@@ -99,28 +99,29 @@ function ChangePassword() {
 
   return (
     <div
-      className="flex flex-col items-center justify-center w-full h-full m-10"
+      className="flex flex-col items-center justify-center w-full h-full p-10 "
       data-test="change-password-container"
     >
       <form
-        className="flex flex-col w-full h-full gap-4 p-6 font-bold border-2 border-solid rounded-lg shadow-lg border-offset-background max-w-prose"
+        className="flex flex-col w-full gap-1 p-8 font-bold border-2 border-solid rounded-lg shadow-lg border-offset-background max-w-prose"
         onSubmit={handleSubmit(onSubmit)}
         data-test="change-password-form-container"
       >
         <h1
-          className="text-xl font-bold mb-7"
+          className="mb-8 text-2xl font-bold text-center"
           data-test="change-password-title"
         >
           Change Password
         </h1>
         {inputs.map((input: Input) => (
-          <div className="flex flex-col mb-4" key={input.name}>
+          <div className="flex flex-col mb-6" key={input.name}>
             <Controller
               control={control}
               name={input.name}
               rules={input.rules}
               render={({ field }) => (
                 <PasswordInput
+                  darkMode
                   value={field.value}
                   onChange={field.onChange}
                   placeholder={input.placeholder}
@@ -131,7 +132,7 @@ function ChangePassword() {
               <ErrorMessage
                 message={errors[input.name]?.message as string}
                 testName={`${input.test}-error`}
-                styles="text-sm"
+                styles="text-sm mt-2"
                 type={`${input.rules.pattern ? 'password' : ''}`}
               />
             )}
@@ -150,10 +151,11 @@ function ChangePassword() {
               }
               testName="change-password-error-message"
             />
-          )}{' '}
+          )}
         <Button
           type="submit"
-          className={`w-full font-semibold ${
+          variant="outline"
+          className={`w-auto px-8 py-3 font-bold transition-all duration-300 ease-in-out transform border-2 shadow-md hover:scale-105 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
             statusState.changePassword.error ? 'mt-4' : ''
           }`}
           data-test="change-password-btn-submit"
